@@ -9,7 +9,7 @@ const { title, description, waMessage, waArea = 'vet' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const waHref = whatsapp[waArea](waMessage);
 // subconjunto de íconos (deben ir en orden alfabético)
-const ICONS = ['arrow_back', 'arrow_forward', 'brush', 'call', 'check_circle', 'chevron_right', 'close', 'content_cut', 'dentistry', 'hearing', 'home_health', 'location_on', 'map', 'medical_services', 'menu', 'person', 'pest_control', 'pill', 'radiology', 'redeem', 'shopping_bag', 'shower', 'spa', 'stethoscope', 'storefront', 'vaccines', 'waves'];
+const ICONS = ['arrow_back', 'arrow_forward', 'brush', 'call', 'check_circle', 'chevron_right', 'close', 'content_cut', 'dentistry', 'hearing', 'home_health', 'location_on', 'map', 'medical_services', 'menu', 'person', 'pest_control', 'pets', 'pill', 'radiology', 'redeem', 'shopping_bag', 'shower', 'spa', 'stethoscope', 'storefront', 'vaccines', 'waves'];
 ---
 <!doctype html>
 <html lang="es-CO">
