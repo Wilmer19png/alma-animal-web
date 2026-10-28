@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { whatsapp } from '../data/site';
+
+interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop' }
+const { title, description, waMessage, waArea = 'vet' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const waHref = whatsapp[waArea](waMessage);
+// subconjunto de íconos (deben ir en orden alfabético)
+const ICONS = ['arrow_forward', 'call', 'chevron_right', 'close', 'home_health', 'location_on', 'map', 'menu', 'person', 'shopping_bag', 'shower', 'stethoscope', 'storefront'];
+---
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="theme-color" content="#FEF7FE" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_CO" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
+  <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&icon_names=${ICONS.join(',')}&display=block`} />
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <slot name="top" />
+  <main id="contenido">
+    <slot />
+  </main>
+  <Footer />
+  <a class="fab-wa" href={waHref} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><WaIcon size={30} class="" /></a>
+
+  <style>
+    .fab-wa { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--wa); color: #fff; box-shadow: 0 4px 8px 3px rgb(54 41 84 / .12), 0 1px 3px rgb(54 41 84 / .2); transition: transform .25s var(--ease-out); }
+    .fab-wa:hover { color: #fff; transform: translateY(-2px) scale(1.04); }
+    @media (min-width: 768px) { .fab-wa { right: 24px; bottom: 24px; width: 60px; height: 60px; } }
+  </style>
+</body>
+</html>

@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import heart from '../assets/corazon.png';
+---
+<a class="lockup" href="/" aria-label="Alma Animal, inicio">
+  <Image src={heart} alt="" width={96} class="lockup__mark" loading="eager" />
+  <svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" class="lockup__word">
+    <text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text>
+    <text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text>
+  </svg>
+</a>
+
+<style>
+  .lockup { display: flex; align-items: center; gap: 8px; text-decoration: none; min-width: 0; }
+  .lockup__mark { width: 36px; height: auto; }
+  .lockup__word { width: 132px; height: auto; overflow: visible; }
+  @media (min-width: 768px) {
+    .lockup { gap: 12px; }
+    .lockup__mark { width: 48px; }
+    .lockup__word { width: 184px; }
+  }
+</style>

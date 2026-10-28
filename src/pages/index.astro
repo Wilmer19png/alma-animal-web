@@ -1,0 +1,558 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Lockup from '../components/Lockup.astro';
+import MobileMenu from '../components/MobileMenu.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { NAV, ADDRESS, PHONES, SOCIAL, DOCTOR, whatsapp } from '../data/site';
+import heartPaper from '../assets/papel-corazon-v2.png';
+import tigerDog from '../assets/papel-tigre-perro-v3.png';
+import paw from '../assets/pata-perro-h.png';
+import claw from '../assets/garra-tigre.png';
+import mariana from '../assets/mariana-gato.png';
+import groomer from '../assets/peluquera.png';
+import moto from '../assets/mariana-moto.png';
+import heart from '../assets/corazon.png';
+
+// equipo del carrusel del héroe
+const TEAM = [
+  { img: mariana, alt: 'Dra. Mariana Hoyos Giraldo con un gato atigrado en brazos', who: 'Dra. Mariana Hoyos · MVZ', a: 'MVZ · TP 51206', b: 'Consulta a domicilio' },
+  { img: groomer, alt: 'Peluquería canina de Alma Animal: schnauzer en brazos y herramientas de corte', who: 'Spa y peluquería', a: 'Spa con protocolo', b: 'Corte según la raza' }
+];
+const REASONS = [
+  { n: '8', title: 'Cuidados en cada baño', text: 'Antipulgas, oídos, dientes, hidromasaje, aromaterapia, cepillado, deslanado y uñas.' },
+  { n: '3', suffix: 'en 1', title: 'Consultorio, spa y petshop', text: 'Un solo lugar y una sola historia clínica para tu mascota.' },
+  { n: '0', title: 'Parabenos en el shampoo', text: 'Hipoalergénico, y baño medicado para la piel sensible.' },
+  { n: '1', title: 'Carnet digital por mascota', text: 'Vacunas con lote, laboratorio y sello, visibles desde tu cuenta.' }
+];
+const POSTS = [
+  { cat: 'Cuidado', min: 5, title: '¿Cada cuánto bañar a tu perro según su tipo de pelo?', bg: 'var(--grad-alma)', img: heart, w: 96 },
+  { cat: 'Vacunas', min: 4, title: 'El calendario de vacunas de un cachorro, paso a paso', bg: 'var(--grad-primary)', img: heartPaper, w: 96 },
+  { cat: 'Gatos', min: 6, title: 'Señales de que tu gato tiene dolor de dientes', bg: '#D1C1DD', img: tigerDog, w: 150 }
+];
+const waVet = whatsapp.vet();
+---
+<Base
+  title="Alma Animal · Veterinaria, spa y petshop en Pereira"
+  description="Consulta veterinaria, vacunas, cirugía y atención a domicilio en Pereira y Dosquebradas con la Dra. Mariana Hoyos. Spa con baño antipulgas e hidromasaje, y tienda con envío gratis en Pereira."
+>
+  <!-- ======== HÉROE ======== -->
+  <div class="wrap hero-wrap">
+    <header class="hero">
+      <svg class="hero__curve" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="yg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A6A9C"/><stop offset=".5" stop-color="#655785"/><stop offset="1" stop-color="#4D3F6C"/></linearGradient>
+          <radialGradient id="glow" cx=".72" cy=".2" r=".5"><stop offset="0" stop-color="#D0BEF3" stop-opacity=".45"/><stop offset="1" stop-color="#D0BEF3" stop-opacity="0"/></radialGradient>
+        </defs>
+        <path d="M1280 0H900C730 0 690 170 760 330C830 490 820 720 610 720H1280Z" fill="url(#yg)"/>
+        <path d="M1280 0H900C730 0 690 170 760 330C830 490 820 720 610 720H1280Z" fill="url(#glow)"/>
+        <circle cx="905" cy="120" r="9" fill="#FBCFAF"/>
+        <circle cx="640" cy="610" r="9" fill="#8F7FB0"/>
+      </svg>
+
+      <div class="hero__top">
+        <Lockup />
+        <nav class="navpill" aria-label="Principal">
+          {NAV.map((n) => <a href={n.href} class={n.href === '/' ? 'is-on' : undefined} aria-current={n.href === '/' ? 'page' : undefined}>{n.label}</a>)}
+        </nav>
+        <div class="hero__tools">
+          <span class="hero__addr"><span class="ms" aria-hidden="true">location_on</span><span>{ADDRESS.city}<small>{ADDRESS.line}</small></span></span>
+          <a class="icon-btn on-curve hide-sm" href={`tel:+${PHONES.vet.e164}`} aria-label={`Llamar al ${PHONES.vet.display}`}><span class="ms" aria-hidden="true">call</span></a>
+          <a class="icon-btn on-curve" href="/petshop" aria-label="Carrito"><span class="ms" aria-hidden="true">shopping_bag</span></a>
+          <a class="icon-btn solid hide-sm" href="/portal" aria-label="Ingresar a mi portal"><span class="ms" aria-hidden="true">person</span></a>
+          <MobileMenu />
+        </div>
+      </div>
+
+      <div class="hero__copy">
+        <h1>Cuidado<br /><span class="hero__h1-line">con <span class="gt">alma</span><span class="hero__seal"><Image src={heartPaper} alt="" width={96} loading="eager" /></span></span></h1>
+        <p><b>Consultorio, spa y petshop</b> en un mismo lugar. Te atiende la Dra. Mariana Hoyos, médica veterinaria y zootecnista.</p>
+        <div class="hero__actions">
+          <a class="btn btn--alma btn--lg" href="/consultorio#agendar">Agenda tu cita<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+          <a class="wa-o" href={waVet} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos</a>
+        </div>
+      </div>
+
+      <!-- carrusel del equipo sobre la curva -->
+      <div class="hero__team" data-carousel aria-roledescription="carrusel" aria-label="Nuestro equipo">
+        <div class="team__disc" aria-hidden="true"></div>
+        <div class="team__ring" aria-hidden="true"></div>
+        {TEAM.map((t, i) => (
+          <div class:list={['team__slide', { 'is-on': i === 0 }]} data-slide data-who={t.who} data-a={t.a} data-b={t.b} aria-hidden={i === 0 ? 'false' : 'true'}>
+            <Image src={t.img} alt={t.alt} widths={[340, 480, 640]} sizes="(min-width: 1100px) 460px, 340px" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+          </div>
+        ))}
+        <div class="team__caption">
+          <span class="team__who" data-who-label aria-live="polite">{TEAM[0].who}</span>
+          <div class="team__dots">
+            {TEAM.map((t, i) => <button type="button" data-dot aria-label={`Ver ${t.who}`} aria-pressed={i === 0 ? 'true' : 'false'}><span></span></button>)}
+          </div>
+        </div>
+      </div>
+      <div class="tagpill tagpill--a" aria-hidden="true"><span class="tagpill__t" data-pill-a>{TEAM[0].a}</span><span class="tagpill__d"></span></div>
+      <div class="tagpill tagpill--b" aria-hidden="true"><span class="tagpill__t" data-pill-b>{TEAM[0].b}</span><span class="tagpill__d"></span></div>
+
+      <div class="hero__side on-dark">
+        <h2>Consultorio, spa y petshop <b class="gt">en un mismo lugar</b></h2>
+        <p>Consulta, vacunas, radiografía y cirugía. Y cuando toca baño, <b>la misma doctora</b> revisa piel, oídos y dientes.</p>
+      </div>
+
+      <div class="hero__social">
+        <span>Síguenos</span>
+        {SOCIAL.instagram.map((s) => (
+          <a class="social" href={s.url} target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>{s.handle}</a>
+        ))}
+      </div>
+
+      <nav class="hero__spaces" aria-label="Nuestros espacios">
+        <a href="/consultorio" class="space space--a"><span class="ms" aria-hidden="true">stethoscope</span><b>Consultorio</b><span class="space__more">Ver servicios<span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+        <a href="/spa" class="space space--b"><span class="ms" aria-hidden="true">shower</span><b>Spa</b><span class="space__more">Qué incluye<span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+        <a href="/petshop" class="space space--c"><span class="ms" aria-hidden="true">storefront</span><b>Petshop</b><span class="space__more">Ir a la tienda<span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+      </nav>
+    </header>
+  </div>
+
+  <!-- ======== DECLARACIÓN ======== -->
+  <section class="wrap statement" aria-label="Nuestra filosofía">
+    <h2 class="statement__h">
+      <b class="gt">Un animalito</b>
+      <span class="pill-img pill-img--paw" aria-hidden="true"><Image src={paw} alt="" width={284} /></span>
+      limpio es un animalito
+      <span class="pill-img pill-img--claw" aria-hidden="true"><Image src={claw} alt="" width={224} /></span>
+      <b class="gt">sano</b>
+    </h2>
+    <p class="lead">Alma Animal reúne en un solo lugar la consulta veterinaria, el spa y la tienda. Así, la persona que baña a tu mascota trabaja al lado de la médica que la conoce.</p>
+  </section>
+
+  <!-- ======== TRES ESPACIOS ======== -->
+  <section class="wrap spaces" aria-labelledby="esp">
+    <div class="section-head">
+      <h2 id="esp" class="h-section">Elige a qué<br /><b class="gt">vienes hoy</b></h2>
+      <p class="lead">Cada espacio tiene su página con todos los detalles. Agenda o escríbenos desde cualquiera.</p>
+    </div>
+    <div class="spaces__grid">
+      <a class="card door door--clinic" href="/consultorio">
+        <span class="ms glyph" aria-hidden="true">stethoscope</span>
+        <h3>Consultorio</h3>
+        <p>Consulta general, vacunación, desparasitación, radiografía y cirugía. También atendemos a domicilio.</p>
+        <span class="link">Ver el consultorio<span class="ms" aria-hidden="true">arrow_forward</span></span>
+      </a>
+      <a class="door door--spa" href="/spa">
+        <Image src={tigerDog} alt="" width={360} class="door__art" />
+        <h3>Spa Alma</h3>
+        <p>Baño antipulgas, hidromasaje y aromaterapia, con shampoo hipoalergénico libre de parabenos. Sale con perfume, accesorio y snack.</p>
+        <span class="link">Ver el spa<span class="ms" aria-hidden="true">arrow_forward</span></span>
+      </a>
+      <a class="door door--shop" href="/petshop">
+        <span class="ms glyph" aria-hidden="true">storefront</span>
+        <h3>Petshop</h3>
+        <p>Alimento, higiene y accesorios. Arma tu pedido en la web y te lo llevamos: envío gratis en Pereira y Dosquebradas.</p>
+        <span class="link">Ir a la tienda<span class="ms" aria-hidden="true">arrow_forward</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ======== A DOMICILIO ======== -->
+  <section id="domicilio" class="wrap" aria-labelledby="dom">
+    <div class="home-visit on-dark">
+      <div class="home-visit__copy">
+        <span class="chip-dark"><span class="ms" aria-hidden="true">home_health</span>Servicio a domicilio</span>
+        <h2 id="dom" class="h-section">La doctora va <b class="gt">a tu casa</b></h2>
+        <p>Consulta veterinaria en tu hogar, en Pereira. Para mascotas que se estresan al salir, o cuando a ti se te complica llegar.</p>
+        <span class="chip-light"><span class="ms" aria-hidden="true">location_on</span>Cobertura: toda Pereira y Dosquebradas</span>
+        <div class="home-visit__actions">
+          <a class="btn btn--alma btn--lg" href="/consultorio#domicilio">Agendar visita<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+          <a class="wa-o" href={whatsapp.vet('Hola, Alma Animal. ¿Atienden a domicilio en mi barrio?')} target="_blank" rel="noopener"><WaIcon size={24} />Preguntar cobertura</a>
+        </div>
+      </div>
+      <div class="moto" aria-hidden="false">
+        <div class="moto__disc" aria-hidden="true"></div>
+        <div class="moto__shadow" aria-hidden="true"></div>
+        <Image src={moto} alt="La Dra. Mariana con casco, llegando en scooter con su maletín veterinario" widths={[360, 520, 720]} sizes="(min-width: 1100px) 460px, 340px" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== NOSOTROS ======== -->
+  <section id="nosotros" class="wrap" aria-labelledby="nos">
+    <div class="about">
+      <div class="about__portrait">
+        <div class="about__ring" aria-hidden="true"></div>
+        <div class="about__photo"><Image src={mariana} alt="Retrato de la Dra. Mariana Hoyos con un gato atigrado" widths={[320, 480]} sizes="(min-width: 768px) 420px, 280px" /></div>
+        <div class="about__seal" role="img" aria-label="Sello de Alma Animal, MVZ TP 51206">
+          <svg viewBox="0 0 132 132" aria-hidden="true"><defs><path id="ring" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"/></defs><circle cx="66" cy="66" r="63" fill="#FEF7FE" stroke="currentColor" stroke-width="2.5"/><circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1"/><text font-family="Alan Sans, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor"><textPath href="#ring">ALMA ANIMAL · PEREIRA · MVZ TP 51206 ·</textPath></text></svg>
+          <span><Image src={heartPaper} alt="" width={96} /></span>
+        </div>
+      </div>
+      <div class="about__copy">
+        <h2 id="nos" class="h-section about__name">Dra. Mariana<br /><b class="gt">Hoyos Giraldo</b></h2>
+        <p class="serif about__title">{DOCTOR.title} · {DOCTOR.tp}</p>
+        <p class="lead">[Historia breve de la doctora: dónde estudió, desde cuándo ejerce y por qué creó Alma Animal. Dos o tres frases en su propia voz.]</p>
+        <ul class="about__tags"><li>Medicina preventiva</li><li>Cirugía</li><li>Spa y peluquería</li></ul>
+        <div class="about__actions">
+          <a class="btn" href="/nosotros">Conoce al equipo</a>
+          <a class="btn btn--outlined" href="https://instagram.com/vet_marianahoyos" target="_blank" rel="noopener">@vet_marianahoyos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== POR QUÉ ======== -->
+  <section class="wrap reasons" aria-labelledby="pq">
+    <h2 id="pq" class="h-section">¿Por qué <b class="gt">Alma Animal?</b></h2>
+    <ul class="reasons__grid">
+      {REASONS.map((r) => (
+        <li>
+          <span class="reasons__n">{r.n}{r.suffix && <small>{r.suffix}</small>}</span>
+          <b>{r.title}</b>
+          <p>{r.text}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- ======== BLOG ======== -->
+  <section id="blog" class="wrap blog" aria-labelledby="bl">
+    <div class="section-head section-head--row">
+      <h2 id="bl" class="h-section">Blog <b class="gt">veterinario</b></h2>
+      <a class="link" href="/blog">Leer el blog<span class="ms" aria-hidden="true">arrow_forward</span></a>
+    </div>
+    <div class="blog__grid">
+      {POSTS.map((p) => (
+        <a class="card post" href="/blog">
+          <span class="post__cover" style={`background: ${p.bg};`}><Image src={p.img} alt="" width={p.w * 2} style={`width: ${p.w}px;`} /></span>
+          <span class="post__body">
+            <span class="post__meta">{p.cat} · {p.min} min · Artículo de ejemplo</span>
+            <span class="serif post__title">{p.title}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ======== WHATSAPP ======== -->
+  <section class="wrap wa-strip-wrap" aria-labelledby="wab">
+    <div class="wa-strip">
+      <div class="wa-strip__copy">
+        <span class="wa-strip__icon"><WaIcon size={32} /></span>
+        <div>
+          <h2 id="wab">¿Dudas? <span>Escríbenos por WhatsApp</span></h2>
+          <p>Agenda, pregunta por un producto o pide el precio del baño. Te responde el equipo de Alma Animal.</p>
+        </div>
+      </div>
+      <a class="wa-o" href={waVet} target="_blank" rel="noopener"><WaIcon size={24} />Abrir chat</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Carrusel del equipo: cambia cada 5 s, se pausa al pasar el mouse o con movimiento reducido.
+  const root = document.querySelector<HTMLElement>('[data-carousel]');
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const who = root.querySelector<HTMLElement>('[data-who-label]');
+    const pillA = document.querySelector<HTMLElement>('[data-pill-a]');
+    const pillB = document.querySelector<HTMLElement>('[data-pill-b]');
+    let i = 0;
+    let timer: number | undefined;
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
+      dots.forEach((d, k) => d.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+      const s = slides[i];
+      if (who) who.textContent = s.dataset.who ?? '';
+      if (pillA) pillA.textContent = s.dataset.a ?? '';
+      if (pillB) pillB.textContent = s.dataset.b ?? '';
+    };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const start = () => { if (!reduce) timer = window.setInterval(() => show(i + 1), 5000); };
+    const stop = () => window.clearInterval(timer);
+    dots.forEach((d, k) => d.addEventListener('click', () => { stop(); show(k); start(); }));
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', start);
+    start();
+  }
+</script>
+
+<style>
+  /* ---------- HÉROE · celular primero ---------- */
+  .hero-wrap { padding-top: 12px; }
+  .hero { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: var(--r-lg); background: var(--wash), #fff; box-shadow: 0 0 0 1px var(--line); isolation: isolate; }
+  .hero__curve { display: none; }
+  .hero__top { order: 1; display: flex; align-items: center; gap: 10px; }
+  .navpill { display: none; }
+  .hero__tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .hero__addr { display: none; }
+  .hide-sm { display: none; }
+  .icon-btn.solid { background: #fff; color: var(--primary); }
+
+  .hero__copy { order: 2; display: flex; flex-direction: column; gap: 16px; padding: 4px 4px 0; }
+  .hero h1 { font-size: clamp(42px, 12vw, 100px); font-weight: 700; line-height: .95; letter-spacing: -.045em; }
+  .hero__h1-line { display: inline-flex; align-items: center; gap: .14em; }
+  .hero__seal { width: .7em; height: .7em; border-radius: 50%; background: var(--grad-primary); display: inline-grid; place-items: center; margin-top: .1em; box-shadow: var(--shadow-1); }
+  .hero__seal img { width: 62%; height: auto; }
+  .hero__copy p { font-size: 17px; line-height: 1.55; color: var(--ink-muted); max-width: 34ch; }
+  .hero__copy p b { color: var(--ink); font-weight: 600; }
+  .hero__actions { display: flex; flex-direction: column; gap: 12px; }
+  .hero__actions > * { width: 100%; }
+
+  .hero__team { order: 3; position: relative; height: 340px; border-radius: 22px 22px 0 0; background: var(--grad-primary); overflow: hidden; }
+  .team__disc { position: absolute; left: 50%; top: 30px; width: 260px; height: 260px; margin-left: -130px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); box-shadow: 0 0 0 14px rgb(255 255 255 / .2); }
+  .team__ring { position: absolute; left: 50%; top: 12px; width: 296px; height: 296px; margin-left: -148px; border-radius: 50%; border: 1px dashed rgb(255 255 255 / .6); }
+  .team__slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s var(--ease); }
+  .team__slide.is-on { opacity: 1; }
+  .team__slide img { position: absolute; left: 50%; bottom: 0; height: 320px; width: auto; max-width: none; transform: translateX(-50%); }
+  .team__caption { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 4; }
+  .team__who { font: 600 14px/1 var(--font-sans); white-space: nowrap; padding: 10px 16px; border-radius: 999px; background: rgb(255 255 255 / .95); color: var(--ink); box-shadow: 0 1px 3px rgb(54 41 84 / .2); }
+  .team__dots { display: flex; gap: 2px; }
+  .team__dots button { width: 34px; height: 24px; border: 0; padding: 0 5px; background: transparent; cursor: pointer; display: grid; place-items: center; }
+  .team__dots span { display: block; width: 14px; height: 6px; border-radius: 999px; background: rgb(255 255 255 / .55); transition: width .3s var(--ease-out), background .3s; }
+  .team__dots [aria-pressed="true"] span { width: 26px; background: #fff; }
+
+  .tagpill { display: none; }
+  .hero__side { order: 4; margin-top: -18px; padding: 6px 20px 24px; border-radius: 0 0 22px 22px; background: var(--grad-primary); color: #fff; display: flex; flex-direction: column; gap: 10px; }
+  .hero__side h2 { font-size: 24px; font-weight: 400; line-height: 1.15; letter-spacing: -.02em; }
+  .hero__side h2 b { font-weight: 700; }
+  .hero__side p { font-size: 16px; line-height: 1.5; color: rgb(255 255 255 / .88); }
+  .hero__side p b { color: #fff; font-weight: 600; }
+  .hero__social { display: none; }
+
+  .hero__spaces { order: 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .space { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 6px; border-radius: 16px; text-decoration: none; text-align: center; transition: transform .25s var(--ease-out); }
+  .space:hover { transform: translateY(-2px); }
+  .space .ms { font-size: 26px; }
+  .space b { font: 600 14px/1.2 var(--font-sans); }
+  .space__more { display: none; }
+  .space--a { background: var(--surface-3); color: var(--ink); }
+  .space--a .ms { color: var(--primary); }
+  .space--b { background: var(--grad-primary); color: #fff; }
+  .space--b:hover { color: #fff; }
+  .space--c { background: var(--grad-alma); color: #362954; }
+  .space--c:hover { color: #362954; }
+
+  /* ---------- HÉROE · tableta ---------- */
+  @media (min-width: 768px) {
+    .hero-wrap { padding-top: 24px; }
+    .hero { padding: 22px; gap: 22px; border-radius: var(--r-xl); }
+    .hero__actions { flex-direction: row; flex-wrap: wrap; }
+    .hero__actions > * { width: auto; }
+    .hero__team { height: 420px; }
+    .team__disc { width: 330px; height: 330px; margin-left: -165px; }
+    .team__ring { width: 370px; height: 370px; margin-left: -185px; }
+    .team__slide img { height: 400px; }
+    .hero__side { padding: 6px 28px 28px; }
+    .space { flex-direction: row; justify-content: center; padding: 16px; }
+    .space b { font-size: 16px; }
+  }
+
+  /* ---------- HÉROE · escritorio: la curva yin-yang ---------- */
+  @media (min-width: 1100px) {
+    .hero { display: block; height: 720px; padding: 0; overflow: hidden; }
+    .hero__curve { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+    .hero__top { position: absolute; top: 28px; left: 40px; right: 32px; gap: 24px; z-index: 6; }
+    .navpill { display: flex; gap: 2px; padding: 5px; border-radius: 999px; background: rgb(255 255 255 / .85); box-shadow: 0 0 0 1px var(--line); }
+    .navpill a { font: 600 15px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; padding: 11px 14px; border-radius: 999px; transition: background .15s; }
+    .navpill a:hover { background: var(--surface-3); color: var(--ink); }
+    .navpill a.is-on { background: var(--ink); color: #fff; }
+    .hero__tools { gap: 12px; }
+    .hero__addr { display: flex; align-items: center; gap: 8px; color: #fff; margin-right: 8px; font: 600 13px/1.25 var(--font-sans); }
+    .hero__addr small { display: block; font-weight: 400; font-size: 12px; color: rgb(255 255 255 / .78); }
+    .hide-sm { display: inline-grid; }
+    .icon-btn.on-curve { background: rgb(255 255 255 / .14); color: #fff; }
+    .icon-btn.on-curve:hover { background: rgb(255 255 255 / .26); color: #fff; }
+
+    .hero__copy { position: absolute; left: 40px; top: 124px; width: 540px; padding: 0; gap: 20px; z-index: 5; }
+    .hero__copy p { font-size: 18px; max-width: 32ch; }
+
+    .hero__team { position: absolute; left: 43.75%; bottom: 0; width: 31.25%; height: 610px; border-radius: 0; background: none; overflow: visible; z-index: 2; }
+    .team__disc { top: 40px; width: 380px; height: 380px; margin-left: -190px; box-shadow: 0 0 0 14px rgb(255 255 255 / .35); }
+    .team__ring { top: 18px; width: 424px; height: 424px; margin-left: -212px; }
+    .team__slide img { height: 600px; }
+    .team__caption { bottom: 22px; gap: 6px; }
+    .team__who { font-size: 15px; padding: 11px 18px; }
+    .team__dots span { background: rgb(101 87 133 / .35); }
+    .team__dots [aria-pressed="true"] span { width: 30px; background: var(--primary); }
+
+    .tagpill { display: flex; position: absolute; align-items: center; gap: 10px; font: 600 16px/1 var(--font-sans); white-space: nowrap; z-index: 4; }
+    .tagpill__t { padding: 10px 16px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: var(--shadow-1); }
+    .tagpill__d { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgb(255 255 255 / .8); }
+    .tagpill--a { left: 40%; top: 330px; }
+    .tagpill--b { left: 64%; top: 470px; flex-direction: row-reverse; }
+    .tagpill--b .tagpill__d { background: #fff; box-shadow: 0 0 0 4px rgb(255 255 255 / .25); }
+
+    .hero__side { position: absolute; right: 32px; top: 180px; width: 236px; margin: 0; padding: 0; background: none; border-radius: 0; gap: 16px; z-index: 3; }
+    .hero__side h2 { font-size: 32px; line-height: 1.1; }
+
+    .hero__social { display: flex; position: absolute; right: 40px; bottom: 32px; flex-direction: column; align-items: flex-end; gap: 8px; color: #fff; z-index: 3; }
+    .hero__social > span { font: 600 15px/1 var(--font-sans); color: rgb(255 255 255 / .85); margin-bottom: 2px; }
+    .social { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: rgb(255 255 255 / .14); color: #fff; font-weight: 600; text-decoration: none; transition: background .15s; }
+    .social:hover { background: rgb(255 255 255 / .26); color: #fff; }
+
+    .hero__spaces { position: absolute; left: 40px; bottom: 32px; width: 480px; gap: 8px; padding: 10px; border-radius: var(--r-md); box-shadow: var(--shadow-2); z-index: 5; }
+    .space { flex-direction: column; align-items: flex-start; text-align: left; gap: 10px; padding: 16px; border-radius: 18px; }
+    .space__more { display: flex; align-items: center; gap: 4px; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
+    .space--b .space__more { color: rgb(255 255 255 / .85); }
+    .space--c .space__more { color: #362954; }
+    .space__more .ms { font-size: 16px; }
+  }
+  @media (min-width: 1100px) and (max-width: 1300px) {
+    .navpill a { padding: 11px 10px; font-size: 14px; }
+    .hero__addr { display: none; }
+  }
+
+  /* ---------- DECLARACIÓN ---------- */
+  .statement { padding-block: var(--section); display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .statement__h { font-size: clamp(30px, 7.4vw, 56px); font-weight: 300; line-height: 1.16; letter-spacing: -.03em; max-width: 20ch; }
+  .statement__h b { font-weight: 700; }
+  .pill-img { display: inline-block; vertical-align: middle; width: 2.36em; height: 1.18em; border-radius: 999px; margin: 0 .1em; position: relative; top: -.07em; overflow: hidden; }
+  .pill-img img { position: absolute; height: auto; max-width: none; }
+  .pill-img--paw { background: var(--grad-primary); }
+  .pill-img--paw img { left: -.54em; top: -.34em; width: 2.54em; }
+  .pill-img--claw { background: var(--grad-alma); }
+  .pill-img--claw img { left: .25em; top: -.11em; width: 2em; }
+  .statement .lead { max-width: 54ch; }
+
+  /* ---------- ENCABEZADOS DE SECCIÓN ---------- */
+  .section-head { display: flex; flex-direction: column; gap: 14px; }
+  .section-head .lead { max-width: 40ch; }
+  .section-head--row { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; }
+  @media (min-width: 900px) {
+    .section-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 40px; }
+    .section-head .lead { text-align: right; }
+  }
+
+  /* ---------- TRES ESPACIOS ---------- */
+  .spaces { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 28px; }
+  .spaces__grid { display: grid; gap: 16px; }
+  .door { min-height: 230px; padding: 24px; border-radius: var(--r-md); display: flex; flex-direction: column; gap: 14px; text-decoration: none; position: relative; overflow: hidden; isolation: isolate; }
+  .door h3 { font-size: clamp(26px, 5vw, 32px); font-weight: 600; line-height: 1.1; letter-spacing: -.02em; margin-top: auto; }
+  .door p { font-size: 17px; line-height: 1.55; }
+  .door--clinic { color: var(--ink); }
+  .door--clinic p { color: var(--ink-muted); }
+  .door--spa { background: var(--grad-primary); color: #fff; }
+  .door--spa p { color: rgb(255 255 255 / .88); }
+  .door--spa .link { color: #fff; }
+  .door--shop { background: var(--grad-alma); color: #362954; }
+  .door--shop .link { color: #362954; }
+  .door:hover { color: inherit; }
+  .door--spa:hover { color: #fff; }
+  .door__art { display: none; }
+  .glyph { font-size: 52px; width: 52px; height: 52px; color: transparent; -webkit-text-stroke: 1.4px var(--primary-soft); font-variation-settings: "FILL" 1, "wght" 300, "opsz" 48; }
+  .door--shop .glyph { -webkit-text-stroke-color: var(--primary); }
+  @media (min-width: 900px) {
+    .spaces { gap: 40px; }
+    .spaces__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .door { min-height: 480px; padding: 32px; }
+    .glyph { font-size: 72px; width: 72px; height: 72px; }
+    .door__art { display: block; position: absolute; right: -48px; top: -36px; width: 270px; height: auto; z-index: -1; opacity: .9; }
+    a.door:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
+    .door { transition: transform .25s var(--ease-out), box-shadow .25s var(--ease); }
+  }
+
+  /* ---------- A DOMICILIO ---------- */
+  #domicilio { padding-bottom: var(--section); }
+  .home-visit { display: grid; gap: 24px; padding: 28px 20px 0; border-radius: var(--r-lg); background: var(--grad-primary); color: #fff; overflow: hidden; isolation: isolate; }
+  .home-visit__copy { display: flex; flex-direction: column; gap: 18px; }
+  .home-visit__copy p { font-size: 17px; line-height: 1.6; color: rgb(255 255 255 / .88); max-width: 46ch; }
+  .chip-dark, .chip-light { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; border-radius: 999px; }
+  .chip-dark { font: 600 14px/1 var(--font-sans); padding: 9px 14px; background: rgb(255 255 255 / .14); }
+  .chip-dark .ms { font-size: 18px; }
+  .chip-light { font: 600 15px/1.3 var(--font-sans); padding: 10px 16px; background: #fff; color: var(--ink); }
+  .chip-light .ms { color: var(--primary); }
+  .home-visit__actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .home-visit__actions > * { width: 100%; }
+  .moto { position: relative; height: 470px; margin: 0 -20px; }
+  .moto__disc { position: absolute; left: 50%; bottom: 80px; width: 320px; height: 320px; margin-left: -160px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F6EFFF 0%, #EADDFF 45%, #D1C1DD 100%); box-shadow: 0 20px 44px rgb(30 20 50 / .28), inset 0 -12px 28px rgb(77 63 108 / .16); }
+  .moto__shadow { position: absolute; left: 50%; bottom: 4px; width: 240px; height: 24px; margin-left: -120px; border-radius: 50%; background: radial-gradient(ellipse at center, rgb(30 20 50 / .35), rgb(30 20 50 / 0) 70%); }
+  .moto img { position: absolute; left: 50%; bottom: 12px; height: 460px; width: auto; max-width: none; transform: translateX(-50%); filter: drop-shadow(0 12px 18px rgb(30 20 50 / .3)); }
+  @media (min-width: 768px) {
+    .home-visit { border-radius: var(--r-xl); padding: 48px 48px 0; }
+    .home-visit__actions { flex-direction: row; flex-wrap: wrap; }
+    .home-visit__actions > * { width: auto; }
+  }
+  @media (min-width: 1100px) {
+    #domicilio { padding-top: 120px; }
+    .home-visit { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding: 56px 64px; overflow: visible; }
+    .moto { justify-self: center; align-self: end; width: 460px; height: 620px; margin: -160px 0 -56px; }
+    .moto__disc { bottom: 110px; width: 420px; height: 420px; margin-left: -210px; }
+    .moto__shadow { width: 320px; height: 26px; margin-left: -160px; }
+    .moto img { height: 600px; }
+  }
+
+  /* ---------- NOSOTROS ---------- */
+  #nosotros { padding-bottom: var(--section); scroll-margin-top: 24px; }
+  .about { display: grid; gap: 28px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--surface-2); }
+  .about__portrait { position: relative; justify-self: center; width: min(280px, 100%); aspect-ratio: 1; }
+  .about__ring { position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); }
+  .about__photo { position: absolute; inset: 16px; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #fff, var(--surface-3)); overflow: hidden; }
+  .about__photo img { position: absolute; left: 50%; top: 12px; width: 118%; height: auto; max-width: none; transform: translateX(-50%); }
+  .about__seal { position: absolute; right: -8px; top: -4px; width: 88px; height: 88px; color: var(--primary); transform: rotate(-8deg); display: grid; place-items: center; }
+  .about__seal svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .about__seal > span { position: relative; width: 46px; height: 46px; border-radius: 50%; background: var(--primary); display: grid; place-items: center; }
+  .about__seal > span img { width: 70%; height: auto; }
+  .about__copy { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .about__name { font-size: clamp(31px, 6vw, 48px); }
+  .about__title { font-size: 19px; line-height: 1.4; color: var(--ink-soft); letter-spacing: .02em; }
+  .about__tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .about__tags li { font: 600 14px/1 var(--font-sans); padding: 10px 14px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .about__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+  @media (min-width: 900px) {
+    .about { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: center; padding: 56px; border-radius: var(--r-xl); }
+    .about__portrait { width: min(420px, 100%); }
+    .about__photo { inset: 22px; }
+    .about__photo img { top: 18px; }
+    .about__seal { right: -16px; top: 10px; width: 128px; height: 128px; }
+    .about__seal > span { width: 66px; height: 66px; }
+  }
+
+  /* ---------- POR QUÉ ---------- */
+  .reasons { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 28px; }
+  .reasons__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+  .reasons__grid li { display: flex; flex-direction: column; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .reasons__n { font-size: clamp(48px, 9vw, 72px); font-weight: 300; line-height: 1; letter-spacing: -.04em; }
+  .reasons__n small { font-size: .42em; font-weight: 600; color: var(--primary); vertical-align: top; margin-left: 4px; }
+  .reasons__grid b { font: 600 17px/1.35 var(--font-sans); }
+  .reasons__grid p { font-size: 15.5px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 1100px) {
+    .reasons { gap: 40px; }
+    .reasons__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+    .reasons__grid b { font-size: 18px; }
+    .reasons__grid p { font-size: 16px; }
+  }
+
+  /* ---------- BLOG ---------- */
+  .blog { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 24px; }
+  .blog__grid { display: grid; gap: 16px; }
+  .post { overflow: hidden; display: flex; flex-direction: column; color: var(--ink); text-decoration: none; }
+  .post:hover { color: var(--ink); }
+  .post__cover { height: 150px; display: grid; place-items: center; }
+  .post__cover img { height: auto; }
+  .post__body { padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .post__meta { font: 500 14px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .post__title { font-size: 21px; line-height: 1.35; }
+  @media (min-width: 900px) {
+    .blog { gap: 32px; }
+    .blog__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .post__cover { height: 200px; }
+    .post__title { font-size: 22px; }
+  }
+
+  /* ---------- WHATSAPP ---------- */
+  .wa-strip-wrap { padding-bottom: 40px; }
+  .wa-strip { display: flex; flex-direction: column; gap: 18px; padding: 22px 20px; border-radius: var(--r-lg); background: #fff; box-shadow: 0 0 0 2px var(--wa), 0 6px 16px rgb(0 188 57 / .1); }
+  .wa-strip__copy { display: flex; align-items: flex-start; gap: 14px; }
+  .wa-strip__icon { width: 48px; height: 48px; border-radius: 50%; background: var(--wa); color: #fff; display: grid; place-items: center; flex: none; }
+  .wa-strip h2 { font-size: clamp(21px, 4vw, 28px); font-weight: 600; line-height: 1.2; }
+  .wa-strip h2 span { color: var(--wa-ink); }
+  .wa-strip p { margin-top: 4px; font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 900px) {
+    .wa-strip-wrap { padding-bottom: 56px; }
+    .wa-strip { flex-direction: row; align-items: center; justify-content: space-between; gap: 32px; padding: 28px 36px; border-radius: 32px; }
+    .wa-strip__copy { align-items: center; gap: 20px; }
+    .wa-strip__icon { width: 64px; height: 64px; }
+    .wa-strip .wa-o { flex: none; min-height: 56px; font-size: 17px; }
+  }
+</style>

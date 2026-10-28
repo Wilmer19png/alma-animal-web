@@ -1,0 +1,132 @@
+/* Alma Animal · tokens y base. Mobile first: las reglas de escritorio van en min-width. */
+:root {
+  /* color */
+  --ink: #2B1E48;
+  --ink-muted: #584E6E;
+  --ink-soft: #706884;
+  --primary: #655785;
+  --primary-strong: #4D3F6C;
+  --primary-soft: #8F7FB0;
+  --peach: #FBCFAF;
+  --peach-ink: #623F21;
+  --lavender: #D1C1DD;
+  --surface: #FEF7FE;
+  --surface-2: #F8F2F8;
+  --surface-3: #F2ECF2;
+  --line: #CBC4D1;
+  --line-soft: #E6E1E7;
+  --wa: #00BC39;
+  --wa-ink: #00852A;
+  --wa-dark: #06290F;
+  --grad-alma: linear-gradient(100deg, #FBCFAF 0%, #E8C6CF 50%, #D1C1DD 100%);
+  --grad-primary: linear-gradient(100deg, #7A6A9C 0%, #655785 45%, #4D3F6C 100%);
+  --grad-text: linear-gradient(100deg, #4D3F6C 0%, #655785 45%, #8F7FB0 100%);
+  --wash: radial-gradient(55% 70% at 0% 0%, rgb(251 207 175 / .45), transparent 70%), radial-gradient(60% 80% at 100% 100%, rgb(209 193 221 / .55), transparent 70%);
+
+  /* tipografía */
+  --font-sans: "Alan Sans", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Gowun Batang", "Iowan Old Style", Georgia, serif;
+
+  /* forma y profundidad */
+  --r-sm: 14px;
+  --r-md: 24px;
+  --r-lg: 28px;
+  --r-xl: 40px;
+  --shadow-1: 0 1px 2px rgb(54 41 84 / .18), 0 1px 3px 1px rgb(54 41 84 / .08);
+  --shadow-2: 0 4px 8px 3px rgb(54 41 84 / .09), 0 1px 3px rgb(54 41 84 / .18);
+  --ease: cubic-bezier(.2, 0, 0, 1);
+  --ease-out: cubic-bezier(.05, .7, .1, 1);
+
+  /* layout */
+  --gutter: 16px;
+  --section: 48px;
+}
+@media (min-width: 768px) { :root { --gutter: 24px; --section: 80px; } }
+@media (min-width: 1100px) { :root { --gutter: 32px; --section: 112px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 17px/1.55 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+h1, h2, h3, h4, p { margin: 0; text-wrap: balance; }
+p { text-wrap: pretty; }
+img, svg { display: block; max-width: 100%; }
+a { color: var(--primary); text-underline-offset: 3px; }
+a:hover { color: var(--primary-strong); }
+::selection { background: var(--peach); color: var(--peach-ink); }
+:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
+button { font: inherit; }
+
+.wrap { width: 100%; max-width: 1344px; margin-inline: auto; padding-inline: var(--gutter); }
+.serif { font-family: var(--font-serif); }
+.gt { background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.on-dark .gt { background: linear-gradient(100deg, #FFFFFF 0%, #FBCFAF 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; text-decoration: none; transition: top .2s var(--ease); }
+.skip:focus { top: 12px; color: #fff; }
+
+/* íconos (Material Symbols Rounded, subconjunto) */
+.ms { font-family: "Material Symbols Rounded"; font-weight: 400; font-style: normal; font-size: 20px; line-height: 1; display: inline-block; width: 1em; height: 1em; overflow: hidden; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; flex: none; font-variation-settings: "FILL" 0, "wght" 400, "opsz" 24; -webkit-font-feature-settings: "liga"; font-feature-settings: "liga"; }
+
+/* títulos de sección */
+.h-section { font-size: clamp(32px, 7vw, 52px); font-weight: 400; line-height: 1.04; letter-spacing: -.03em; }
+.h-section b { font-weight: 700; }
+.lead { font-size: clamp(16.5px, 2.2vw, 18px); line-height: 1.6; color: var(--ink-muted); }
+
+/* botones */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid transparent;
+  background: var(--grad-primary); background-size: 160% 100%; color: #fff;
+  font: 600 16px/1 var(--font-sans); text-decoration: none; cursor: pointer;
+  transition: box-shadow .15s var(--ease), background-position .4s var(--ease), transform .25s var(--ease-out);
+}
+.btn:hover { color: #fff; background-position: 100% 0; box-shadow: var(--shadow-1); }
+.btn--alma { background: var(--grad-alma); background-size: 160% 100%; color: #362954; }
+.btn--alma:hover { color: #362954; }
+.btn--ghost { background: rgb(255 255 255 / .14); border-color: rgb(255 255 255 / .3); }
+.btn--ghost:hover { background: rgb(255 255 255 / .24); }
+.btn--outlined { background: transparent; color: var(--primary); border-color: var(--line); }
+.btn--outlined:hover { background: var(--surface-3); color: var(--primary-strong); box-shadow: none; }
+.btn--lg { min-height: 56px; padding: 0 8px 0 28px; font-size: 17px; gap: 18px; justify-content: space-between; }
+.btn__end { width: 42px; height: 42px; border-radius: 50%; background: #fff; color: var(--primary); display: grid; place-items: center; transition: transform .25s var(--ease-out); }
+.btn:hover .btn__end { transform: rotate(-45deg); }
+
+/* WhatsApp: contorno verde con el ícono que se mueve */
+.wa-o {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 22px 0 18px; border-radius: 999px;
+  border: 2px solid var(--wa); background: #fff; color: var(--wa-ink);
+  font: 600 16px/1 var(--font-sans); text-decoration: none;
+  transition: background .2s var(--ease), color .2s, transform .25s var(--ease-out), box-shadow .25s;
+}
+.wa-o:hover { background: var(--wa); color: var(--wa-dark); transform: translateY(-2px); box-shadow: 0 4px 8px 2px rgb(0 188 57 / .18); }
+.wa-o .wa-ic { color: var(--wa); }
+.wa-o:hover .wa-ic { color: var(--wa-dark); }
+.wa-ic { transform-origin: 50% 60%; animation: wa-nudge 4s var(--ease) infinite; }
+@keyframes wa-nudge { 0%, 78%, 100% { transform: rotate(0); } 82% { transform: rotate(-14deg) scale(1.08); } 86% { transform: rotate(12deg) scale(1.08); } 90% { transform: rotate(-8deg); } 94% { transform: rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .wa-ic { animation: none; } }
+
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%; display: inline-grid; place-items: center; flex: none;
+  border: 0; cursor: pointer; position: relative; text-decoration: none;
+  background: var(--surface-3); color: var(--primary); transition: background .15s;
+}
+.icon-btn:hover { background: #ECE6ED; color: var(--primary-strong); }
+.icon-btn .ms { font-size: 22px; }
+.badge { position: absolute; top: 2px; right: 2px; min-width: 17px; height: 17px; border-radius: 9px; background: var(--peach); color: var(--peach-ink); font: 700 11px/17px var(--font-sans); text-align: center; padding: 0 4px; }
+
+.link { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--primary); text-decoration: none; }
+.link:hover { text-decoration: underline; }
+
+.card { background: #fff; border-radius: var(--r-md); box-shadow: 0 0 0 1px var(--line); transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
+a.card:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
+
+.pending { display: inline-flex; align-items: center; gap: 6px; font: 600 13px/1.3 var(--font-sans); color: #372C42; background: var(--lavender); border-radius: 999px; padding: 5px 11px; }
