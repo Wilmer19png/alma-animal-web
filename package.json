@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "vista": "astro build && node scripts/vista-previa.mjs"
+    "vista": "node scripts/vista-previa.mjs"
   },
   "dependencies": {
     "astro": "^5.18.2"

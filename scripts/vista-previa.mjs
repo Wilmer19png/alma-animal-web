@@ -1,8 +1,12 @@
 // Copia la página construida a una carpeta que se abre con doble clic (sin servidor):
 // cambia las rutas absolutas (/_astro/...) por relativas.
-// uso: npm run vista
+// uso: npm run vista  (construye sin comprimir y copia)
 import { cpSync, readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { execSync } from 'node:child_process';
+
+// construye en modo legible (sin comprimir)
+execSync('npx astro build', { stdio: 'inherit', env: { ...process.env, VISTA: '1' } });
 
 const OUT = 'C:/Users/wburi/OneDrive/Escritorio/Página web_Alma animal/vista-previa';
 rmSync(OUT, { recursive: true, force: true });
