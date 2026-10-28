@@ -5,17 +5,18 @@ const KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
 
 export const supabaseReady = Boolean(URL && KEY);
 
-// inserta una fila; devuelve true si quedó guardada
-export async function insert(table: string, row: Record<string, unknown>): Promise<boolean> {
-  if (!URL || !KEY) return false;
+// inserta una fila. "duplicado" = ya existía (p. ej. un correo ya suscrito)
+export type InsertResult = 'ok' | 'duplicado' | 'error';
+export async function insert(table: string, row: Record<string, unknown>): Promise<InsertResult> {
+  if (!URL || !KEY) return 'error';
   try {
     const res = await fetch(`${URL}/rest/v1/${table}`, {
       method: 'POST',
       headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify(row)
     });
-    return res.ok;
+    return res.ok ? 'ok' : res.status === 409 ? 'duplicado' : 'error';
   } catch {
-    return false;
+    return 'error';
   }
 }

@@ -404,7 +404,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   const send = async (order: NonNullable<typeof lastOrder>) => {
     setBusy(true);
-    const ok = PREVIEW || (await insert('pedidos', order.row));
+    const ok = PREVIEW || (await insert('pedidos', order.row)) === 'ok';
     setBusy(false);
     if (ok) {
       done = true;

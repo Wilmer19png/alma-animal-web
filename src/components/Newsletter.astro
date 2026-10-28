@@ -1,0 +1,75 @@
+---
+// Boletín "Un consejo al mes" (Blog y Artículo). Guarda el correo en Supabase (tabla suscriptores).
+// El envío de los correos se hará después desde el gestor con un servicio de correo.
+interface Props { origen?: 'blog' | 'articulo' }
+const { origen = 'blog' } = Astro.props;
+---
+<section class="wrap nl-wrap" aria-labelledby="nl">
+  <div class="nl">
+    <div class="nl__copy">
+      <h2 id="nl">Un consejo <b>al mes</b></h2>
+      <p>Te llega al correo el artículo nuevo de la doctora. Sin promociones de más.</p>
+    </div>
+    <form class="nl__form" novalidate data-newsletter data-origen={origen}>
+      <div class="nl__row">
+        <label class="nl__field"><span class="sr-only">Tu correo</span><input type="email" name="correo" placeholder="Ej: laura@correo.com" autocomplete="email" required /></label>
+        <button class="btn nl__btn" type="submit"><span data-nl-txt>Suscribirme</span></button>
+      </div>
+      <label class="nl__consent"><input type="checkbox" name="acepto" required /><span>Acepto recibir correos de Alma Animal y el <a href="/privacidad">tratamiento de mis datos</a> (Ley 1581 de 2012). Puedo darme de baja cuando quiera.</span></label>
+      <p class="nl__err" role="alert" data-nl-err hidden></p>
+    </form>
+    <p class="nl__ok" role="status" data-nl-ok hidden><span class="ms" aria-hidden="true">mark_email_read</span><span data-nl-ok-txt>¡Listo! Te llega el próximo consejo de la doctora.</span></p>
+  </div>
+</section>
+
+<script>
+  import { insert, supabaseReady } from '../scripts/supabase';
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    const box = form.closest('.nl')!;
+    const err = form.querySelector<HTMLElement>('[data-nl-err]')!;
+    const btn = form.querySelector<HTMLButtonElement>('button')!;
+    const say = (msg: string) => { err.textContent = msg; err.hidden = !msg; };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mail = form.elements.namedItem('correo') as HTMLInputElement;
+      const ok = form.elements.namedItem('acepto') as HTMLInputElement;
+      if (!mail.value.trim() || !mail.checkValidity()) { say('Revisa tu correo. Ej: laura@correo.com'); mail.focus(); return; }
+      if (!ok.checked) { say('Para enviarte el boletín necesitamos tu autorización.'); ok.focus(); return; }
+      say(''); btn.disabled = true; form.querySelector('[data-nl-txt]')!.textContent = 'Enviando…';
+      const res = PREVIEW ? 'ok' : await insert('suscriptores', { correo: mail.value.trim(), acepto_datos: true, origen: form.dataset.origen });
+      btn.disabled = false; form.querySelector('[data-nl-txt]')!.textContent = 'Suscribirme';
+      if (res === 'error') { say('No pudimos guardar tu correo. Revisa tu conexión e inténtalo de nuevo.'); return; }
+      if (res === 'duplicado') box.querySelector('[data-nl-ok-txt]')!.textContent = 'Ese correo ya está suscrito. Te llega el próximo consejo de la doctora.';
+      form.hidden = true;
+      box.querySelector<HTMLElement>('[data-nl-ok]')!.hidden = false;
+    });
+  });
+</script>
+
+<style>
+  .nl-wrap { padding-bottom: 40px; }
+  .nl { display: grid; gap: 20px; align-items: center; padding: 28px 20px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; }
+  .nl__copy { display: flex; flex-direction: column; gap: 10px; }
+  .nl h2 { font-size: clamp(26px, 6vw, 40px); font-weight: 400; line-height: 1.05; letter-spacing: -.03em; }
+  .nl h2 b { font-weight: 700; }
+  .nl__copy p { font-size: 17px; line-height: 1.55; }
+  .nl__form { display: flex; flex-direction: column; gap: 12px; }
+  .nl__form[hidden] { display: none; }
+  .nl__row { display: flex; flex-direction: column; gap: 10px; }
+  .nl__field input { width: 100%; height: 52px; border-radius: 999px; border: 0; padding: 0 22px; font: 400 17px/1 var(--font-sans); color: var(--ink); background: #fff; outline: 0; box-shadow: 0 0 0 1px rgb(54 41 84 / .12); }
+  .nl__field input:focus { box-shadow: 0 0 0 3px var(--primary); }
+  .nl__btn { height: 52px; padding: 0 26px; }
+  .nl__consent { display: flex; gap: 10px; align-items: flex-start; font: 400 14px/1.45 var(--font-sans); cursor: pointer; }
+  .nl__consent input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
+  .nl__consent a { color: #362954; }
+  .nl__err { font: 600 14px/1.4 var(--font-sans); color: #8C1D18; }
+  .nl__err[hidden], .nl__ok[hidden] { display: none; }
+  .nl__ok { display: flex; align-items: center; gap: 10px; font: 600 18px/1.4 var(--font-sans); }
+  .nl__ok .ms { font-size: 26px; font-variation-settings: "FILL" 1; }
+  @media (min-width: 768px) { .nl__row { flex-direction: row; } .nl__field { flex: 1; } }
+  @media (min-width: 900px) {
+    .nl { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; padding: 48px 56px; border-radius: var(--r-xl); }
+  }
+</style>
