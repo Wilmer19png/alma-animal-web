@@ -1,0 +1,35 @@
+---
+// Tira verde "¿Dudas? Escríbenos por WhatsApp" que cierra las páginas.
+import WaIcon from './WaIcon.astro';
+interface Props { text: string; href: string; title?: string; accent?: string }
+const { text, href, title = '¿Dudas?', accent = 'Escríbenos por WhatsApp' } = Astro.props;
+---
+<section class="wrap wa-strip-wrap" aria-labelledby="wab">
+  <div class="wa-strip">
+    <div class="wa-strip__copy">
+      <span class="wa-strip__icon"><WaIcon size={32} class="" /></span>
+      <div>
+        <h2 id="wab">{title} <span>{accent}</span></h2>
+        <p>{text}</p>
+      </div>
+    </div>
+    <a class="wa-o" href={href} target="_blank" rel="noopener"><WaIcon size={24} />Abrir chat</a>
+  </div>
+</section>
+
+<style>
+  .wa-strip-wrap { padding-bottom: 40px; }
+  .wa-strip { display: flex; flex-direction: column; gap: 18px; padding: 22px 20px; border-radius: var(--r-lg); background: #fff; box-shadow: 0 0 0 2px var(--wa), 0 6px 16px rgb(0 188 57 / .1); }
+  .wa-strip__copy { display: flex; align-items: flex-start; gap: 14px; }
+  .wa-strip__icon { width: 48px; height: 48px; border-radius: 50%; background: var(--wa); color: #fff; display: grid; place-items: center; flex: none; }
+  .wa-strip h2 { font-size: clamp(21px, 4vw, 28px); font-weight: 600; line-height: 1.2; }
+  .wa-strip h2 span { color: var(--wa-ink); }
+  .wa-strip p { margin-top: 4px; font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 900px) {
+    .wa-strip-wrap { padding-bottom: 56px; }
+    .wa-strip { flex-direction: row; align-items: center; justify-content: space-between; gap: 32px; padding: 28px 36px; border-radius: 32px; }
+    .wa-strip__copy { align-items: center; gap: 20px; }
+    .wa-strip__icon { width: 64px; height: 64px; }
+    .wa-strip .wa-o { flex: none; min-height: 56px; font-size: 17px; }
+  }
+</style>

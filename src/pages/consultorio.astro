@@ -1,0 +1,245 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import HomeVisit from '../components/HomeVisit.astro';
+import WaIcon from '../components/WaIcon.astro';
+import WaStrip from '../components/WaStrip.astro';
+import { whatsapp } from '../data/site';
+import { CLINIC_SERVICES, HOME_VISIT, VISIT_STEPS } from '../data/services';
+import mariana from '../assets/mariana-gato.png';
+import tigerHead from '../assets/cabeza-tigre.png';
+import dogHead from '../assets/cabeza-perro.png';
+
+const waClinic = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta para mi mascota.');
+const waService = (name: string) => whatsapp.vet(`Hola, Alma Animal. Quiero agendar: ${name}.`);
+const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a domicilio.');
+---
+<Base
+  title="Consultorio veterinario en Pereira · Alma Animal"
+  description="Consulta general, vacunación, desparasitación, radiografía y cirugía con la Dra. Mariana Hoyos. También a domicilio en Pereira y Dosquebradas."
+  waMessage="Hola, Alma Animal. Quiero agendar una consulta para mi mascota."
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== HÉROE ======== -->
+  <div class="wrap">
+    <header class="c-hero">
+      <svg class="c-hero__curve" viewBox="0 0 1280 560" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A6A9C"/><stop offset=".5" stop-color="#655785"/><stop offset="1" stop-color="#4D3F6C"/></linearGradient></defs>
+        <path d="M1280 0H760C640 0 610 140 660 280C710 420 700 560 560 560H1280Z" fill="url(#cg)"/>
+        <circle cx="770" cy="90" r="8" fill="#FBCFAF"/>
+        <circle cx="590" cy="480" r="8" fill="#8F7FB0"/>
+      </svg>
+
+      <div class="c-hero__copy">
+        <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
+        <h1>Consul&shy;torio <span>veterinario</span></h1>
+        <p>Prevención, diagnóstico y tratamiento con la Dra. Mariana Hoyos. Cada visita queda en la historia clínica de tu mascota.</p>
+        <div class="c-hero__actions">
+          <a id="agendar" class="btn btn--alma btn--lg" href={waClinic} target="_blank" rel="noopener">Agenda una consulta<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+          <a class="wa-o" href={waClinic} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos</a>
+        </div>
+      </div>
+
+      <!-- foto de la doctora (cuando haya más fotos trabajando, esto pasa a carrusel) -->
+      <div class="c-hero__photo">
+        <div class="c-hero__disc" aria-hidden="true"></div>
+        <Image src={mariana} alt="La Dra. Mariana Hoyos con un gato atigrado en brazos" widths={[340, 480, 640]} sizes="(min-width: 1100px) 440px, 320px" loading="eager" fetchpriority="high" />
+      </div>
+    </header>
+  </div>
+
+  <!-- ======== SERVICIOS ======== -->
+  <section class="wrap services" aria-labelledby="sv">
+    <div class="section-head">
+      <h2 id="sv" class="h-section">Servicios del<br /><b class="gt">consultorio</b></h2>
+      <p class="lead">Escríbenos por WhatsApp para agendar cualquiera de ellos. Te confirmamos el día y la hora.</p>
+    </div>
+    <div class="services__grid">
+      <a href="#domicilio" class="svc svc--home">
+        <span class="ms glyph" aria-hidden="true">home_health</span>
+        <h3>A domicilio</h3>
+        <p>La doctora atiende a tu mascota en tu casa, en Pereira y Dosquebradas.</p>
+        <span class="link">Cómo funciona<span class="ms" aria-hidden="true">arrow_forward</span></span>
+      </a>
+      {CLINIC_SERVICES.map((s) => (
+        <article class="card svc">
+          <span class="ms glyph" aria-hidden="true">{s.icon}</span>
+          <h3>{s.name}</h3>
+          <p>{s.text}</p>
+          <div class="svc__foot">
+            <a class="link" href={waService(s.name.toLowerCase())} target="_blank" rel="noopener">Agendar<span class="ms" aria-hidden="true">arrow_forward</span></a>
+            {s.price && <span class="svc__price">{s.price}</span>}
+          </div>
+        </article>
+      ))}
+      <article class="svc svc--other on-dark">
+        <h3>¿Buscas otro servicio?</h3>
+        <p>Escríbenos y la doctora te dice si lo atendemos aquí.</p>
+        <a class="wa-o" href={whatsapp.vet('Hola, doctora. ¿Atienden este caso en el consultorio?')} target="_blank" rel="noopener"><WaIcon size={22} />Escribir por WhatsApp</a>
+        <div class="heads" aria-hidden="true">
+          <Image src={tigerHead} alt="" width={236} />
+          <Image src={dogHead} alt="" width={236} />
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======== A DOMICILIO ======== -->
+  <HomeVisit titleId="dom">
+    <span class="chip-dark"><span class="ms" aria-hidden="true">home_health</span>Servicio a domicilio</span>
+    <h2 id="dom" class="h-section">Consulta veterinaria <b class="gt">en tu casa</b></h2>
+    <p>La Dra. Mariana va hasta tu hogar en Pereira y Dosquebradas. La visita queda en la misma historia clínica y el mismo carnet que en el consultorio.</p>
+    <ul class="checks">
+      {HOME_VISIT.reasons.map((r) => <li><span class="ms" aria-hidden="true">check_circle</span>{r}</li>)}
+    </ul>
+    <div class="visit-tags">
+      <span class="chip-dark">Cobertura: {HOME_VISIT.coverage}</span>
+      {HOME_VISIT.price && <span class="chip-dark">Valor del domicilio: {HOME_VISIT.price}</span>}
+    </div>
+    <div class="actions">
+      <a class="btn btn--alma btn--lg" href={waHome} target="_blank" rel="noopener">Agendar visita a domicilio<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+      <a class="wa-o" href={whatsapp.vet('Hola, Alma Animal. ¿Atienden a domicilio en mi barrio?')} target="_blank" rel="noopener"><WaIcon size={24} />Preguntar por WhatsApp</a>
+    </div>
+  </HomeVisit>
+
+  <!-- ======== ASÍ FUNCIONA (la línea se llena paso a paso) ======== -->
+  <section class="wrap how" aria-labelledby="cf">
+    <div class="section-head">
+      <h2 id="cf" class="h-section">Así funciona <b class="gt">tu cita</b></h2>
+      <p class="lead">Después de la consulta, todo queda en tu portal: tus mascotas, citas y carnet.</p>
+    </div>
+    <div class="how__track" data-steps>
+      <div class="how__line" aria-hidden="true"><span class="how__fill"></span></div>
+      <ol>
+        {VISIT_STEPS.map((s) => (
+          <li data-step>
+            <span class="how__dot" aria-hidden="true"></span>
+            <b>{s.title}</b>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ======== WHATSAPP ======== -->
+  <WaStrip href={waClinic} text="Cuéntanos qué tiene tu mascota y te decimos si necesita consulta o puede esperar." />
+</Base>
+
+<script>
+  // La línea de "Así funciona" se llena paso a paso cuando la sección entra en pantalla.
+  const track = document.querySelector<HTMLElement>('[data-steps]');
+  if (track) {
+    const steps = [...track.querySelectorAll<HTMLElement>('[data-step]')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const set = (n: number) => {
+      steps.forEach((s, k) => { s.classList.toggle('is-done', k <= n); s.classList.toggle('is-now', k === n); });
+      track.style.setProperty('--fill', String(n / (steps.length - 1)));
+    };
+    if (reduce) set(steps.length - 1);
+    else {
+      let n = 0, timer: number | undefined;
+      const run = () => { set(n); timer = window.setInterval(() => { n = n >= steps.length + 1 ? 0 : n + 1; set(Math.min(n, steps.length - 1)); }, 1400); };
+      new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .4 }).observe(track);
+      window.addEventListener('pagehide', () => window.clearInterval(timer));
+    }
+  }
+</script>
+
+<style>
+  /* ---------- HÉROE ---------- */
+  .c-hero { position: relative; display: flex; flex-direction: column; gap: 20px; padding: 22px 18px 18px; border-radius: var(--r-lg); background: var(--wash), #fff; box-shadow: 0 0 0 1px var(--line); isolation: isolate; overflow: hidden; }
+  .c-hero__curve { display: none; }
+  .c-hero__copy { display: flex; flex-direction: column; gap: 16px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .back .ms { font-size: 18px; }
+  .c-hero h1 { font-size: clamp(40px, 11.5vw, 88px); font-weight: 700; line-height: .95; letter-spacing: -.045em; }
+  .c-hero h1 span { font-weight: 300; color: var(--primary); }
+  .c-hero__copy > p { font-size: 17px; line-height: 1.6; color: var(--ink-muted); max-width: 38ch; }
+  .c-hero__actions { display: flex; flex-direction: column; gap: 12px; }
+  .c-hero__actions > * { width: 100%; }
+  .c-hero__photo { position: relative; height: 340px; border-radius: 24px; background: var(--grad-primary); overflow: hidden; }
+  .c-hero__disc { position: absolute; left: 50%; top: 30px; width: 260px; height: 260px; margin-left: -130px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); box-shadow: 0 0 0 14px rgb(255 255 255 / .18); }
+  .c-hero__photo :global(img) { position: absolute; left: 50%; bottom: 0; height: 320px; width: auto; max-width: none; transform: translateX(-50%); }
+  @media (min-width: 768px) {
+    .c-hero { padding: 32px; border-radius: var(--r-xl); }
+    .c-hero__actions { flex-direction: row; flex-wrap: wrap; }
+    .c-hero__actions > * { width: auto; }
+    .c-hero__photo { height: 420px; }
+    .c-hero__disc { width: 330px; height: 330px; margin-left: -165px; }
+    .c-hero__photo :global(img) { height: 400px; }
+  }
+  @media (min-width: 1100px) {
+    .c-hero { display: block; height: 560px; padding: 0; }
+    .c-hero__curve { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+    .c-hero__copy { position: absolute; left: 48px; top: 64px; width: 500px; gap: 20px; }
+    .c-hero__copy > p { font-size: 18px; }
+    .c-hero__photo { position: absolute; right: 40px; bottom: 0; width: 520px; height: 540px; border-radius: 0; background: none; overflow: visible; }
+    .c-hero__disc { top: 40px; width: 380px; height: 380px; margin-left: -190px; }
+    .c-hero__photo :global(img) { height: 520px; }
+  }
+
+  /* ---------- SERVICIOS ---------- */
+  .services { padding-block: var(--section); display: flex; flex-direction: column; gap: 28px; }
+  .services__grid { display: grid; gap: 14px; }
+  .svc { padding: 22px; border-radius: var(--r-md); display: flex; flex-direction: column; gap: 10px; }
+  .svc h3 { font: 600 22px/1.3 var(--font-sans); }
+  .svc p { font-size: 17px; line-height: 1.55; color: var(--ink-muted); }
+  .svc__foot { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .svc__price { font: 500 15px/1 var(--font-sans); color: var(--ink-muted); }
+  .svc--home { background: var(--grad-alma); color: #362954; text-decoration: none; transition: transform .25s var(--ease-out), box-shadow .25s; }
+  .svc--home:hover { color: #362954; transform: translateY(-3px); box-shadow: var(--shadow-2); }
+  .svc--home p, .svc--home .link { color: #362954; }
+  .svc--home .glyph { -webkit-text-stroke-color: var(--primary); }
+  .svc--other { padding-bottom: 0; background: var(--grad-primary); color: #fff; overflow: hidden; isolation: isolate; }
+  .svc--other p { color: rgb(255 255 255 / .88); }
+  .svc--other .wa-o { align-self: flex-start; min-height: 48px; }
+  .heads { position: relative; height: 112px; margin: 16px -22px 0; }
+  .heads :global(img) { position: absolute; bottom: 0; width: 112px; height: auto; }
+  .heads :global(img:first-child) { left: 0; }
+  .heads :global(img:last-child) { right: 0; }
+  @media (min-width: 640px) {
+    .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1100px) {
+    .services { gap: 40px; }
+    .services__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+    .svc { min-height: 300px; padding: 28px; gap: 12px; }
+    .svc h3 { margin-top: auto; }
+    .svc--other { padding-bottom: 0; }
+    .svc--other h3 { margin-top: 0; }
+    .svc--other { grid-column: span 2; }
+    .heads { margin: auto -28px 0; height: 120px; }
+    .heads :global(img) { width: 118px; }
+  }
+
+  /* ---------- A DOMICILIO (contenido) ---------- */
+  .checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 17px; line-height: 1.5; }
+  .checks li { display: flex; gap: 10px; align-items: flex-start; }
+  .checks .ms { color: var(--peach); }
+  .visit-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ---------- ASÍ FUNCIONA ---------- */
+  .how { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 28px; }
+  .how__track { position: relative; --fill: 0; }
+  .how__line { display: none; }
+  .how ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+  .how li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 14px; align-items: start; }
+  .how__dot { grid-row: span 2; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px var(--primary); transition: background .4s, box-shadow .4s; }
+  .how li.is-done .how__dot { background: var(--primary); }
+  .how li.is-now .how__dot { box-shadow: inset 0 0 0 2px var(--primary), 0 0 0 6px rgb(101 87 133 / .16); }
+  .how li b { font: 600 17px/1.3 var(--font-sans); margin-top: 1px; }
+  .how li p { font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 900px) {
+    .how { gap: 40px; }
+    .how__line { display: block; position: absolute; left: 10%; right: 10%; top: 11px; height: 2px; border-radius: 2px; background: var(--line-soft); }
+    .how__fill { display: block; height: 100%; width: calc(var(--fill) * 100%); border-radius: 2px; background: var(--grad-primary); transition: width .9s var(--ease); }
+    .how ol { position: relative; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+    .how li { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+    .how li b { margin-top: 6px; }
+    .how li p { max-width: 24ch; }
+  }
+
+</style>

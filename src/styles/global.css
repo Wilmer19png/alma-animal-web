@@ -130,3 +130,23 @@ button { font: inherit; }
 a.card:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
 
 .pending { display: inline-flex; align-items: center; gap: 6px; font: 600 13px/1.3 var(--font-sans); color: #372C42; background: var(--lavender); border-radius: 999px; padding: 5px 11px; }
+
+/* encabezado de sección: título a la izquierda, texto a la derecha en pantallas grandes */
+.section-head { display: flex; flex-direction: column; gap: 14px; }
+.section-head .lead { max-width: 40ch; }
+.section-head--row { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; }
+@media (min-width: 900px) {
+  .section-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 40px; }
+  .section-head .lead { text-align: right; }
+}
+
+/* ícono grande de contorno (tarjetas de servicios) */
+.glyph { font-size: 52px; width: 52px; height: 52px; color: transparent; -webkit-text-stroke: 1.4px var(--primary-soft); font-variation-settings: "FILL" 1, "wght" 300, "opsz" 48; }
+@media (min-width: 900px) { .glyph { font-size: 72px; width: 72px; height: 72px; } }
+
+/* etiquetas sobre fondos morados */
+.chip-dark, .chip-light { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; border-radius: 999px; }
+.chip-dark { font: 600 14px/1.2 var(--font-sans); padding: 9px 14px; background: rgb(255 255 255 / .14); color: #fff; }
+.chip-dark .ms { font-size: 18px; }
+.chip-light { font: 600 15px/1.3 var(--font-sans); padding: 10px 16px; background: #fff; color: var(--ink); }
+.chip-light .ms { color: var(--primary); }

@@ -1,0 +1,47 @@
+---
+// Tarjeta morada del servicio a domicilio: el texto llega por <slot />, la doctora en moto va a la derecha.
+import { Image } from 'astro:assets';
+import moto from '../assets/mariana-moto.png';
+interface Props { titleId: string }
+const { titleId } = Astro.props;
+---
+<section id="domicilio" class="wrap home-visit-wrap" aria-labelledby={titleId}>
+  <div class="home-visit on-dark">
+    <div class="home-visit__copy">
+      <slot />
+    </div>
+    <div class="moto">
+      <div class="moto__disc" aria-hidden="true"></div>
+      <div class="moto__shadow" aria-hidden="true"></div>
+      <Image src={moto} alt="La Dra. Mariana con casco, llegando en scooter con su maletín veterinario" widths={[360, 520, 720]} sizes="(min-width: 1100px) 460px, 340px" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-visit-wrap { padding-bottom: var(--section); scroll-margin-top: 24px; }
+  .home-visit { display: grid; gap: 24px; padding: 28px 20px 0; border-radius: var(--r-lg); background: var(--grad-primary); color: #fff; overflow: hidden; isolation: isolate; }
+  .home-visit__copy { display: flex; flex-direction: column; gap: 18px; }
+  .home-visit__copy :global(p) { font-size: 17px; line-height: 1.6; color: rgb(255 255 255 / .88); max-width: 48ch; }
+  .home-visit__copy :global(.actions) { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .home-visit__copy :global(.actions > *) { width: 100%; }
+
+  .moto { position: relative; height: 470px; margin: 0 -20px; }
+  .moto__disc { position: absolute; left: 50%; bottom: 80px; width: 320px; height: 320px; margin-left: -160px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F6EFFF 0%, #EADDFF 45%, #D1C1DD 100%); box-shadow: 0 20px 44px rgb(30 20 50 / .28), inset 0 -12px 28px rgb(77 63 108 / .16); }
+  .moto__shadow { position: absolute; left: 50%; bottom: 4px; width: 240px; height: 24px; margin-left: -120px; border-radius: 50%; background: radial-gradient(ellipse at center, rgb(30 20 50 / .35), rgb(30 20 50 / 0) 70%); }
+  .moto :global(img) { position: absolute; left: 50%; bottom: 12px; height: 460px; width: auto; max-width: none; transform: translateX(-50%); filter: drop-shadow(0 12px 18px rgb(30 20 50 / .3)); }
+
+  @media (min-width: 768px) {
+    .home-visit { border-radius: var(--r-xl); padding: 48px 48px 0; }
+    .home-visit__copy :global(.actions) { flex-direction: row; flex-wrap: wrap; }
+    .home-visit__copy :global(.actions > *) { width: auto; }
+  }
+  @media (min-width: 1100px) {
+    .home-visit-wrap { padding-top: 40px; }
+    .home-visit { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding: 56px 64px; overflow: visible; }
+    .moto { justify-self: center; align-self: end; width: 460px; height: 620px; margin: -160px 0 -56px; }
+    .moto__disc { bottom: 110px; width: 420px; height: 420px; margin-left: -210px; }
+    .moto__shadow { width: 320px; height: 26px; margin-left: -160px; }
+    .moto :global(img) { height: 600px; }
+  }
+</style>

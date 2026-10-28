@@ -15,7 +15,10 @@ cpSync('dist', OUT, { recursive: true });
 
 for (const f of readdirSync(OUT).filter((f) => f.endsWith('.html'))) {
   const p = join(OUT, f);
+  const pages = new Set(readdirSync(OUT).filter((x) => x.endsWith('.html')).map((x) => x.replace('.html', '')));
   const html = readFileSync(p, 'utf8')
+    // enlaces entre páginas: /consultorio -> ./consultorio.html, / -> ./index.html
+    .replace(/href="/([a-z-]*)(#[^"]*)?"/g, (m, name, hash = '') => (name === '' ? 'href="./index.html' + hash + '"' : pages.has(name) ? 'href="./' + name + '.html' + hash + '"' : m))
     .replace(/(src|href|srcset)="\/(?!\/)/g, '$1="./')
     .replace(/, \/_astro\//g, ', ./_astro/');
   writeFileSync(p, html);
