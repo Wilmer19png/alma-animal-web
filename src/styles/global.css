@@ -102,9 +102,9 @@ button { font: inherit; }
 /* WhatsApp: contorno verde con el ícono que se mueve */
 .wa-o {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  min-height: 52px; padding: 0 22px 0 18px; border-radius: 999px;
+  min-height: 52px; padding: 8px 22px 8px 18px; text-align: center; border-radius: 999px;
   border: 2px solid var(--wa); background: #fff; color: var(--wa-ink);
-  font: 600 16px/1 var(--font-sans); text-decoration: none;
+  font: 600 16px/1.25 var(--font-sans); text-decoration: none;
   transition: background .2s var(--ease), color .2s, transform .25s var(--ease-out), box-shadow .25s;
 }
 .wa-o:hover { background: var(--wa); color: var(--wa-dark); transform: translateY(-2px); box-shadow: 0 4px 8px 2px rgb(0 188 57 / .18); }
@@ -150,3 +150,10 @@ a.card:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
 .chip-dark .ms { font-size: 18px; }
 .chip-light { font: 600 15px/1.3 var(--font-sans); padding: 10px 16px; background: #fff; color: var(--ink); }
 .chip-light .ms { color: var(--primary); }
+
+/* botón + para agregar al carrito */
+.add { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--peach); color: var(--peach-ink); display: grid; place-items: center; cursor: pointer; flex: none; transition: background .15s, transform .2s var(--ease-out); }
+.add:hover { background: #F0BC95; }
+.add:active { transform: scale(.92); }
+.add.is-added { background: var(--primary); color: #fff; }
+.add--sm { width: 36px; height: 36px; }

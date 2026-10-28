@@ -6,14 +6,10 @@ import WaStrip from '../components/WaStrip.astro';
 import Steps from '../components/Steps.astro';
 import SalesBuzz from '../components/SalesBuzz.astro';
 import { whatsapp } from '../data/site';
-import { DEMO, CATEGORIES, TAGS, PRODUCTS, BUY_STEPS, SHIPPING, money, minPrice, stockOf, productUrl } from '../data/shop';
+import ProductCard from '../components/ProductCard.astro';
+import { DEMO, CATEGORIES, PRODUCTS, BUY_STEPS, SHIPPING, money, minPrice, stockOf, productUrl, cartPayload } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tienda.');
-const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)!.label;
-const detail = (p: (typeof PRODUCTS)[number]) =>
-  p.variants.length > 1
-    ? p.variants.length > 3 ? `${p.variants.length} ${p.variantKind === 'Talla' ? 'tallas' : 'opciones'}` : p.variants.map((v) => v.label).join(', ')
-    : '';
 // productos baratos para "Súmale a tu pedido"
 const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0).sort((a, b) => minPrice(a) - minPrice(b));
 ---
@@ -102,31 +98,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
       </div>
 
       <div class="grid" data-grid>
-        {PRODUCTS.map((p, i) => {
-          const stock = stockOf(p);
-          const v = p.variants[0];
-          const multi = p.variants.length > 1;
-          const from = multi && new Set(p.variants.map((x) => x.price)).size > 1;
-          return (
-            <article class="prod" data-prod data-i={i} data-cat={p.cat} data-para={p.for.join(' ')} data-talla={p.sizes.join(' ')} data-price={minPrice(p)} data-stock={stock} data-sold={p.sold} data-added={p.added} data-q={`${p.name} ${catLabel(p.cat)} ${p.variants.map((x) => x.label).join(' ')}`.toLowerCase()}>
-              <a class="prod__img" href={productUrl(p)} tabindex="-1" aria-hidden="true" style={`background:${p.tone}`}>
-                <span class="ms">{p.icon}</span>
-                {stock === 0 ? <span class="stock out">Agotado</span> : 3 >= stock ? <span class="stock low">Últimas {stock}</span> : <span class="stock">En stock</span>}
-                {p.tag && <span class:list={['tag', TAGS[p.tag].tone]}>{TAGS[p.tag].label}</span>}
-              </a>
-              <div class="prod__body">
-                <span class="prod__cat">{catLabel(p.cat)}{detail(p) && <span> · {detail(p)}</span>}</span>
-                <h3><a href={productUrl(p)}>{p.name}</a></h3>
-                <div class="prod__buy">
-                  <span class="prod__price">{from && <small>Desde</small>}<b>{money(minPrice(p))}</b>{v.was && !multi && <s>{money(v.was)}</s>}</span>
-                  {stock === 0 ? null : multi
-                    ? <a class="pick" href={productUrl(p)} aria-label={`Elegir ${p.variantKind?.toLowerCase() ?? 'opción'} de ${p.name}`}>Elegir</a>
-                    : <button class="add" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock })}><span class="ms" aria-hidden="true">add</span></button>}
-                </div>
-              </div>
-            </article>
-          );
-        })}
+        {PRODUCTS.map((p, i) => <ProductCard p={p} i={i} />)}
       </div>
 
       <div class="empty" data-empty hidden>
@@ -157,7 +129,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
             <div class="extra" data-extra={p.id}>
               <span class="extra__ic" style={`background:${p.tone}`} aria-hidden="true"><span class="ms">{p.icon}</span></span>
               <span class="extra__txt"><a href={productUrl(p)}>{p.name}</a><span>{money(v.price)}</span></span>
-              <button class="add add--sm" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock })}><span class="ms" aria-hidden="true">add</span></button>
+              <button class="add add--sm" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify(cartPayload(p, v))}><span class="ms" aria-hidden="true">add</span></button>
             </div>
           );
         })}
@@ -258,19 +230,6 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
     toggle.setAttribute('aria-expanded', String(open));
   });
 
-  /* ---------- agregar al carrito ---------- */
-  const announce = document.querySelector<HTMLElement>('[data-announce]')!;
-  document.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-add]');
-    if (!btn) return;
-    const item = JSON.parse(btn.dataset.add!);
-    cart.add(item);
-    announce.textContent = `${item.name} quedó en tu carrito.`;
-    btn.classList.add('is-added');
-    btn.querySelector('.ms')!.textContent = 'check';
-    window.setTimeout(() => { btn.classList.remove('is-added'); btn.querySelector('.ms')!.textContent = 'add'; }, 1200);
-  });
-
   /* ---------- mini carrito y barra inferior ---------- */
   const mini = document.querySelector<HTMLElement>('[data-mini]')!;
   const dock = document.querySelector<HTMLElement>('[data-dock]')!;
@@ -333,7 +292,9 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
     paint();
     dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump');
   });
-  apply();
+  // /petshop#higiene abre la categoría (lo usan las migas de la ficha)
+  const fromHash = chips.find((b) => b.dataset.cat && b.dataset.cat === location.hash.slice(1));
+  if (fromHash) fromHash.click(); else apply();
 </script>
 
 <style>
@@ -414,43 +375,6 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
 
-  .prod { min-width: 0; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px var(--line); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
-  .prod[hidden] { display: none; }
-  .prod:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
-  .prod__img { position: relative; aspect-ratio: 1; display: grid; place-items: center; color: rgb(54 41 84 / .55); }
-  .prod__img > .ms { font-size: 52px; transition: transform .35s var(--ease-out); }
-  .prod:hover .prod__img > .ms { transform: scale(1.08) rotate(-4deg); }
-  .stock { position: absolute; top: 8px; left: 8px; font: 600 11px/1 var(--font-sans); padding: 6px 9px; border-radius: 999px; background: #B8F1B9; color: #1D5128; }
-  .stock.low { background: #FFDDB2; color: #624000; }
-  .stock.out { background: #fff; color: var(--ink-muted); }
-  .tag { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font: 600 11px/1.2 var(--font-sans); padding: 5px 8px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: 0 1px 2px rgb(54 41 84 / .14); }
-  .tag.sale { color: #910809; }
-  .prod__body { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 12px; }
-  .prod__cat { font: 600 12.5px/1.3 var(--font-sans); color: var(--primary); }
-  .prod__cat span { font-weight: 500; color: var(--ink-muted); }
-  .prod h3 { font: 600 15px/1.3 var(--font-sans); }
-  .prod h3 a { color: inherit; text-decoration: none; }
-  .prod h3 a:hover { color: var(--primary); text-decoration: underline; }
-  .prod__buy { margin-top: auto; padding-top: 8px; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
-  .prod__price { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; min-width: 0; }
-  .prod__price small { width: 100%; font: 500 12px/1.3 var(--font-sans); color: var(--ink-muted); }
-  .prod__price b { font: 700 16px/1.1 var(--font-sans); font-variant-numeric: tabular-nums; }
-  .prod__price s { font-size: 13px; color: var(--ink-muted); }
-  .add { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--peach); color: var(--peach-ink); display: grid; place-items: center; cursor: pointer; flex: none; transition: background .15s, transform .2s var(--ease-out); }
-  .add:hover { background: #F0BC95; }
-  .add:active { transform: scale(.92); }
-  .add.is-added { background: var(--primary); color: #fff; }
-  .add--sm { width: 36px; height: 36px; }
-  .pick { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface-3); color: var(--primary); font: 600 14px/1 var(--font-sans); text-decoration: none; flex: none; }
-  .pick:hover { background: #ECE6ED; color: var(--primary-strong); }
-  @media (min-width: 768px) {
-    .prod { border-radius: var(--r-md); }
-    .prod__body { padding: 16px; }
-    .prod h3 { font-size: 16px; }
-    .prod__price b { font-size: 18px; }
-    .stock { top: 12px; left: 12px; }
-    .tag { left: 12px; bottom: 12px; font-size: 12px; }
-  }
 
   .empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); text-align: center; }
   .empty[hidden] { display: none; }

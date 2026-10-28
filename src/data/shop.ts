@@ -44,6 +44,7 @@ export interface Product {
   sold: number; // para "Más vendidos"
   added: string; // para "Nuevos"
   text: string;
+  specs?: [string, string][]; // características que se muestran en la ficha (sin marcadores: si no hay dato, no sale)
 }
 
 const T = {
@@ -56,13 +57,16 @@ const T = {
 export const PRODUCTS: Product[] = [
   { id: 'shampoo-hipoalergenico', name: 'Shampoo hipoalergénico', cat: 'higiene', for: ['perro', 'gato'], sizes: ['pequeno', 'mediano', 'grande'], variantKind: 'Presentación', tag: 'top', icon: 'soap', tone: T.lav, sold: 140, added: '2026-03-01',
     text: 'Libre de parabenos, para pieles sensibles. El mismo que usamos en el spa.',
-    variants: [{ id: '250', label: '250 ml', price: 28000, stock: 12 }, { id: '500', label: '500 ml', price: 42000, stock: 8 }, { id: '1000', label: '1 litro', price: 68000, stock: 4 }] },
+    variants: [{ id: '250', label: '250 ml', price: 28000, stock: 12 }, { id: '500', label: '500 ml', price: 42000, stock: 8 }, { id: '1000', label: '1 litro', price: 68000, stock: 0 }],
+    specs: [['Tipo de piel', 'Sensible'], ['Libre de', 'Parabenos'], ['Modo de uso', 'Aplicar sobre el pelo húmedo, masajear y enjuagar bien.']] },
   { id: 'concentrado-adulto-pequena', name: 'Concentrado adulto raza pequeña', cat: 'alimento', for: ['perro'], sizes: ['pequeno'], variantKind: 'Presentación', tag: 'dra', icon: 'set_meal', tone: T.peach, sold: 120, added: '2026-02-10',
     text: 'Croqueta pequeña, alta en proteína y fácil de digerir.',
-    variants: [{ id: '2kg', label: '2 kg', price: 45000, stock: 10 }, { id: '4kg', label: '4 kg', price: 82000, stock: 6 }, { id: '8kg', label: '8 kg', price: 150000, stock: 3 }] },
+    variants: [{ id: '2kg', label: '2 kg', price: 45000, stock: 10 }, { id: '4kg', label: '4 kg', price: 82000, stock: 6 }, { id: '8kg', label: '8 kg', price: 150000, stock: 3 }],
+    specs: [['Etapa', 'Adulto (desde 1 año)'], ['Proteína', 'Pollo y arroz']] },
   { id: 'pechera-ajustable', name: 'Pechera ajustable', cat: 'accesorios', for: ['perro'], sizes: ['pequeno', 'mediano', 'grande'], variantKind: 'Talla', tag: 'nuevo', icon: 'pets', tone: T.mix, sold: 35, added: '2026-10-01',
     text: 'Acolchada y con broche de seguridad. No aprieta el cuello.',
-    variants: [{ id: 'xs', label: 'XS', price: 35000, stock: 3 }, { id: 's', label: 'S', price: 35000, stock: 5 }, { id: 'm', label: 'M', price: 38000, stock: 5 }, { id: 'l', label: 'L', price: 42000, stock: 2 }] },
+    variants: [{ id: 'xs', label: 'XS', price: 35000, stock: 3 }, { id: 's', label: 'S', price: 35000, stock: 5 }, { id: 'm', label: 'M', price: 38000, stock: 5 }, { id: 'l', label: 'L', price: 42000, stock: 2 }],
+    specs: [['Material', 'Malla acolchada'], ['Cómo medir', 'Mide el pecho detrás de las patas delanteras.']] },
   { id: 'galletas-entrenamiento', name: 'Galletas para entrenamiento', cat: 'snacks', for: ['perro'], sizes: ['pequeno', 'mediano', 'grande'], tag: 'top', icon: 'cookie', tone: T.rose, sold: 160, added: '2026-01-15',
     text: 'Bocados pequeños para premiar sin pasarse de calorías.',
     variants: [{ id: 'u', label: '200 g', price: 12000, stock: 25 }] },
@@ -104,3 +108,10 @@ export const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?
 export const minPrice = (p: Product) => Math.min(...p.variants.map((v) => v.price));
 export const stockOf = (p: Product) => p.variants.reduce((s, v) => s + v.stock, 0);
 export const productUrl = (p: Product) => `/producto/${p.id}`;
+export const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)!.label;
+export const forLabel = (p: Product) => (p.for.length > 1 ? 'Perros y gatos' : p.for[0] === 'perro' ? 'Perros' : 'Gatos');
+// lo que guarda el carrito de cada producto/variante (data-add)
+export const cartPayload = (p: Product, v: Variant) => ({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock });
+// "250 ml, 500 ml, 1 litro" o "4 tallas"
+export const variantSummary = (p: Product) =>
+  p.variants.length < 2 ? '' : p.variants.length > 3 ? `${p.variants.length} ${p.variantKind === 'Talla' ? 'tallas' : 'opciones'}` : p.variants.map((v) => v.label).join(', ');
