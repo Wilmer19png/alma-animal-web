@@ -5,6 +5,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import HomeVisit from '../components/HomeVisit.astro';
 import WaIcon from '../components/WaIcon.astro';
 import WaStrip from '../components/WaStrip.astro';
+import Steps from '../components/Steps.astro';
 import { whatsapp } from '../data/site';
 import { CLINIC_SERVICES, HOME_VISIT, VISIT_STEPS } from '../data/services';
 import mariana from '../assets/mariana-gato.png';
@@ -110,43 +111,12 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
       <h2 id="cf" class="h-section">Así funciona <b class="gt">tu cita</b></h2>
       <p class="lead">Después de la consulta, todo queda en tu portal: tus mascotas, citas y carnet.</p>
     </div>
-    <div class="how__track" data-steps>
-      <div class="how__line" aria-hidden="true"><span class="how__fill"></span></div>
-      <ol>
-        {VISIT_STEPS.map((s) => (
-          <li data-step>
-            <span class="how__dot" aria-hidden="true"></span>
-            <b>{s.title}</b>
-            <p>{s.text}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
+    <Steps steps={VISIT_STEPS} />
   </section>
 
   <!-- ======== WHATSAPP ======== -->
   <WaStrip href={waClinic} text="Cuéntanos qué tiene tu mascota y te decimos si necesita consulta o puede esperar." />
 </Base>
-
-<script>
-  // La línea de "Así funciona" se llena paso a paso cuando la sección entra en pantalla.
-  const track = document.querySelector<HTMLElement>('[data-steps]');
-  if (track) {
-    const steps = [...track.querySelectorAll<HTMLElement>('[data-step]')];
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const set = (n: number) => {
-      steps.forEach((s, k) => { s.classList.toggle('is-done', k <= n); s.classList.toggle('is-now', k === n); });
-      track.style.setProperty('--fill', String(n / (steps.length - 1)));
-    };
-    if (reduce) set(steps.length - 1);
-    else {
-      let n = 0, timer: number | undefined;
-      const run = () => { set(n); timer = window.setInterval(() => { n = n >= steps.length + 1 ? 0 : n + 1; set(Math.min(n, steps.length - 1)); }, 1400); };
-      new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .4 }).observe(track);
-      window.addEventListener('pagehide', () => window.clearInterval(timer));
-    }
-  }
-</script>
 
 <style>
   /* ---------- HÉROE ---------- */
@@ -223,23 +193,6 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
 
   /* ---------- ASÍ FUNCIONA ---------- */
   .how { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 28px; }
-  .how__track { position: relative; --fill: 0; }
-  .how__line { display: none; }
-  .how ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
-  .how li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 14px; align-items: start; }
-  .how__dot { grid-row: span 2; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px var(--primary); transition: background .4s, box-shadow .4s; }
-  .how li.is-done .how__dot { background: var(--primary); }
-  .how li.is-now .how__dot { box-shadow: inset 0 0 0 2px var(--primary), 0 0 0 6px rgb(101 87 133 / .16); }
-  .how li b { font: 600 17px/1.3 var(--font-sans); margin-top: 1px; }
-  .how li p { font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
-  @media (min-width: 900px) {
-    .how { gap: 40px; }
-    .how__line { display: block; position: absolute; left: 10%; right: 10%; top: 11px; height: 2px; border-radius: 2px; background: var(--line-soft); }
-    .how__fill { display: block; height: 100%; width: calc(var(--fill) * 100%); border-radius: 2px; background: var(--grad-primary); transition: width .9s var(--ease); }
-    .how ol { position: relative; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
-    .how li { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-    .how li b { margin-top: 6px; }
-    .how li p { max-width: 24ch; }
-  }
+  @media (min-width: 900px) { .how { gap: 40px; } }
 
 </style>

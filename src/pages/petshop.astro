@@ -1,0 +1,538 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import WaStrip from '../components/WaStrip.astro';
+import Steps from '../components/Steps.astro';
+import SalesBuzz from '../components/SalesBuzz.astro';
+import { whatsapp } from '../data/site';
+import { DEMO, CATEGORIES, TAGS, PRODUCTS, BUY_STEPS, SHIPPING, money, minPrice, stockOf, productUrl } from '../data/shop';
+
+const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tienda.');
+const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)!.label;
+const detail = (p: (typeof PRODUCTS)[number]) =>
+  p.variants.length > 1
+    ? p.variants.length > 3 ? `${p.variants.length} ${p.variantKind === 'Talla' ? 'tallas' : 'opciones'}` : p.variants.map((v) => v.label).join(', ')
+    : '';
+// productos baratos para "Súmale a tu pedido"
+const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0).sort((a, b) => minPrice(a) - minPrice(b));
+---
+<Base
+  title="Petshop · Alma Animal"
+  description="Alimento, higiene y accesorios recomendados por la doctora. Envío gratis en Pereira y Dosquebradas, y a toda Colombia desde $70.000."
+  waMessage="Hola, Alma Animal. Tengo una pregunta sobre la tienda."
+  waArea="shop"
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== CABECERA DE TIENDA ======== -->
+  <div class="wrap">
+    <header class="shophead">
+      <div class="shophead__copy">
+        <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
+        <h1>Pet<span>shop</span></h1>
+        <p>Alimento, higiene y accesorios recomendados por la doctora. Agrégalos al carrito y te los llevamos a casa.</p>
+        <ul class="perks">
+          <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+          <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia desde {money(SHIPPING.freeFrom)}</li>
+          <li><span class="ms" aria-hidden="true">bolt</span>Envío prioritario +{money(SHIPPING.priority)}</li>
+        </ul>
+      </div>
+      <!-- empaques ilustrados (se cambian por fotos recortadas cuando las tengamos) -->
+      <div class="shelf" aria-hidden="true">
+        <span class="pk pk--bag"><span class="ms">set_meal</span></span>
+        <span class="pk pk--bottle"><span class="ms">soap</span></span>
+        <span class="pk pk--box"><span class="ms">cookie</span></span>
+        <span class="pk pk--ball"><span class="ms">sports_baseball</span></span>
+        <span class="pk pk--tag"><span class="ms">loyalty</span></span>
+      </div>
+    </header>
+  </div>
+
+  <!-- ======== CATEGORÍAS + BÚSQUEDA ======== -->
+  <div class="wrap toolbar">
+    <div class="cats" role="group" aria-label="Categorías">
+      <button class="chip is-on" type="button" data-cat="" aria-pressed="true">Todo</button>
+      {CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.label}</button>)}
+    </div>
+    <label class="search">
+      <span class="ms" aria-hidden="true">search</span>
+      <span class="sr-only">Buscar productos</span>
+      <input type="search" placeholder="Buscar en la tienda" data-search autocomplete="off" />
+    </label>
+  </div>
+
+  <!-- ======== FILTROS | PRODUCTOS | CARRITO ======== -->
+  <section class="wrap catalog" aria-label="Catálogo">
+    <aside class="filters" id="filtros" aria-label="Filtros" data-filters>
+      <div class="filters__head"><b>Filtros</b><button class="link" type="button" data-clear>Quitar filtros</button></div>
+      <fieldset class="fgroup"><legend>Para</legend>
+        <label class="check"><input type="checkbox" name="para" value="perro" />Perros</label>
+        <label class="check"><input type="checkbox" name="para" value="gato" />Gatos</label>
+      </fieldset>
+      <fieldset class="fgroup"><legend>Tamaño</legend>
+        <label class="check"><input type="checkbox" name="talla" value="pequeno" />Pequeño</label>
+        <label class="check"><input type="checkbox" name="talla" value="mediano" />Mediano</label>
+        <label class="check"><input type="checkbox" name="talla" value="grande" />Grande</label>
+      </fieldset>
+      <fieldset class="fgroup"><legend>Precio</legend>
+        <div class="price-range">
+          <input aria-label="Precio mínimo" placeholder="Desde" inputmode="numeric" data-min />
+          <input aria-label="Precio máximo" placeholder="Hasta" inputmode="numeric" data-max />
+        </div>
+      </fieldset>
+      <label class="check"><input type="checkbox" data-instock checked />Solo con existencias</label>
+    </aside>
+
+    <div class="results">
+      <div class="results__bar">
+        <span class="results__count" aria-live="polite"><b data-count>{PRODUCTS.length}</b> productos{DEMO && <em> de ejemplo</em>}</span>
+        <div class="results__tools">
+          <button class="filter-btn" type="button" aria-expanded="false" aria-controls="filtros" data-filter-toggle><span class="ms" aria-hidden="true">tune</span>Filtros<i data-filter-n hidden></i></button>
+          <label class="sort">Ordenar
+            <select data-sort>
+              <option value="dest">Destacados</option>
+              <option value="top">Más vendidos</option>
+              <option value="new">Nuevos</option>
+              <option value="asc">Menor precio</option>
+              <option value="desc">Mayor precio</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid" data-grid>
+        {PRODUCTS.map((p, i) => {
+          const stock = stockOf(p);
+          const v = p.variants[0];
+          const multi = p.variants.length > 1;
+          const from = multi && new Set(p.variants.map((x) => x.price)).size > 1;
+          return (
+            <article class="prod" data-prod data-i={i} data-cat={p.cat} data-para={p.for.join(' ')} data-talla={p.sizes.join(' ')} data-price={minPrice(p)} data-stock={stock} data-sold={p.sold} data-added={p.added} data-q={`${p.name} ${catLabel(p.cat)} ${p.variants.map((x) => x.label).join(' ')}`.toLowerCase()}>
+              <a class="prod__img" href={productUrl(p)} tabindex="-1" aria-hidden="true" style={`background:${p.tone}`}>
+                <span class="ms">{p.icon}</span>
+                {stock === 0 ? <span class="stock out">Agotado</span> : 3 >= stock ? <span class="stock low">Últimas {stock}</span> : <span class="stock">En stock</span>}
+                {p.tag && <span class:list={['tag', TAGS[p.tag].tone]}>{TAGS[p.tag].label}</span>}
+              </a>
+              <div class="prod__body">
+                <span class="prod__cat">{catLabel(p.cat)}{detail(p) && <span> · {detail(p)}</span>}</span>
+                <h3><a href={productUrl(p)}>{p.name}</a></h3>
+                <div class="prod__buy">
+                  <span class="prod__price">{from && <small>Desde</small>}<b>{money(minPrice(p))}</b>{v.was && !multi && <s>{money(v.was)}</s>}</span>
+                  {stock === 0 ? null : multi
+                    ? <a class="pick" href={productUrl(p)} aria-label={`Elegir ${p.variantKind?.toLowerCase() ?? 'opción'} de ${p.name}`}>Elegir</a>
+                    : <button class="add" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock })}><span class="ms" aria-hidden="true">add</span></button>}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div class="empty" data-empty hidden>
+        <span class="ms" aria-hidden="true">search</span>
+        <b>No encontramos productos con esos filtros.</b>
+        <p>Prueba con otra palabra o escríbenos: si no lo tenemos, te lo conseguimos.</p>
+        <div class="empty__actions"><button class="btn btn--outlined" type="button" data-clear>Quitar filtros</button><a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />Preguntar por WhatsApp</a></div>
+      </div>
+    </div>
+
+    <!-- mini carrito (escritorio) -->
+    <aside class="mini" aria-labelledby="mini-t" data-mini>
+      <h2 id="mini-t"><span class="ms" aria-hidden="true">shopping_bag</span>Tu carrito</h2>
+      <p class="mini__empty" data-mini-empty>Aún no has agregado productos. Toca <b>+</b> en el que quieras.</p>
+      <ul class="mini__list" data-mini-list></ul>
+      <div class="mini__total" data-mini-filled hidden><span>Subtotal</span><b data-mini-sub>$0</b></div>
+      <div class="mini__ship">
+        <span data-ship-text><span class="ms" aria-hidden="true">local_shipping</span> Envío gratis a toda Colombia desde <b>{money(SHIPPING.freeFrom)}</b></span>
+        <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ship-bar><i></i></div>
+        <small>En Pereira y Dosquebradas el envío siempre es gratis.</small>
+      </div>
+      <p class="mini__gift" data-gift><span class="ms" aria-hidden="true">redeem</span><span data-gift-text></span></p>
+      <div class="mini__extras" data-extras>
+        <span>Súmale a tu pedido</span>
+        {extras.map((p) => {
+          const v = p.variants[0];
+          return (
+            <div class="extra" data-extra={p.id}>
+              <span class="extra__ic" style={`background:${p.tone}`} aria-hidden="true"><span class="ms">{p.icon}</span></span>
+              <span class="extra__txt"><a href={productUrl(p)}>{p.name}</a><span>{money(v.price)}</span></span>
+              <button class="add add--sm" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock })}><span class="ms" aria-hidden="true">add</span></button>
+            </div>
+          );
+        })}
+      </div>
+      <a class="btn btn--alma mini__go" href="/carrito" data-mini-filled hidden>Ver carrito y pagar<span class="ms" aria-hidden="true">arrow_forward</span></a>
+      <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
+    </aside>
+  </section>
+
+  <!-- ======== ASÍ COMPRAS ======== -->
+  <section class="wrap buy" aria-labelledby="cc">
+    <div class="buy__panel">
+      <h2 id="cc" class="h-section">Así <b class="gt">compras</b></h2>
+      <Steps steps={BUY_STEPS} />
+    </div>
+  </section>
+
+  <WaStrip href={waShop} title="¿No sabes cuál elegir?" text="Cuéntanos de tu mascota y la doctora te recomienda el producto." />
+
+  <!-- barra del carrito (celular y tableta) -->
+  <div class="dock" data-dock hidden>
+    <a class="dock__in" href="/carrito">
+      <span class="dock__txt"><b data-dock-sub>$0</b><small data-dock-msg></small></span>
+      <span class="dock__go"><span class="dock__bag"><span class="ms" aria-hidden="true">shopping_bag</span><i data-dock-n>0</i></span>Ver carrito</span>
+    </a>
+  </div>
+  <p class="sr-only" aria-live="polite" data-announce></p>
+
+  <SalesBuzz />
+</Base>
+
+<script>
+  import { cart, progress, money } from '../scripts/cart';
+
+  /* ---------- filtros, búsqueda y orden ---------- */
+  const grid = document.querySelector<HTMLElement>('[data-grid]')!;
+  const cards = [...grid.querySelectorAll<HTMLElement>('[data-prod]')];
+  const filters = document.querySelector<HTMLElement>('[data-filters]')!;
+  const search = document.querySelector<HTMLInputElement>('[data-search]')!;
+  const sort = document.querySelector<HTMLSelectElement>('[data-sort]')!;
+  const minIn = document.querySelector<HTMLInputElement>('[data-min]')!;
+  const maxIn = document.querySelector<HTMLInputElement>('[data-max]')!;
+  const inStock = document.querySelector<HTMLInputElement>('[data-instock]')!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-cat]')].filter((b) => b.tagName === 'BUTTON');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-filter-toggle]')!;
+  let cat = '';
+
+  const num = (s: string) => Number(s.replace(/\D/g, '')) || 0;
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const checkedOf = (name: string) => [...filters.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)].map((i) => i.value);
+
+  const apply = () => {
+    const q = norm(search.value.trim());
+    const para = checkedOf('para'), talla = checkedOf('talla');
+    const min = num(minIn.value), max = num(maxIn.value);
+    let shown = 0;
+    for (const c of cards) {
+      const d = c.dataset;
+      const ok = (!cat || d.cat === cat)
+        && (!q || norm(d.q!).includes(q))
+        && (!para.length || para.some((x) => d.para!.split(' ').includes(x)))
+        && (!talla.length || talla.some((x) => d.talla!.split(' ').includes(x)))
+        && (!min || Number(d.price) >= min) && (!max || Number(d.price) <= max)
+        && (!inStock.checked || Number(d.stock) > 0);
+      c.hidden = !ok; if (ok) shown++;
+    }
+    const by: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+      dest: (a, b) => Number(a.dataset.i) - Number(b.dataset.i),
+      top: (a, b) => Number(b.dataset.sold) - Number(a.dataset.sold),
+      new: (a, b) => b.dataset.added!.localeCompare(a.dataset.added!),
+      asc: (a, b) => Number(a.dataset.price) - Number(b.dataset.price),
+      desc: (a, b) => Number(b.dataset.price) - Number(a.dataset.price)
+    };
+    [...cards].sort(by[sort.value]).forEach((c) => grid.append(c));
+    document.querySelector('[data-count]')!.textContent = String(shown);
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = shown > 0;
+    const n = para.length + talla.length + (min ? 1 : 0) + (max ? 1 : 0) + (inStock.checked ? 0 : 1);
+    const badge = document.querySelector<HTMLElement>('[data-filter-n]')!;
+    badge.textContent = String(n); badge.hidden = n === 0;
+  };
+
+  chips.forEach((b) => b.addEventListener('click', () => {
+    cat = b.dataset.cat ?? '';
+    chips.forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+    apply();
+  }));
+  search.addEventListener('input', apply);
+  sort.addEventListener('change', apply);
+  filters.addEventListener('input', apply);
+  filters.addEventListener('change', apply);
+  document.querySelectorAll('[data-clear]').forEach((b) => b.addEventListener('click', () => {
+    filters.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((i) => { i.checked = i === inStock; });
+    minIn.value = maxIn.value = ''; search.value = '';
+    chips[0].click();
+  }));
+  toggle.addEventListener('click', () => {
+    const open = filters.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  /* ---------- agregar al carrito ---------- */
+  const announce = document.querySelector<HTMLElement>('[data-announce]')!;
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-add]');
+    if (!btn) return;
+    const item = JSON.parse(btn.dataset.add!);
+    cart.add(item);
+    announce.textContent = `${item.name} quedó en tu carrito.`;
+    btn.classList.add('is-added');
+    btn.querySelector('.ms')!.textContent = 'check';
+    window.setTimeout(() => { btn.classList.remove('is-added'); btn.querySelector('.ms')!.textContent = 'add'; }, 1200);
+  });
+
+  /* ---------- mini carrito y barra inferior ---------- */
+  const mini = document.querySelector<HTMLElement>('[data-mini]')!;
+  const dock = document.querySelector<HTMLElement>('[data-dock]')!;
+  const paint = () => {
+    const items = cart.items();
+    const sub = cart.subtotal();
+    const p = progress(sub);
+    const has = items.length > 0;
+
+    const list = mini.querySelector<HTMLElement>('[data-mini-list]')!;
+    list.innerHTML = '';
+    for (const it of items) {
+      const li = document.createElement('li');
+      const ic = document.createElement('span'); ic.className = 'mini__ic'; ic.style.background = it.tone;
+      ic.innerHTML = `<span class="ms" aria-hidden="true">${it.icon}</span>`;
+      const txt = document.createElement('span'); txt.className = 'mini__txt';
+      const name = document.createElement('b'); name.textContent = it.name;
+      const meta = document.createElement('span'); meta.textContent = `${it.variant && !/^(único|única)$/i.test(it.variant) ? it.variant + ' · ' : ''}${it.qty} × ${money(it.price)}`;
+      txt.append(name, meta);
+      const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'mini__rm'; rm.setAttribute('aria-label', `Quitar ${it.name}`);
+      rm.innerHTML = '<span class="ms" aria-hidden="true">close</span>';
+      rm.addEventListener('click', () => cart.remove(it.key));
+      li.append(ic, txt, rm); list.append(li);
+    }
+    mini.querySelector<HTMLElement>('[data-mini-empty]')!.hidden = has;
+    mini.querySelectorAll<HTMLElement>('[data-mini-filled]').forEach((el) => { el.hidden = !has; });
+    mini.querySelector('[data-mini-sub]')!.textContent = money(sub);
+
+    const shipText = mini.querySelector<HTMLElement>('[data-ship-text]')!;
+    shipText.innerHTML = p.toFree > 0
+      ? `<span class="ms" aria-hidden="true">local_shipping</span> Te faltan <b>${money(p.toFree)}</b> para envío gratis a toda Colombia`
+      : '<span class="ms" aria-hidden="true">local_shipping</span> <b>¡Tu envío es gratis</b> a toda Colombia!';
+    const bar = mini.querySelector<HTMLElement>('[data-ship-bar]')!;
+    bar.setAttribute('aria-valuenow', String(p.freePct));
+    bar.querySelector('i')!.style.width = p.freePct + '%';
+
+    const gift = mini.querySelector<HTMLElement>('[data-gift]')!;
+    gift.hidden = !has;
+    mini.querySelector('[data-gift-text]')!.innerHTML = p.toGift > 0
+      ? `Agrega <b>${money(p.toGift)}</b> más y llévate un <b>obsequio</b>`
+      : '¡Te ganaste un <b>snack dental</b> de obsequio!';
+
+    // sugerencias: solo las que aún no están en el carrito, máximo 2
+    let shown = 0;
+    mini.querySelectorAll<HTMLElement>('[data-extra]').forEach((x) => {
+      const inCart = items.some((it) => it.id === x.dataset.extra);
+      x.hidden = inCart || shown >= 2; if (!x.hidden) shown++;
+    });
+    mini.querySelector<HTMLElement>('[data-extras]')!.hidden = !has || shown === 0;
+
+    // barra inferior: una sola línea con lo que falta
+    dock.hidden = !has;
+    document.documentElement.classList.toggle('has-dock', has);
+    dock.querySelector('[data-dock-n]')!.textContent = String(cart.count());
+    dock.querySelector('[data-dock-sub]')!.textContent = money(sub);
+    dock.querySelector('[data-dock-msg]')!.textContent = p.toFree > 0 ? `Envío gratis con ${money(p.toFree)} más` : 'Tu envío es gratis';
+  };
+  paint();
+  cart.onChange(() => {
+    paint();
+    dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump');
+  });
+  apply();
+</script>
+
+<style>
+  /* ---------- CABECERA ---------- */
+  .shophead { position: relative; display: grid; gap: 24px; align-items: center; padding: 26px 20px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; overflow: hidden; }
+  .shophead__copy { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: #362954; text-decoration: none; }
+  .back .ms { font-size: 18px; }
+  .shophead h1 { font-size: clamp(44px, 12vw, 80px); font-weight: 700; line-height: .95; letter-spacing: -.045em; }
+  .shophead h1 span { font-weight: 300; }
+  .shophead p { font-size: 16.5px; line-height: 1.55; max-width: 46ch; }
+  .perks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .perks li { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border-radius: 999px; background: #fff; font: 600 14px/1.25 var(--font-sans); }
+  .perks .ms { color: var(--primary); }
+  .shelf { display: none; }
+  @media (min-width: 1000px) {
+    .shophead { grid-template-columns: minmax(0, 1fr) 500px; gap: 40px; padding: 48px 56px; border-radius: var(--r-xl); }
+    .shophead p { font-size: 18px; line-height: 1.6; }
+    .perks li { font-size: 15px; padding: 10px 14px; }
+    .shelf { display: block; position: relative; height: 280px; margin: -16px -24px -48px 0; }
+    .pk { position: absolute; display: grid; place-items: center; box-shadow: 0 6px 10px 4px rgb(54 41 84 / .1), 0 2px 3px rgb(54 41 84 / .16); }
+    .pk .ms { font-size: 44px; }
+    .pk--bag { left: 0; top: 34px; width: 150px; height: 230px; border-radius: 26px 26px 18px 18px; background: #fff; color: var(--primary); transform: rotate(-6deg); }
+    .pk--bottle { left: 124px; top: 0; width: 104px; height: 196px; border-radius: 40px 40px 20px 20px; background: var(--grad-primary); color: #fff; transform: rotate(5deg); }
+    .pk--box { left: 222px; top: 96px; width: 150px; height: 150px; border-radius: 22px; background: #fff; color: var(--primary); transform: rotate(-3deg); }
+    .pk--ball { left: 270px; top: 0; width: 104px; height: 104px; border-radius: 50%; background: var(--peach); color: var(--peach-ink); }
+    .pk--tag { left: 376px; top: 40px; width: 120px; height: 196px; border-radius: 20px; background: #fff; color: var(--primary); transform: rotate(7deg); }
+  }
+
+  /* ---------- CATEGORÍAS + BÚSQUEDA ---------- */
+  .toolbar { display: flex; flex-direction: column; gap: 14px; padding-top: 24px; padding-bottom: 18px; }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink-muted); font: 600 14px/1 var(--font-sans); cursor: pointer; transition: background .15s, color .15s; }
+  .chip:hover { background: var(--surface-3); }
+  .chip.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .search { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 18px; border-radius: 999px; background: #ECE6ED; color: var(--ink-muted); }
+  .search:focus-within { box-shadow: 0 0 0 2px var(--primary); }
+  .search input { flex: 1; min-width: 0; border: 0; background: transparent; font: 400 16px/1 var(--font-sans); color: var(--ink); outline: 0; }
+  .search input::placeholder { color: var(--ink-muted); }
+  @media (min-width: 900px) {
+    .toolbar { flex-direction: row; align-items: center; padding-top: 32px; padding-bottom: 24px; }
+    .search { margin-left: auto; width: 340px; }
+  }
+
+  /* ---------- CATÁLOGO ---------- */
+  .catalog { display: grid; gap: 20px; align-items: start; padding-bottom: var(--section); }
+  .results { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .results__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .results__count { font-size: 15px; color: var(--ink-muted); }
+  .results__count b { color: var(--ink); }
+  .results__count em { font-style: normal; }
+  .results__tools { display: flex; align-items: center; gap: 8px; }
+  .filter-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 600 14px/1 var(--font-sans); cursor: pointer; }
+  .filter-btn[aria-expanded="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .filter-btn i { font-style: normal; min-width: 20px; height: 20px; border-radius: 10px; background: var(--peach); color: var(--peach-ink); font: 700 12px/20px var(--font-sans); text-align: center; padding: 0 5px; }
+  .filter-btn i[hidden] { display: none; }
+  .sort { display: flex; align-items: center; gap: 8px; font: 500 14px/1 var(--font-sans); color: var(--ink-muted); }
+  .sort select { height: 40px; border-radius: 999px; border: 1px solid var(--line); padding: 0 12px; font: 600 14px/1 var(--font-sans); background: #fff; color: var(--ink); }
+
+  /* filtros: panel plegable hasta 1200px, columna fija después */
+  .filters { display: none; flex-direction: column; gap: 20px; padding: 20px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .filters.is-open { display: flex; }
+  .filters__head { display: flex; justify-content: space-between; align-items: center; font: 600 17px/1.3 var(--font-sans); }
+  .filters__head .link { border: 0; background: none; padding: 6px 0; font: 600 14px/1 var(--font-sans); color: var(--primary); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .fgroup { margin: 0; padding: 0 0 20px; border: 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .fgroup legend { float: left; width: 100%; padding: 0; margin-bottom: 12px; font: 600 15px/1.3 var(--font-sans); }
+  .check { display: flex; align-items: center; gap: 10px; min-height: 28px; font: 400 15px/1.3 var(--font-sans); cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); flex: none; }
+  .price-range { display: flex; gap: 8px; }
+  .price-range input { width: 100%; min-width: 0; height: 44px; border-radius: 10px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 var(--font-sans); color: var(--ink); background: #fff; }
+  .price-range input:focus { outline: 0; border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  @media (min-width: 600px) and (max-width: 1199px) {
+    .filters.is-open { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 24px; }
+    .filters__head { grid-column: 1 / -1; }
+    .fgroup { border: 0; padding: 0; }
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
+
+  .prod { min-width: 0; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px var(--line); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
+  .prod[hidden] { display: none; }
+  .prod:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
+  .prod__img { position: relative; aspect-ratio: 1; display: grid; place-items: center; color: rgb(54 41 84 / .55); }
+  .prod__img > .ms { font-size: 52px; transition: transform .35s var(--ease-out); }
+  .prod:hover .prod__img > .ms { transform: scale(1.08) rotate(-4deg); }
+  .stock { position: absolute; top: 8px; left: 8px; font: 600 11px/1 var(--font-sans); padding: 6px 9px; border-radius: 999px; background: #B8F1B9; color: #1D5128; }
+  .stock.low { background: #FFDDB2; color: #624000; }
+  .stock.out { background: #fff; color: var(--ink-muted); }
+  .tag { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font: 600 11px/1.2 var(--font-sans); padding: 5px 8px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: 0 1px 2px rgb(54 41 84 / .14); }
+  .tag.sale { color: #910809; }
+  .prod__body { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 12px; }
+  .prod__cat { font: 600 12.5px/1.3 var(--font-sans); color: var(--primary); }
+  .prod__cat span { font-weight: 500; color: var(--ink-muted); }
+  .prod h3 { font: 600 15px/1.3 var(--font-sans); }
+  .prod h3 a { color: inherit; text-decoration: none; }
+  .prod h3 a:hover { color: var(--primary); text-decoration: underline; }
+  .prod__buy { margin-top: auto; padding-top: 8px; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
+  .prod__price { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; min-width: 0; }
+  .prod__price small { width: 100%; font: 500 12px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .prod__price b { font: 700 16px/1.1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .prod__price s { font-size: 13px; color: var(--ink-muted); }
+  .add { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--peach); color: var(--peach-ink); display: grid; place-items: center; cursor: pointer; flex: none; transition: background .15s, transform .2s var(--ease-out); }
+  .add:hover { background: #F0BC95; }
+  .add:active { transform: scale(.92); }
+  .add.is-added { background: var(--primary); color: #fff; }
+  .add--sm { width: 36px; height: 36px; }
+  .pick { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface-3); color: var(--primary); font: 600 14px/1 var(--font-sans); text-decoration: none; flex: none; }
+  .pick:hover { background: #ECE6ED; color: var(--primary-strong); }
+  @media (min-width: 768px) {
+    .prod { border-radius: var(--r-md); }
+    .prod__body { padding: 16px; }
+    .prod h3 { font-size: 16px; }
+    .prod__price b { font-size: 18px; }
+    .stock { top: 12px; left: 12px; }
+    .tag { left: 12px; bottom: 12px; font-size: 12px; }
+  }
+
+  .empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); text-align: center; }
+  .empty[hidden] { display: none; }
+  .empty > .ms { font-size: 36px; color: var(--primary); }
+  .empty b { font: 600 18px/1.3 var(--font-sans); }
+  .empty p { color: var(--ink-muted); max-width: 40ch; }
+  .empty__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
+
+  /* mini carrito: solo en pantallas anchas */
+  .mini { display: none; }
+  .mini h2 { display: flex; align-items: center; gap: 8px; font: 600 22px/1.3 var(--font-sans); }
+  .mini h2 .ms { color: var(--primary); }
+  .mini__empty { font-size: 15px; line-height: 1.5; color: var(--ink-muted); }
+  .mini__empty[hidden], [data-mini-filled][hidden], .mini__gift[hidden], .mini__extras[hidden], .extra[hidden] { display: none; }
+  .mini__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .mini__list :global(li) { display: flex; align-items: center; gap: 12px; }
+  .mini__list :global(.mini__ic) { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
+  .mini__list :global(.mini__txt) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .mini__list :global(.mini__txt b) { font: 600 15px/1.3 var(--font-sans); }
+  .mini__list :global(.mini__txt span) { font: 400 14px/1.4 var(--font-sans); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .mini__list :global(.mini__rm) { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #7A7580; display: grid; place-items: center; cursor: pointer; flex: none; }
+  .mini__list :global(.mini__rm:hover) { background: var(--surface-3); color: var(--ink); }
+  .mini__list :global(.mini__rm .ms) { font-size: 18px; }
+  .mini__total { display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--line); font: 600 17px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .mini__ship { display: flex; flex-direction: column; gap: 8px; font: 400 15px/1.4 var(--font-sans); }
+  .mini__ship .ms { font-size: 18px; color: var(--primary); vertical-align: -4px; }
+  .mini__ship small { font-size: 14px; color: var(--ink-muted); }
+  .bar { height: 8px; border-radius: 999px; background: #ECE6ED; overflow: hidden; }
+  .bar i { display: block; width: 0; height: 100%; border-radius: 999px; background: var(--grad-primary); transition: width .6s var(--ease); }
+  .mini__gift { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--grad-alma); color: #362954; font: 500 15px/1.35 var(--font-sans); }
+  .mini__gift .ms { font-size: 24px; }
+  .mini__extras { display: flex; flex-direction: column; gap: 10px; }
+  .mini__extras > span { font: 600 14px/1 var(--font-sans); color: var(--ink-muted); }
+  .extra { display: flex; align-items: center; gap: 10px; }
+  .extra__ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
+  .extra__ic .ms { font-size: 20px; }
+  .extra__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; font: 500 14.5px/1.3 var(--font-sans); }
+  .extra__txt a { color: var(--ink); text-decoration: none; }
+  .extra__txt a:hover { text-decoration: underline; }
+  .extra__txt span { color: var(--ink-muted); }
+  .mini__go { height: 52px; font-size: 17px; }
+
+  @media (min-width: 1200px) {
+    .catalog { grid-template-columns: 210px minmax(0, 1fr) 320px; gap: 28px; }
+    .filters, .filters.is-open { display: flex; padding: 0; background: none; box-shadow: none; position: sticky; top: 24px; }
+    .filter-btn { display: none; }
+    .mini { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 24px; padding: 24px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); }
+    .grid { gap: 18px; }
+  }
+
+  /* ---------- ASÍ COMPRAS ---------- */
+  .buy { padding-bottom: var(--section); }
+  .buy__panel { display: flex; flex-direction: column; gap: 24px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--surface-2); }
+  @media (min-width: 900px) {
+    .buy__panel { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 48px; align-items: center; padding: 48px 56px; border-radius: var(--r-xl); }
+  }
+
+  /* ---------- BARRA DEL CARRITO (hasta 1200px) ---------- */
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 38; padding: 10px var(--gutter) max(10px, env(safe-area-inset-bottom)); background: rgb(254 247 254 / .96); box-shadow: 0 -1px 0 var(--line-soft); }
+  .dock[hidden] { display: none; }
+  .dock.bump .dock__in { animation: bump .45s var(--ease-out); }
+  .dock__in { display: flex; align-items: center; gap: 12px; max-width: 720px; margin: 0 auto; padding: 8px 8px 8px 20px; border-radius: 999px; background: var(--ink); color: #fff; text-decoration: none; }
+  .dock__in:hover { color: #fff; }
+  .dock__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .dock__txt b { font: 700 16px/1.1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .dock__txt small { font: 500 12.5px/1.25 var(--font-sans); color: rgb(255 255 255 / .8); }
+  .dock__go { display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 16px; border-radius: 999px; background: var(--grad-alma); color: #362954; font: 600 15px/1 var(--font-sans); flex: none; }
+  .dock__go .ms { font-size: 18px; }
+  .dock__bag { position: relative; display: grid; }
+  .dock__bag .ms { font-size: 20px; }
+  .dock__bag i { position: absolute; top: -8px; right: -9px; min-width: 17px; height: 17px; border-radius: 9px; background: var(--ink); color: #fff; font: 700 10.5px/17px var(--font-sans); font-style: normal; text-align: center; padding: 0 4px; }
+  .dock__go { gap: 14px; padding: 0 16px 0 18px; }
+  @keyframes bump { 40% { transform: scale(1.03); } }
+  @media (prefers-reduced-motion: reduce) { .dock.bump .dock__in { animation: none; } }
+  /* con la barra visible, el botón de WhatsApp se aparta y el aviso de compras sube */
+  :global(html.has-dock) { --dock: 76px; }
+  :global(html.has-dock .fab-wa) { display: none !important; }
+  :global(html.has-dock main) { padding-bottom: 76px; }
+  @media (min-width: 1200px) {
+    .dock { display: none !important; }
+    :global(html.has-dock) { --dock: 0px; }
+    :global(html.has-dock .fab-wa) { display: grid !important; }
+    :global(html.has-dock main) { padding-bottom: 0; }
+  }
+</style>

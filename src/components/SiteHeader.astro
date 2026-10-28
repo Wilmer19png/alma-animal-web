@@ -1,6 +1,7 @@
 ---
 // Barra superior de las páginas internas (el Inicio lleva la suya dentro de la portada).
 import Lockup from './Lockup.astro';
+import CartLink from './CartLink.astro';
 import MobileMenu from './MobileMenu.astro';
 import { NAV, PHONES } from '../data/site';
 const path = Astro.url.pathname.replace(/\.html$/, '');
@@ -14,7 +15,7 @@ const isOn = (href: string) => href !== '/' && path.startsWith(href);
     </nav>
     <div class="site-bar__tools">
       <a class="icon-btn hide-sm" href={`tel:+${PHONES.vet.e164}`} aria-label={`Llamar al ${PHONES.vet.display}`}><span class="ms" aria-hidden="true">call</span></a>
-      <a class="icon-btn" href="/petshop" aria-label="Carrito"><span class="ms" aria-hidden="true">shopping_bag</span></a>
+      <CartLink />
       <a class="btn hide-sm" href="/portal">Ingresar</a>
       <MobileMenu />
     </div>

@@ -1,0 +1,67 @@
+---
+// Aviso "🔥 Laura, de Pereira, compró…". Rota entre las compras recientes confirmadas:
+// sale a los 5 s, se queda 6 s y se oculta 9 s. Si la persona lo cierra, no vuelve en esta visita.
+// Sin compras para mostrar, no se pinta nada.
+import { PRODUCTS, RECENT_SALES, productUrl } from '../data/shop';
+
+const ago = (m: number) =>
+  m < 60 ? `hace ${m} minutos` : m < 120 ? 'hace 1 hora' : m < 1440 ? `hace ${Math.round(m / 60)} horas` : m < 2880 ? 'ayer' : `hace ${Math.round(m / 1440)} días`;
+
+const sales = RECENT_SALES.flatMap((s) => {
+  const p = PRODUCTS.find((x) => x.id === s.product);
+  return p ? [{ ...s, name: p.name + (s.variant ? ` · ${s.variant}` : ''), url: productUrl(p), icon: p.icon, tone: p.tone, ago: ago(s.minutesAgo) }] : [];
+});
+---
+{sales.length > 0 && (
+  <div class="buzz" role="status" aria-live="polite" data-buzz hidden>
+    {sales.map((s, i) => (
+      <div class="buzz__item" data-buzz-item hidden={i > 0}>
+        <span class="buzz__ic" style={`background:${s.tone}`} aria-hidden="true"><span class="ms">{s.icon}</span></span>
+        <span class="buzz__txt">
+          <span>🔥 <b>{s.who}</b>, de {s.city}, compró <a href={s.url}>{s.name}</a></span>
+          <small>{s.ago} · compra verificada</small>
+        </span>
+      </div>
+    ))}
+    <button class="buzz__x" type="button" aria-label="Cerrar aviso" data-buzz-close><span class="ms" aria-hidden="true">close</span></button>
+  </div>
+)}
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-buzz]');
+  const KEY = 'alma-aviso-cerrado';
+  let closed = false;
+  try { closed = sessionStorage.getItem(KEY) === '1'; } catch { /* sin almacenamiento */ }
+  if (box && !closed) {
+    const items = [...box.querySelectorAll<HTMLElement>('[data-buzz-item]')];
+    let i = 0, timer: number | undefined;
+    const show = () => { items.forEach((el, k) => { el.hidden = k !== i; }); box.hidden = false; timer = window.setTimeout(hide, 6000); };
+    const hide = () => { box.hidden = true; i = (i + 1) % items.length; timer = window.setTimeout(show, 9000); };
+    // no interrumpe mientras pasan el mouse o el foco por el aviso
+    box.addEventListener('mouseenter', () => window.clearTimeout(timer));
+    box.addEventListener('mouseleave', () => { timer = window.setTimeout(hide, 3000); });
+    timer = window.setTimeout(show, 5000);
+    box.querySelector('[data-buzz-close]')!.addEventListener('click', () => {
+      window.clearTimeout(timer); box.remove();
+      try { sessionStorage.setItem(KEY, '1'); } catch { /* sin almacenamiento */ }
+    });
+  }
+</script>
+
+<style>
+  .buzz { position: fixed; left: 12px; right: 84px; bottom: calc(16px + var(--dock, 0px)); z-index: 35; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 16px; background: rgb(255 255 255 / .97); box-shadow: 0 0 0 1px var(--line-soft), 0 6px 14px rgb(54 41 84 / .12); animation: buzz-in .55s var(--ease-out); }
+  .buzz[hidden] { display: none; }
+  .buzz__item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
+  .buzz__item[hidden] { display: none; }
+  .buzz__ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--ink); flex: none; }
+  .buzz__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 400 13px/1.35 var(--font-sans); }
+  .buzz__txt a { color: var(--ink); font-weight: 600; text-decoration: none; }
+  .buzz__txt a:hover { text-decoration: underline; }
+  .buzz__txt small { font-size: 11.5px; color: var(--ink-muted); }
+  .buzz__x { align-self: flex-start; width: 32px; height: 32px; margin: -4px -4px 0 0; border: 0; border-radius: 50%; background: transparent; color: #7A7580; cursor: pointer; display: grid; place-items: center; flex: none; }
+  .buzz__x:hover { background: var(--surface-3); }
+  .buzz__x .ms { font-size: 18px; }
+  @keyframes buzz-in { from { opacity: 0; transform: translateY(12px); } }
+  @media (prefers-reduced-motion: reduce) { .buzz { animation: none; } }
+  @media (min-width: 768px) { .buzz { left: 20px; right: auto; bottom: calc(20px + var(--dock, 0px)); width: 320px; } }
+</style>

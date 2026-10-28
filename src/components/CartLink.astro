@@ -1,0 +1,20 @@
+---
+// Botón del carrito con el número de productos (lo lee del carrito del navegador).
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+---
+<a class:list={['icon-btn', cls]} href="/carrito" aria-label="Carrito" data-cart-link>
+  <span class="ms" aria-hidden="true">shopping_bag</span>
+  <span class="badge" data-cart-count hidden></span>
+</a>
+
+<script>
+  import { cart } from '../scripts/cart';
+  const paint = () => {
+    const n = cart.count();
+    document.querySelectorAll<HTMLElement>('[data-cart-count]').forEach((b) => { b.textContent = String(n); b.hidden = n === 0; });
+    document.querySelectorAll<HTMLElement>('[data-cart-link]').forEach((a) => a.setAttribute('aria-label', n ? `Carrito, ${n} ${n === 1 ? 'producto' : 'productos'}` : 'Carrito vacío'));
+  };
+  paint();
+  cart.onChange(paint);
+</script>
