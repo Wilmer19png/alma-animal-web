@@ -1,0 +1,311 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import WaStrip from '../components/WaStrip.astro';
+import { whatsapp } from '../data/site';
+import { SPA_INCLUDES, SPA_COAT, SPA_PHOTOS } from '../data/spa';
+
+const waSpa = whatsapp.vet('Hola, Alma Animal. Quiero agendar un baño en el spa.');
+const waPrice = whatsapp.vet('Hola, Alma Animal. ¿Cuánto cuesta el baño para mi mascota? Te mando una foto.');
+const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
+---
+<Base
+  title="Spa para perros y gatos en Pereira · Alma Animal"
+  description="Baño antipulgas, hidromasaje, aromaterapia y corte según la raza, con shampoo hipoalergénico. Agenda en línea y te confirmamos por WhatsApp."
+  waMessage="Hola, Alma Animal. Quiero agendar un baño en el spa."
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== HÉROE ======== -->
+  <div class="wrap">
+    <header class="s-hero on-dark">
+      <div class="s-hero__copy">
+        <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
+        <h1>Spa <span>para mascotas</span></h1>
+        <p class="serif s-hero__motto">Un animalito limpio es un animalito sano.</p>
+        <p>Baño completo con shampoo hipoalergénico libre de parabenos, en el mismo lugar donde atiende la veterinaria.</p>
+        <div class="s-hero__actions">
+          <a class="btn btn--alma btn--lg" href="/agendar-spa">Agenda su baño<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+          <a class="wa-o" href={waSpa} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos por WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- carrusel de fotos reales en forma de arco -->
+      <div class="arch" data-hero-carousel aria-roledescription="carrusel" aria-label="Mascotas después del spa">
+        <div class="arch__ring" aria-hidden="true"></div>
+        <div class="arch__frame">
+          {HERO_PHOTOS.map((p, i) => (
+            <div class:list={['arch__slide', { 'is-on': i === 0 }]} data-slide data-cap={p.cap} aria-hidden={i === 0 ? 'false' : 'true'}>
+              <Image src={p.src} alt={p.alt} widths={[360, 520, 760]} sizes="(min-width: 1100px) 440px, 90vw" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+            </div>
+          ))}
+        </div>
+        <div class="arch__pill" aria-hidden="true"><span data-cap-label>{HERO_PHOTOS[0].cap}</span><i></i></div>
+        <div class="arch__dots">
+          {HERO_PHOTOS.map((p, i) => <button type="button" data-dot aria-label={`Ver foto ${i + 1}: ${p.cap}`} aria-pressed={i === 0 ? 'true' : 'false'}><span></span></button>)}
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- ======== CADA BAÑO INCLUYE ======== -->
+  <section class="wrap includes" aria-labelledby="inc" data-includes>
+    <div class="section-head">
+      <h2 id="inc" class="h-section">Cada baño<br /><b class="gt">incluye</b></h2>
+      <p class="lead">Siempre con agua caliente, secado y protección de oídos.</p>
+    </div>
+    <div class="includes__body">
+      <div class="inc-arch" aria-live="polite">
+        {SPA_INCLUDES.map((s, i) => (
+          <div class:list={['inc-arch__slide', { 'is-on': i === 0 }]} style={`background: ${s.bg};`} data-inc-slide aria-hidden={i === 0 ? 'false' : 'true'}>
+            <span class="ms" aria-hidden="true">{s.icon}</span>
+          </div>
+        ))}
+        <div class="inc-arch__label"><b data-inc-title>{SPA_INCLUDES[0].title}</b><span data-inc-num>1 de {SPA_INCLUDES.length}</span></div>
+      </div>
+
+      <!-- celular: líneas de avance + descripción del cuidado actual -->
+      <div class="inc-lines" role="tablist" aria-label="Cuidados del baño">
+        {SPA_INCLUDES.map((s, i) => <button type="button" role="tab" aria-label={s.title} aria-selected={i === 0 ? 'true' : 'false'} data-inc-tab><span><i></i></span></button>)}
+      </div>
+      <p class="inc-desc" data-inc-text>{SPA_INCLUDES[0].text}</p>
+
+      <!-- escritorio: los 8 cuidados en tarjetas -->
+      <ol class="inc-list">
+        {SPA_INCLUDES.map((s, i) => (
+          <li>
+            <button type="button" class:list={['inc-card', { 'is-on': i === 0 }]} data-inc-card>
+              <span class="inc-card__icon"><span class="ms" aria-hidden="true">{s.icon}</span></span>
+              <span class="inc-card__txt"><b>{s.title}</b><span>{s.text}</span></span>
+              <span class="inc-card__bar" aria-hidden="true"></span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ======== SEGÚN SU PELO Y SU PIEL ======== -->
+  <section class="wrap" aria-labelledby="pel">
+    <div class="coat">
+      <div class="coat__intro">
+        <h2 id="pel" class="h-section coat__title">Según su <b class="gt">pelo y su piel</b></h2>
+        <p>No necesitas saber qué tipo de manto tiene tu mascota: lo revisamos al recibirla y te contamos qué le hace falta.</p>
+      </div>
+      <div class="coat__grid">
+        {SPA_COAT.map((c) => <div class="coat__item"><b>{c.title}</b><p>{c.text}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== PRECIO (sin cotizador) ======== -->
+  <section class="wrap" aria-labelledby="pr">
+    <div class="price">
+      <div>
+        <h2 id="pr" class="h-section price__title">¿Cuánto <b class="gt">cuesta?</b></h2>
+        <p>Depende de la raza, el tamaño y el estado del manto. Escríbenos con una foto de tu mascota y te damos el valor antes de agendar.</p>
+      </div>
+      <div class="price__actions">
+        <a class="wa-o" href={waPrice} target="_blank" rel="noopener"><WaIcon size={24} />Pedir precio por WhatsApp</a>
+        <a class="btn" href="/agendar-spa">Agendar el baño</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== ASÍ SALEN ======== -->
+  <section class="wrap results" aria-labelledby="ad">
+    <div class="section-head section-head--row">
+      <h2 id="ad" class="h-section">Así <b class="gt">salen</b></h2>
+      <a class="link" href="https://instagram.com/vet_alma_animal" target="_blank" rel="noopener">Ver más en Instagram<span class="ms" aria-hidden="true">arrow_forward</span></a>
+    </div>
+    <div class="results__grid">
+      {SPA_PHOTOS.map((p) => (
+        <figure><Image src={p.src} alt={p.alt} widths={[300, 460, 640]} sizes="(min-width: 1100px) 300px, 45vw" /></figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- ======== WHATSAPP ======== -->
+  <WaStrip href={waPrice} text="Mándanos una foto de tu mascota y te decimos el precio del baño." />
+</Base>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Carrusel de la portada: cambia cada 4 s, se pausa al pasar el mouse.
+  const hero = document.querySelector<HTMLElement>('[data-hero-carousel]');
+  if (hero) {
+    const slides = [...hero.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...hero.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const cap = hero.querySelector<HTMLElement>('[data-cap-label]');
+    let i = 0, timer: number | undefined;
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
+      dots.forEach((d, k) => d.setAttribute('aria-pressed', String(k === i)));
+      if (cap) cap.textContent = slides[i].dataset.cap ?? '';
+    };
+    const start = () => { if (!reduce) timer = window.setInterval(() => show(i + 1), 4000); };
+    const stop = () => window.clearInterval(timer);
+    dots.forEach((d, k) => d.addEventListener('click', () => { stop(); show(k); start(); }));
+    hero.addEventListener('mouseenter', stop);
+    hero.addEventListener('mouseleave', start);
+    start();
+  }
+
+  // "Cada baño incluye": recorre los 8 cuidados; tarjetas en escritorio, líneas en celular.
+  const inc = document.querySelector<HTMLElement>('[data-includes]');
+  if (inc) {
+    const slides = [...inc.querySelectorAll<HTMLElement>('[data-inc-slide]')];
+    const cards = [...inc.querySelectorAll<HTMLButtonElement>('[data-inc-card]')];
+    const tabs = [...inc.querySelectorAll<HTMLButtonElement>('[data-inc-tab]')];
+    const title = inc.querySelector<HTMLElement>('[data-inc-title]');
+    const num = inc.querySelector<HTMLElement>('[data-inc-num]');
+    const text = inc.querySelector<HTMLElement>('[data-inc-text]');
+    const items = cards.map((c) => ({ title: c.querySelector('b')?.textContent ?? '', text: c.querySelector('.inc-card__txt > span')?.textContent ?? '' }));
+    const STEP = 2800;
+    let k = 0, timer: number | undefined;
+    const show = (n: number, animate = true) => {
+      k = (n + slides.length) % slides.length;
+      slides.forEach((s, j) => { s.classList.toggle('is-on', j === k); s.setAttribute('aria-hidden', String(j !== k)); });
+      cards.forEach((c, j) => { c.classList.toggle('is-on', j === k); c.classList.toggle('is-run', animate && j === k); });
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === k)); t.classList.toggle('is-done', j < k); t.classList.toggle('is-run', animate && j === k); t.classList.toggle('is-now', j === k); });
+      if (title) title.textContent = items[k].title;
+      if (num) num.textContent = `${k + 1} de ${slides.length}`;
+      if (text) text.textContent = items[k].text;
+    };
+    const start = () => { if (!reduce) { show(k); timer = window.setInterval(() => show(k + 1), STEP); } };
+    const stop = () => window.clearInterval(timer);
+    const pick = (j: number) => { stop(); show(j, false); };
+    cards.forEach((c, j) => c.addEventListener('click', () => pick(j)));
+    tabs.forEach((t, j) => t.addEventListener('click', () => pick(j)));
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { start(); o.disconnect(); } }, { threshold: .3 }).observe(inc);
+    show(0, false);
+  }
+</script>
+
+<style>
+  /* ---------- HÉROE ---------- */
+  .s-hero { display: flex; flex-direction: column; gap: 22px; padding: 24px 18px 56px; border-radius: var(--r-lg); background: var(--grad-primary); color: #fff; overflow: hidden; isolation: isolate; }
+  .s-hero__copy { display: flex; flex-direction: column; gap: 16px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: rgb(255 255 255 / .8); text-decoration: none; }
+  .back:hover { color: #fff; }
+  .back .ms { font-size: 18px; }
+  .s-hero h1 { font-size: clamp(42px, 12vw, 96px); font-weight: 700; line-height: .95; letter-spacing: -.045em; }
+  .s-hero h1 span { font-weight: 300; }
+  .s-hero__motto { font-size: clamp(20px, 4.4vw, 24px); line-height: 1.45; color: var(--peach); }
+  .s-hero__copy > p:not(.s-hero__motto) { font-size: 17px; line-height: 1.6; color: rgb(255 255 255 / .88); max-width: 42ch; }
+  .s-hero__actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .s-hero__actions > * { width: 100%; }
+
+  .arch { position: relative; height: 380px; margin: 8px 8px 0; }
+  .arch__ring { position: absolute; inset: -12px; border-radius: 999px 999px 40px 40px; border: 1px dashed rgb(255 255 255 / .4); }
+  .arch__frame { position: absolute; inset: 0; border-radius: 999px 999px 28px 28px; overflow: hidden; background: var(--surface-3); }
+  .arch__slide { position: absolute; inset: 0; opacity: 0; transition: opacity .9s var(--ease); }
+  .arch__slide.is-on { opacity: 1; }
+  .arch__slide :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .arch__pill { display: none; }
+  .arch__dots { position: absolute; left: 50%; bottom: -40px; transform: translateX(-50%); display: flex; gap: 2px; }
+  .arch__dots button { width: 34px; height: 28px; border: 0; padding: 0 5px; background: transparent; cursor: pointer; display: grid; place-items: center; }
+  .arch__dots span { display: block; width: 14px; height: 7px; border-radius: 999px; background: rgb(255 255 255 / .45); transition: width .3s var(--ease-out), background .3s; }
+  .arch__dots [aria-pressed="true"] span { width: 28px; background: #fff; }
+  @media (min-width: 768px) {
+    .s-hero { padding: 40px 40px 64px; border-radius: var(--r-xl); }
+    .s-hero__actions { flex-direction: row; flex-wrap: wrap; }
+    .s-hero__actions > * { width: auto; }
+    .arch { height: 460px; max-width: 420px; width: 100%; align-self: center; }
+  }
+  @media (min-width: 1100px) {
+    .s-hero { position: relative; display: block; height: 600px; padding: 0; }
+    .s-hero__copy { position: absolute; left: 56px; top: 64px; width: 560px; gap: 22px; }
+    .s-hero__copy > p:not(.s-hero__motto) { font-size: 18px; }
+    .arch { position: absolute; right: 64px; top: 40px; width: 440px; height: 520px; max-width: none; margin: 0; }
+    .arch__ring { inset: -14px; }
+    .arch__pill { display: flex; position: absolute; left: -60px; bottom: 56px; align-items: center; gap: 10px; z-index: 3; }
+    .arch__pill span { font: 600 16px/1 var(--font-sans); padding: 10px 16px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: var(--shadow-1); white-space: nowrap; }
+    .arch__pill i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgb(255 255 255 / .8); }
+    .arch__dots { bottom: -42px; }
+  }
+
+  /* ---------- CADA BAÑO INCLUYE ---------- */
+  .includes { padding-block: var(--section); display: flex; flex-direction: column; gap: 28px; }
+  .includes__body { display: flex; flex-direction: column; gap: 16px; }
+  .inc-arch { position: relative; height: 300px; border-radius: 150px 150px 24px 24px; overflow: hidden; background: var(--surface-3); }
+  .inc-arch__slide { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transform: scale(1); transition: opacity .7s var(--ease), transform 2.8s var(--ease); }
+  .inc-arch__slide.is-on { opacity: 1; transform: scale(1.06); }
+  .inc-arch__slide .ms { font-size: 96px; width: 96px; height: 96px; color: rgb(255 255 255 / .8); }
+  .inc-arch__label { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-radius: 999px; background: rgb(255 255 255 / .95); }
+  .inc-arch__label b { font: 600 17px/1.2 var(--font-sans); }
+  .inc-arch__label span { font: 600 15px/1 var(--font-sans); color: var(--primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .inc-lines { display: flex; gap: 6px; }
+  .inc-lines button { flex: 1; height: 24px; border: 0; padding: 0; background: transparent; cursor: pointer; display: flex; align-items: center; }
+  .inc-lines button > span { display: block; width: 100%; height: 4px; border-radius: 999px; background: var(--line-soft); overflow: hidden; }
+  .inc-lines i { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--primary); }
+  .inc-lines .is-done i, .inc-lines .is-now i { width: 100%; }
+  .inc-lines .is-run i { animation: fill-line 2.8s linear; }
+  .inc-desc { font-size: 17px; line-height: 1.55; color: var(--ink-muted); min-height: 3.1em; margin: 0 4px; }
+  .inc-list { display: none; }
+  @keyframes fill-line { from { width: 0; } to { width: 100%; } }
+
+  @media (min-width: 1000px) {
+    .includes { gap: 40px; }
+    .includes__body { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 40px; align-items: stretch; }
+    .inc-arch { height: auto; min-height: 360px; border-radius: 170px 170px 28px 28px; }
+    .inc-arch__label { left: 16px; right: 16px; bottom: 16px; }
+    .inc-lines, .inc-desc { display: none; }
+    .inc-list { display: grid; list-style: none; margin: 0; padding: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .inc-card { width: 100%; height: 100%; text-align: left; position: relative; overflow: hidden; display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: 20px; border: 0; cursor: pointer; background: var(--surface-2); color: var(--ink); transition: background .3s, box-shadow .3s, transform .3s var(--ease-out); }
+    .inc-card:hover { background: #fff; }
+    .inc-card.is-on { background: #fff; box-shadow: 0 0 0 2px var(--primary), 0 6px 14px rgb(54 41 84 / .12); transform: translateX(6px); }
+    .inc-card__icon { width: 46px; height: 46px; border-radius: 50%; flex: none; display: grid; place-items: center; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); color: var(--primary-strong); }
+    .inc-card__icon .ms { font-size: 24px; }
+    .inc-card__txt { display: flex; flex-direction: column; gap: 4px; }
+    .inc-card__txt b { font: 600 18px/1.3 var(--font-sans); }
+    .inc-card__txt span { font-size: 16px; line-height: 1.45; color: var(--ink-muted); }
+    .inc-card__bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--primary); }
+    .inc-card.is-run .inc-card__bar { animation: fill-line 2.8s linear forwards; }
+  }
+
+  /* ---------- PELO Y PIEL ---------- */
+  .coat { display: grid; gap: 24px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--surface-2); margin-bottom: var(--section); }
+  .coat__intro { display: flex; flex-direction: column; gap: 14px; }
+  .coat__title { font-size: clamp(30px, 6vw, 44px); }
+  .coat__intro p { font-size: 16px; line-height: 1.6; color: var(--ink-muted); }
+  .coat__grid { display: grid; gap: 12px; }
+  .coat__item { background: #fff; border-radius: var(--r-md); padding: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .coat__item b { font: 600 19px/1.3 var(--font-sans); }
+  .coat__item p { font-size: 17px; line-height: 1.55; color: var(--ink-muted); }
+  @media (min-width: 700px) { .coat__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+  @media (min-width: 1100px) {
+    .coat { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; padding: 56px; border-radius: var(--r-xl); }
+    .coat__item { padding: 24px; }
+  }
+
+  /* ---------- PRECIO ---------- */
+  .price { display: grid; gap: 22px; padding: 28px 20px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; margin-bottom: var(--section); }
+  .price__title { font-size: clamp(30px, 6vw, 44px); }
+  .price p { margin-top: 14px; font-size: 17px; line-height: 1.6; max-width: 48ch; }
+  .price__actions { display: flex; flex-direction: column; gap: 12px; }
+  .price__actions > * { width: 100%; }
+  @media (min-width: 768px) {
+    .price__actions { flex-direction: row; flex-wrap: wrap; }
+    .price__actions > * { width: auto; }
+  }
+  @media (min-width: 1100px) {
+    .price { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding: 56px; border-radius: var(--r-xl); }
+    .price__actions { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ---------- ASÍ SALEN ---------- */
+  .results { padding-bottom: var(--section); display: flex; flex-direction: column; gap: 24px; }
+  .results__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .results figure { margin: 0; aspect-ratio: 4 / 5; border-radius: 200px 200px 20px 20px; overflow: hidden; background: var(--surface-3); }
+  .results figure :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 1100px) {
+    .results { gap: 32px; }
+    .results__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+    .results figure { border-radius: 200px 200px 24px 24px; }
+  }
+</style>
