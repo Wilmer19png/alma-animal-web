@@ -65,10 +65,6 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       </div>
     </div>
 
-    <!-- Netlify detecta este formulario al publicar y guarda cada pedido (llega también al correo) -->
-    <form name="pedido" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
-      {['codigo', 'nombre', 'apellido', 'celular', 'correo', 'departamento', 'ciudad', 'direccion', 'barrio', 'indicaciones', 'productos', 'subtotal', 'envio', 'prioritario', 'total', 'obsequio', 'aviso', 'bot-field'].map((n) => <input name={n} />)}
-    </form>
 
     <div class="checkout__main" data-main hidden>
       <ol class="wiz" aria-label="Pasos de la compra">
@@ -178,6 +174,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
 <script>
   import { cart, money, type CartItem } from '../scripts/cart';
+  import { insert, supabaseReady } from '../scripts/supabase';
   import '../scripts/add-buttons';
 
   const root = document.querySelector<HTMLElement>('[data-checkout]')!;
@@ -339,13 +336,13 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     return !first;
   };
 
-  // El pedido se guarda en Netlify Forms (luego irá al gestor). El cliente no tiene que enviar nada:
+  // El pedido se guarda en Supabase (tabla pedidos, la lee el gestor). El cliente no tiene que enviar nada:
   // la tienda le escribe por WhatsApp para confirmar.
   const wa = (text: string) => `https://wa.me/${C.shop}?text=${encodeURIComponent(text)}`;
-  // en la vista previa (archivo o localhost) no hay Netlify: se simula que se guardó
-  const PREVIEW = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+  // en la vista previa sin Supabase configurado se simula que se guardó
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
   let sending = false;
-  let lastOrder: { code: string; fields: Record<string, string>; msg: string } | null = null;
+  let lastOrder: { code: string; fields: Record<string, string>; row: Record<string, unknown>; msg: string } | null = null;
 
   const buildOrder = () => {
     const v = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
@@ -357,7 +354,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     });
     const ship = t.ship === 0 ? 'Gratis' : money(t.ship ?? 0);
     const fields: Record<string, string> = {
-      'form-name': 'pedido', codigo: code,
+      codigo: code,
       nombre: v('nombre'), apellido: v('apellido'), celular: v('celular'), correo: v('correo'),
       departamento: dept.value, ciudad: city(), direccion: v('direccion'), barrio: v('barrio'), indicaciones: v('notas'),
       productos: lines.join('\n'), subtotal: money(t.sub), envio: ship, prioritario: t.prio ? 'Sí' : 'No',
@@ -373,7 +370,16 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       `Dirección: ${fields.direccion}, barrio ${fields.barrio}, ${fields.ciudad} (${fields.departamento})`,
       fields.indicaciones ? `Indicaciones: ${fields.indicaciones}` : ''
     ].filter((x, i, a) => x !== '' || (i > 0 && a[i - 1] !== '')).join('\n');
-    return { code, fields, msg };
+    // fila de la tabla pedidos (valores en pesos, sin formato)
+    const row = {
+      codigo: code, nombre: fields.nombre, apellido: fields.apellido, celular: fields.celular, correo: fields.correo || null,
+      departamento: fields.departamento, ciudad: fields.ciudad, direccion: fields.direccion, barrio: fields.barrio,
+      indicaciones: fields.indicaciones || null,
+      items: cart.items().map((it) => ({ id: it.id, nombre: it.name, variante: it.variant, precio: it.price, cantidad: it.qty })),
+      subtotal: t.sub, envio: t.ship ?? 0, prioritario: t.prio, total: t.total,
+      obsequio: t.sub >= GIFT, aviso_compras: fields.aviso === 'Sí'
+    };
+    return { code, fields, row, msg };
   };
 
   const show = (which: 'done' | 'fail') => {
@@ -398,13 +404,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   const send = async (order: NonNullable<typeof lastOrder>) => {
     setBusy(true);
-    let ok = PREVIEW;
-    if (!PREVIEW) {
-      try {
-        const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(order.fields).toString() });
-        ok = res.ok;
-      } catch { ok = false; }
-    }
+    const ok = PREVIEW || (await insert('pedidos', order.row));
     setBusy(false);
     if (ok) {
       done = true;

@@ -43,3 +43,12 @@ Cada página tiene tres partes, en este orden:
 
 Teléfonos, mensajes de WhatsApp, dirección y horario están en `src/data/site.ts`.
 Se cambian ahí una sola vez y se actualizan en todas las páginas.
+
+## Supabase (pedidos de la tienda)
+
+1. Crear el proyecto en supabase.com (plan gratis; se pausa tras 7 días sin uso).
+2. SQL Editor → pegar y ejecutar `supabase/01-pedidos.sql`.
+3. Project Settings → API: copiar la URL y la clave `anon`.
+4. Local: copiar `.env.example` como `.env` y llenarlo. Netlify: mismas variables en Environment variables.
+
+Sin estas variables, en local el pedido se simula (sale "¡Listo!") y en el sitio publicado se ofrece enviarlo por WhatsApp.
