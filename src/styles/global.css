@@ -153,7 +153,12 @@ a.card:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
 
 /* botón + para agregar al carrito */
 .add { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--peach); color: var(--peach-ink); display: grid; place-items: center; cursor: pointer; flex: none; transition: background .15s, transform .2s var(--ease-out); }
-.add:hover { background: #F0BC95; }
+.add:hover { background: #F0BC95; color: var(--peach-ink); }
 .add:active { transform: scale(.92); }
 .add.is-added { background: var(--primary); color: #fff; }
 .add--sm { width: 36px; height: 36px; }
+
+/* barra de envío gratis completa: degradado de la marca que se mueve suave */
+.is-full[data-free-fill] { background: linear-gradient(90deg, #FBCFAF, #E8A6B4, #B4A3D6, #655785, #B4A3D6, #FBCFAF) 0 0 / 200% 100% !important; animation: fill-shine 3s linear infinite; }
+@keyframes fill-shine { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .is-full[data-free-fill] { animation: none; } }

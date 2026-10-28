@@ -42,14 +42,33 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       <a class="btn btn--alma" href="/petshop">Ver productos<span class="ms" aria-hidden="true">arrow_forward</span></a>
     </div>
 
-    <!-- pedido enviado -->
+    <!-- pedido recibido -->
     <div class="panel sent" role="status" data-done hidden>
       <span class="sent__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
       <h2>¡Listo, <span data-done-name></span>!</h2>
-      <p>Se abrió WhatsApp con tu pedido. <b>Envía el mensaje</b> y te respondemos para confirmar el pago y la entrega.</p>
-      <p class="sent__alt">¿No se abrió? <a href="#" data-done-link target="_blank" rel="noopener">Toca aquí para enviarlo</a>.</p>
-      <a class="btn btn--outlined" href="/petshop">Seguir comprando</a>
+      <p>Recibimos tu pedido <b class="sent__code" data-done-code></b>. En breve te escribimos por WhatsApp al <b data-done-cel></b> para confirmar tus datos, el pago y la entrega.</p>
+      <div class="sent__wa">
+        <span>¿Prefieres escribirnos primero?</span>
+        <a class="wa-o" href="#" data-done-wa target="_blank" rel="noopener"><WaIcon size={22} />Quiero confirmar mi pedido</a>
+      </div>
+      <a class="link-btn" href="/petshop"><span class="ms" aria-hidden="true">arrow_back</span>Seguir comprando</a>
     </div>
+
+    <!-- no se pudo registrar: el pedido sale completo por WhatsApp -->
+    <div class="panel sent sent--warn" role="alert" data-fail hidden>
+      <span class="sent__ic" aria-hidden="true"><span class="ms">wifi_off</span></span>
+      <h2>No pudimos registrar tu pedido</h2>
+      <p>Revisa tu conexión e inténtalo de nuevo, o envíanos el pedido por WhatsApp: ya va escrito con todos tus datos.</p>
+      <div class="sent__wa">
+        <button class="btn btn--outlined" type="button" data-retry>Intentar de nuevo</button>
+        <a class="wa-o" href="#" data-fail-wa target="_blank" rel="noopener"><WaIcon size={22} />Enviar por WhatsApp</a>
+      </div>
+    </div>
+
+    <!-- Netlify detecta este formulario al publicar y guarda cada pedido (llega también al correo) -->
+    <form name="pedido" data-netlify="true" netlify-honeypot="bot-field" hidden aria-hidden="true">
+      {['codigo', 'nombre', 'apellido', 'celular', 'correo', 'departamento', 'ciudad', 'direccion', 'barrio', 'indicaciones', 'productos', 'subtotal', 'envio', 'prioritario', 'total', 'obsequio', 'aviso', 'bot-field'].map((n) => <input name={n} />)}
+    </form>
 
     <div class="checkout__main" data-main hidden>
       <ol class="wiz" aria-label="Pasos de la compra">
@@ -81,7 +100,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       </div>
 
       <!-- PASO 2 · ENVÍO -->
-      <form class="panel ship" data-step="1" hidden novalidate>
+      <form class="panel ship" data-step="1" data-ship-form hidden novalidate>
         <div class="ship__head">
           <h2 class="panel__t" tabindex="-1">Datos de envío</h2>
           <p class="hint">No necesitas crear cuenta. Los campos con <span class="req">*</span> son obligatorios.</p>
@@ -126,7 +145,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
         <h2 id="res" class="panel__t">Resumen</h2>
         <div class="meter">
           <span class="meter__txt" data-free-txt></span>
-          <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" data-free-bar><i></i></div>
+          <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" data-free-bar><i data-free-fill></i></div>
         </div>
         <div class="meter meter--gift">
           <span class="meter__txt" data-gift-txt></span>
@@ -140,9 +159,9 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
         </dl>
         <p class="hint" data-ship-note>El envío se calcula con tu ciudad en el siguiente paso.</p>
         <button class="btn btn--alma btn--go" type="button" data-next>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
-        <button class="btn btn--alma btn--go" type="button" data-place hidden><WaIcon size={22} class="" />Confirmar pedido</button>
+        <button class="btn btn--alma btn--go" type="button" data-place hidden><span data-place-txt>Confirmar pedido</span><span class="ms" aria-hidden="true">arrow_forward</span></button>
         <button class="backlink" type="button" data-back hidden><span class="ms" aria-hidden="true">arrow_back</span>Volver al carrito</button>
-        <p class="hint">Al confirmar se abre WhatsApp con tu pedido. Ahí coordinamos el pago: contraentrega, transferencia o en el consultorio.</p>
+        <p class="hint">Al confirmar te escribimos por WhatsApp para coordinar el pago: contraentrega, transferencia o en el consultorio.</p>
         <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
         {DEMO && <p class="hint">Precios de ejemplo.</p>}
       </div>
@@ -167,7 +186,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   const LOCAL = C.local!.split('|');
   const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
   const $$ = <T extends HTMLElement = HTMLElement>(s: string) => [...document.querySelectorAll<T>(s)];
-  const form = $<HTMLFormElement>('form');
+  const form = $<HTMLFormElement>("[data-ship-form]");
   const announce = document.querySelector<HTMLElement>('[data-announce]')!;
   let step = 0;
   let done = false;
@@ -255,7 +274,9 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     if (local) { freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>Envío <b>gratis</b> en ${city()}.</span>`; pct = 100; }
     else if (t.sub >= FREE) freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>¡Lograste el envío <b>gratis</b>${step === 1 && city() ? ' a ' + city() : ' a toda Colombia'}!</span>`;
     else freeTxt.innerHTML = `<span class="ms" aria-hidden="true">local_shipping</span><span>Te faltan <b>${money(FREE - t.sub)}</b> para envío <b>gratis</b> a toda Colombia.</span>`;
-    freeBar.querySelector('i')!.style.width = pct + '%'; freeBar.setAttribute('aria-valuenow', String(pct));
+    const fill = freeBar.querySelector('i')!;
+    fill.style.width = pct + '%';
+    fill.classList.toggle('is-full', pct >= 100); freeBar.setAttribute('aria-valuenow', String(pct));
 
     const gp = Math.min(100, Math.round((t.sub / GIFT) * 100));
     $('[data-gift-txt]').innerHTML = t.sub >= GIFT
@@ -318,41 +339,97 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     return !first;
   };
 
-  const place = () => {
-    if (!validate()) return;
+  // El pedido se guarda en Netlify Forms (luego irá al gestor). El cliente no tiene que enviar nada:
+  // la tienda le escribe por WhatsApp para confirmar.
+  const wa = (text: string) => `https://wa.me/${C.shop}?text=${encodeURIComponent(text)}`;
+  // en la vista previa (archivo o localhost) no hay Netlify: se simula que se guardó
+  const PREVIEW = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+  let sending = false;
+  let lastOrder: { code: string; fields: Record<string, string>; msg: string } | null = null;
+
+  const buildOrder = () => {
     const v = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
     const t = totals();
-    const items = cart.items();
-    const lines = items.map((it) => {
+    const code = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
+    const lines = cart.items().map((it) => {
       const vr = it.variant && !/^(único|única)$/i.test(it.variant) ? ` (${it.variant})` : '';
-      return `• ${it.qty} × ${it.name}${vr} — ${money(it.price * it.qty)}`;
+      return `${it.qty} × ${it.name}${vr} — ${money(it.price * it.qty)}`;
     });
+    const ship = t.ship === 0 ? 'Gratis' : money(t.ship ?? 0);
+    const fields: Record<string, string> = {
+      'form-name': 'pedido', codigo: code,
+      nombre: v('nombre'), apellido: v('apellido'), celular: v('celular'), correo: v('correo'),
+      departamento: dept.value, ciudad: city(), direccion: v('direccion'), barrio: v('barrio'), indicaciones: v('notas'),
+      productos: lines.join('\n'), subtotal: money(t.sub), envio: ship, prioritario: t.prio ? 'Sí' : 'No',
+      total: money(t.total), obsequio: t.sub >= GIFT ? 'Snack dental' : 'No',
+      aviso: (form.elements.namedItem('aviso') as HTMLInputElement).checked ? 'Sí' : 'No'
+    };
+    // por si no se puede guardar: el pedido completo listo para WhatsApp
     const msg = [
-      'Hola, Alma Animal. Quiero hacer este pedido:',
-      ...lines,
-      `Subtotal: ${money(t.sub)}`,
-      `Envío: ${t.ship === 0 ? 'gratis' : money(t.ship ?? 0)}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`,
-      `Total: ${money(t.total)}`,
-      t.sub >= GIFT ? 'Con obsequio: snack dental 🎁' : '',
-      '',
-      `Para: ${v('nombre')} ${v('apellido')} · ${v('celular')}${v('correo') ? ' · ' + v('correo') : ''}`,
-      `Dirección: ${v('direccion')}, barrio ${v('barrio')}, ${city()} (${dept.value})`,
-      v('notas') ? `Indicaciones: ${v('notas')}` : '',
-      (form.elements.namedItem('aviso') as HTMLInputElement).checked ? 'Autorizo mostrar mi nombre y ciudad en los avisos de compra.' : ''
+      `Hola, Alma Animal. Quiero hacer este pedido (${code}):`, ...lines.map((l) => '• ' + l),
+      `Subtotal: ${fields.subtotal}`, `Envío: ${ship}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`, `Total: ${fields.total}`,
+      t.sub >= GIFT ? 'Con obsequio: snack dental 🎁' : '', '',
+      `Para: ${fields.nombre} ${fields.apellido} · ${fields.celular}${fields.correo ? ' · ' + fields.correo : ''}`,
+      `Dirección: ${fields.direccion}, barrio ${fields.barrio}, ${fields.ciudad} (${fields.departamento})`,
+      fields.indicaciones ? `Indicaciones: ${fields.indicaciones}` : ''
     ].filter((x, i, a) => x !== '' || (i > 0 && a[i - 1] !== '')).join('\n');
-    const url = `https://wa.me/${C.shop}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank', 'noopener');
-    done = true;
-    $('[data-done-name]').textContent = v('nombre');
-    $<HTMLAnchorElement>('[data-done-link]').href = url;
-    $('[data-done]').hidden = false;
+    return { code, fields, msg };
+  };
+
+  const show = (which: 'done' | 'fail') => {
+    $('[data-done]').hidden = which !== 'done';
+    $('[data-fail]').hidden = which !== 'fail';
     $('[data-main]').hidden = true;
     $('[data-summary]').hidden = true;
     document.querySelector<HTMLElement>('[data-mbar]')!.hidden = true;
     document.documentElement.classList.remove('has-mbar');
-    cart.clear();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    root.querySelector<HTMLElement>(which === 'done' ? '[data-done] h2' : '[data-fail] h2')?.setAttribute('tabindex', '-1');
+    root.querySelector<HTMLElement>(which === 'done' ? '[data-done] h2' : '[data-fail] h2')?.focus({ preventScroll: true });
   };
+
+  const setBusy = (on: boolean) => {
+    sending = on;
+    $('[data-place-txt]').textContent = on ? 'Enviando tu pedido…' : 'Confirmar pedido';
+    document.querySelector('[data-mbar-txt]')!.textContent = on ? 'Enviando…' : 'Confirmar pedido';
+    $<HTMLButtonElement>('[data-place]').disabled = on;
+    document.querySelector<HTMLButtonElement>('[data-mbar-btn]')!.disabled = on;
+  };
+
+  const send = async (order: NonNullable<typeof lastOrder>) => {
+    setBusy(true);
+    let ok = PREVIEW;
+    if (!PREVIEW) {
+      try {
+        const res = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(order.fields).toString() });
+        ok = res.ok;
+      } catch { ok = false; }
+    }
+    setBusy(false);
+    if (ok) {
+      done = true;
+      $('[data-done-name]').textContent = order.fields.nombre;
+      $('[data-done-code]').textContent = order.code;
+      $('[data-done-cel]').textContent = order.fields.celular;
+      $<HTMLAnchorElement>('[data-done-wa]').href = wa(`Hola, Alma Animal. Quiero confirmar mi pedido ${order.code}.`);
+      cart.clear();
+      show('done');
+    } else {
+      $<HTMLAnchorElement>('[data-fail-wa]').href = wa(order.msg);
+      show('fail');
+    }
+  };
+
+  const place = () => {
+    if (sending || !validate()) return;
+    lastOrder = buildOrder();
+    send(lastOrder);
+  };
+  $('[data-retry]').addEventListener('click', () => {
+    $('[data-fail]').hidden = true;
+    $('[data-main]').hidden = false; $('[data-summary]').hidden = false;
+    if (lastOrder) send(lastOrder);
+  });
   $('[data-place]').addEventListener('click', place);
   document.querySelector('[data-mbar-btn]')!.addEventListener('click', () => (step === 0 ? go(1) : place()));
   form.addEventListener('submit', (e) => { e.preventDefault(); place(); });
@@ -511,7 +588,17 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   .sent__ic { background: #B8F1B9; color: #1D5128; }
   .empty__ic .ms, .sent__ic .ms { font-size: 34px; }
   .sent__ic .ms { font-variation-settings: "FILL" 1; }
-  .sent__alt { font-size: 15px; }
+  .sent h2:focus { outline: none; }
+  .sent__code { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .sent__wa { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; padding: 16px 14px; border-radius: 20px; background: var(--surface-2); width: 100%; max-width: 440px; }
+  .sent__wa > span { font: 500 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .sent__wa .wa-o { width: 100%; }
+  .sent--warn .sent__ic { background: #FFDDB2; color: #624000; }
+  .sent--warn .sent__wa { flex-direction: row; flex-wrap: wrap; justify-content: center; background: none; padding: 0; }
+  .sent--warn .sent__wa > * { flex: 1 1 180px; }
+  .link-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 8px; font: 600 15px/1 var(--font-sans); color: var(--primary); text-decoration: none; }
+  .link-btn:hover { text-decoration: underline; }
+  .link-btn .ms { font-size: 18px; }
   .empty .btn, .sent .btn { margin-top: 8px; }
 
   /* barra inferior (celular) */

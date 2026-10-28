@@ -10,6 +10,7 @@ document.addEventListener('click', (e) => {
   cart.add(item);
   live!.textContent = `${item.name} quedó en tu carrito.`;
   const ic = btn.querySelector('.ms');
+  const was = ic?.textContent ?? 'add';
   btn.classList.add('is-added'); if (ic) ic.textContent = 'check';
-  window.setTimeout(() => { btn.classList.remove('is-added'); if (ic) ic.textContent = 'add'; }, 1200);
+  window.setTimeout(() => { btn.classList.remove('is-added'); if (ic) ic.textContent = was; }, 1200);
 });

@@ -40,7 +40,7 @@ const subLabel = (v: Product['variants'][number]) => (v.stock === 0 ? 'Agotado' 
     <div class="shipline" role="status" data-shipline>
       <span class="ms" aria-hidden="true">local_shipping</span>
       <span class="shipline__txt" data-ship-msg>Envío gratis a toda Colombia desde <b>{money(SHIPPING.freeFrom)}</b></span>
-      <span class="shipline__bar" aria-hidden="true"><i data-ship-bar></i></span>
+      <span class="shipline__bar" aria-hidden="true"><i data-ship-bar data-free-fill></i></span>
       <span class="shipline__note">En Pereira y Dosquebradas siempre es gratis</span>
     </div>
   </div>
@@ -198,6 +198,7 @@ const subLabel = (v: Product['variants'][number]) => (v.stock === 0 ? 'Agotado' 
     const p = progress(sub);
     shipMsg.innerHTML = p.toFree > 0 ? `Te faltan <b>${money(p.toFree)}</b> para envío gratis<span class="hide-sm"> a toda Colombia</span>` : '<b>¡Ya tienes envío gratis</b><span class="hide-sm"> a toda Colombia</span>!';
     shipBar.style.width = p.freePct + '%';
+    shipBar.classList.toggle('is-full', p.freePct >= 100);
     gift.innerHTML = p.toGift > 0 ? `Agrega <b>${money(p.toGift)}</b> más a tu carrito y llévate un <b>obsequio</b>.` : '¡Tu pedido ya lleva un <b>snack dental</b> de obsequio!';
   };
   paintCart();

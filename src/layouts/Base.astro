@@ -9,7 +9,7 @@ const { title, description, waMessage, waArea = 'vet' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const waHref = whatsapp[waArea](waMessage);
 // subconjunto de íconos (deben ir en orden alfabético)
-const ICONS = ['add', 'arrow_back', 'arrow_forward', 'bolt', 'brush', 'call', 'check', 'check_circle', 'chevron_right', 'clean_hands', 'close', 'content_cut', 'cookie', 'delete', 'dentistry', 'hearing', 'home_health', 'local_shipping', 'location_on', 'loyalty', 'map', 'medical_services', 'menu', 'person', 'pest_control', 'pets', 'pill', 'public', 'radiology', 'redeem', 'remove', 'search', 'set_meal', 'shopping_bag', 'shower', 'soap', 'spa', 'sports_baseball', 'stethoscope', 'storefront', 'tune', 'vaccines', 'waves'];
+const ICONS = ['add', 'add_shopping_cart', 'arrow_back', 'arrow_forward', 'bolt', 'brush', 'call', 'check', 'check_circle', 'chevron_right', 'clean_hands', 'close', 'content_cut', 'cookie', 'delete', 'dentistry', 'hearing', 'home_health', 'local_shipping', 'location_on', 'loyalty', 'map', 'medical_services', 'menu', 'person', 'pest_control', 'pets', 'pill', 'public', 'radiology', 'redeem', 'remove', 'search', 'set_meal', 'shopping_bag', 'shower', 'soap', 'spa', 'sports_baseball', 'stethoscope', 'storefront', 'tune', 'vaccines', 'waves', 'wifi_off'];
 ---
 <!doctype html>
 <html lang="es-CO">

@@ -117,7 +117,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
       <div class="mini__total" data-mini-filled hidden><span>Subtotal</span><b data-mini-sub>$0</b></div>
       <div class="mini__ship">
         <span data-ship-text><span class="ms" aria-hidden="true">local_shipping</span> Envío gratis a toda Colombia desde <b>{money(SHIPPING.freeFrom)}</b></span>
-        <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ship-bar><i></i></div>
+        <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ship-bar><i data-free-fill></i></div>
         <small>En Pereira y Dosquebradas el envío siempre es gratis.</small>
       </div>
       <p class="mini__gift" data-gift><span class="ms" aria-hidden="true">redeem</span><span data-gift-text></span></p>
@@ -264,7 +264,9 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
       : '<span class="ms" aria-hidden="true">local_shipping</span> <b>¡Tu envío es gratis</b> a toda Colombia!';
     const bar = mini.querySelector<HTMLElement>('[data-ship-bar]')!;
     bar.setAttribute('aria-valuenow', String(p.freePct));
-    bar.querySelector('i')!.style.width = p.freePct + '%';
+    const fill = bar.querySelector('i')!;
+    fill.style.width = p.freePct + '%';
+    fill.classList.toggle('is-full', p.freePct >= 100);
 
     const gift = mini.querySelector<HTMLElement>('[data-gift]')!;
     gift.hidden = !has;

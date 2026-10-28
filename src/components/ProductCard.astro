@@ -22,8 +22,8 @@ const detail = variantSummary(p);
     <div class="prod__buy">
       <span class="prod__price">{from && <small>Desde</small>}<b>{money(minPrice(p))}</b>{v.was && !multi && <s>{money(v.was)}</s>}</span>
       {stock === 0 ? null : multi
-        ? <a class="pick" href={productUrl(p)} aria-label={`Elegir ${p.variantKind?.toLowerCase() ?? 'opción'} de ${p.name}`}>Elegir</a>
-        : <button class="add" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify(cartPayload(p, v))}><span class="ms" aria-hidden="true">add</span></button>}
+        ? <a class="add" href={productUrl(p)} aria-label={`Agregar ${p.name}: elige ${p.variantKind?.toLowerCase() ?? 'la opción'}`}><span class="ms" aria-hidden="true">add_shopping_cart</span></a>
+        : <button class="add" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify(cartPayload(p, v))}><span class="ms" aria-hidden="true">add_shopping_cart</span></button>}
     </div>
   </div>
 </article>
@@ -55,8 +55,8 @@ const detail = variantSummary(p);
   .prod__price small { width: 100%; font: 500 12px/1.3 var(--font-sans); color: var(--ink-muted); }
   .prod__price b { font: 700 16px/1.1 var(--font-sans); font-variant-numeric: tabular-nums; }
   .prod__price s { font-size: 13px; color: var(--ink-muted); }
-  .pick { display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border-radius: 999px; background: var(--surface-3); color: var(--primary); font: 600 14px/1 var(--font-sans); text-decoration: none; flex: none; }
-  .pick:hover { background: #ECE6ED; color: var(--primary-strong); }
+  .prod__buy .add { width: 44px; height: 44px; text-decoration: none; }
+  .prod__buy .add .ms { font-size: 22px; }
   @media (min-width: 768px) {
     .prod { border-radius: var(--r-md); }
     .prod__body { padding: 16px; }
