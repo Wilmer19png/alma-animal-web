@@ -99,6 +99,9 @@ const waAsk = whatsapp.vet('Hola, doctora. Tengo una pregunta sobre mi mascota.'
     document.querySelector<HTMLElement>('[data-more-empty]')!.hidden = rest > 0;
   };
   chips.forEach((c) => c.addEventListener('click', () => pick(c.dataset.bcat ?? '')));
+  // /blog#Gatos abre esa categoría (lo usan las migas del artículo)
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  if (chips.some((c) => c.dataset.bcat === fromHash && fromHash)) pick(fromHash);
 </script>
 
 <style>
