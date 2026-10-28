@@ -37,6 +37,16 @@ export const DOCTOR = {
   tp: 'TP 51206'
 };
 
+// Datos legales que exigen la Ley 1581 de 2012 (datos personales) y la Ley 1480 de 2011 (consumidor).
+// Lo que está en null sale como "Pendiente" en las páginas legales: hay que llenarlo antes de publicar.
+export const LEGAL = {
+  holder: 'Mariana Hoyos Giraldo', // responsable del tratamiento y vendedora (persona natural o empresa)
+  idLabel: 'NIT', // 'NIT' o 'C.C.'
+  id: null as string | null,
+  email: null as string | null, // correo para consultas, reclamos y retracto
+  updated: '2026-10-28' // fecha de la última versión de las políticas
+};
+
 export const NAV = [
   { href: '/', label: 'Inicio' },
   { href: '/consultorio', label: 'Consultorio' },

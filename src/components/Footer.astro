@@ -43,8 +43,15 @@ import { PHONES, ADDRESS, HOURS, SOCIAL, DOCTOR } from '../data/site';
       <nav aria-label="Pie de página">
         <a href="/consultorio">Consultorio</a><a href="/spa">Spa</a><a href="/petshop">Petshop</a><a href="/blog">Blog</a>
       </nav>
-      <span>{DOCTOR.name} · MVZ · {DOCTOR.tp} · <a href="/privacidad">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+      <span>{DOCTOR.name} · MVZ · {DOCTOR.tp}</span>
     </div>
+    <nav class="foot__legal" aria-label="Información legal">
+      <a href="/privacidad">Política de tratamiento de datos</a>
+      <a href="/terminos">Términos y condiciones</a>
+      <a href="/terminos#retracto">Derecho de retracto</a>
+      <a href="/terminos#pqr">Peticiones, quejas y reclamos</a>
+      <a href="https://www.sic.gov.co" target="_blank" rel="noopener">Superintendencia de Industria y Comercio</a>
+    </nav>
   </footer>
 </div>
 
@@ -66,7 +73,8 @@ import { PHONES, ADDRESS, HOURS, SOCIAL, DOCTOR } from '../data/site';
   .foot__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .foot__bottom { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgb(255 255 255 / .14); font-size: 15px; color: rgb(255 255 255 / .7); }
   .foot__bottom nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  .foot__bottom span a { text-decoration: underline; }
+  .foot__legal { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 16px; font-size: 14px; color: rgb(255 255 255 / .7); }
+  .foot__legal a { text-decoration: underline; text-underline-offset: 3px; }
   @media (min-width: 768px) {
     .foot { border-radius: var(--r-xl); padding: 64px 48px 32px; }
     .foot__art { width: 520px; right: -40px; }

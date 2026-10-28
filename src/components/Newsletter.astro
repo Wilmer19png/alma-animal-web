@@ -2,6 +2,7 @@
 // Boletín "Un consejo al mes" (Blog y Artículo). Guarda el correo en Supabase (tabla suscriptores).
 // El envío de los correos se hará después desde el gestor con un servicio de correo.
 interface Props { origen?: 'blog' | 'articulo' }
+import { LEGAL } from '../data/site';
 const { origen = 'blog' } = Astro.props;
 ---
 <section class="wrap nl-wrap" aria-labelledby="nl">
@@ -10,7 +11,7 @@ const { origen = 'blog' } = Astro.props;
       <h2 id="nl">Un consejo <b>al mes</b></h2>
       <p>Te llega al correo el artículo nuevo de la doctora. Sin promociones de más.</p>
     </div>
-    <form class="nl__form" novalidate data-newsletter data-origen={origen}>
+    <form class="nl__form" novalidate data-newsletter data-origen={origen} data-legal={LEGAL.updated}>
       <div class="nl__row">
         <label class="nl__field"><span class="sr-only">Tu correo</span><input type="email" name="correo" placeholder="Ej: laura@correo.com" autocomplete="email" required /></label>
         <button class="btn nl__btn" type="submit"><span data-nl-txt>Suscribirme</span></button>
@@ -38,7 +39,7 @@ const { origen = 'blog' } = Astro.props;
       if (!mail.value.trim() || !mail.checkValidity()) { say('Revisa tu correo. Ej: laura@correo.com'); mail.focus(); return; }
       if (!ok.checked) { say('Para enviarte el boletín necesitamos tu autorización.'); ok.focus(); return; }
       say(''); btn.disabled = true; form.querySelector('[data-nl-txt]')!.textContent = 'Enviando…';
-      const res = PREVIEW ? 'ok' : await insert('suscriptores', { correo: mail.value.trim(), acepto_datos: true, origen: form.dataset.origen });
+      const res = PREVIEW ? 'ok' : await insert('suscriptores', { correo: mail.value.trim(), acepto_datos: true, version_politicas: form.dataset.legal, origen: form.dataset.origen });
       btn.disabled = false; form.querySelector('[data-nl-txt]')!.textContent = 'Suscribirme';
       if (res === 'error') { say('No pudimos guardar tu correo. Revisa tu conexión e inténtalo de nuevo.'); return; }
       if (res === 'duplicado') box.querySelector('[data-nl-ok-txt]')!.textContent = 'Ese correo ya está suscrito. Te llega el próximo consejo de la doctora.';

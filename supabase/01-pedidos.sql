@@ -26,7 +26,10 @@ create table if not exists public.pedidos (
   prioritario   boolean not null default false,
   total         integer not null check (total >= 0),
   obsequio      boolean not null default false,
-  aviso_compras boolean not null default false        -- permiso para "Laura, de Pereira, compró…"
+  aviso_compras boolean not null default false,       -- permiso para "Laura, de Pereira, compró…"
+  -- prueba de la autorización (Ley 1581): aceptó términos y política, y qué versión
+  acepto_terminos boolean not null check (acepto_terminos),
+  version_politicas text not null check (length(version_politicas) <= 20)
 );
 
 create index if not exists pedidos_creado_idx on public.pedidos (creado desc);

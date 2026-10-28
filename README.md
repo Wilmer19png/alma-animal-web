@@ -52,3 +52,12 @@ Se cambian ahí una sola vez y se actualizan en todas las páginas.
 4. Local: copiar `.env.example` como `.env` y llenarlo. Netlify: mismas variables en Environment variables.
 
 Sin estas variables, en local el pedido se simula (sale "¡Listo!") y en el sitio publicado se ofrece enviarlo por WhatsApp.
+
+## Antes de publicar (legal)
+
+- [ ] Llenar `LEGAL` en `src/data/site.ts`: NIT o cédula y correo para solicitudes (la compilación avisa si faltan).
+- [ ] Que la doctora o un abogado revise `/privacidad` y `/terminos`.
+- [ ] Revisar si el negocio debe inscribir sus bases de datos en el Registro Nacional de Bases de Datos (RNBD) de la SIC
+      (obligatorio para sociedades con activos totales mayores a 100.000 UVT).
+- [ ] Guardar en el consultorio el formato físico de autorización de datos para los clientes que se registren allá.
+- [ ] Quitar los datos de ejemplo (`DEMO` en `src/data/shop.ts` y `BLOG_DEMO` en `src/data/blog.ts`).

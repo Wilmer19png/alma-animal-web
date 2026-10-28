@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
-import { whatsapp, PHONES } from '../data/site';
+import { whatsapp, PHONES, LEGAL } from '../data/site';
 import { DEMO, PRODUCTS, SHIPPING, GIFT, money, stockOf, productUrl, cartPayload } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
@@ -32,7 +32,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   </div>
 
   <section class="wrap checkout" aria-label="Carrito y datos de envío" data-checkout data-shop={PHONES.shop.e164}
-    data-free={SHIPPING.freeFrom} data-flat={SHIPPING.flat} data-prio-cost={SHIPPING.priority} data-gift={GIFT.from} data-local={SHIPPING.localCities.join('|')}>
+    data-free={SHIPPING.freeFrom} data-flat={SHIPPING.flat} data-prio-cost={SHIPPING.priority} data-gift={GIFT.from} data-local={SHIPPING.localCities.join('|')} data-legal={LEGAL.updated}>
 
     <!-- carrito vacío -->
     <div class="panel empty" data-empty hidden>
@@ -130,7 +130,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <b class="prio__price">+{money(SHIPPING.priority)}</b>
         </label>
         <label class="consent"><input type="checkbox" name="aviso" /><span>Pueden mostrar mi <b>nombre (sin apellido) y mi ciudad</b> en los avisos de compra de la página. Ej: «Laura, de Pereira, compró…». Es opcional.</span></label>
-        <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto la <a href="/privacidad">política de tratamiento de datos</a> (Ley 1581 de 2012). <span class="req">*</span></span></label>
+        <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos" target="_blank">términos y condiciones</a> y la <a href="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012). <span class="req">*</span></span></label>
         <span class="err" data-err-for="datos">Para enviar tu pedido necesitamos tu autorización.</span>
       </form>
     </div>
@@ -377,7 +377,8 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       indicaciones: fields.indicaciones || null,
       items: cart.items().map((it) => ({ id: it.id, nombre: it.name, variante: it.variant, precio: it.price, cantidad: it.qty })),
       subtotal: t.sub, envio: t.ship ?? 0, prioritario: t.prio, total: t.total,
-      obsequio: t.sub >= GIFT, aviso_compras: fields.aviso === 'Sí'
+      obsequio: t.sub >= GIFT, aviso_compras: fields.aviso === 'Sí',
+      acepto_terminos: true, version_politicas: C.legal
     };
     return { code, fields, row, msg };
   };

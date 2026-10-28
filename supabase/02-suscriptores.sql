@@ -7,6 +7,7 @@ create table if not exists public.suscriptores (
   creado      timestamptz not null default now(),
   origen      text not null default 'blog' check (origen in ('blog', 'articulo')),
   acepto_datos boolean not null check (acepto_datos),     -- Ley 1581 de 2012
+  version_politicas text not null check (length(version_politicas) <= 20),
   activo      boolean not null default true
 );
 
