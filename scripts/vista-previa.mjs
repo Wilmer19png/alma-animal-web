@@ -5,6 +5,7 @@
 import { cpSync, readdirSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { execSync } from 'node:child_process';
+import { buildSync } from 'esbuild';
 
 execSync('npx astro build', { stdio: 'inherit', env: { ...process.env, VISTA: '1' } });
 
@@ -19,6 +20,18 @@ const files = walk(OUT);
 // "producto/shampoo" para dist/producto/shampoo.html
 const pages = new Set(files.map((f) => relative(OUT, f).replace(/\\/g, '/').replace(/\.html$/, '')));
 
+// Abriendo con doble clic (file://) el navegador bloquea los scripts tipo módulo que se cargan
+// desde un archivo. Cada uno se empaqueta como script clásico (con sus importaciones adentro).
+const done = new Map();
+const classic = (name) => {
+  if (!done.has(name)) {
+    const out = `${name}.vista.js`;
+    buildSync({ entryPoints: [join(OUT, '_astro', `${name}.js`)], bundle: true, format: 'iife', outfile: join(OUT, '_astro', out), logLevel: 'error' });
+    done.set(name, out);
+  }
+  return done.get(name);
+};
+
 for (const f of files) {
   const depth = relative(OUT, f).split(/[\\/]/).length - 1;
   const up = depth ? '../'.repeat(depth) : './';
@@ -29,6 +42,7 @@ for (const f of files) {
     return match;
   };
   const html = readFileSync(f, 'utf8')
+    .replace(/<script type="module" src="\/_astro\/([^"]+)\.js"><\/script>/g, (m, name) => `<script defer src="/_astro/${classic(name)}"></script>`)
     .replace(/href="\/([a-z0-9/-]*)(#[^"]*)?"/g, pageLink)
     .replace(/(src|href|srcset)="\/(?!\/)/g, `$1="${up}`)
     .replace(/, \/_astro\//g, `, ${up}_astro/`);
