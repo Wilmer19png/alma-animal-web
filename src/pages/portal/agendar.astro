@@ -1,0 +1,11 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+<PortalLayout title="Agendar">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Agendar from '../../portal/Agendar';
+    montar(Agendar);
+  </script>
+</PortalLayout>

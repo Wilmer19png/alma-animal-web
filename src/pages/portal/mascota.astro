@@ -1,0 +1,11 @@
+---
+import PortalLayout from '../../layouts/PortalLayout.astro';
+---
+<PortalLayout title="Mis mascotas">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Mascota from '../../portal/Mascota';
+    montar(Mascota);
+  </script>
+</PortalLayout>

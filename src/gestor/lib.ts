@@ -13,7 +13,7 @@ export const DEMO = !sb;
 // Enlaces entre páginas: en el sitio son /gestor/pedidos; abriendo la vista previa con doble clic
 // (file://) son archivos .html relativos.
 const enArchivo = () => typeof location !== 'undefined' && location.protocol === 'file:';
-const subir = () => (/\/gestor\/[^/]*$/.test(location.pathname.replace(/\\/g, '/')) ? '../' : './');
+const subir = () => (/\/(gestor|portal)\/[^/]*$/.test(location.pathname.replace(/\\/g, '/')) ? '../' : './');
 export const link = (path: string) => {
   if (!enArchivo()) return path;
   const [p, hash = ''] = path.replace(/^\//, '').split('#');

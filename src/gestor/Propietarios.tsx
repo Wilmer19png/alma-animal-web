@@ -116,7 +116,10 @@ function Ficha({ p, mascotas, volver, cambiado, avisar }: { p: Propietario; masc
   };
   const invitar = async () => {
     if (!p.correo) { avisar('Primero agrega su correo.'); return; }
-    try { cambiado(await actualizarPropietario(p.id, { portal: 'por_invitar' }), 'Listo: se le enviará el correo cuando el portal esté activo'); }
+    const msg = `Hola, ${p.nombre} 🐾 Te escribimos de Alma Animal. Ya puedes ver el carnet, la historia y las citas de tus mascotas en tu portal: ${location.origin}/portal/ingresar
+Entra con tu correo ${p.correo} y toca «Enviarme un enlace para entrar». Desde ahí también puedes agendar.`;
+    window.open(waLink(p.celular, msg), '_blank', 'noopener');
+    try { cambiado(await actualizarPropietario(p.id, { portal: p.portal === 'activo' ? 'activo' : 'invitado' }), 'Invitación abierta en WhatsApp'); }
     catch (e) { avisar((e as Error).message); }
   };
   const mascota = (m: Paciente) => [ESPECIES[m.especie], m.raza, edad(m)].filter(Boolean).join(' · ');
@@ -170,8 +173,8 @@ function Ficha({ p, mascotas, volver, cambiado, avisar }: { p: Propietario; masc
           <div className="legal-b">
             <div><b>Tratamiento de datos</b><span className="chip ok"><span className="ms" aria-hidden="true">verified_user</span>Aceptado</span><span className="hint">{fecha(p.acepto_fecha)} · Ley 1581 de 2012</span></div>
             <div><b>Portal de clientes</b><span className="chip" style={{ background: PORTAL[p.portal][1], color: PORTAL[p.portal][2] }}>{PORTAL[p.portal][0]}</span>
-              {p.portal === 'sin_invitar' && <button className="link-add" type="button" onClick={invitar}>Invitar al portal</button>}
-              {p.portal === 'por_invitar' && <span className="hint">El correo sale cuando el portal esté activo.</span>}
+              {p.portal !== 'activo' && <button className="link-add" type="button" onClick={invitar}>{p.portal === 'sin_invitar' ? 'Invitar al portal por WhatsApp' : 'Reenviar la invitación'}</button>}
+              {p.portal === 'activo' && <span className="hint">Ya entra a su portal con su correo.</span>}
             </div>
           </div>
 
