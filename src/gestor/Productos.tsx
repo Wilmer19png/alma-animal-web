@@ -366,7 +366,10 @@ function Editor({ base, ventas, volver, guardado, borrado, movido, avisar }: {
             {TIPOS_VARIANTE.map((t) => <button key={t} type="button" role="radio" aria-checked={d.tipo_variante === t} onClick={() => set('tipo_variante', t)}>{t}</button>)}
           </div>
         )}
-        <Interruptor on={promo} label="En promoción: mostrar el precio anterior tachado y el % de descuento" onChange={cambiarPromo} />
+        <div className="promo-sw">
+          <Interruptor on={promo} label="En promoción" onChange={cambiarPromo} />
+          <span><b>En promoción</b><span>Muestra el precio anterior tachado y el % de descuento. Escribe el precio de antes en cada variante.</span></span>
+        </div>
         {promo && variantes.some((v) => v.precio_antes && v.precio_antes <= v.precio) && <p className="hint-g">El precio de antes debe ser mayor que el precio actual.</p>}
         <div className="vtabla" role="table" aria-label="Variantes" data-promo={promo || undefined}>
           <div className="vrow vrow--h" role="row">
