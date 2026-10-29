@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestor · Propietarios · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#F8F2F8}
+a{color:#655785}a:hover{color:#4D3F6C}
+.g{--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#F8F2F8;-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-wrap:wrap}
+.g *{box-sizing:border-box}
+.g h1,.g h2,.g h3,.g p{margin:0}
+.g ::selection{background:#FBCFAF;color:#623F21}
+.g :focus-visible{outline:3px solid #655785;outline-offset:2px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.side{flex:0 0 256px;background:#2B1E48;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:18px;min-height:1300px}
+.side .grp{font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:0 12px;margin-top:6px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.85);text-decoration:none;font:500 15px/1 "Alan Sans",sans-serif;transition:background .15s}
+.side nav a:hover{background:rgb(255 255 255/.08);color:#fff}
+.side nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+.side nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+.main{flex:999 1 900px;min-width:0;padding:24px 32px 48px;display:flex;flex-direction:column;gap:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);color:#fff;font:600 15px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{color:#fff;box-shadow:0 2px 6px rgb(54 41 84/.2)}
+.btn.out{background:#fff;color:#655785;border-color:#CBC4D1}
+.btn.out:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.wa-o{background:#fff;color:#00852A;border:2px solid #00BC39}
+.btn.wa-o:hover{background:#00BC39;color:#06290F}
+.btn.sm{height:34px;padding:0 12px;font-size:14px}
+.card{background:#fff;border-radius:20px;box-shadow:0 0 0 1px #E6E1E7;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card h2{font:600 17px/1.3 "Alan Sans",sans-serif;display:flex;align-items:center;gap:8px}
+.card h2 .ms{color:#655785}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;font:600 13px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.filt{height:38px;padding:0 14px;border-radius:999px;border:1px solid #CBC4D1;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+table{border-collapse:collapse;width:100%;font:400 15px/1.35 "Alan Sans",sans-serif}
+th{font:600 13px/1.2 "Alan Sans",sans-serif;color:#584E6E;text-align:left;padding:10px 12px;border-bottom:1px solid #E6E1E7}
+td{padding:12px;border-bottom:1px solid #F2ECF2;vertical-align:middle}
+.kv{display:flex;flex-direction:column;margin:0}
+.kv div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid #F2ECF2}
+.kv dt{font:500 14px/1.35 "Alan Sans",sans-serif;color:#584E6E}
+.kv dd{margin:0;font:600 15px/1.35 "Alan Sans",sans-serif;overflow-wrap:anywhere}
+.ex{font:500 12px/1 "Alan Sans",sans-serif;color:#584E6E;background:#F2ECF2;border-radius:999px;padding:5px 10px}
+.btn.sm{height:32px;padding:0 12px;font-size:13px}
+/*GMOVIL-INI*/
+.gbar,.gnav,.mdays{display:none}
+.lanebtn{border:0;cursor:pointer;font-family:inherit}
+@media (max-width:760px){
+  .g{display:block !important}
+  .side{display:none !important}
+  .main{padding:0 14px 104px !important;gap:14px !important}
+  /* barra superior */
+  .gbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;margin:0 -14px;padding:10px 14px;background:#2B1E48;color:#fff}
+  .gbar-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 17px/1 "Alan Sans",sans-serif}
+  .gbar-logo:hover{color:#fff}
+  .gbar-logo > span{width:34px;height:34px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center}
+  .gbar-logo img{width:26px}
+  .gbar-ic{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgb(255 255 255/.12);color:#fff;display:grid;place-items:center;text-decoration:none}
+  .gbar-ic:hover{color:#fff;background:rgb(255 255 255/.2)}
+  /* navegación inferior */
+  .gnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;gap:4px;background:#2B1E48;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgb(43 30 72/.25)}
+  .gnav > a,.gmore > summary{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:14px;color:rgb(255 255 255/.78);font:600 11.5px/1 "Alan Sans",sans-serif;text-decoration:none;list-style:none;cursor:pointer}
+  .gnav > a:hover{color:#fff}
+  .gnav .ms{font-size:22px}
+  .gnav .on,.gmore.on > summary{color:#2B1E48;background:#FBCFAF}
+  .gmore{flex:1;display:flex}
+  .gmore > summary::-webkit-details-marker{display:none}
+  .gmore[open] > summary{color:#fff;background:rgb(255 255 255/.14)}
+  .gsheet{position:fixed;left:8px;right:8px;bottom:78px;max-height:70vh;overflow:auto;background:#2B1E48;border-radius:22px;padding:8px 10px 12px;box-shadow:0 -10px 30px rgb(43 30 72/.35)}
+  .gsheet .grp{display:block;font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:14px 12px 6px}
+  .gsheet nav{display:flex;flex-direction:column;gap:2px}
+  .gsheet nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.88);text-decoration:none;font:500 15.5px/1.2 "Alan Sans",sans-serif}
+  .gsheet nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+  .gsheet nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+
+  /* encabezado de cada módulo */
+  .main h1{font-size:24px !important;line-height:1.15 !important}
+  .main > div:first-of-type{gap:10px !important;padding-top:14px}
+  .main > div:first-of-type > div:first-child{flex:1 1 100% !important}
+  .main > div:first-of-type p{font-size:14.5px !important}
+  .main > div:first-of-type > .btn,.main > div:first-of-type > a.btn{flex:1 1 auto}
+  .ex{order:-1}
+
+  /* rejillas: una columna; las de 4-5 columnas (indicadores) en dos; fotos en tres */
+  :where(.g) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  :where(.g) [style*="grid-template-columns: repeat(4"],:where(.g) [style*="grid-template-columns: repeat(5"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  :where(.g) [style*="grid-template-columns: repeat(6"]{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .main [style*="grid-column: 1 / -1"],.main [style*="grid-column: span"]{grid-column:auto !important}
+  .card{padding:14px !important;border-radius:18px !important}
+  .main div[style*="display: flex"]:not([role="tablist"]){flex-wrap:wrap}
+  .main [style*="white-space: nowrap"]{white-space:normal}
+  .main label[style*="width: 2"],.main label[style*="width: 3"]{width:100% !important;margin-left:0 !important}
+  .main [style*="margin-left: auto"]{margin-left:0}
+  .btn{min-height:44px}
+
+  /* tablas y filas anchas: se deslizan de lado dentro de su tarjeta */
+  .main div:has(> table),.card:has(> table){overflow-x:auto}
+  .main table{min-width:640px}
+  .main div:has(> .vrow),.main div:has(> .trow),.main section:has(> .trow),.main div:has(> .urow),.main section:has(> .urow){overflow-x:auto}
+  .vrow{min-width:560px}
+  .trow{min-width:760px}
+  .urow{min-width:700px}
+  .drow{grid-template-columns:46px minmax(0,1fr) !important;gap:8px 12px !important}
+  .drow > :nth-child(n+3){grid-column:2}
+  .main{overflow-wrap:break-word}
+  .main .card,.main .blk,.main .sec,.main section{min-width:0 !important;max-width:100%;overflow-wrap:anywhere}
+  .main .card *{max-width:100%}
+  .main .card table,.main .card .vrow,.main .card .trow,.main .card .urow,.main .card .prow,.main .card .lanes,.main .card [style*="46px repeat(6"]{max-width:none}
+  .main h3{flex-wrap:wrap}
+  .sec h3 small{flex-basis:100%}
+  /* agenda del día (Hoy): los 3 carriles se mantienen lado a lado */
+  .lanebtn[aria-pressed="true"]{box-shadow:0 0 0 2px #2B1E48}
+  :where(.g) .lanes{grid-template-columns:44px minmax(0,1fr) !important;gap:0 8px !important}
+  .lanes:not([data-lane="s"]) .ln-s,.lanes:not([data-lane="d"]) .ln-d,.lanes[data-lane="s"] .ln-c,.lanes[data-lane="d"] .ln-c{display:none !important}
+  .lanes-body > div[aria-hidden]{left:52px !important}
+  /* agenda de la semana: se desliza de lado, un día de ~110 px por columna */
+  .mdays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:6px}
+  .mdays button{border:0;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:inset 0 0 0 1px #E6E1E7;font-family:inherit}
+  .mdays span{font:600 11px/1 "Alan Sans",sans-serif;letter-spacing:.04em}
+  .mdays b{font:700 18px/1 "Alan Sans",sans-serif}
+  .wkday.m-off{display:none !important}
+  :where(.g) [style*="grid-template-columns: 46px repeat(6"]{grid-template-columns:40px minmax(0,1fr) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 4px"]{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 8px"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  /* spa: franja de hoy deslizable */
+  /* spa: la franja de hoy pasa a lista */
+  section[aria-labelledby="hoy"] div[style*="height: 92px"]{height:auto !important;display:flex;flex-direction:column;gap:8px}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] > div,section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="top: 0"],section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="dashed"]{display:none !important}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] button{position:static !important;width:auto !important;height:auto !important;min-height:56px;padding:10px 14px !important}
+  /* pasos en una sola fila */
+  :where(.g) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  .main ol[style*="repeat(5"] li > span:last-child{font-size:11px !important;line-height:1.2 !important;overflow-wrap:normal !important;hyphens:auto}
+  ol[aria-label="Pasos"]{gap:6px !important}
+  ol[aria-label="Pasos"] button{padding:10px 6px !important;flex-direction:column;gap:6px !important;text-align:center !important;justify-content:center}
+  ol[aria-label="Pasos"] button > span:last-child > span{display:none !important}
+  ol[aria-label="Pasos"] button b{font-size:13px !important;line-height:1.2 !important}
+  /* horarios */
+  h2 + .drow{display:none !important}
+  .rng{flex-wrap:nowrap !important}
+  .rng .cell{width:96px !important}
+  /* envíos: el valor va debajo del texto */
+  .rule{flex-wrap:wrap}
+  .rule > .cell,.rule > select{flex:1 1 calc(100% - 46px);margin-left:46px;width:auto !important}
+
+}
+/*GMOVIL-FIN*/
+</style>
+</helmet>
+<div class="g">
+
+<aside class="side" aria-label="Menú del gestor">
+  <a href="GestorHoy.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 8px; text-decoration: none;">
+    <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--grad-primary); display: grid; place-items: center;"><img src="/_blob/409735a76ce80c9f522581004be4da71" alt="" style="width: 34px;"></span>
+    <span><span style="display: block; font: 600 19px/1 'Alan Sans', sans-serif; color: #fff;">Alma Animal</span><span style="display: block; font: 400 13px/1.2 'Gowun Batang', serif; color: #D1C1DD; margin-top: 4px;">Gestor interno</span></span>
+  </a>
+  <nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+  <span class="grp">CLÍNICA</span>
+  <nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a class="on" href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SPA</span>
+  <nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+  <span class="grp">TIENDA</span>
+  <nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SITIO WEB</span>
+  <nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+  <span class="grp">AJUSTES</span>
+  <nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+  <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgb(255 255 255/.08);">
+    <span style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 1px; width: 92px; max-width: none; transform: translateX(-46%);"></span>
+    <span style="min-width: 0;"><span style="display: block; font: 600 14px/1.2 'Alan Sans', sans-serif;">Dra. Mariana Hoyos</span><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Administradora</span></span>
+    <span class="ms" style="margin-left: auto; color: rgb(255 255 255/.7);">unfold_more</span>
+  </div>
+</aside>
+
+<main class="main">
+<!--GNAV-->
+<div class="gbar"><a class="gbar-logo" href="GestorHoy.dc.html"><span><img src="/_blob/409735a76ce80c9f522581004be4da71" alt=""></span>Alma Animal</a><a class="gbar-ic" href="GestorRegistro.dc.html" aria-label="Registrar paciente"><span class="ms">person_add</span></a></div>
+<nav class="gnav" aria-label="Menú del gestor"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a><a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a><a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a><a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos</a><details class="gmore on"><summary><span class="ms">menu</span>Más</summary><div class="gsheet">
+<span class="grp">GENERAL</span>
+<nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+<span class="grp">CLÍNICA</span>
+<nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a class="on" href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+<span class="grp">SPA</span>
+<nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+<span class="grp">TIENDA</span>
+<nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+<span class="grp">SITIO WEB</span>
+<nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+<span class="grp">AJUSTES</span>
+<nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+</div></details></nav>
+<!--/GNAV-->
+  <div style="display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 4px; margin-right: auto;">
+      <h1 style="font: 600 30px/1.1 'Alan Sans', sans-serif;">Propietarios</h1>
+      <p style="font: 400 16px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Cada propietario con sus mascotas, sus citas, sus compras y su autorización de datos.</p>
+    </div>
+    <span class="ex">Datos de ejemplo</span>
+    <a class="btn" href="GestorRegistro.dc.html"><span class="ms">person_add</span>Registrar paciente</a>
+  </div>
+
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <label style="display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px #CBC4D1; color: #584E6E; flex: 1; max-width: 460px;"><span class="ms">search</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar propietario</span><input placeholder="Nombre, celular, cédula o mascota. Ej: Gómez, 300 123 4567" style="border: 0; background: transparent; font: 400 16px/1 'Alan Sans', sans-serif; color: #2B1E48; outline: 0; flex: 1; min-width: 0;"></label>
+    <div style="display: flex; gap: 8px;" role="group" aria-label="Filtrar">
+      <sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button class="filt" type="button" aria-pressed="{{f.on}}" onClick="{{f.pick}}" style="background: {{f.bg}}; color: {{f.fg}}; border-color: {{f.bd}};">{{f.label}}</button></sc-for>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start;">
+    <!-- lista -->
+    <section class="card" aria-label="Lista de propietarios" style="padding: 8px 10px;">
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>Propietario</th><th>Celular</th><th>Mascotas</th><th>Última visita</th><th>Portal</th></tr></thead>
+          <tbody>
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+              <tr style="background: {{r.bg}};">
+                <td><button type="button" onClick="{{r.pick}}" style="border: 0; background: transparent; padding: 0; font: 600 15px/1.3 'Alan Sans', sans-serif; color: #2B1E48; cursor: pointer; text-align: left;">{{r.name}}</button><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{r.city}}</span></td>
+                <td style="font-variant-numeric: tabular-nums; white-space: nowrap;">{{r.phone}}</td>
+                <td><span style="display: flex; gap: 4px; flex-wrap: wrap;"><sc-for list="{{r.pets}}" as="p" hint-placeholder-count="1"><span class="chip" style="background: {{p.bg}}; color: {{p.fg}}; height: 24px; font-size: 12px;">{{p.name}}</span></sc-for></span></td>
+                <td style="white-space: nowrap; color: #584E6E;">{{r.last}}</td>
+                <td><span class="chip" style="background: {{r.portalBg}}; color: {{r.portalFg}}; height: 24px; font-size: 12px;">{{r.portal}}</span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- detalle -->
+    <section class="card" aria-labelledby="on" style="gap: 16px;">
+      <div style="display: flex; gap: 14px; align-items: center;">
+        <span style="width: 56px; height: 56px; border-radius: 50%; background: #EADDFF; color: #4D3F6C; display: grid; place-items: center; font: 700 20px/1 'Alan Sans', sans-serif; flex: none;">{{d.initials}}</span>
+        <div style="min-width: 0; margin-right: auto;"><h2 id="on" style="font-size: 22px;">{{d.name}}</h2><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Cliente desde {{d.since}}</span></div>
+        <a class="btn out sm" href="#"><span class="ms" style="font-size: 17px;">edit</span>Editar</a>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a class="btn wa-o sm" href="#"><span class="ms" style="font-size: 17px;">chat</span>WhatsApp</a>
+        <a class="btn out sm" href="#"><span class="ms" style="font-size: 17px;">event</span>Agendar cita</a>
+        <a class="btn out sm" href="GestorRegistro.dc.html"><span class="ms" style="font-size: 17px;">add</span>Agregar mascota</a>
+      </div>
+
+      <h3 style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Mascotas</h3>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+        <sc-for list="{{d.pets}}" as="p" hint-placeholder-count="2">
+          <a href="GestorPaciente.dc.html" style="display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 16px; box-shadow: 0 0 0 1px #E6E1E7; text-decoration: none; color: #2B1E48;">
+            <span style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); display: grid; place-items: center; font: 700 15px/1 'Alan Sans', sans-serif; color: #4D3F6C; flex: none;">{{p.initial}}</span>
+            <span style="min-width: 0;"><b style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">{{p.name}}</b><span style="font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{p.desc}}</span></span>
+          </a>
+        </sc-for>
+      </div>
+
+      <h3 style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Datos de contacto</h3>
+      <dl class="kv">
+        <div><dt>Cédula</dt><dd style="font-variant-numeric: tabular-nums;">{{d.doc}}</dd></div>
+        <div><dt>Celular</dt><dd style="font-variant-numeric: tabular-nums;">{{d.phone}}</dd></div>
+        <div><dt>Correo</dt><dd>{{d.email}}</dd></div>
+        <div><dt>Dirección</dt><dd>{{d.address}}</dd></div>
+        <div><dt>Barrio</dt><dd>{{d.hood}}</dd></div>
+        <div><dt>Ciudad</dt><dd>{{d.city}}</dd></div>
+        <div><dt>Nos conoció por</dt><dd>{{d.source}}</dd></div>
+      </dl>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+        <div style="padding: 12px 14px; border-radius: 14px; background: #F8F2F8; display: flex; flex-direction: column; gap: 6px;"><b style="font: 600 14px/1.2 'Alan Sans', sans-serif;">Tratamiento de datos</b><span class="chip" style="background: #B8F1B9; color: #1D5128; align-self: flex-start;"><span class="ms fill" style="font-size: 15px;">verified_user</span>Aceptado</span><span style="font: 400 13px/1.35 'Alan Sans', sans-serif; color: #584E6E;">{{d.consent}} · Ley 1581 de 2012</span></div>
+        <div style="padding: 12px 14px; border-radius: 14px; background: #F8F2F8; display: flex; flex-direction: column; gap: 6px;"><b style="font: 600 14px/1.2 'Alan Sans', sans-serif;">Portal de clientes</b><span class="chip" style="background: {{d.portalBg}}; color: {{d.portalFg}}; align-self: flex-start;">{{d.portal}}</span><sc-if value="{{d.noPortal}}" hint-placeholder-val="{{false}}"><a href="#" style="font: 600 13px/1.3 'Alan Sans', sans-serif;">Enviar correo para crear contraseña</a></sc-if><sc-if value="{{d.portal2}}" hint-placeholder-val="{{true}}"><a href="#" style="font: 600 13px/1.3 'Alan Sans', sans-serif;">Reenviar acceso</a></sc-if></div>
+      </div>
+
+      <!-- compras en la tienda, unidas por celular y correo -->
+      <div style="display: flex; align-items: baseline; gap: 10px;"><h3 style="font: 600 15px/1.3 'Alan Sans', sans-serif; margin-right: auto;">Compras en la tienda</h3><span style="font: 400 13px/1 'Alan Sans', sans-serif; color: #584E6E;">{{d.buySum}}</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <sc-for list="{{d.buys}}" as="b" hint-placeholder-count="2">
+          <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 14px; background: {{b.bg}}; box-shadow: {{b.ring}};">
+            <a href="GestorPedidos.dc.html" style="font: 700 14px/1 'Alan Sans', sans-serif; color: #655785;">#{{b.id}}</a>
+            <span style="font: 400 14px/1.3 'Alan Sans', sans-serif; min-width: 0;">{{b.date}} · {{b.items}}<span style="display: block; font-size: 12px; color: {{b.noteFg}};">{{b.note}}</span></span>
+            <b style="font: 700 14px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{b.totalTxt}}</b>
+            <sc-if value="{{b.maybe}}" hint-placeholder-val="{{false}}"><button class="btn sm" type="button" onClick="{{b.link}}" style="height: 32px; padding: 0 12px; font-size: 13px;">Vincular</button></sc-if>
+            <sc-if value="{{b.linked}}" hint-placeholder-val="{{true}}"><span class="chip" style="height: 24px; font-size: 12px; background: {{b.stBg}}; color: {{b.stFg}};">{{b.st}}</span></sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{d.noBuys}}" hint-placeholder-val="{{false}}"><p style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E; padding: 4px 2px;">Aún no ha comprado en la tienda. Cuando compre con su celular o su correo, el pedido aparece aquí.</p></sc-if>
+      </div>
+
+      <h3 style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Actividad reciente</h3>
+      <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+        <sc-for list="{{d.activity}}" as="a" hint-placeholder-count="3">
+          <li style="display: flex; gap: 10px; align-items: center; font: 400 14px/1.35 'Alan Sans', sans-serif;"><span style="width: 30px; height: 30px; border-radius: 50%; background: #F2ECF2; color: #655785; display: grid; place-items: center; flex: none;"><span class="ms" style="font-size: 17px;">{{a.icon}}</span></span><span style="flex: 1; min-width: 0;">{{a.text}}</span><span style="color: #584E6E; white-space: nowrap;">{{a.when}}</span></li>
+        </sc-for>
+      </ol>
+    </section>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const SP = { perro: ['#FFDCC3', '#623F21'], gato: ['#EADDFF', '#4D3F6C'] };
+    const owners = [
+      { id: 1, name: 'Laura Gómez Restrepo', doc: '1.088.234.567', phone: '300 123 4567', email: 'laura@correo.com', address: 'Calle 19 # 8-34, apto 302', hood: 'Álamos', city: 'Pereira', source: 'Instagram', since: 'mar 2022', consent: 'Aceptado en la web el 12 mar 2022', portal: true, last: '14 oct 2026',
+        pets: [{ name: 'Luna', sp: 'perro', desc: 'Shih Tzu · 4 años' }, { name: 'Toby', sp: 'perro', desc: 'Schnauzer · 6 años' }],
+        activity: [{ icon: 'vaccines', text: 'Luna · vacuna antirrábica', when: '14 oct' }, { icon: 'receipt_long', text: 'Pedido #1043 · $57.000', when: 'Hoy' }, { icon: 'shower', text: 'Toby · baño y corte', when: 'Hoy' }] },
+      { id: 2, name: 'Andrea Muñoz', doc: '42.115.908', phone: '315 789 1122', email: 'andrea.munoz@correo.com', address: 'Carrera 7 # 22-15', hood: 'Centro', city: 'Pereira', source: 'Recomendación', since: 'ene 2025', consent: 'Firmado en el consultorio el 8 ene 2025', portal: false, last: 'Hoy',
+        pets: [{ name: 'Coco', sp: 'perro', desc: 'Poodle · 8 años' }],
+        activity: [{ icon: 'medical_services', text: 'Coco · cirugía (extracción dental)', when: '13 oct' }, { icon: 'event', text: 'Coco · control posquirúrgico', when: 'Hoy 3:00' }] },
+      { id: 3, name: 'Sofía Arango', doc: '1.087.556.210', phone: '310 555 1212', email: 'sofia.arango@correo.com', address: 'Calle 1 # 12-40', hood: 'Alfonso López', city: 'Pereira', source: 'Vecina del consultorio', since: 'jun 2024', consent: 'Aceptado en la web el 2 jun 2024', portal: true, last: 'Hoy',
+        pets: [{ name: 'Nala', sp: 'gato', desc: 'Gata criolla · 3 años' }],
+        activity: [{ icon: 'shower', text: 'Nala · baño medicado', when: 'Hoy 11:00' }, { icon: 'receipt_long', text: 'Pedido #1039 · entregado', when: 'Sábado' }] },
+      { id: 4, name: 'Daniel Cardona', doc: '18.613.402', phone: '317 334 9087', email: '—', address: 'Manzana 12, casa 4', hood: 'Cuba', city: 'Pereira', source: 'Google', since: 'oct 2025', consent: 'Firmado en el consultorio el 20 oct 2025', portal: false, last: '20 oct 2025',
+        pets: [{ name: 'Kira', sp: 'perro', desc: 'Labrador · 2 años' }],
+        activity: [{ icon: 'warning', text: 'Kira · antirrábica vencida', when: '20 oct' }] },
+      { id: 5, name: 'María José Patiño', doc: '1.004.778.912', phone: '320 410 5566', email: 'majo.patino@correo.com', address: 'Calle 50 # 14-20', hood: 'Cuba', city: 'Dosquebradas', source: 'Instagram', since: 'abr 2026', consent: 'Aceptado en la web el 3 abr 2026', portal: true, last: '29 sep 2026',
+        pets: [{ name: 'Simba', sp: 'gato', desc: 'Gato criollo · 1 año' }, { name: 'Mía', sp: 'gato', desc: 'Gata angora · 5 años' }],
+        activity: [{ icon: 'vaccines', text: 'Simba · triple felina vence el 29 oct', when: 'Próx.' }] },
+      { id: 6, name: 'Juan Pablo Ríos', doc: '10.034.665', phone: '311 222 0099', email: 'jprios@correo.com', address: 'Avenida 30 de Agosto # 40-12', hood: 'Pinares', city: 'Pereira', source: 'Recomendación', since: 'ago 2023', consent: 'Firmado en el consultorio el 5 ago 2023', portal: false, last: 'Hoy',
+        pets: [{ name: 'Rocky', sp: 'perro', desc: 'Golden · 7 años' }],
+        activity: [{ icon: 'shower', text: 'Rocky · baño completo', when: 'Hoy 2:00' }] }
+    ];
+    const filter = s.filter || 'todos';
+    const FIL = [['todos', 'Todos'], ['portal', 'Con portal'], ['sinportal', 'Sin portal'], ['dosq', 'Dosquebradas']];
+    const vis = owners.filter((o) => filter === 'todos' || (filter === 'portal' && o.portal) || (filter === 'sinportal' && !o.portal) || (filter === 'dosq' && o.city === 'Dosquebradas'));
+    const sel = owners.find((o) => o.id === (s.sel || 1)) || owners[0];
+    const pet = (p) => ({ ...p, bg: SP[p.sp][0], fg: SP[p.sp][1], initial: p.name[0] });
+    return {
+      filters: FIL.map((f) => ({ label: f[1], on: f[0] === filter, bg: f[0] === filter ? '#2B1E48' : '#FFFFFF', fg: f[0] === filter ? '#FFFFFF' : '#2B1E48', bd: f[0] === filter ? '#2B1E48' : '#CBC4D1', pick: () => this.setState({ filter: f[0] }) })),
+      rows: vis.map((o) => ({
+        name: o.name, city: o.city, phone: o.phone, last: o.last,
+        pets: o.pets.map(pet),
+        portal: o.portal ? 'Activo' : 'Sin cuenta',
+        portalBg: o.portal ? '#B8F1B9' : '#F2ECF2', portalFg: o.portal ? '#1D5128' : '#584E6E',
+        bg: o.id === sel.id ? '#F8F2F8' : 'transparent',
+        pick: () => this.setState({ sel: o.id })
+      })),
+      d: {
+        ...sel,
+        initials: sel.name.split(' ').map((w) => w[0]).slice(0, 2).join(''),
+        pets: sel.pets.map(pet),
+        portal: sel.portal ? 'Tiene cuenta' : 'Sin cuenta',
+        portalBg: sel.portal ? '#B8F1B9' : '#F2ECF2', portalFg: sel.portal ? '#1D5128' : '#584E6E',
+        noPortal: !sel.portal,
+        ...(() => {
+          const fmt = (n) => '$' + n.toLocaleString('es-CO');
+          // [pedido, fecha, productos, total, estado, posible (solo coincide el celular)]
+          const BUY = {
+            1: [[1043, 'Hoy', '3 productos', 57000, 'Nuevo'], [1027, '18 sep', '2 productos', 46000, 'Entregado']],
+            3: [[1039, 'Sábado', '6 productos', 39000, 'Entregado'], [1018, '2 ago', '1 producto', 28000, 'Entregado']],
+            6: [[1041, 'Ayer', '2 productos', 31000, 'Cliente confirmó', true]]
+          };
+          const lk = s.lk || {};
+          const list = (BUY[sel.id] || []).map((b) => {
+            const maybe = !!b[5] && !lk[b[0]];
+            return { id: b[0], date: b[1], items: b[2], totalTxt: fmt(b[3]), st: b[4], maybe, linked: !maybe,
+              note: maybe ? 'A nombre de Valentina Ríos, con el celular de esta ficha' : (b[5] ? 'Vinculado por ti hoy' : ''), noteFg: maybe ? '#624000' : '#584E6E',
+              bg: maybe ? '#FFF1DE' : '#F8F2F8', ring: maybe ? 'inset 0 0 0 1px #F5D3A3' : 'none',
+              stBg: b[4] === 'Entregado' ? '#B8F1B9' : '#EADDFF', stFg: b[4] === 'Entregado' ? '#1D5128' : '#4D3F6C',
+              link: () => this.setState({ lk: { ...lk, [b[0]]: true } }) };
+          });
+          const real = list.filter((b) => b.linked);
+          return { buys: list, noBuys: list.length === 0, buySum: real.length ? real.length + (real.length === 1 ? ' pedido' : ' pedidos') : (list.length ? '1 posible' : '') };
+        })(),
+        portal2: !!sel.portal
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

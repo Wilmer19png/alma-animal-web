@@ -1,0 +1,471 @@
+<title>Inicio Alma Animal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Gowun+Batang:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block">
+<style>
+/* Layout: inicio desktop 1440 — héroe partido por una curva yin-yang (claro | morado), doctora sobre la curva; luego declaración, servicios, por qué, tienda+blog, contacto. Contenedor 1280. Solo tema claro (aprobado). */
+:root{
+  --brand-purple:#8F7FB0; --brand-peach:#FBCFAF; --brand-lavender:#D1C1DD; --brand-lavender-soft:#DCCCE4; --brand-ink:#706884;
+  --md-primary:#655785; --md-on-primary:#FFFFFF; --md-primary-container:#EADDFF; --md-on-primary-container:#4D3F6C;
+  --md-secondary-container:#FBCFAF; --md-on-secondary-container:#623F21;
+  --md-tertiary-container:#D1C1DD; --md-on-tertiary-container:#372C42;
+  --md-success-container:#B8F1B9; --md-on-success-container:#1D5128;
+  --md-surface:#FEF7FE; --md-on-surface:#1D1B1F; --md-on-surface-variant:#49454F;
+  --md-surface-lowest:#FFFFFF; --md-surface-low:#F8F2F8; --md-surface-container:#F2ECF2; --md-surface-high:#ECE6ED;
+  --md-outline:#7A6A80; --md-outline-variant:#CBC4D1;
+  --md-inverse-surface:#322F34; --md-inverse-on-surface:#F5EFF5;
+  --deep:#2B1E48; /* primario tono 15: banda de contacto */
+  --md-shadow:54 41 84;
+  --whatsapp:#137A4A; --on-whatsapp:#FFFFFF;
+  --grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%); --on-grad-alma:#362954;
+  --grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  --grad-wash:radial-gradient(55% 70% at 0% 0%,rgb(251 207 175/.45),transparent 70%),radial-gradient(60% 80% at 100% 100%,rgb(209 193 221/.55),transparent 70%);
+  --font-sans:"Alan Sans","Segoe UI",system-ui,sans-serif; --font-serif:"Gowun Batang","Iowan Old Style",Georgia,serif;
+  --headline-lg:600 2rem/1.2 var(--font-sans); --title-lg:600 1.375rem/1.3 var(--font-sans); --title-md:600 1.125rem/1.4 var(--font-sans);
+  --body-lg:400 1.125rem/1.6 var(--font-sans); --body-md:400 1rem/1.55 var(--font-sans); --body-sm:400 .875rem/1.5 var(--font-sans);
+  --label-lg:600 .9375rem/1.25 var(--font-sans); --label-md:600 .8125rem/1.3 var(--font-sans); --label-sm:600 .75rem/1.3 var(--font-sans);
+  --serif-lead:400 1.375rem/1.5 var(--font-serif);
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;--sp-12:48px;--sp-16:64px;--sp-20:80px;--sp-24:96px;--sp-32:128px;
+  --container:1280px;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:28px;--r-full:999px;
+  --elev-1:0 1px 2px rgb(var(--md-shadow)/.18),0 1px 3px 1px rgb(var(--md-shadow)/.08);
+  --elev-2:0 1px 2px rgb(var(--md-shadow)/.18),0 2px 6px 2px rgb(var(--md-shadow)/.09);
+  --elev-3:0 4px 8px 3px rgb(var(--md-shadow)/.09),0 1px 3px rgb(var(--md-shadow)/.18);
+  --elev-4:0 6px 10px 4px rgb(var(--md-shadow)/.10),0 2px 3px rgb(var(--md-shadow)/.18);
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-emph-decel:cubic-bezier(.05,.7,.1,1);
+  --dur-short:150ms; --dur-medium:250ms; --dur-long:400ms; --dur-xlong:600ms;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--md-surface);color:var(--md-on-surface);font:var(--body-lg);-webkit-font-smoothing:antialiased;caret-color:var(--md-primary);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+::selection{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+h1,h2,h3,h4{margin:0;text-wrap:balance}p{margin:0}
+a{color:var(--md-primary);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px;border-radius:6px}
+img{display:block;max-width:100%}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;
+  font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24;-webkit-font-smoothing:antialiased;flex:none;width:1em;height:1em;overflow:hidden}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:var(--container);margin:0 auto}
+.pending{font:var(--label-sm);color:var(--md-on-tertiary-container);background:var(--md-tertiary-container);border-radius:var(--r-full);padding:4px 10px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pending .ms{font-size:14px}
+
+/* Botones (del sistema aprobado) */
+.btn{--bg:var(--grad-primary);--fg:#fff;--bd:transparent;position:relative;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  height:44px;padding:0 var(--sp-6);border-radius:var(--r-full);border:1px solid var(--bd);background:var(--bg);background-size:160% 100%;color:var(--fg);font:var(--label-lg);text-decoration:none;cursor:pointer;
+  transition:box-shadow var(--dur-short) var(--ease-standard),background-position var(--dur-long) var(--ease-standard),transform var(--dur-short) var(--ease-standard)}
+.btn::before{content:"";position:absolute;inset:0;background:currentColor;opacity:0;z-index:-1;transition:opacity var(--dur-short)}
+.btn:hover::before{opacity:.08}.btn:active{transform:scale(.98)}
+.btn:hover{box-shadow:var(--elev-2);background-position:100% 0}
+.btn.alma{--bg:var(--grad-alma);--fg:var(--on-grad-alma)}
+.btn.outlined{--bg:transparent;--fg:var(--md-primary);--bd:var(--md-outline-variant)}
+.btn.outlined:hover{box-shadow:none}
+.btn.ghost{--bg:rgb(255 255 255/.14);--fg:#fff;--bd:rgb(255 255 255/.28)}
+.btn.lg{height:56px;padding:0 var(--sp-2) 0 var(--sp-8);font:600 1.0625rem/1 var(--font-sans);gap:var(--sp-5)}
+.btn .end{width:42px;height:42px;border-radius:50%;background:#fff;color:var(--md-primary);display:grid;place-items:center;transition:transform var(--dur-medium) var(--ease-emph-decel)}
+.btn:hover .end{transform:rotate(-45deg)}
+.btn.sm{height:36px;padding:0 var(--sp-4);font:var(--label-md)}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;
+  background:rgb(255 255 255/.14);color:#fff;transition:background var(--dur-short) var(--ease-standard)}
+.icon-btn:hover{background:rgb(255 255 255/.26)}
+.icon-btn.solid{background:#fff;color:var(--md-primary)}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:4px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--brand-peach);color:#623F21;font:700 .625rem/16px var(--font-sans);text-align:center;padding:0 4px}
+
+/* ================= HÉROE ================= */
+.hero{position:relative;margin:var(--sp-6) auto 0;max-width:var(--container);height:720px;border-radius:40px;overflow:hidden;isolation:isolate;
+  background:var(--grad-wash),var(--md-surface-lowest);box-shadow:0 0 0 1px var(--md-outline-variant)}
+.hero .yang{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+/* barra superior dentro del héroe */
+.top{position:absolute;inset:28px 32px auto 40px;display:flex;align-items:center;gap:var(--sp-6);z-index:5}
+.lockup{display:flex;align-items:center;gap:var(--sp-3);text-decoration:none}
+.lockup img{width:48px}
+.lockup .wm{font:600 1.375rem/1 var(--font-sans);color:var(--brand-purple);letter-spacing:-.01em;display:block}
+.lockup .tag{font:400 .75rem/1.2 var(--font-serif);letter-spacing:.06em;color:var(--brand-ink);display:block;margin-top:4px}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:var(--r-full);background:rgb(255 255 255/.8);box-shadow:0 0 0 1px var(--md-outline-variant);backdrop-filter:blur(8px)}
+.navpill a{font:var(--label-lg);color:var(--md-on-surface-variant);text-decoration:none;padding:10px 16px;border-radius:var(--r-full);transition:background var(--dur-short),color var(--dur-short)}
+.navpill a:hover{background:var(--md-surface-container);color:var(--md-on-surface)}
+.navpill a[aria-current]{background:var(--md-on-surface);color:#fff}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:var(--sp-3);color:#fff}
+.place{display:flex;align-items:center;gap:var(--sp-2);font:var(--label-md);color:rgb(255 255 255/.92);margin-right:var(--sp-3)}
+.place .ms{font-size:18px}
+.place small{display:block;font:400 .75rem/1.3 var(--font-sans);color:rgb(255 255 255/.75)}
+
+/* lado claro */
+.h-copy{position:absolute;left:40px;top:116px;width:520px;display:flex;flex-direction:column;gap:var(--sp-5);z-index:5}
+.h-copy h1{font:700 6.25rem/.9 var(--font-sans);letter-spacing:-.045em;color:var(--md-on-surface)}
+.h-copy h1 .line{display:flex;align-items:center;gap:18px}
+.h-copy h1 .alma{color:var(--md-primary)}
+.h-copy h1 .seal{width:70px;height:70px;border-radius:50%;background:var(--grad-primary);display:grid;place-items:center;flex:none;box-shadow:var(--elev-2);margin-top:12px}
+.h-copy h1 .seal img{width:62%}
+.h-row{display:flex;gap:var(--sp-6);align-items:flex-start}
+.h-copy .lead{font:var(--body-md);color:var(--md-on-surface-variant);max-width:30ch}
+.h-copy .lead b{color:var(--md-on-surface);font-weight:600}
+.h-cta{display:flex;align-items:center;gap:var(--sp-4)}
+.textlink{display:inline-flex;align-items:center;gap:var(--sp-2);font:var(--label-lg);color:var(--md-on-surface);text-decoration:none;padding:var(--sp-2) var(--sp-3);border-radius:var(--r-full)}
+.textlink:hover{background:var(--md-surface-container)}
+.textlink svg{width:22px;height:22px;color:var(--whatsapp)}
+
+/* tarjeta cotizador (equivale a la tarjeta de cifras de la referencia) */
+.quote{position:absolute;left:40px;bottom:28px;width:470px;background:#fff;border-radius:24px;box-shadow:var(--elev-3);padding:var(--sp-5);display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--sp-5);z-index:4}
+.quote .pic{border-radius:16px;background:var(--grad-primary);display:grid;place-items:center;position:relative;overflow:hidden}
+.quote .pic img{width:86%;opacity:.95}
+.quote .q{display:flex;flex-direction:column;gap:var(--sp-3);min-width:0}
+.quote .q b{font:var(--title-md)}
+.seg{display:inline-flex;border:1px solid var(--md-outline-variant);border-radius:var(--r-full);overflow:hidden;align-self:flex-start}
+.seg button{height:34px;padding:0 var(--sp-3);border:0;background:transparent;color:var(--md-on-surface);font:var(--label-md);cursor:pointer;transition:background var(--dur-short)}
+.seg button+button{border-left:1px solid var(--md-outline-variant)}
+.seg button[aria-pressed="true"]{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.quote .res{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3)}
+.quote .res span{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.quote .res strong{display:block;font:700 1.25rem/1.2 var(--font-sans);color:var(--md-on-surface);font-variant-numeric:tabular-nums}
+
+/* doctora sobre la curva */
+.doc{position:absolute;left:560px;bottom:0;width:400px;height:610px;z-index:2}
+.doc .disc{position:absolute;left:50%;top:40px;width:400px;height:400px;margin-left:-200px;border-radius:50%;background:linear-gradient(90deg,var(--brand-peach) 50%,var(--brand-lavender) 50%);box-shadow:0 0 0 14px rgb(255 255 255/.35)}
+.doc .disc::after{content:"";position:absolute;inset:-34px;border-radius:50%;border:1px dashed rgb(255 255 255/.55)}
+.doc .slot{position:absolute;inset:auto 0 0 0;height:560px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.doc svg.person{width:330px;height:auto;display:block}
+.doc .slot .pending{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;box-shadow:var(--elev-2)}
+.tagpill{position:absolute;display:flex;align-items:center;gap:10px;z-index:3;font:var(--label-lg);white-space:nowrap}
+.tagpill span.t{padding:9px 16px;border-radius:var(--r-full);background:rgb(255 255 255/.92);color:var(--md-on-surface);box-shadow:var(--elev-1);backdrop-filter:blur(6px)}
+.tagpill i{width:12px;height:12px;border-radius:50%;background:var(--md-on-surface);box-shadow:0 0 0 4px rgb(255 255 255/.8);flex:none}
+.tagpill.r{flex-direction:row-reverse}
+.tagpill.onp i{background:#fff;box-shadow:0 0 0 4px rgb(255 255 255/.25)}
+
+/* lado morado */
+.h-side{position:absolute;right:40px;top:200px;width:300px;color:#fff;display:flex;flex-direction:column;gap:var(--sp-4);z-index:3}
+.h-side h2{font:400 2.25rem/1.08 var(--font-sans);letter-spacing:-.02em}
+.h-side h2 b{font-weight:700}
+.h-side p{font:var(--body-sm);color:rgb(255 255 255/.82)}
+.h-side p b{color:#fff;font-weight:600}
+.h-foot{position:absolute;right:40px;bottom:36px;display:flex;align-items:center;gap:var(--sp-5);color:#fff;z-index:3}
+.h-foot p{font:var(--body-sm);color:rgb(255 255 255/.82);text-align:right}
+.h-foot p b{color:#fff;font-weight:600}
+.ig{display:flex}
+.ig a{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--md-primary);font:700 .75rem/1 var(--font-sans);text-decoration:none;box-shadow:0 0 0 3px #5F5180;transition:transform var(--dur-medium) var(--ease-emph-decel)}
+.ig a+a{margin-left:-10px}
+.ig a:hover{transform:translateY(-3px)}
+.ig a img{width:30px}
+
+/* ================= DECLARACIÓN ================= */
+.statement{max-width:var(--container);margin:0 auto;padding-block:var(--sp-24) var(--sp-20);display:flex;flex-direction:column;align-items:center;gap:var(--sp-8);text-align:center}
+.statement h2{font:300 3.5rem/1.14 var(--font-sans);letter-spacing:-.03em;max-width:20ch;color:var(--md-on-surface)}
+.statement h2 b{font-weight:700}
+.statement h2 .chip{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;height:62px;padding:0 14px;border-radius:var(--r-full);margin:0 6px;position:relative;top:-4px}
+.statement h2 .chip.a{background:var(--grad-alma);width:118px}
+.statement h2 .chip.a img{height:48px}
+.statement h2 .chip.b{background:var(--grad-primary);width:132px}
+.statement h2 .chip.b img{height:54px}
+.statement p{font:var(--body-lg);color:var(--md-on-surface-variant);max-width:52ch}
+.statement p b{color:var(--md-on-surface);font-weight:600}
+
+/* ================= SERVICIOS ================= */
+.services{max-width:var(--container);margin:0 auto;padding-block:0 var(--sp-24);display:flex;flex-direction:column;gap:var(--sp-10)}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sp-10)}
+.sec-top h2{font:400 3.25rem/1 var(--font-sans);letter-spacing:-.03em}
+.sec-top h2 b{font-weight:700}
+.sec-top .r{display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-3);max-width:38ch;text-align:right}
+.sec-top .r p{font:var(--body-md);color:var(--md-on-surface-variant)}
+.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-5)}
+.svc{background:#fff;border-radius:24px;padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-3);min-height:300px;box-shadow:0 0 0 1px var(--md-outline-variant);
+  transition:box-shadow var(--dur-medium) var(--ease-standard),transform var(--dur-medium) var(--ease-emph-decel)}
+.svc:hover{box-shadow:var(--elev-3);transform:translateY(-3px)}
+.svc .glyph{font-size:76px;width:76px;height:76px;color:transparent;-webkit-text-stroke:1.4px var(--brand-purple);font-variation-settings:"FILL" 1,"wght" 300,"opsz" 48;margin-bottom:auto}
+.svc h3{font:var(--title-lg);display:flex;align-items:center;gap:var(--sp-2);margin-top:var(--sp-6)}
+.svc h3 .ms{font-size:22px;color:var(--md-primary)}
+.svc p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.svc .f{display:flex;justify-content:space-between;align-items:center;margin-top:var(--sp-2);font:var(--label-md)}
+.svc .f a{color:var(--md-primary)}
+.svc .f span{color:var(--md-on-surface-variant);font-weight:500}
+.svc.feat{background:var(--grad-primary);color:#fff;box-shadow:none;position:relative;overflow:hidden;isolation:isolate}
+.svc.feat .bg{position:absolute;right:-50px;bottom:-95px;width:270px;opacity:.9;z-index:-1}
+.svc.feat .wm{font:600 1.75rem/1 var(--font-sans);letter-spacing:-.02em;color:rgb(255 255 255/.92)}
+.svc.feat p{color:rgb(255 255 255/.82);max-width:22ch}
+.svc.feat .btn{margin-top:auto;align-self:flex-start}
+.svc.photo{grid-column:span 2;padding:0;overflow:hidden;background:var(--md-surface-container);display:grid;place-items:center;position:relative}
+.svc.photo .moon{width:250px;aspect-ratio:1;border-radius:50%;background:#fff;overflow:hidden;display:grid;place-items:center;box-shadow:0 0 0 10px var(--md-surface-container),0 0 0 11px var(--md-outline-variant)}
+.svc.photo .moon img{width:86%}
+.svc.photo .pending{position:absolute;left:var(--sp-5);bottom:var(--sp-5)}
+
+/* ================= POR QUÉ ================= */
+.why{max-width:var(--container);margin:0 auto;padding-block:0 var(--sp-24);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--sp-12);align-items:stretch}
+.why .panel{position:relative;border-radius:40px;background:var(--grad-primary);min-height:620px;overflow:hidden;isolation:isolate;color:#fff;padding:var(--sp-12) var(--sp-10)}
+.why .panel h2{font:400 3.25rem/1 var(--font-sans);letter-spacing:-.03em}
+.why .panel h2 b{font-weight:700}
+.why .panel .by{font:var(--label-sm);color:rgb(255 255 255/.75);margin-top:var(--sp-4);letter-spacing:.04em}
+.why .panel .cut{position:absolute;right:-90px;bottom:-80px;width:560px;opacity:.16;z-index:-1}
+.why .panel .team{position:absolute;left:50%;bottom:0;transform:translateX(-25%);width:250px;height:394px;display:flex;align-items:flex-end;justify-content:center}
+.why .panel .team svg{width:100%}
+.why .panel .team .pending{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#fff}
+.why .panel .tagpill{position:absolute}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-10) var(--sp-8);align-content:center}
+.fact{display:flex;flex-direction:column;gap:var(--sp-2);padding-top:var(--sp-5);border-top:1px solid var(--md-outline-variant)}
+.fact .n{font:300 4.5rem/1 var(--font-sans);letter-spacing:-.04em;color:var(--md-on-surface);font-variant-numeric:tabular-nums}
+.fact .n sup{font-size:.45em;color:var(--md-primary);font-weight:600;vertical-align:top;position:relative;top:.3em;margin-left:2px}
+.fact b{font:var(--title-md)}
+.fact p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.facts .lema{grid-column:1/-1;font:var(--serif-lead);color:var(--md-on-surface);display:flex;align-items:center;gap:var(--sp-4)}
+.facts .lema img{width:44px}
+
+/* ================= TIENDA + BLOG ================= */
+.duo{max-width:var(--container);margin:0 auto;padding-block:0 var(--sp-24);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:var(--sp-10)}
+.duo h2{font:400 2.5rem/1.05 var(--font-sans);letter-spacing:-.03em}
+.duo h2 b{font-weight:700}
+.duo .head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:var(--sp-6)}
+.prods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+.prod{background:#fff;border-radius:24px;box-shadow:0 0 0 1px var(--md-outline-variant);overflow:hidden;display:flex;flex-direction:column}
+.prod .img{aspect-ratio:1;background:var(--md-surface-container);display:grid;place-items:center;color:var(--md-outline-variant)}
+.prod .img .ms{font-size:44px;width:44px;height:44px}
+.prod .b{padding:var(--sp-4);display:flex;flex-direction:column;gap:4px}
+.prod .c{font:var(--label-sm);color:var(--md-primary)}
+.prod h3{font:600 1rem/1.35 var(--font-sans)}
+.prod .p{display:flex;justify-content:space-between;align-items:center;margin-top:var(--sp-2)}
+.prod .p b{font:700 1.125rem/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.prod .add{width:36px;height:36px;border-radius:50%;border:0;background:var(--md-secondary-container);color:var(--md-on-secondary-container);display:grid;place-items:center;cursor:pointer}
+.posts{display:flex;flex-direction:column;gap:var(--sp-4)}
+.post{display:grid;grid-template-columns:112px minmax(0,1fr);gap:var(--sp-5);align-items:center;padding:var(--sp-3);border-radius:24px;text-decoration:none;color:inherit;transition:background var(--dur-short)}
+.post:hover{background:var(--md-surface-container)}
+.post .th{aspect-ratio:1;border-radius:18px;display:grid;place-items:center}
+.post .th img{width:66%}
+.post .meta{font:var(--label-sm);color:var(--md-on-surface-variant);font-weight:500}
+.post h3{font:400 1.25rem/1.35 var(--font-serif);margin:4px 0}
+
+/* ================= CONTACTO ================= */
+.contact{max-width:var(--container);margin:0 auto var(--sp-8);border-radius:40px;background:var(--deep);color:#fff;position:relative;overflow:hidden;isolation:isolate;padding:var(--sp-16) var(--sp-12) var(--sp-8)}
+.contact .cut{position:absolute;right:-40px;top:-30px;width:520px;opacity:.12;z-index:-1}
+.contact h2{font:400 3.5rem/1 var(--font-sans);letter-spacing:-.03em;max-width:12ch}
+.contact h2 b{font-weight:700}
+.cgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-8);margin-top:var(--sp-12)}
+.cgrid h3{font:var(--label-md);color:rgb(255 255 255/.65);font-weight:500;margin-bottom:var(--sp-3)}
+.cgrid p,.cgrid a{font:var(--body-md);color:#fff;text-decoration:none;display:block}
+.cgrid a:hover{text-decoration:underline}
+.cgrid .pending{margin-top:var(--sp-2);background:rgb(255 255 255/.12);color:#fff}
+.c-cta{display:flex;gap:var(--sp-3);margin-top:var(--sp-10)}
+.legal{display:flex;justify-content:space-between;gap:var(--sp-6);margin-top:var(--sp-16);padding-top:var(--sp-6);border-top:1px solid rgb(255 255 255/.14);font:var(--body-sm);color:rgb(255 255 255/.65)}
+.legal a{color:rgb(255 255 255/.85)}
+
+/* WhatsApp flotante (aprobado: solo isotipo) */
+.fab-wa{position:fixed;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
+  background:var(--whatsapp);color:var(--on-whatsapp);box-shadow:var(--elev-3);border:0;cursor:pointer;transition:box-shadow var(--dur-medium),transform var(--dur-medium) var(--ease-emph-decel)}
+.fab-wa:hover{box-shadow:var(--elev-4);transform:translateY(-2px) scale(1.04)}
+.fab-wa svg{width:32px;height:32px}
+.fab-wa .tip{position:absolute;right:calc(100% + 12px);top:50%;transform:translate(6px,-50%);white-space:nowrap;background:var(--md-inverse-surface);color:var(--md-inverse-on-surface);font:var(--label-md);padding:8px 12px;border-radius:var(--r-sm);opacity:0;pointer-events:none;transition:all var(--dur-short)}
+.fab-wa:hover .tip,.fab-wa:focus-visible .tip{opacity:1;transform:translate(0,-50%)}
+
+/* Nota de maqueta */
+.mock-note{max-width:var(--container);margin:0 auto var(--sp-16);background:var(--md-surface-low);border-radius:var(--r-xl);padding:var(--sp-8);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-8);font:var(--body-sm);color:var(--md-on-surface-variant)}
+.mock-note h3{font:var(--title-md);color:var(--md-on-surface);margin-bottom:var(--sp-3)}
+.mock-note ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:var(--sp-2)}
+.mock-note li::marker{color:var(--md-primary)}
+
+/* Entrada orquestada del héroe: un solo momento (desde estado visible) */
+@media (prefers-reduced-motion:no-preference){
+  .doc .disc{animation:rise var(--dur-xlong) var(--ease-emph-decel) both}
+  .tagpill{animation:pop var(--dur-long) var(--ease-emph-decel) both}
+  .tagpill:nth-of-type(2){animation-delay:120ms}.tagpill:nth-of-type(3){animation-delay:200ms}.tagpill:nth-of-type(4){animation-delay:280ms}
+  @keyframes rise{from{transform:scale(.92) rotate(-20deg)}to{transform:none}}
+  @keyframes pop{from{transform:translateY(8px)}to{transform:none}}
+}
+/* Solo para que la maqueta no se rompa en pantallas angostas: el responsive real es una fase posterior */
+@media (max-width:1100px){
+  .hero{height:auto;padding:120px 24px 24px;display:flex;flex-direction:column;gap:24px}
+  .hero .yang,.doc,.tagpill,.h-foot{display:none}
+  .top{inset:20px 20px auto 20px;flex-wrap:wrap}.navpill{display:none}.top .right .place{display:none}
+  .h-copy,.quote,.h-side{position:static;width:auto}
+  .h-copy h1{font-size:4rem}.h-copy h1 .seal{width:56px;height:56px}
+  .h-side{color:var(--md-on-surface)}.h-side p{color:var(--md-on-surface-variant)}.h-side p b{color:var(--md-on-surface)}
+  .top .right .icon-btn{background:var(--md-surface-container);color:var(--md-primary)}
+  .h-row{flex-direction:column}
+  .quote{grid-template-columns:1fr}.quote .pic{height:140px}
+  .sgrid,.prods{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .why,.duo{grid-template-columns:minmax(0,1fr)}
+  .cgrid,.mock-note{grid-template-columns:minmax(0,1fr)}
+  .statement h2,.sec-top h2,.why .panel h2,.contact h2{font-size:2.25rem}
+  .sec-top{flex-direction:column;align-items:flex-start}.sec-top .r{align-items:flex-start;text-align:left}
+  .contact{padding:40px 24px}.legal{flex-direction:column}
+}
+@media (max-width:560px){.sgrid,.prods{grid-template-columns:minmax(0,1fr)}.svc.photo{grid-column:auto}.facts{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important;scroll-behavior:auto!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"/></symbol>
+  <!-- silueta provisional: marca el lugar de la foto real -->
+  <symbol id="person" viewBox="0 0 330 520"><g fill="rgb(255 255 255/.5)" stroke="#fff" stroke-width="2" stroke-dasharray="7 7"><circle cx="165" cy="118" r="72"/><path d="M30 520C30 360 80 262 140 240V200Q165 212 190 200V240C250 262 300 360 300 520Z"/></g></symbol>
+</defs></svg>
+
+<!-- ============ HÉROE ============ -->
+<header class="hero" aria-label="Inicio">
+  <svg class="yang" viewBox="0 0 1280 720" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="yg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7A6A9C"/><stop offset=".5" stop-color="#655785"/><stop offset="1" stop-color="#4D3F6C"/></linearGradient>
+      <radialGradient id="glow" cx=".72" cy=".2" r=".5"><stop offset="0" stop-color="#D0BEF3" stop-opacity=".45"/><stop offset="1" stop-color="#D0BEF3" stop-opacity="0"/></radialGradient>
+    </defs>
+    <!-- curva en S: el borde entre el lado claro (yin) y el morado (yang) -->
+    <path d="M1280 0H900C730 0 690 170 760 330C830 490 820 720 610 720H1280Z" fill="url(#yg)"/>
+    <path d="M1280 0H900C730 0 690 170 760 330C830 490 820 720 610 720H1280Z" fill="url(#glow)"/>
+    <!-- los dos "ojos" del yin-yang -->
+    <circle cx="905" cy="120" r="9" fill="#FBCFAF"/>
+    <circle cx="640" cy="610" r="9" fill="#8F7FB0"/>
+  </svg>
+
+  <div class="top">
+    <a class="lockup" href="#" aria-label="Alma Animal, inicio"><img src="{{MARK}}" alt=""><span><span class="wm">Alma Animal</span><span class="tag">Consultorio · Spa · Petshop</span></span></a>
+    <nav class="navpill" aria-label="Principal">
+      <a href="#" aria-current="page">Inicio</a>
+      <a href="#servicios">Consultorio</a>
+      <a href="#servicios">Spa</a>
+      <a href="#tienda">Tienda</a>
+      <a href="#por-que">Nosotros</a>
+      <a href="#blog">Blog</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="right">
+      <div class="place"><span class="ms">location_on</span><span>Pereira, Risaralda<small>Dirección por confirmar</small></span></div>
+      <a class="icon-btn" href="#contacto" aria-label="Llamar: 324 679 6695"><span class="ms">call</span></a>
+      <a class="icon-btn" href="#tienda" aria-label="Carrito, 2 productos"><span class="ms">shopping_bag</span><span class="badge">2</span></a>
+      <a class="icon-btn solid" href="#" aria-label="Ingresar a mi cuenta"><span class="ms">person</span></a>
+    </div>
+  </div>
+
+  <div class="h-copy">
+    <h1><span class="line">Cuidado</span><span class="line">con <span class="alma">alma</span><span class="seal"><img src="{{PAPELC}}" alt=""></span></span></h1>
+    <div class="h-row">
+      <p class="lead"><b>Consultorio, spa y petshop</b> en un mismo lugar. Te atiende la Dra. Mariana Hoyos, médica veterinaria y zootecnista.</p>
+    </div>
+    <div class="h-cta">
+      <a class="btn alma lg" href="#">Agenda tu cita<span class="end"><span class="ms">arrow_forward</span></span></a>
+      <a class="textlink" href="#"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbenos</a>
+    </div>
+  </div>
+
+  <div class="quote" aria-label="Cotizador rápido del spa">
+    <div class="pic"><img src="{{PAPEL}}" alt=""></div>
+    <div class="q">
+      <b>¿Cuánto cuesta el baño?</b>
+      <div class="seg" data-single role="group" aria-label="Especie">
+        <button type="button" aria-pressed="true">Perro</button><button type="button" aria-pressed="false">Gato</button>
+      </div>
+      <div class="seg" data-single role="group" aria-label="Largo del pelo">
+        <button type="button" aria-pressed="false">Corto</button><button type="button" aria-pressed="true">Medio</button><button type="button" aria-pressed="false">Largo</button>
+      </div>
+      <div class="res"><span>Estimado desde<strong>$00.000</strong></span><a class="btn sm outlined" href="#">Cotizar completo</a></div>
+    </div>
+  </div>
+
+  <div class="doc" aria-hidden="true">
+    <div class="disc"></div>
+    <div class="slot"><svg class="person" viewBox="0 0 330 520"><use href="#person"/></svg><span class="pending"><span class="ms">photo_camera</span>Foto de la Dra. Mariana, recortada</span></div>
+  </div>
+  <div class="tagpill" style="left:560px;top:420px"><span class="t">Medicina preventiva</span><i></i></div>
+  <div class="tagpill r onp" style="left:880px;top:360px"><span class="t">Spa con protocolo</span><i></i></div>
+  <div class="tagpill r onp" style="left:850px;top:520px"><span class="t">Carnet de vacunas digital</span><i></i></div>
+  <div class="tagpill" style="left:610px;top:560px"><span class="t">MVZ · TP 51206</span><i></i></div>
+
+  <div class="h-side">
+    <h2>Consultorio y spa <b>en un mismo lugar</b></h2>
+    <p>Consulta, vacunas, radiografía y cirugía. Y cuando toca baño, <b>la misma doctora</b> revisa piel, oídos y dientes.</p>
+  </div>
+  <div class="h-foot">
+    <p>Síguenos en Instagram<br><b>@vet_alma_animal</b></p>
+    <div class="ig">
+      <a href="https://instagram.com/vet_alma_animal" aria-label="Instagram @vet_alma_animal"><img src="{{MARK}}" alt=""></a>
+      <a href="https://instagram.com/vet_marianahoyos" aria-label="Instagram @vet_marianahoyos" style="background:var(--brand-peach);color:#623F21">MH</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ DECLARACIÓN ============ -->
+<section class="statement" aria-labelledby="st">
+  <h2 id="st"><b>Un animalito</b> <span class="chip a"><img src="{{MARK}}" alt=""></span> limpio es un animalito <span class="chip b"><img src="{{PAPEL}}" alt=""></span> <b>sano</b></h2>
+  <p>En Alma Animal el baño también es salud. Usamos <b>shampoo hipoalergénico libre de parabenos</b>, agua caliente y protección de oídos, y si algo no se ve bien en la piel, la doctora está a un paso.</p>
+  <a class="btn outlined" href="#por-que">Conoce a la doctora</a>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section class="services" id="servicios" aria-labelledby="sv">
+  <div class="sec-top">
+    <h2 id="sv">Nuestros<br><b>servicios</b></h2>
+    <div class="r"><p>Del control de rutina a la cirugía, y del baño al corte según la raza.</p><a href="#" style="font:var(--label-lg)">Ver todos los servicios</a></div>
+  </div>
+  <div class="sgrid">
+    <article class="svc"><span class="ms glyph">stethoscope</span><h3><span class="ms">stethoscope</span>Consulta general</h3><p>Anamnesis, examen físico, diagnóstico y plan de tratamiento, todo en su historia clínica.</p><div class="f"><a href="#">Agendar</a><span>Precio</span></div></article>
+    <article class="svc feat"><img class="bg" src="{{PAPEL}}" alt=""><span class="wm">Spa Alma</span><p>Baño, hidromasaje, aromaterapia y cierre con perfume, accesorio y snack.</p><a class="btn alma sm" href="#">Cotiza en línea</a></article>
+    <article class="svc"><span class="ms glyph">vaccines</span><h3><span class="ms">vaccines</span>Vacunación</h3><p>Esquema completo con carnet digital: lote, laboratorio y próxima dosis, con recordatorio.</p><div class="f"><a href="#">Agendar</a><span>Precio</span></div></article>
+    <article class="svc"><span class="ms glyph">radiology</span><h3><span class="ms">radiology</span>Radiografía</h3><p>Imágenes diagnósticas en el consultorio, adjuntas a la historia de tu mascota.</p><div class="f"><a href="#">Agendar</a><span>Precio</span></div></article>
+    <article class="svc"><span class="ms glyph">medical_services</span><h3><span class="ms">medical_services</span>Cirugía</h3><p>Procedimientos programados con valoración previa y seguimiento después.</p><div class="f"><a href="#">Agendar</a><span>Precio</span></div></article>
+    <article class="svc"><span class="ms glyph">storefront</span><h3><span class="ms">storefront</span>Petshop</h3><p>Alimento, higiene y accesorios. Pides en la web y cierras el pedido por WhatsApp.</p><div class="f"><a href="#tienda">Ver tienda</a><span>Catálogo</span></div></article>
+    <article class="svc photo"><div class="moon"><img src="{{YY}}" alt="Tigre y perro, la ilustración de Alma Animal"></div><span class="pending"><span class="ms">photo_camera</span>Aquí iría una foto real del consultorio</span></article>
+  </div>
+</section>
+
+<!-- ============ POR QUÉ ============ -->
+<section class="why" id="por-que" aria-labelledby="pq">
+  <div class="panel">
+    <img class="cut" src="{{PAPEL}}" alt="">
+    <h2 id="pq">¿Por qué<br><b>Alma Animal?</b></h2>
+    <p class="by">ATENDIDO POR: DRA. MARIANA HOYOS GIRALDO, MVZ</p>
+    <div class="team" aria-hidden="true"><svg viewBox="0 0 330 520"><use href="#person"/></svg><span class="pending"><span class="ms">photo_camera</span>Foto del equipo</span></div>
+    <div class="tagpill onp" style="left:40px;top:330px"><span class="t">Médica veterinaria</span><i></i></div>
+    <div class="tagpill r onp" style="right:36px;top:250px"><span class="t">Peluqueros</span><i></i></div>
+    <div class="tagpill onp" style="left:60px;bottom:90px"><span class="t">Spa con protocolo</span><i></i></div>
+  </div>
+  <div class="facts">
+    <div class="fact"><span class="n">8</span><b>Cuidados en cada baño</b><p>Antipulgas, oídos, dientes, hidromasaje, aromaterapia, cepillado, deslanado y uñas.</p></div>
+    <div class="fact"><span class="n">3<sup>en 1</sup></span><b>Consultorio, spa y petshop</b><p>Un solo lugar y una sola historia clínica para tu mascota.</p></div>
+    <div class="fact"><span class="n">0</span><b>Parabenos en el shampoo</b><p>Hipoalergénico. Para piel sensible hay baño medicado (+$5.000 hasta 10 kg).</p></div>
+    <div class="fact"><span class="n">1</span><b>Carnet digital por mascota</b><p>Vacunas con lote, laboratorio y sello, visibles desde tu portal.</p></div>
+    <p class="lema"><img src="{{MARK}}" alt="">Un animalito limpio es un animalito sano.</p>
+  </div>
+</section>
+
+<!-- ============ TIENDA + BLOG ============ -->
+<section class="duo" aria-label="Tienda y blog">
+  <div id="tienda">
+    <div class="head"><h2>Pet<b>shop</b></h2><a href="#" style="font:var(--label-lg)">Ver tienda</a></div>
+    <div class="prods">
+      <article class="prod"><div class="img"><span class="ms">photo_camera</span></div><div class="b"><span class="c">Higiene · Ejemplo</span><h3>Shampoo hipoalergénico 250 ml</h3><div class="p"><b>$00.000</b><button class="add" aria-label="Agregar al carrito"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="ms">photo_camera</span></div><div class="b"><span class="c">Alimento · Ejemplo</span><h3>Concentrado adulto raza pequeña</h3><div class="p"><b>$00.000</b><button class="add" aria-label="Agregar al carrito"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="ms">photo_camera</span></div><div class="b"><span class="c">Accesorios · Ejemplo</span><h3>Pechera ajustable talla S</h3><div class="p"><b>$00.000</b><button class="add" aria-label="Agregar al carrito"><span class="ms">add</span></button></div></div></article>
+    </div>
+  </div>
+  <div id="blog">
+    <div class="head"><h2>Blog <b>veterinario</b></h2><a href="#" style="font:var(--label-lg)">Leer el blog</a></div>
+    <div class="posts">
+      <a class="post" href="#"><span class="th" style="background:var(--grad-alma)"><img src="{{PAPELC}}" alt=""></span><span><span class="meta">Cuidado · 5 min · Artículo de ejemplo</span><h3>¿Cada cuánto bañar a tu perro según su tipo de pelo?</h3></span></a>
+      <a class="post" href="#"><span class="th" style="background:var(--grad-primary)"><img src="{{PAPELC}}" alt=""></span><span><span class="meta">Vacunas · 4 min · Artículo de ejemplo</span><h3>El calendario de vacunas de un cachorro, paso a paso</h3></span></a>
+      <a class="post" href="#"><span class="th" style="background:var(--md-tertiary-container)"><img src="{{MARK}}" alt=""></span><span><span class="meta">Gatos · 6 min · Artículo de ejemplo</span><h3>Señales de que tu gato tiene dolor de dientes</h3></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<footer class="contact" id="contacto">
+  <img class="cut" src="{{PAPEL}}" alt="">
+  <h2>Te esperamos en <b>Pereira</b></h2>
+  <div class="cgrid">
+    <div><h3>Dirección</h3><p>Pereira, Risaralda</p><span class="pending">Dirección por confirmar</span></div>
+    <div><h3>Teléfonos</h3><a href="tel:+573246796695">324 679 6695</a><a href="tel:+573017925910">301 792 5910</a></div>
+    <div><h3>Horario</h3><p>Lunes a sábado</p><span class="pending">Horas por confirmar</span></div>
+    <div><h3>Instagram</h3><a href="https://instagram.com/vet_alma_animal">@vet_alma_animal</a><a href="https://instagram.com/vet_marianahoyos">@vet_marianahoyos</a></div>
+  </div>
+  <div class="c-cta"><a class="btn alma" href="#">Agenda tu cita</a><a class="btn ghost" href="#"><span class="ms">map</span>Cómo llegar</a></div>
+  <div class="legal"><span>Dra. Mariana Hoyos Giraldo · Médica Veterinaria &amp; Zootecnista · TP 51206</span><a href="#">Política de tratamiento de datos (Ley 1581 de 2012)</a></div>
+</footer>
+
+<aside class="mock-note" aria-label="Notas de la maqueta">
+  <div><h3>De la referencia</h3><ul><li>Título enorme a la izquierda y panel de color a la derecha.</li><li>La doctora cruza los dos lados, con etiquetas flotantes unidas por un punto.</li><li>Tarjeta destacada dentro de la grilla de servicios.</li><li>Sección "Por qué" con foto del equipo y datos grandes.</li></ul></div>
+  <div><h3>Adaptado a Alma Animal</h3><ul><li>El borde entre el lado claro y el morado es una curva en S, como el yin-yang, con sus dos "ojos" en durazno y morado.</li><li>Papel recortado: la ilustración del tigre y el perro convertida en silueta blanca calada.</li><li>La tarjeta de cifras se vuelve un cotizador rápido del spa.</li><li>Solo datos reales; precios, productos y artículos son de ejemplo.</li></ul></div>
+  <div><h3>Falta para cerrar</h3><ul><li>Foto de la Dra. Mariana (cintura para arriba, bata, fondo liso) y foto del equipo.</li><li>Foto del consultorio.</li><li>Dirección, horario y número de WhatsApp.</li><li>Tarifas reales del spa para el cotizador.</li></ul></div>
+</aside>
+
+<button class="fab-wa" type="button" aria-label="Escríbenos por WhatsApp"><svg aria-hidden="true"><use href="#wa"/></svg><span class="tip" aria-hidden="true">Escríbenos por WhatsApp</span></button>
+
+<script>
+document.querySelectorAll('.seg[data-single]').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))}));
+</script>

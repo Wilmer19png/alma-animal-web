@@ -3,10 +3,12 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Lockup from '../components/Lockup.astro';
 import MobileMenu from '../components/MobileMenu.astro';
+import CartLink from '../components/CartLink.astro';
 import WaIcon from '../components/WaIcon.astro';
 import WaStrip from '../components/WaStrip.astro';
 import HomeVisit from '../components/HomeVisit.astro';
 import { NAV, ADDRESS, PHONES, SOCIAL, DOCTOR, whatsapp } from '../data/site';
+import { POSTS as BLOG_POSTS, BLOG_DEMO, postUrl } from '../data/blog';
 import heartPaper from '../assets/papel-corazon-v2.png';
 import tigerDog from '../assets/papel-tigre-perro-v3.png';
 import paw from '../assets/pata-perro-h.png';
@@ -26,11 +28,8 @@ const REASONS = [
   { n: '0', title: 'Parabenos en el shampoo', text: 'Hipoalergénico, y baño medicado para la piel sensible.' },
   { n: '1', title: 'Carnet digital por mascota', text: 'Vacunas con lote, laboratorio y sello, visibles desde tu cuenta.' }
 ];
-const POSTS = [
-  { cat: 'Cuidado', min: 5, title: '¿Cada cuánto bañar a tu perro según su tipo de pelo?', bg: 'var(--grad-alma)', img: heart, w: 96 },
-  { cat: 'Vacunas', min: 4, title: 'El calendario de vacunas de un cachorro, paso a paso', bg: 'var(--grad-primary)', img: heartPaper, w: 96 },
-  { cat: 'Gatos', min: 6, title: 'Señales de que tu gato tiene dolor de dientes', bg: '#D1C1DD', img: tigerDog, w: 150 }
-];
+// los 3 artículos más recientes del blog
+const POSTS = BLOG_POSTS.slice(0, 3);
 const waVet = whatsapp.vet();
 ---
 <Base
@@ -59,7 +58,7 @@ const waVet = whatsapp.vet();
         <div class="hero__tools">
           <span class="hero__addr"><span class="ms" aria-hidden="true">location_on</span><span>{ADDRESS.city}<small>{ADDRESS.line}</small></span></span>
           <a class="icon-btn on-curve hide-sm" href={`tel:+${PHONES.vet.e164}`} aria-label={`Llamar al ${PHONES.vet.display}`}><span class="ms" aria-hidden="true">call</span></a>
-          <a class="icon-btn on-curve" href="/petshop" aria-label="Carrito"><span class="ms" aria-hidden="true">shopping_bag</span></a>
+          <CartLink class="on-curve" />
           <a class="icon-btn solid hide-sm" href="/portal" aria-label="Ingresar a mi portal"><span class="ms" aria-hidden="true">person</span></a>
           <MobileMenu />
         </div>
@@ -211,10 +210,10 @@ const waVet = whatsapp.vet();
     </div>
     <div class="blog__grid">
       {POSTS.map((p) => (
-        <a class="card post" href="/blog">
-          <span class="post__cover" style={`background: ${p.bg};`}><Image src={p.img} alt="" width={p.w * 2} style={`width: ${p.w}px;`} /></span>
+        <a class="card post" href={postUrl(p)}>
+          <span class="post__cover" style={`background: ${p.cover.bg};`}><Image src={p.cover.img} alt="" width={300} style={`width: ${Math.round(p.cover.w * 100)}%; max-width: 150px;`} /></span>
           <span class="post__body">
-            <span class="post__meta">{p.cat} · {p.min} min · Artículo de ejemplo</span>
+            <span class="post__meta">{p.cat} · {p.min} min{BLOG_DEMO && ' · Artículo de ejemplo'}</span>
             <span class="serif post__title">{p.title}</span>
           </span>
         </a>
@@ -342,8 +341,8 @@ const waVet = whatsapp.vet();
     .hero__addr { display: flex; align-items: center; gap: 8px; color: #fff; margin-right: 8px; font: 600 13px/1.25 var(--font-sans); }
     .hero__addr small { display: block; font-weight: 400; font-size: 12px; color: rgb(255 255 255 / .78); }
     .hide-sm { display: inline-grid; }
-    .icon-btn.on-curve { background: rgb(255 255 255 / .14); color: #fff; }
-    .icon-btn.on-curve:hover { background: rgb(255 255 255 / .26); color: #fff; }
+    :global(.icon-btn.on-curve) { background: rgb(255 255 255 / .14); color: #fff; }
+    :global(.icon-btn.on-curve:hover) { background: rgb(255 255 255 / .26); color: #fff; }
 
     .hero__copy { position: absolute; left: 40px; top: 124px; width: 540px; padding: 0; gap: 20px; z-index: 5; }
     .hero__copy p { font-size: 18px; max-width: 32ch; }

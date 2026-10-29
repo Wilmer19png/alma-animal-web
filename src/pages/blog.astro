@@ -1,0 +1,184 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaStrip from '../components/WaStrip.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { whatsapp, DOCTOR } from '../data/site';
+import { BLOG_DEMO, BLOG_CATS, POSTS, shortDate, postUrl } from '../data/blog';
+import mariana from '../assets/mariana-gato.png';
+import tigerDog from '../assets/papel-tigre-perro-v3.png';
+
+const waAsk = whatsapp.vet('Hola, doctora. Tengo una pregunta sobre mi mascota.');
+---
+<Base
+  title="Blog veterinario · Alma Animal"
+  description="Consejos de la Dra. Mariana Hoyos Giraldo para cuidar a tu perro o gato en casa: vacunas, baño, nutrición y más."
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== CABECERA ======== -->
+  <section class="wrap bhead-wrap" aria-labelledby="bh">
+    <div class="bhead">
+      <div class="bhead__copy">
+        <span class="bhead__kicker">Consejos para cuidar a tu mascota en casa</span>
+        <h1 id="bh">Blog <b class="gt">veterinario</b></h1>
+        <p>Lo que la doctora explica todos los días en consulta, escrito para que lo tengas a mano.</p>
+        <div class="byline">
+          <span class="byline__pic"><Image src={mariana} alt="" width={240} /></span>
+          <span><b>Escribe la {DOCTOR.name}</b><span>{DOCTOR.title} · {DOCTOR.tp}</span></span>
+        </div>
+      </div>
+      <div class="bhead__art" aria-hidden="true">
+        <span class="bhead__ring"></span>
+        <Image src={tigerDog} alt="" width={720} />
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== CATEGORÍAS ======== -->
+  <nav class="wrap cats" aria-label="Categorías del blog">
+    <button class="chip is-on" type="button" data-bcat="" aria-pressed="true">Todo</button>
+    {BLOG_CATS.map((c) => <button class="chip" type="button" data-bcat={c} aria-pressed="false">{c}</button>)}
+  </nav>
+
+  <!-- ======== DESTACADO: el más reciente de la categoría ======== -->
+  <section class="wrap feat-wrap" aria-label="Artículo más reciente">
+    {POSTS.map((p, i) => (
+      <a class="feat" href={postUrl(p)} data-feat={p.cat} hidden={i > 0}>
+        <span class="feat__cover" style={`background:${p.cover.bg}`}>
+          <Image src={p.cover.img} alt="" width={600} style={`width:${Math.round(p.cover.w * 100)}%`} />
+          <span class="feat__new">Lo más reciente</span>
+        </span>
+        <span class="feat__body">
+          <span class="meta">{p.cat} · {p.min} min de lectura · <time datetime={p.date}>{shortDate(p.date)}</time></span>
+          <span class="serif feat__title">{p.title}</span>
+          <span class="feat__excerpt">{p.excerpt}</span>
+          <span class="link">Leer el artículo<span class="ms" aria-hidden="true">arrow_forward</span></span>
+        </span>
+      </a>
+    ))}
+  </section>
+
+  <!-- ======== MÁS ARTÍCULOS ======== -->
+  <section class="wrap more" aria-labelledby="ar" data-more>
+    <h2 id="ar" class="h-section">Más <b class="gt">artículos</b></h2>
+    <div class="posts">
+      {POSTS.map((p, i) => (
+        <a class="post" href={postUrl(p)} data-post={p.cat} hidden={i === 0}>
+          <span class="post__cover" style={`background:${p.cover.bg}`}><Image src={p.cover.img} alt="" width={400} style={`width:${Math.round(p.cover.w * 100)}%`} /></span>
+          <span class="post__body">
+            <span class="meta">{p.cat} · {p.min} min</span>
+            <span class="serif post__title">{p.title}</span>
+            <span class="post__excerpt">{p.excerpt}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+    <p class="more__empty" data-more-empty hidden>Pronto habrá más artículos de esta categoría.</p>
+    {BLOG_DEMO && <p class="demo">Artículos de ejemplo: la doctora publicará los suyos desde el gestor.</p>}
+  </section>
+
+  <Newsletter />
+
+  <WaStrip href={waAsk} title="¿Tu duda no está aquí?" accent="Pregúntale a la doctora" text="Si es urgente, escríbenos y te decimos si necesita consulta." />
+</Base>
+
+<script>
+  // Filtro por categoría: el más reciente de la categoría va destacado y el resto en la cuadrícula.
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-bcat]')];
+  const feats = [...document.querySelectorAll<HTMLElement>('[data-feat]')];
+  const posts = [...document.querySelectorAll<HTMLElement>('[data-post]')];
+  const pick = (cat: string) => {
+    chips.forEach((c) => { const on = (c.dataset.bcat ?? '') === cat; c.classList.toggle('is-on', on); c.setAttribute('aria-pressed', String(on)); });
+    const match = (el: HTMLElement, key: string) => !cat || el.dataset[key] === cat;
+    const first = feats.findIndex((f) => match(f, 'feat'));
+    feats.forEach((f, i) => { f.hidden = i !== first; });
+    let rest = 0;
+    posts.forEach((p, i) => { p.hidden = i === first || !match(p, 'post'); if (!p.hidden) rest++; });
+    document.querySelector<HTMLElement>('[data-more-empty]')!.hidden = rest > 0;
+  };
+  chips.forEach((c) => c.addEventListener('click', () => pick(c.dataset.bcat ?? '')));
+  // /blog#Gatos abre esa categoría (lo usan las migas del artículo)
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  if (chips.some((c) => c.dataset.bcat === fromHash && fromHash)) pick(fromHash);
+</script>
+
+<style>
+  /* ---------- CABECERA ---------- */
+  .bhead-wrap { padding-top: 8px; padding-bottom: 28px; }
+  .bhead { position: relative; display: grid; gap: 24px; align-items: center; padding: 28px 20px; border-radius: var(--r-lg); background: var(--surface-2); overflow: hidden; isolation: isolate; }
+  .bhead__copy { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .bhead__kicker { font: 600 15px/1.3 var(--font-sans); color: var(--primary); }
+  .bhead h1 { font-size: clamp(40px, 11vw, 80px); font-weight: 400; line-height: .95; letter-spacing: -.045em; }
+  .bhead h1 b { font-weight: 700; }
+  .bhead__copy > p { font-size: 17px; line-height: 1.6; color: var(--ink-muted); max-width: 46ch; }
+  .byline { display: flex; align-items: center; gap: 12px; }
+  .byline__pic { position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: var(--peach); flex: none; }
+  .byline__pic :global(img) { position: absolute; left: 50%; top: 2px; width: 120px; max-width: none; height: auto; transform: translateX(-46%); }
+  .byline b { display: block; font: 600 16px/1.3 var(--font-sans); }
+  .byline span > span { font: 400 14px/1.35 var(--font-sans); color: var(--ink-muted); }
+  .bhead__art { display: none; }
+  @media (min-width: 1000px) {
+    .bhead-wrap { padding-top: 24px; padding-bottom: 40px; }
+    .bhead { grid-template-columns: minmax(0, 1fr) 420px; gap: 40px; padding: 56px 56px 56px 64px; border-radius: var(--r-xl); }
+    .bhead__copy > p { font-size: 19px; }
+    .bhead__art { display: block; position: relative; height: 320px; }
+    .bhead__ring { position: absolute; inset: 10px 30px; border-radius: 50%; border: 2px dashed var(--lavender); }
+    .bhead__art :global(img) { position: absolute; left: 50%; top: 50%; width: 360px; height: auto; transform: translate(-50%, -50%); }
+  }
+
+  /* ---------- CATEGORÍAS ---------- */
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 24px; }
+  .chip { min-height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink-muted); font: 600 14px/1 var(--font-sans); cursor: pointer; transition: background .15s, color .15s; }
+  .chip:hover { background: var(--surface-3); }
+  .chip.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  @media (min-width: 900px) { .cats { padding-bottom: 32px; } }
+
+  .meta { font: 600 13.5px/1.3 var(--font-sans); color: var(--primary); }
+
+  /* ---------- DESTACADO ---------- */
+  .feat-wrap { padding-bottom: 32px; }
+  .feat { display: grid; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line); color: inherit; text-decoration: none; transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
+  .feat[hidden] { display: none; }
+  .feat:hover { color: inherit; box-shadow: var(--shadow-2); transform: translateY(-3px); }
+  .feat:hover .link { text-decoration: underline; }
+  .feat__cover { position: relative; min-height: 200px; display: grid; place-items: center; overflow: hidden; }
+  .feat__cover :global(img) { max-width: 200px; height: auto; opacity: .9; }
+  .feat__new { position: absolute; top: 16px; left: 16px; font: 600 13px/1 var(--font-sans); padding: 8px 12px; border-radius: 999px; background: #fff; color: var(--ink); }
+  .feat__body { display: flex; flex-direction: column; gap: 12px; padding: 22px 20px; }
+  .feat__title { font-size: clamp(24px, 6vw, 40px); line-height: 1.15; color: var(--ink); text-wrap: balance; }
+  .feat__excerpt { font-size: 16.5px; line-height: 1.6; color: var(--ink-muted); }
+  .feat .link { margin-top: 4px; }
+  @media (min-width: 900px) {
+    .feat-wrap { padding-bottom: 40px; }
+    .feat { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-radius: var(--r-xl); }
+    .feat__cover { min-height: 400px; }
+    .feat__cover :global(img) { max-width: 300px; }
+    .feat__body { gap: 18px; padding: 48px; justify-content: center; }
+    .feat__excerpt { font-size: 18px; }
+  }
+
+  /* ---------- MÁS ARTÍCULOS ---------- */
+  .more { display: flex; flex-direction: column; gap: 20px; padding-bottom: var(--section); }
+  .posts { display: grid; gap: 16px; }
+  .post { display: flex; flex-direction: column; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line); color: inherit; text-decoration: none; transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
+  .post[hidden] { display: none; }
+  .post:hover { color: inherit; box-shadow: var(--shadow-2); transform: translateY(-3px); }
+  .post__cover { aspect-ratio: 16 / 9; display: grid; place-items: center; }
+  .post__cover :global(img) { max-width: 160px; height: auto; opacity: .9; }
+  .post__body { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px 22px; }
+  .post__title { font-size: 21px; line-height: 1.3; color: var(--ink); }
+  .post__excerpt { font-size: 15px; line-height: 1.55; color: var(--ink-muted); }
+  .more__empty { font-size: 17px; color: var(--ink-muted); }
+  .more__empty[hidden] { display: none; }
+  .demo { font-size: 14px; color: var(--ink-muted); }
+  @media (min-width: 700px) { .posts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; } }
+  @media (min-width: 1000px) {
+    .more { gap: 24px; }
+    .posts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .post { border-radius: 28px; }
+    .post__cover { aspect-ratio: 16 / 10; }
+    .post__title { font-size: 22px; }
+  }
+</style>

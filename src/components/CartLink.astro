@@ -1,0 +1,38 @@
+---
+// Botón del carrito con el número de productos (lo lee del carrito del navegador).
+// Como está en todas las páginas, también lanza el confeti cuando el pedido alcanza el envío gratis.
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+---
+<a class:list={['icon-btn', cls]} href="/carrito" aria-label="Carrito" data-cart-link>
+  <span class="ms" aria-hidden="true">shopping_bag</span>
+  <span class="badge" data-cart-count hidden></span>
+</a>
+
+<script>
+  import { cart } from '../scripts/cart';
+  import { confetti } from '../scripts/confetti';
+  import { SHIPPING } from '../data/shop';
+
+  const paint = () => {
+    const n = cart.count();
+    document.querySelectorAll<HTMLElement>('[data-cart-count]').forEach((b) => { b.textContent = String(n); b.hidden = n === 0; });
+    document.querySelectorAll<HTMLElement>('[data-cart-link]').forEach((a) => a.setAttribute('aria-label', n ? `Carrito, ${n} ${n === 1 ? 'producto' : 'productos'}` : 'Carrito vacío'));
+  };
+
+  // solo cuando el subtotal cruza el mínimo (no al cargar una página que ya lo tenía)
+  let before = cart.subtotal();
+  const celebrate = () => {
+    const now = cart.subtotal();
+    if (before < SHIPPING.freeFrom && now >= SHIPPING.freeFrom) {
+      const bar = [...document.querySelectorAll<HTMLElement>('[data-free-fill]')].find((el) => el.offsetParent !== null);
+      const r = bar?.getBoundingClientRect();
+      // espera a que la barra termine de llenarse
+      window.setTimeout(() => confetti(r && r.bottom > 0 && r.top < window.innerHeight ? r : undefined), 450);
+    }
+    before = now;
+  };
+
+  paint();
+  cart.onChange(() => { paint(); celebrate(); });
+</script>

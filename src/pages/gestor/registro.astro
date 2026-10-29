@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Registrar paciente">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Registro from '../../gestor/Registro';
+    montar(Registro);
+  </script>
+</GestorLayout>

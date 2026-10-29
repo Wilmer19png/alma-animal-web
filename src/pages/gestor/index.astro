@@ -1,0 +1,12 @@
+---
+// /gestor abre en Hoy, el tablero del día.
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Hoy">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Hoy from '../../gestor/Hoy';
+    montar(Hoy);
+  </script>
+</GestorLayout>

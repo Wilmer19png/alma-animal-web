@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Agendar baño · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.alma:hover{color:#362954;background-position:100% 0}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn .ms{font-size:22px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.panel{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;padding:28px}
+.step{display:flex;align-items:center;gap:12px;font:600 22px/1.3 "Alan Sans",sans-serif}
+.step i{font-style:normal;width:34px;height:34px;border-radius:50%;background:var(--grad-primary);color:#fff;display:grid;place-items:center;font:700 16px/1 "Alan Sans",sans-serif;flex:none}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label{font:600 15px/1.3 "Alan Sans",sans-serif;color:#2B1E48}
+.fld input,.fld select,.fld textarea{width:100%;height:52px;border-radius:12px;border:1px solid #7A7580;background:#fff;padding:0 16px;font:400 17px/1.3 "Alan Sans",sans-serif;color:#2B1E48;outline:0;transition:border-color .15s,box-shadow .15s}
+.fld textarea{height:110px;padding:14px 16px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:#6E6585}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#655785;box-shadow:0 0 0 3px rgb(101 87 133/.18)}
+.fld .hint{font:400 14px/1.4 "Alan Sans",sans-serif;color:#584E6E}
+.req{color:#B4271F}
+.opt{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;border:2px solid #CBC4D1;cursor:pointer;transition:border-color .2s,background .2s}
+.opt input{width:22px;height:22px;margin:0;accent-color:#655785}
+.slot{height:44px;padding:0 16px;border-radius:999px;border:1px solid #CBC4D1;background:#fff;color:#2B1E48;font:600 15px/1 "Alan Sans",sans-serif;cursor:pointer;font-variant-numeric:tabular-nums;transition:background .15s,color .15s}
+.slot:hover{background:#F2ECF2}
+.seg{display:inline-flex;border:1px solid #CBC4D1;border-radius:999px;overflow:hidden;align-self:flex-start}
+.seg button{height:48px;padding:0 22px;border:0;background:#fff;color:#2B1E48;font:600 16px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.seg button+button{border-left:1px solid #CBC4D1}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:52px;padding:0 20px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+
+.wiz{list-style:none;margin:0;padding:0;display:flex;gap:6px;counter-reset:w}
+.wiz li{flex:1;min-width:0}
+.wiz button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:inherit;color:#584E6E;text-align:left}
+.wiz button::before{content:"";display:block;width:100%;height:4px;border-radius:999px;background:#E6E1E7;transition:background .3s cubic-bezier(.2,0,0,1)}
+.wiz li.done button::before,.wiz li.now button::before{background:#655785}
+.wiz i{font-style:normal;font:700 12px/1 "Alan Sans",sans-serif;color:#655785;letter-spacing:.02em}
+.wiz span{font:600 14px/1.25 "Alan Sans",sans-serif}
+.wiz li.now span{color:#2B1E48}
+.wiz li.todo button{cursor:default}
+.wiz-nav{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.wiz-nav .btn{height:52px;padding:0 26px;font-size:17px}
+.wiz-nav .grow{margin-left:auto}
+.rv{display:flex;flex-direction:column}
+.rv > div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:14px 0;border-top:1px solid #F2ECF2}
+.rv dt{font:500 14px/1.3 "Alan Sans",sans-serif;color:#584E6E}
+.rv dd{margin:0;font:600 16px/1.4 "Alan Sans",sans-serif;grid-column:1}
+.rv button{grid-column:2;grid-row:1 / span 2;border:0;background:transparent;color:#655785;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;padding:10px 4px;text-decoration:underline;text-underline-offset:3px}
+.m-bar{display:none}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  .opt{padding:14px !important}
+  .fld[style*="max-width: 320px"]{max-width:none !important}
+  .seg{width:100%}
+  .seg button{flex:1}
+  section[aria-label="Formulario de cita de spa"]{gap:20px !important}
+}
+/*MOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA ======== -->
+<div class="wrap m-top" style="padding-top: 24px; padding-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main-movil.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <nav class="navpill" aria-label="Principal" style="margin-left: 24px;">
+    <a href="Main-movil.dc.html">Inicio</a><a href="Consultorio-movil.dc.html">Consultorio</a><a class="on" href="Spa-movil.dc.html">Spa</a><a href="Petshop-movil.dc.html">Petshop</a><a href="Main-movil.dc.html#nosotros">Nosotros</a><a href="Blog-movil.dc.html">Blog</a><a href="Main-movil.dc.html#contacto">Contacto</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a class="icon-btn" href="Carrito-movil.dc.html" aria-label="Carrito"><span class="ms">shopping_bag</span></a>
+    <a class="btn" href="PortalAcceso.dc.html">Ingresar</a>
+      <details class="mnav"><summary aria-label="Abrir el menú"><span class="ms m-open">menu</span><span class="ms m-close">close</span></summary><div class="mpanel"><a href="Main-movil.dc.html">Inicio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Consultorio-movil.dc.html">Consultorio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="on" href="Spa-movil.dc.html">Spa<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Petshop-movil.dc.html">Petshop<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main-movil.dc.html#nosotros">Nosotros<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Blog-movil.dc.html">Blog<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main-movil.dc.html#contacto">Contacto<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="btn mlogin" href="PortalAcceso.dc.html"><span class="ms" style="font-size: 18px;">person</span>Ingresar a mi portal</a></div></details>
+  </div>
+</div>
+
+<!-- ======== TÍTULO ======== -->
+<div class="wrap" style="display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px;">
+  <a href="Spa-movil.dc.html" style="font: 500 15px/1 'Alan Sans', sans-serif; color: #584E6E; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><span class="ms" style="font-size: 18px;">arrow_back</span>Spa</a>
+  <h1 class="m-d2" style="font: 400 56px/1.02 'Alan Sans', sans-serif; letter-spacing: -.035em;">Agenda el <b class="gt" style="font-weight: 700;">baño</b> de tu mascota</h1>
+  <p class="m-lead" style="font: 400 18px/1.6 'Alan Sans', sans-serif; color: #584E6E; max-width: 60ch;">Llena el formulario y te confirmamos por WhatsApp la hora y el precio, según la raza y el estado del manto.</p>
+</div>
+
+<!-- ======== FORMULARIO ======== -->
+<section class="wrap" aria-label="Formulario de cita de spa" style="padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+  <form style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+    <ol class="wiz" aria-label="Pasos para agendar">
+      <sc-for list="{{wsteps}}" as="w" hint-placeholder-count="5"><li class="{{w.cls}}" aria-current="{{w.cur}}"><button type="button" onClick="{{w.go}}"><i>{{w.n}}</i><span>{{w.t}}</span></button></li></sc-for>
+    </ol>
+
+    <sc-if value="{{st1}}" hint-placeholder-val="{{true}}">
+    <fieldset class="panel" style="border: 0; margin: 0; display: flex; flex-direction: column; gap: 20px;">
+      <legend class="step" style="float: left; width: 100%; margin-bottom: 4px;"><i>1</i>Tu mascota</legend>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Es un… <span class="req">*</span></span>
+        <div class="seg" role="group" aria-label="Especie">
+          <button type="button" aria-pressed="{{dogOn}}" onClick="{{pickDog}}" style="background: {{dogBg}}; color: {{dogFg}};"><span class="ms">sound_detection_dog_barking</span>Perro</button>
+          <button type="button" aria-pressed="{{catOn}}" onClick="{{pickCat}}" style="background: {{catBg}}; color: {{catFg}};"><span class="ms">pets</span>Gato</button>
+        </div>
+      </div>
+      <div class="m-g" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px;">
+        <div class="fld"><label for="m-nombre">Nombre de la mascota <span class="req">*</span></label><input id="m-nombre" placeholder="Ej: Luna" value="{{pet}}" onChange="{{onPet}}"></div>
+        <div class="fld"><label for="m-raza">Raza <span class="req">*</span></label><input id="m-raza" placeholder="Ej: Shih Tzu, French Poodle o criollo"></div>
+        <div class="fld"><label for="m-peso">Peso aproximado (kg) <span class="req">*</span></label><input id="m-peso" inputmode="decimal" placeholder="Ej: 8"><span class="hint">Si no sabes, un aproximado está bien.</span></div>
+        <div class="fld"><label for="m-edad">Edad</label><input id="m-edad" placeholder="Ej: 4 años"></div>
+        <div class="fld" style="grid-column: 1 / -1;"><label for="m-notas">¿Algo que debamos saber?</label><textarea id="m-notas" placeholder="Ej: Tiene la piel sensible, nudos detrás de las orejas y se pone nerviosa con el secador."></textarea></div>
+      </div>
+    </fieldset>
+    </sc-if>
+
+    <sc-if value="{{st2}}" hint-placeholder-val="{{false}}">
+    <fieldset class="panel" style="border: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
+      <legend class="step" style="float: left; width: 100%; margin-bottom: 4px;"><i>2</i>El servicio</legend>
+      <div class="opt" style="border-color: #655785; background: #F8F2F8; cursor: default;"><span class="ms fill" style="font-size: 24px; color: #655785;">check_circle</span><span style="flex: 1;"><b style="display: block; font: 600 17px/1.3 'Alan Sans', sans-serif;">Baño completo</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Incluye los 8 cuidados, secado y el cierre con perfume, accesorio y snack.</span></span></div>
+      <label class="opt" style="border-color: {{cutBorder}};"><input type="checkbox" checked="{{cut}}" onChange="{{toggleCut}}"><span style="flex: 1;"><b style="display: block; font: 600 17px/1.3 'Alan Sans', sans-serif;">Corte según la raza</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Valor según la raza y el manto.</span></span></label>
+      <label class="opt" style="border-color: {{medBorder}};"><input type="checkbox" checked="{{med}}" onChange="{{toggleMed}}"><span style="flex: 1;"><b style="display: block; font: 600 17px/1.3 'Alan Sans', sans-serif;">Baño medicado para piel sensible</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">+$5.000 para mascotas de hasta 10 kg.</span></span></label>
+    </fieldset>
+    </sc-if>
+
+    <sc-if value="{{st3}}" hint-placeholder-val="{{false}}">
+    <fieldset class="panel" style="border: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;">
+      <legend class="step" style="float: left; width: 100%; margin-bottom: 4px;"><i>3</i>Fecha y hora</legend>
+      <div class="fld" style="max-width: 320px;"><label for="f-fecha">Día <span class="req">*</span></label><input id="f-fecha" type="date"></div>
+      <span style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Hora preferida <span class="req">*</span></span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{slots}}" as="h" hint-placeholder-count="6"><button class="slot" type="button" aria-pressed="{{h.on}}" onClick="{{h.pick}}" style="background: {{h.bg}}; color: {{h.fg}}; border-color: {{h.bd}};">{{h.t}}</button></sc-for>
+      </div>
+      <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Lunes a viernes de 8:00 a. m. a 12:30 p. m. y de 2:00 a 5:00 p. m. Sábados de 8:00 a. m. a 12:30 p. m. Si la hora no está libre, te proponemos otra por WhatsApp.</span>
+    </fieldset>
+    </sc-if>
+
+    <sc-if value="{{st4}}" hint-placeholder-val="{{false}}">
+    <fieldset class="panel" style="border: 0; margin: 0; display: flex; flex-direction: column; gap: 18px;">
+      <legend class="step" style="float: left; width: 100%; margin-bottom: 4px;"><i>4</i>Tus datos</legend>
+      <div class="m-g" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px;">
+        <div class="fld"><label for="p-nombre">Nombre <span class="req">*</span></label><input id="p-nombre" placeholder="Ej: Laura" autocomplete="given-name"></div>
+        <div class="fld"><label for="p-apellido">Apellido <span class="req">*</span></label><input id="p-apellido" placeholder="Ej: Gómez Restrepo" autocomplete="family-name"></div>
+        <div class="fld"><label for="p-cel">Celular (WhatsApp) <span class="req">*</span></label><input id="p-cel" type="tel" inputmode="tel" placeholder="Ej: 300 123 4567" autocomplete="tel"><span class="hint">Por aquí te confirmamos la cita.</span></div>
+        <div class="fld"><label for="p-correo">Correo (opcional)</label><input id="p-correo" type="email" placeholder="Ej: laura@correo.com" autocomplete="email"><span class="hint">Para enviarte el recordatorio con la cita.</span></div>
+      </div>
+      <label style="display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E; cursor: pointer;"><input type="checkbox" style="width: 22px; height: 22px; margin: 0; accent-color: #655785; flex: none;">Acepto la <a href="#">política de tratamiento de datos</a> (Ley 1581 de 2012).</label>
+    </fieldset>
+    </sc-if>
+
+    <!-- paso 5: revisar y enviar -->
+    <sc-if value="{{st5}}" hint-placeholder-val="{{false}}">
+      <div class="panel" style="display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;"><h2 style="font: 600 24px/1.25 'Alan Sans', sans-serif;">Revisa tu cita</h2><p style="font: 400 16px/1.5 'Alan Sans', sans-serif; color: #584E6E;">Si todo está bien, envíala. Te escribimos por WhatsApp para confirmar la hora y el precio.</p></div>
+        <dl class="rv" style="margin: 0;">
+          <sc-for list="{{review}}" as="r" hint-placeholder-count="4"><div><dt>{{r.k}}</dt><dd>{{r.v}}</dd><button type="button" onClick="{{r.edit}}">Cambiar</button></div></sc-for>
+        </dl>
+        <sc-if value="{{notSent}}" hint-placeholder-val="{{true}}"><button class="btn alma" type="button" onClick="{{send}}" style="height: 56px; font-size: 18px; width: 100%;">Solicitar cita<span class="ms">arrow_forward</span></button></sc-if>
+        <sc-if value="{{sent}}" hint-placeholder-val="{{false}}"><div role="status" style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128;"><span class="ms fill" style="font-size: 26px;">check_circle</span><span style="font: 500 16px/1.45 'Alan Sans', sans-serif;"><b>¡Solicitud enviada!</b> En unos minutos te escribimos por WhatsApp para confirmar la hora y el precio.</span></div></sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showNav}}" hint-placeholder-val="{{true}}">
+      <div class="wiz-nav">
+        <sc-if value="{{canBack}}" hint-placeholder-val="{{false}}"><button class="btn outlined" type="button" onClick="{{back}}"><span class="ms" style="font-size: 18px;">arrow_back</span>Atrás</button></sc-if>
+        <sc-if value="{{canNext}}" hint-placeholder-val="{{true}}"><button class="btn grow" type="button" onClick="{{next}}">{{nextTxt}}<span class="ms" style="font-size: 18px;">arrow_forward</span></button></sc-if>
+      </div>
+    </sc-if>
+  </form>
+
+  <!-- ======== RESUMEN ======== -->
+  <aside aria-labelledby="rs" style="flex: 0 0 380px; display: flex; flex-direction: column; gap: 16px;">
+    <div class="panel m-hide" style="display: flex; flex-direction: column; gap: 18px; position: relative; overflow: hidden;">
+      <div aria-hidden="true" style="position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); opacity: .5;"></div>
+      <h2 id="rs" style="font: 600 22px/1.3 'Alan Sans', sans-serif; position: relative;">Tu cita</h2>
+      <dl style="margin: 0; display: flex; flex-direction: column; gap: 12px; font: 400 17px/1.35 'Alan Sans', sans-serif; position: relative;">
+        <div class="m-sb" style="display: flex; justify-content: space-between; gap: 12px;"><dt style="color: #584E6E;">Mascota</dt><dd style="margin: 0; font-weight: 600; text-align: right;">{{petTxt}}</dd></div>
+        <div class="m-sb" style="display: flex; justify-content: space-between; gap: 12px;"><dt style="color: #584E6E;">Servicio</dt><dd style="margin: 0; font-weight: 600; text-align: right;">{{serviceTxt}}</dd></div>
+        <div class="m-sb" style="display: flex; justify-content: space-between; gap: 12px;"><dt style="color: #584E6E;">Hora</dt><dd style="margin: 0; font-weight: 600; font-variant-numeric: tabular-nums;">{{slotTxt}}</dd></div>
+        <div class="m-sb" style="display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #CBC4D1;"><dt style="color: #584E6E;">Precio</dt><dd style="margin: 0; text-align: right; max-width: 22ch;">Te lo confirmamos por WhatsApp</dd></div>
+      </dl>
+      <span style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E; position: relative;">Paso {{step}} de 5 · la envías en el último paso.</span>
+    </div>
+    <div class="m-wa" style="display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 24px; background: #fff; box-shadow: 0 0 0 2px #00BC39;">
+      <b style="font: 600 18px/1.3 'Alan Sans', sans-serif;">¿Prefieres agendar por chat?</b>
+      <p style="font: 400 16px/1.5 'Alan Sans', sans-serif; color: #584E6E;">Mándanos una foto de tu mascota y te agendamos en minutos.</p>
+      <a class="wa-o" href="https://wa.me/573246796695?text=Hola%2C%20Alma%20Animal.%20Quiero%20agendar%20un%20ba%C3%B1o%20en%20el%20spa." target="_blank" rel="noopener"><svg class="wa-ic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>Agendar por WhatsApp</a>
+    </div>
+  </aside>
+</section>
+
+<footer data-dark="1" class="wrap" style="padding-bottom: 32px;">
+  <div class="m-sb" style="border-radius: 32px; background: #2B1E48; color: rgb(255 255 255 / .75); padding: 28px 40px; display: flex; justify-content: space-between; gap: 24px; font: 400 15px/1.5 'Alan Sans', sans-serif;">
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206</span>
+    <span><a href="#" style="color: #fff;">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </div>
+</footer>
+
+<a class="fab-wa" href="https://wa.me/573246796695?text=Hola%2C%20Alma%20Animal.%20Quiero%20agendar%20un%20ba%C3%B1o%20en%20el%20spa." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const sp = s.sp || 'perro';
+    const pet = s.pet || '';
+    const cut = !!s.cut;
+    const med = !!s.med;
+    // lunes a sábado: 8:00–12:30 y 2:00–5:00
+    const times = ['8:00 a. m.', '9:30 a. m.', '11:00 a. m.', '2:00 p. m.', '3:30 p. m.'];
+    const slot = s.slot == null ? 2 : s.slot;
+    const step = s.step || 1;
+    const go = (n) => this.setState({ step: n });
+    const STEPS = ['Tu mascota', 'El servicio', 'Fecha y hora', 'Tus datos', 'Revisar'];
+    const extras = [cut ? 'corte' : null, med ? 'baño medicado' : null].filter(Boolean);
+    return {
+      dogOn: sp === 'perro', catOn: sp === 'gato',
+      dogBg: sp === 'perro' ? '#FBCFAF' : '#FFFFFF', dogFg: sp === 'perro' ? '#623F21' : '#2B1E48',
+      catBg: sp === 'gato' ? '#FBCFAF' : '#FFFFFF', catFg: sp === 'gato' ? '#623F21' : '#2B1E48',
+      pickDog: () => this.setState({ sp: 'perro' }),
+      pickCat: () => this.setState({ sp: 'gato' }),
+      pet,
+      onPet: (e) => this.setState({ pet: e.target.value }),
+      petTxt: (pet || 'Tu mascota') + ' · ' + sp,
+      cut, med,
+      toggleCut: () => this.setState({ cut: !cut }),
+      toggleMed: () => this.setState({ med: !med }),
+      cutBorder: cut ? '#655785' : '#CBC4D1',
+      medBorder: med ? '#655785' : '#CBC4D1',
+      serviceTxt: 'Baño completo' + (extras.length ? ' + ' + extras.join(' + ') : ''),
+      slots: times.map((t, n) => ({
+        t, on: n === slot,
+        bg: n === slot ? '#655785' : '#FFFFFF',
+        fg: n === slot ? '#FFFFFF' : '#2B1E48',
+        bd: n === slot ? '#655785' : '#CBC4D1',
+        pick: () => this.setState({ slot: n })
+      })),
+      slotTxt: times[slot],
+      step,
+      wsteps: STEPS.map((x, n) => ({ n: 'Paso ' + (n + 1), t: x, cls: n + 1 < step ? 'done' : n + 1 === step ? 'now' : 'todo', cur: n + 1 === step ? 'step' : 'false', go: () => { if (n + 1 < step && !s.sent) go(n + 1); } })),
+      st1: step === 1, st2: step === 2, st3: step === 3, st4: step === 4, st5: step === 5,
+      canBack: step > 1, canNext: step < 5, showNav: !s.sent,
+      nextTxt: step === 4 ? 'Revisar mi cita' : 'Siguiente',
+      next: () => go(Math.min(5, step + 1)),
+      back: () => go(Math.max(1, step - 1)),
+      review: [
+        { k: 'Mascota', v: (pet || 'Tu mascota') + ' · ' + sp, edit: () => go(1) },
+        { k: 'Servicio', v: 'Baño completo' + (extras.length ? ' + ' + extras.join(' + ') : ''), edit: () => go(2) },
+        { k: 'Hora preferida', v: times[slot] + ' · el día que elegiste', edit: () => go(3) },
+        { k: 'Te confirmamos por', v: 'WhatsApp, al celular que pusiste', edit: () => go(4) }
+      ],
+      sent: !!s.sent, notSent: !s.sent,
+      send: () => this.setState({ sent: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

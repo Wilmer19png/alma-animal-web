@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Petshop · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.outlined{background:transparent;color:#655785;border-color:#CBC4D1}
+.btn.outlined:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.ghost{background:rgb(255 255 255/.14);color:#fff;border-color:rgb(255 255 255/.3)}
+.btn.wa{background:#00BC39;color:#06290F}
+.btn.wa:hover{background:#00A332;color:#06290F}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn:hover{background:#ECE6ED;color:#4D3F6C}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#FBCFAF;color:#623F21;font:700 10px/16px "Alan Sans",sans-serif;text-align:center;padding:0 4px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.lockup .wm{display:block;font:600 22px/1 "Alan Sans",sans-serif;color:#8F7FB0;letter-spacing:-.01em}
+.lockup .tag{display:block;font:400 12px/1.2 "Gowun Batang",Georgia,serif;letter-spacing:.06em;color:#706884;margin-top:4px}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.chip{height:40px;padding:0 18px;border-radius:999px;border:1px solid #CBC4D1;background:#fff;color:#584E6E;font:600 14px/1 "Alan Sans",sans-serif;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.chip:hover{background:#F2ECF2}
+.chip.on{background:#2B1E48;color:#fff;border-color:#2B1E48}
+.fgroup{display:flex;flex-direction:column;gap:12px;padding-bottom:24px;border-bottom:1px solid #CBC4D1}
+.fgroup h3{font:600 15px/1.3 "Alan Sans",sans-serif}
+.check{display:flex;align-items:center;gap:10px;font:400 15px/1.3 "Alan Sans",sans-serif;cursor:pointer}
+.check input{width:20px;height:20px;margin:0;accent-color:#655785}
+.prod{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s cubic-bezier(.2,0,0,1),transform .25s cubic-bezier(.05,.7,.1,1)}
+.prod:hover{box-shadow:0 4px 8px 3px rgb(54 41 84/.09),0 1px 3px rgb(54 41 84/.18);transform:translateY(-3px)}
+.prod .img{aspect-ratio:1;background:#F2ECF2;display:grid;place-items:center;position:relative;color:#CBC4D1}
+.prod .img .ms{font-size:40px}
+.prod .b{padding:16px;display:flex;flex-direction:column;gap:4px}
+.prod .c{font:600 13px/1.3 "Alan Sans",sans-serif;color:#655785}
+.prod h3{font:600 16px/1.35 "Alan Sans",sans-serif}
+.prod .p{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.prod .p b{font:700 18px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.add{width:40px;height:40px;border-radius:50%;border:0;background:#FBCFAF;color:#623F21;display:grid;place-items:center;cursor:pointer}
+.add:hover{background:#F0BC95}
+.stock{position:absolute;top:12px;left:12px;font:600 11px/1 "Alan Sans",sans-serif;padding:6px 10px;border-radius:999px;background:#B8F1B9;color:#1D5128}
+.stock.low{background:#FFDDB2;color:#624000}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+.foot a{color:#fff;text-decoration:none}.foot a:hover{color:#fff;text-decoration:underline}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+[data-dark] .gt{background:linear-gradient(100deg,#FFFFFF 0%,#FBCFAF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.social{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:rgb(255 255 255/.14);color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .15s}
+.aa .social:hover{background:rgb(255 255 255/.26);color:#fff;text-decoration:none}
+.plink{color:inherit;text-decoration:none}.plink:hover{color:#655785;text-decoration:underline}
+.bar{height:8px;border-radius:999px;background:#ECE6ED;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--grad-primary)}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+.tag{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:4px;font:600 12px/1 "Alan Sans",sans-serif;padding:5px 9px;border-radius:999px;background:rgb(255 255 255/.94);color:#2B1E48;box-shadow:0 1px 2px rgb(54 41 84/.14);white-space:nowrap}
+.tag.sale{color:#910809}
+.buzz{position:fixed;left:20px;bottom:20px;z-index:20;display:flex;align-items:center;gap:10px;width:300px;padding:8px 8px 8px 8px;border-radius:16px;background:rgb(255 255 255/.97);box-shadow:0 0 0 1px #E6E1E7,0 6px 14px rgb(54 41 84/.12);animation:buzz-in .55s cubic-bezier(.05,.7,.1,1)}
+@keyframes buzz-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.buzz{animation:none}}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  header.m-shophead{padding:26px 20px !important}
+  [aria-label^="Productos de la tienda"]{display:none !important}
+  aside[aria-label="Filtros"]{display:none !important}
+  section[aria-label="Catálogo"] div.m-g{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important}
+  .prod{border-radius:20px}
+  .prod .b{padding:12px}
+  .prod h3{font-size:15px}
+  .prod .p b{font-size:16px}
+  .tag{top:auto !important;bottom:8px !important;left:8px !important;right:auto !important;font-size:11px !important;padding:4px 8px !important}
+  .stock{top:8px !important;left:8px !important}
+  #pedido{display:none !important}
+}
+/*MOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA ======== -->
+<div class="wrap m-top" style="padding-top: 24px; padding-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <nav class="navpill" aria-label="Principal" style="margin-left: 24px;">
+    <a href="Main.dc.html">Inicio</a>
+    <a href="Consultorio.dc.html">Consultorio</a>
+    <a href="Spa.dc.html">Spa</a>
+    <a class="on" href="Petshop.dc.html">Petshop</a>
+    <a href="Main.dc.html#nosotros">Nosotros</a>
+    <a href="Blog.dc.html">Blog</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a class="icon-btn" href="#contacto" aria-label="Llamar al 324 679 6695"><span class="ms">call</span></a>
+    <a class="icon-btn" href="Carrito.dc.html" aria-label="Carrito, 2 productos"><span class="ms">shopping_bag</span><span class="badge">2</span></a>
+    <a class="btn" href="PortalAcceso.dc.html">Ingresar</a>
+      <details class="mnav"><summary aria-label="Abrir el menú"><span class="ms m-open">menu</span><span class="ms m-close">close</span></summary><div class="mpanel"><a href="Main.dc.html">Inicio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Consultorio.dc.html">Consultorio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Spa.dc.html">Spa<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="on" href="Petshop.dc.html">Petshop<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main.dc.html#nosotros">Nosotros<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Blog.dc.html">Blog<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="#contacto">Contacto<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="btn mlogin" href="PortalAcceso.dc.html"><span class="ms" style="font-size: 18px;">person</span>Ingresar a mi portal</a></div></details>
+  </div>
+</div>
+
+<!-- ======== CABECERA DE TIENDA ======== -->
+<div class="wrap">
+<header class="m-g m-p m-r m-gap m-shophead" style="position: relative; border-radius: 40px; background: var(--grad-alma); color: #362954; padding: 48px 56px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: center; overflow: hidden;">
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <a href="Main.dc.html" style="font: 500 15px/1'Alan Sans', sans-serif; color: #362954; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><span class="ms" style="font-size: 18px;">arrow_back</span>Inicio</a>
+    <h1 class="m-d1" style="font: 700 80px/.95 'Alan Sans', sans-serif; letter-spacing: -.045em;">Pet<span style="font-weight: 300;">shop</span></h1>
+    <p class="m-lead" style="font: 400 18px/1.6 'Alan Sans', sans-serif; max-width: 46ch;">Alimento, higiene y accesorios recomendados por la doctora. Agrégalos al carrito y te los llevamos a casa.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 'Alan Sans', sans-serif; padding: 10px 14px; border-radius: 999px; background: #fff;"><span class="ms" style="color: #655785;">local_shipping</span>Envío gratis en Pereira y Dosquebradas</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 'Alan Sans', sans-serif; padding: 10px 14px; border-radius: 999px; background: #fff;"><span class="ms" style="color: #655785;">public</span>Gratis a toda Colombia desde $70.000</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 'Alan Sans', sans-serif; padding: 10px 14px; border-radius: 999px; background: #fff;"><span class="ms" style="color: #655785;">bolt</span>Envío prioritario +$5.000</span>
+    </div>
+  </div>
+  <!-- productos saliendo por la derecha: marcadores para fotos de producto recortadas -->
+  <div aria-label="Productos de la tienda (fotos por definir)" style="position: relative; width: 540px; height: 280px; margin: -16px -24px -48px 0;">
+    <div style="position: absolute; left: 0; top: 34px; width: 150px; height: 230px; border-radius: 26px 26px 18px 18px; background: #fff; box-shadow: 0 6px 10px 4px rgb(54 41 84/.10), 0 2px 3px rgb(54 41 84/.16); transform: rotate(-6deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #655785;"><span class="ms" style="font-size: 44px;">pets</span><span style="font: 600 12px/1.2 'Alan Sans', sans-serif; color: #584E6E;">[Concentrado]</span></div>
+    <div class="m-r" style="position: absolute; left: 132px; top: 0; width: 104px; height: 196px; border-radius: 40px 40px 20px 20px; background: var(--grad-primary); box-shadow: 0 6px 10px 4px rgb(54 41 84/.12); transform: rotate(5deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #fff;"><span class="ms" style="font-size: 40px;">soap</span><span style="font: 600 12px/1.2 'Alan Sans', sans-serif;">[Shampoo]</span></div>
+    <div style="position: absolute; left: 238px; top: 96px; width: 150px; height: 150px; border-radius: 22px; background: #fff; box-shadow: 0 6px 10px 4px rgb(54 41 84/.10), 0 2px 3px rgb(54 41 84/.16); transform: rotate(-3deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #655785;"><span class="ms" style="font-size: 40px;">cookie</span><span style="font: 600 12px/1.2 'Alan Sans', sans-serif; color: #584E6E;">[Snacks]</span></div>
+    <div style="position: absolute; left: 290px; top: 0; width: 104px; height: 104px; border-radius: 50%; background: #FBCFAF; box-shadow: 0 6px 10px 4px rgb(54 41 84/.10); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #623F21;"><span class="ms" style="font-size: 34px;">sports_baseball</span><span style="font: 600 11px/1.2 'Alan Sans', sans-serif;">[Juguete]</span></div>
+    <div style="position: absolute; left: 404px; top: 40px; width: 126px; height: 196px; border-radius: 20px; background: #fff; box-shadow: 0 6px 10px 4px rgb(54 41 84/.10), 0 2px 3px rgb(54 41 84/.16); transform: rotate(7deg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #655785;"><span class="ms" style="font-size: 40px;">loyalty</span><span style="font: 600 12px/1.2 'Alan Sans', sans-serif; color: #584E6E;">[Collar y placa]</span></div>
+  </div>
+</header>
+</div>
+
+<!-- ======== CATEGORÍAS + BÚSQUEDA ======== -->
+<div class="wrap" style="padding-top: 32px; padding-bottom: 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;" role="group" aria-label="Categorías">
+    <button class="chip on" type="button">Todo</button>
+    <button class="chip" type="button">Alimento</button>
+    <button class="chip" type="button">Higiene</button>
+    <button class="chip" type="button">Accesorios</button>
+    <button class="chip" type="button">Snacks</button>
+    <button class="chip" type="button">Juguetes</button>
+  </div>
+  <label style="margin-left: auto; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border-radius: 999px; background: #ECE6ED; color: #584E6E; width: 340px;"><span class="ms">search</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar productos</span><input type="search" placeholder="Buscar en la tienda" style="border: 0; background: transparent; font: 400 16px/1 'Alan Sans', sans-serif; color: #2B1E48; outline: 0; flex: 1; min-width: 0;"></label>
+</div>
+
+<!-- ======== FILTROS | PRODUCTOS | PEDIDO ======== -->
+<section class="wrap" aria-label="Catálogo" style="padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+  <aside aria-label="Filtros" style="flex: 0 0 220px; display: flex; flex-direction: column; gap: 24px;">
+    <div class="fgroup"><h3>Para</h3><label class="check"><input type="checkbox" checked>Perros</label><label class="check"><input type="checkbox">Gatos</label></div>
+    <div class="fgroup"><h3>Tamaño</h3><label class="check"><input type="checkbox">Pequeño</label><label class="check"><input type="checkbox">Mediano</label><label class="check"><input type="checkbox">Grande</label></div>
+    <div class="fgroup"><h3>Precio</h3><div style="display: flex; gap: 8px;"><input aria-label="Precio mínimo" placeholder="Desde" style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif;"><input aria-label="Precio máximo" placeholder="Hasta" style="width: 100%; height: 44px; border-radius: 8px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif;"></div></div>
+    <label class="check"><input type="checkbox" checked>Solo con existencias</label>
+  </aside>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+    <div class="m-sb" style="display: flex; justify-content: space-between; align-items: center;"><span style="font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;">9 productos de ejemplo</span><label style="display: flex; align-items: center; gap: 8px; font: 500 15px/1'Alan Sans', sans-serif; color: #584E6E;">Ordenar<select style="height: 40px; border-radius: 999px; border: 1px solid #CBC4D1; padding: 0 14px; font: 600 14px/1 'Alan Sans', sans-serif; background: #fff; color: #2B1E48;"><option>Destacados</option><option>Más vendidos</option><option>Nuevos</option><option>Menor precio</option><option>Mayor precio</option></select></label></div>
+    <div class="m-g" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;">
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag">🔥 Más vendido</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Higiene · 3 presentaciones</span><h3><a class="plink" href="Producto.dc.html">Shampoo hipoalergénico</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar shampoo al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag">🩺 Lo recomienda la Dra.</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Alimento · 2, 4 y 8 kg</span><h3><a class="plink" href="Producto.dc.html">Concentrado adulto raza pequeña</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar concentrado al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag">✨ Nuevo</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Accesorios · tallas XS a L</span><h3><a class="plink" href="Producto.dc.html">Pechera ajustable</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar pechera al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag">🔥 Más vendido</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Snacks</span><h3><a class="plink" href="Producto.dc.html">Galletas para entrenamiento</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar galletas al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Higiene</span><h3><a class="plink" href="Producto.dc.html">Cepillo deslanador</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar cepillo al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag sale">🏷️ Oferta</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Juguetes</span><h3><a class="plink" href="Producto.dc.html">Pelota de caucho resistente</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar pelota al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Alimento · pollo o salmón</span><h3><a class="plink" href="Producto.dc.html">Alimento húmedo para gato</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar alimento húmedo al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock">En stock</span><span class="tag">✨ Nuevo</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Accesorios · 3 colores</span><h3><a class="plink" href="Producto.dc.html">Collar con placa de nombre</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar collar al pedido"><span class="ms">add</span></button></div></div></article>
+      <article class="prod"><div class="img"><span class="stock low">Últimas 3</span><span class="ms">photo_camera</span></div><div class="b"><span class="c">Higiene</span><h3><a class="plink" href="Producto.dc.html">Toallitas húmedas para patas</a></h3><div class="p"><b>[$00.000]</b><button class="add" type="button" aria-label="Agregar toallitas al pedido"><span class="ms">add</span></button></div></div></article>
+    </div>
+  </div>
+
+  <!-- mini carrito: avance hacia envío gratis y obsequio (precios de ejemplo) -->
+  <aside id="pedido" aria-labelledby="ped" style="flex: 0 0 320px; background: #fff; border-radius: 24px; box-shadow: 0 0 0 1px #CBC4D1; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <h2 id="ped" style="font: 600 22px/1.3 'Alan Sans', sans-serif; display: flex; align-items: center; gap: 8px;"><span class="ms" style="color: #655785;">shopping_bag</span>Tu carrito</h2>
+    <div style="display: flex; gap: 12px; align-items: center;"><span style="width: 52px; height: 52px; border-radius: 12px; background: #F2ECF2; flex: none;"></span><span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">Shampoo hipoalergénico</span><span style="display: block; font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">1 × $28.000</span></span></div>
+    <div style="display: flex; gap: 12px; align-items: center;"><span style="width: 52px; height: 52px; border-radius: 12px; background: #F2ECF2; flex: none;"></span><span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">Galletas para entrenamiento</span><span style="display: block; font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">2 × $12.000</span></span></div>
+    <div class="m-sb" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid #CBC4D1; font: 600 17px/1 'Alan Sans', sans-serif;"><span>Subtotal</span><span style="font-variant-numeric: tabular-nums;">$52.000</span></div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font: 400 15px/1.4 'Alan Sans', sans-serif;"><span class="ms" style="font-size: 18px; color: #655785; vertical-align: -4px;">local_shipping</span> Te faltan <b>$18.000</b> para envío gratis a toda Colombia</span>
+      <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100"><i style="width: 74%;"></i></div>
+      <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">En Pereira y Dosquebradas el envío siempre es gratis.</span>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--grad-alma); color: #362954;"><span class="ms" style="font-size: 24px;">redeem</span><span style="font: 500 15px/1.35 'Alan Sans', sans-serif;">Agrega <b>$33.000</b> más y llévate un <b>obsequio</b></span></div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font: 600 14px/1 'Alan Sans', sans-serif; color: #584E6E;">Súmale a tu pedido</span>
+      <div style="display: flex; align-items: center; gap: 10px;"><span style="width: 40px; height: 40px; border-radius: 10px; background: #F2ECF2; flex: none;"></span><span style="flex: 1; font: 500 15px/1.3 'Alan Sans', sans-serif;">Toallitas para patas<br><span style="color: #584E6E;">$15.000</span></span><button class="add" type="button" aria-label="Agregar toallitas"><span class="ms">add</span></button></div>
+      <div style="display: flex; align-items: center; gap: 10px;"><span style="width: 40px; height: 40px; border-radius: 10px; background: #F2ECF2; flex: none;"></span><span style="flex: 1; font: 500 15px/1.3 'Alan Sans', sans-serif;">Pelota de caucho<br><span style="color: #584E6E;">$9.000</span></span><button class="add" type="button" aria-label="Agregar pelota"><span class="ms">add</span></button></div>
+    </div>
+    <a class="btn alma" href="Carrito.dc.html" style="height: 52px; font-size: 17px;">Ver carrito y pagar<span class="ms">arrow_forward</span></a>
+    <a class="wa-o" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20la%20tienda." target="_blank" rel="noopener"><svg class="wa-ic" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>¿Dudas? Escríbenos</a>
+    <span style="font: 400 13px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Precios de ejemplo.</span>
+  </aside>
+</section>
+
+<!-- ======== CÓMO COMPRAR (secuencia real) ======== -->
+<section class="wrap" aria-labelledby="cc" style="padding-bottom: 112px;">
+  <div class="m-g m-p m-r m-gap" style="background: #F8F2F8; border-radius: 40px; padding: 48px 56px; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 48px; align-items: center;">
+    <h2 class="m-d4" id="cc" style="font: 400 40px/1.05 'Alan Sans', sans-serif; letter-spacing: -.03em;">Así <b class="gt" style="font-weight: 700;">compras</b></h2>
+    <!-- línea que avanza paso a paso -->
+    <div style="position: relative;">
+      <div aria-hidden="true" style="position: absolute; left: 16.66%; right: 16.66%; top: 11px; height: 2px; border-radius: 2px; background: #E6E1E7;"></div>
+      <div aria-hidden="true" style="position: absolute; left: 16.66%; top: 11px; height: 2px; border-radius: 2px; background: var(--grad-primary); width: {{buyFill}}; transition: width .9s cubic-bezier(.2,0,0,1);"></div>
+      <ol class="m-g" style="list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{buy}}" as="s" hint-placeholder-count="3">
+          <li style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <span aria-hidden="true" style="width: 24px; height: 24px; border-radius: 50%; background: {{s.dot}}; box-shadow: 0 0 0 {{s.ring}} rgb(101 87 133 / .16), inset 0 0 0 2px #655785; transition: background .4s, box-shadow .4s;"></span>
+            <b style="font: 600 17px/1.35 'Alan Sans', sans-serif; margin-top: 6px;">{{s.title}}</b>
+            <p style="font: 400 16px/1.5 'Alan Sans', sans-serif; color: #584E6E; max-width: 26ch;">{{s.text}}</p>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ======== WHATSAPP ======== -->
+<section class="wrap" aria-labelledby="wab" style="padding-bottom: 56px;">
+  <div class="m-wa m-sb" style="display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 28px 36px; border-radius: 32px; background: #fff; box-shadow: 0 0 0 2px #00BC39, 0 6px 16px rgb(0 188 57 / .10);">
+    <div style="display: flex; align-items: center; gap: 20px; min-width: 0;">
+      <span style="width: 64px; height: 64px; border-radius: 50%; background: #00BC39; color: #fff; display: grid; place-items: center; flex: none;"><svg class="wa-ic" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></span>
+      <div style="display: flex; flex-direction: column; gap: 4px;"><h2 class="m-d5" id="wab" style="font: 600 28px/1.2 'Alan Sans', sans-serif;">¿No sabes cuál elegir? <span style="color: #00852A;">Escríbenos por WhatsApp</span></h2><p style="font: 400 17px/1.5 'Alan Sans', sans-serif; color: #584E6E;">Cuéntanos de tu mascota y la doctora te recomienda el producto.</p></div>
+    </div>
+    <a class="wa-o" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20la%20tienda." target="_blank" rel="noopener" style="flex: none; height: 56px; font-size: 17px; padding: 0 24px 0 20px;"><svg class="wa-ic" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>Abrir chat</a>
+  </div>
+</section>
+
+<!-- ======== CONTACTO / PIE ======== -->
+<div class="wrap" style="padding-bottom: 32px;">
+<footer id="contacto" class="foot m-p m-r" data-dark="1" style="border-radius: 40px; background: #2B1E48; color: #fff; position: relative; overflow: hidden; isolation: isolate; padding: 64px 48px 32px;">
+  <img src="/_blob/b9a28d867a46de69c0acd5aa34c34f15" alt="" style="position: absolute; right: -40px; top: -30px; width: 520px; opacity: .12; z-index: -1;">
+  <h2 class="m-d2" style="font: 400 56px/1 'Alan Sans', sans-serif; letter-spacing: -.03em; max-width: 12ch;">Te esperamos en <b class="gt" style="font-weight: 700;">Pereira</b></h2>
+  <div class="m-g" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; margin-top: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Dirección</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Pereira, Risaralda</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Calle 1 # 9-02, Alfonso López</span></div>
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Teléfonos y WhatsApp</span><a href="tel:+573246796695" style="font: 400 17px/1.5'Alan Sans', sans-serif;">Veterinaria y spa: 324 679 6695</a><a href="tel:+573017925910" style="font: 400 17px/1.5'Alan Sans', sans-serif;">Petshop: 301 792 5910</a></div>
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Horario</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Lunes a viernes: 8:00 a. m. – 12:30 p. m. y 2:00 – 5:00 p. m.<br>Sábados: 8:00 a. m. – 12:30 p. m.</span></div>
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Síguenos</span><a class="social" href="https://instagram.com/vet_alma_animal"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>@vet_alma_animal</a><a class="social" href="https://instagram.com/vet_marianahoyos"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>@vet_marianahoyos</a><a class="social" href="#"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.5V21h3z"></path></svg>Facebook</a></div>
+  </div>
+  <div style="display: flex; gap: 12px; margin-top: 40px;"><a class="btn alma" href="#">Agenda tu cita</a><a class="btn ghost" href="#"><span class="ms">map</span>Cómo llegar</a></div>
+  <div class="m-sb" style="display: flex; justify-content: space-between; gap: 24px; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgb(255 255 255/.14); font: 400 16px/1.5 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">
+    <nav aria-label="Pie" style="display: flex; gap: 20px;"><a href="Main.dc.html">Inicio</a><a href="Consultorio.dc.html">Consultorio</a><a href="Spa.dc.html">Spa</a><a href="Blog.dc.html">Blog</a></nav>
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206 · <a href="#" style="text-decoration: underline;">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </div>
+</footer>
+</div>
+
+<!-- aviso de compras: solo pedidos confirmados de clientes que dieron permiso (nombre sin apellido + ciudad) -->
+<sc-if value="{{buzzOn}}" hint-placeholder-val="{{true}}">
+  <div class="buzz" role="status" aria-live="polite">
+    <span style="width: 40px; height: 40px; border-radius: 10px; background: {{buzz.bg}}; display: grid; place-items: center; color: #fff; flex: none;"><span class="ms" style="font-size: 20px;">{{buzz.icon}}</span></span>
+    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font: 400 13px/1.35 'Alan Sans', sans-serif;">🔥 <b>{{buzz.who}}</b>, de {{buzz.city}}, compró <a href="Producto.dc.html" style="color: #2B1E48; font-weight: 600; text-decoration: none;">{{buzz.prod}}</a></span>
+      <span style="font: 400 11px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{buzz.ago}} · compra verificada</span>
+    </span>
+    <button type="button" aria-label="Cerrar aviso" onClick="{{buzzClose}}" style="align-self: flex-start; width: 24px; height: 24px; border: 0; border-radius: 50%; background: transparent; color: #7A7580; cursor: pointer; display: grid; place-items: center;"><span class="ms" style="font-size: 16px;">close</span></button>
+  </div>
+</sc-if>
+
+<a class="fab-wa" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20la%20tienda." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.setState({ j: 0 });
+    // la línea de "Así compras" avanza, se queda llena un momento y vuelve a empezar
+    this.timer = setInterval(() => this.setState({ j: (((this.state && this.state.j) || 0) + 1) % 5 }), 1500);
+    this.buzzTimer = setInterval(() => this.setState({ b: (((this.state && this.state.b) || 0) + 1) }), 3000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this.buzzTimer); }
+  renderVals() {
+    const j = Math.min((this.state && this.state.j) || 0, 2);
+    const steps = [
+      ['Agrega al carrito', 'Envío gratis en Pereira y Dosquebradas, y en toda Colombia desde $70.000.'],
+      ['Llena tus datos de envío', 'Nombre, celular y dirección. Sin crear cuenta.'],
+      ['Te escribimos por WhatsApp', 'Confirmamos el pago y te avisamos cuándo llega.']
+    ];
+    // aviso de compras: 6 s visible, 3 s oculto, rota entre los pedidos confirmados recientes
+    const BUZZ = [
+      ['Laura', 'Pereira', 'Shampoo hipoalergénico · 250 ml', 'hace 12 minutos', 'soap', 'linear-gradient(160deg,#B4A3D6,#8F7FB0)'],
+      ['Andrés', 'Dosquebradas', 'Concentrado adulto raza pequeña · 4 kg', 'hace 1 hora', 'set_meal', 'linear-gradient(160deg,#F0BC95,#E8A6B4)'],
+      ['Valentina', 'Manizales', 'Pechera ajustable · talla M', 'hace 3 horas', 'pets', 'linear-gradient(160deg,#8F7FB0,#655785)'],
+      ['Camilo', 'Pereira', 'Galletas para entrenamiento', 'ayer', 'cookie', 'linear-gradient(160deg,#E8A6B4,#B4A3D6)']
+    ];
+    const bt = (this.state && this.state.b) || 0;
+    const bz = BUZZ[Math.floor(bt / 3) % BUZZ.length];
+    return {
+      buzzOn: !(this.state && this.state.buzzOff) && bt % 3 !== 0,
+      buzz: { who: bz[0], city: bz[1], prod: bz[2], ago: bz[3], icon: bz[4], bg: bz[5] },
+      buzzClose: () => this.setState({ buzzOff: true }),
+      buyFill: (j / 2) * 66.68 + '%',
+      buy: steps.map((s, k) => ({ title: s[0], text: s[1], dot: k <= j ? '#655785' : '#FFFFFF', ring: k === j ? '6px' : '0px' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

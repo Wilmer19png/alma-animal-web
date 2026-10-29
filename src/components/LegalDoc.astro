@@ -1,0 +1,74 @@
+---
+// Plantilla de las páginas legales: título, vigencia, índice y texto.
+// Cada sección del contenido es un <section id="..."><h2>…</h2>…</section>.
+import Base from '../layouts/Base.astro';
+import SiteHeader from './SiteHeader.astro';
+import { LEGAL } from '../data/site';
+import { longDate } from '../data/blog';
+
+interface Props { title: string; lead: string; description: string; sections: { id: string; title: string }[] }
+const { title, lead, description, sections } = Astro.props;
+// recordatorio al compilar: estos datos son obligatorios antes de publicar
+const missing = [!LEGAL.id && LEGAL.idLabel, !LEGAL.email && 'correo'].filter(Boolean);
+if (missing.length) console.warn(`[legal] Falta en src/data/site.ts → LEGAL: ${missing.join(', ')}`);
+---
+<Base title={`${title} · Alma Animal`} description={description}>
+  <SiteHeader slot="top" />
+
+  <header class="wrap lhead">
+    <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
+    <h1 class="h-section">{title}</h1>
+    <p class="lead">{lead}</p>
+    <p class="lhead__date">Vigente desde el <time datetime={LEGAL.updated}>{longDate(LEGAL.updated)}</time></p>
+  </header>
+
+  <div class="wrap lbody">
+    <nav class="ltoc" aria-label="Contenido">
+      <span>Contenido</span>
+      <ol>{sections.map((s) => <li><a href={`#${s.id}`}>{s.title}</a></li>)}</ol>
+    </nav>
+    <div class="ltext">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .lhead { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; padding-bottom: 28px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .back .ms { font-size: 18px; }
+  .lhead .h-section { font-size: clamp(30px, 7vw, 52px); }
+  .lhead .lead { max-width: 62ch; }
+  .lhead__date { font: 600 14px/1.3 var(--font-sans); color: var(--primary); }
+
+  .lbody { display: grid; gap: 24px; align-items: start; padding-bottom: var(--section); }
+  .ltoc { padding: 18px 20px; border-radius: 20px; background: var(--surface-2); }
+  .ltoc > span { display: block; margin-bottom: 8px; font: 600 13px/1 var(--font-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted); }
+  .ltoc ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font: 500 15px/1.4 var(--font-sans); }
+  .ltoc li::marker { color: var(--primary); font-weight: 600; }
+  .ltoc a { color: var(--ink); text-decoration: none; }
+  .ltoc a:hover { color: var(--primary); text-decoration: underline; }
+
+  .ltext { min-width: 0; max-width: 760px; display: flex; flex-direction: column; gap: 32px; font: 400 17px/1.7 var(--font-sans); color: var(--ink); }
+  .ltext :global(section) { display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 90px; }
+  .ltext :global(h2) { font: 600 22px/1.3 var(--font-sans); letter-spacing: -.01em; }
+  .ltext :global(h3) { margin-top: 6px; font: 600 17px/1.4 var(--font-sans); }
+  .ltext :global(p), .ltext :global(li) { color: var(--ink-muted); }
+  .ltext :global(b) { color: var(--ink); }
+  .ltext :global(ul), .ltext :global(ol) { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .ltext :global(li::marker) { color: var(--primary); }
+  .ltext :global(a) { font-weight: 600; }
+  .ltext :global(dl) { margin: 0; display: grid; gap: 1px; border-radius: 18px; overflow: hidden; background: var(--line); box-shadow: 0 0 0 1px var(--line); }
+  .ltext :global(dl > div) { display: grid; gap: 2px; padding: 12px 16px; background: #fff; }
+  .ltext :global(dt) { font: 500 14px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .ltext :global(dd) { margin: 0; font: 600 16px/1.4 var(--font-sans); color: var(--ink); overflow-wrap: anywhere; }
+  .ltext :global(.box) { padding: 16px 18px; border-radius: 18px; background: var(--surface-2); box-shadow: inset 4px 0 0 var(--primary); }
+  @media (min-width: 640px) { .ltext :global(dl > div) { grid-template-columns: 200px minmax(0, 1fr); gap: 16px; align-items: baseline; } }
+  @media (min-width: 1000px) {
+    .lhead { padding-bottom: 40px; }
+    .lbody { grid-template-columns: 260px minmax(0, 1fr); gap: 56px; }
+    .ltoc { position: sticky; top: 24px; }
+    .ltext { gap: 40px; font-size: 18px; }
+    .ltext :global(h2) { font-size: 26px; }
+  }
+</style>

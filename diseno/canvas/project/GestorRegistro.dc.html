@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestor · Registrar paciente · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#F8F2F8}
+a{color:#655785}a:hover{color:#4D3F6C}
+.g{--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#F8F2F8;-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-wrap:wrap}
+.g *{box-sizing:border-box}
+.g h1,.g h2,.g h3,.g p{margin:0}
+.g ::selection{background:#FBCFAF;color:#623F21}
+.g :focus-visible{outline:3px solid #655785;outline-offset:2px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.side{flex:0 0 256px;background:#2B1E48;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:18px;min-height:1500px}
+.side .grp{font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:0 12px;margin-top:6px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.85);text-decoration:none;font:500 15px/1 "Alan Sans",sans-serif;transition:background .15s}
+.side nav a:hover{background:rgb(255 255 255/.08);color:#fff}
+.side nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+.side nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+.main{flex:999 1 900px;min-width:0;padding:24px 32px 48px;display:flex;flex-direction:column;gap:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);color:#fff;font:600 15px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{color:#fff;box-shadow:0 2px 6px rgb(54 41 84/.2)}
+.btn.out{background:#fff;color:#655785;border-color:#CBC4D1}
+.btn.out:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.peach{background:#F0BC95;color:#48290D}
+.btn.peach:hover{background:#E8AC80;color:#48290D}
+.card{background:#fff;border-radius:20px;box-shadow:0 0 0 1px #E6E1E7;padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label,.fld .lb{font:600 14px/1.3 "Alan Sans",sans-serif;color:#2B1E48}
+.fld input,.fld select,.fld textarea{width:100%;height:48px;border-radius:12px;border:1px solid #7A7580;background:#fff;padding:0 14px;font:400 16px/1.3 "Alan Sans",sans-serif;color:#2B1E48;outline:0}
+.fld textarea{height:84px;padding:12px 14px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:#6E6585}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#655785;box-shadow:0 0 0 3px rgb(101 87 133/.18)}
+.req{color:#B4271F}
+.seg{display:inline-flex;border:1px solid #CBC4D1;border-radius:999px;overflow:hidden;align-self:flex-start}
+.seg button{height:44px;padding:0 16px;border:0;font:600 15px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button+button{border-left:1px solid #CBC4D1}
+.check{display:flex;gap:12px;align-items:flex-start;font:400 15px/1.45 "Alan Sans",sans-serif;cursor:pointer}
+.check input{width:22px;height:22px;margin:0;accent-color:#655785;flex:none}
+.ex{font:500 12px/1 "Alan Sans",sans-serif;color:#584E6E;background:#F2ECF2;border-radius:999px;padding:5px 10px}
+/*GMOVIL-INI*/
+.gbar,.gnav,.mdays{display:none}
+.lanebtn{border:0;cursor:pointer;font-family:inherit}
+@media (max-width:760px){
+  .g{display:block !important}
+  .side{display:none !important}
+  .main{padding:0 14px 104px !important;gap:14px !important}
+  /* barra superior */
+  .gbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;margin:0 -14px;padding:10px 14px;background:#2B1E48;color:#fff}
+  .gbar-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 17px/1 "Alan Sans",sans-serif}
+  .gbar-logo:hover{color:#fff}
+  .gbar-logo > span{width:34px;height:34px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center}
+  .gbar-logo img{width:26px}
+  .gbar-ic{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgb(255 255 255/.12);color:#fff;display:grid;place-items:center;text-decoration:none}
+  .gbar-ic:hover{color:#fff;background:rgb(255 255 255/.2)}
+  /* navegación inferior */
+  .gnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;gap:4px;background:#2B1E48;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgb(43 30 72/.25)}
+  .gnav > a,.gmore > summary{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:14px;color:rgb(255 255 255/.78);font:600 11.5px/1 "Alan Sans",sans-serif;text-decoration:none;list-style:none;cursor:pointer}
+  .gnav > a:hover{color:#fff}
+  .gnav .ms{font-size:22px}
+  .gnav .on,.gmore.on > summary{color:#2B1E48;background:#FBCFAF}
+  .gmore{flex:1;display:flex}
+  .gmore > summary::-webkit-details-marker{display:none}
+  .gmore[open] > summary{color:#fff;background:rgb(255 255 255/.14)}
+  .gsheet{position:fixed;left:8px;right:8px;bottom:78px;max-height:70vh;overflow:auto;background:#2B1E48;border-radius:22px;padding:8px 10px 12px;box-shadow:0 -10px 30px rgb(43 30 72/.35)}
+  .gsheet .grp{display:block;font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:14px 12px 6px}
+  .gsheet nav{display:flex;flex-direction:column;gap:2px}
+  .gsheet nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.88);text-decoration:none;font:500 15.5px/1.2 "Alan Sans",sans-serif}
+  .gsheet nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+  .gsheet nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+
+  /* encabezado de cada módulo */
+  .main h1{font-size:24px !important;line-height:1.15 !important}
+  .main > div:first-of-type{gap:10px !important;padding-top:14px}
+  .main > div:first-of-type > div:first-child{flex:1 1 100% !important}
+  .main > div:first-of-type p{font-size:14.5px !important}
+  .main > div:first-of-type > .btn,.main > div:first-of-type > a.btn{flex:1 1 auto}
+  .ex{order:-1}
+
+  /* rejillas: una columna; las de 4-5 columnas (indicadores) en dos; fotos en tres */
+  :where(.g) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  :where(.g) [style*="grid-template-columns: repeat(4"],:where(.g) [style*="grid-template-columns: repeat(5"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  :where(.g) [style*="grid-template-columns: repeat(6"]{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .main [style*="grid-column: 1 / -1"],.main [style*="grid-column: span"]{grid-column:auto !important}
+  .card{padding:14px !important;border-radius:18px !important}
+  .main div[style*="display: flex"]:not([role="tablist"]){flex-wrap:wrap}
+  .main [style*="white-space: nowrap"]{white-space:normal}
+  .main label[style*="width: 2"],.main label[style*="width: 3"]{width:100% !important;margin-left:0 !important}
+  .main [style*="margin-left: auto"]{margin-left:0}
+  .btn{min-height:44px}
+
+  /* tablas y filas anchas: se deslizan de lado dentro de su tarjeta */
+  .main div:has(> table),.card:has(> table){overflow-x:auto}
+  .main table{min-width:640px}
+  .main div:has(> .vrow),.main div:has(> .trow),.main section:has(> .trow),.main div:has(> .urow),.main section:has(> .urow){overflow-x:auto}
+  .vrow{min-width:560px}
+  .trow{min-width:760px}
+  .urow{min-width:700px}
+  .drow{grid-template-columns:46px minmax(0,1fr) !important;gap:8px 12px !important}
+  .drow > :nth-child(n+3){grid-column:2}
+  .main{overflow-wrap:break-word}
+  .main .card,.main .blk,.main .sec,.main section{min-width:0 !important;max-width:100%;overflow-wrap:anywhere}
+  .main .card *{max-width:100%}
+  .main .card table,.main .card .vrow,.main .card .trow,.main .card .urow,.main .card .prow,.main .card .lanes,.main .card [style*="46px repeat(6"]{max-width:none}
+  .main h3{flex-wrap:wrap}
+  .sec h3 small{flex-basis:100%}
+  /* agenda del día (Hoy): los 3 carriles se mantienen lado a lado */
+  .lanebtn[aria-pressed="true"]{box-shadow:0 0 0 2px #2B1E48}
+  :where(.g) .lanes{grid-template-columns:44px minmax(0,1fr) !important;gap:0 8px !important}
+  .lanes:not([data-lane="s"]) .ln-s,.lanes:not([data-lane="d"]) .ln-d,.lanes[data-lane="s"] .ln-c,.lanes[data-lane="d"] .ln-c{display:none !important}
+  .lanes-body > div[aria-hidden]{left:52px !important}
+  /* agenda de la semana: se desliza de lado, un día de ~110 px por columna */
+  .mdays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:6px}
+  .mdays button{border:0;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:inset 0 0 0 1px #E6E1E7;font-family:inherit}
+  .mdays span{font:600 11px/1 "Alan Sans",sans-serif;letter-spacing:.04em}
+  .mdays b{font:700 18px/1 "Alan Sans",sans-serif}
+  .wkday.m-off{display:none !important}
+  :where(.g) [style*="grid-template-columns: 46px repeat(6"]{grid-template-columns:40px minmax(0,1fr) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 4px"]{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 8px"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  /* spa: franja de hoy deslizable */
+  /* spa: la franja de hoy pasa a lista */
+  section[aria-labelledby="hoy"] div[style*="height: 92px"]{height:auto !important;display:flex;flex-direction:column;gap:8px}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] > div,section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="top: 0"],section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="dashed"]{display:none !important}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] button{position:static !important;width:auto !important;height:auto !important;min-height:56px;padding:10px 14px !important}
+  /* pasos en una sola fila */
+  :where(.g) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  .main ol[style*="repeat(5"] li > span:last-child{font-size:11px !important;line-height:1.2 !important;overflow-wrap:normal !important;hyphens:auto}
+  ol[aria-label="Pasos"]{gap:6px !important}
+  ol[aria-label="Pasos"] button{padding:10px 6px !important;flex-direction:column;gap:6px !important;text-align:center !important;justify-content:center}
+  ol[aria-label="Pasos"] button > span:last-child > span{display:none !important}
+  ol[aria-label="Pasos"] button b{font-size:13px !important;line-height:1.2 !important}
+  /* horarios */
+  h2 + .drow{display:none !important}
+  .rng{flex-wrap:nowrap !important}
+  .rng .cell{width:96px !important}
+  /* envíos: el valor va debajo del texto */
+  .rule{flex-wrap:wrap}
+  .rule > .cell,.rule > select{flex:1 1 calc(100% - 46px);margin-left:46px;width:auto !important}
+
+}
+/*GMOVIL-FIN*/
+</style>
+</helmet>
+<div class="g">
+
+<aside class="side" aria-label="Menú del gestor">
+  <a href="GestorHoy.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 8px; text-decoration: none;">
+    <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--grad-primary); display: grid; place-items: center;"><img src="/_blob/409735a76ce80c9f522581004be4da71" alt="" style="width: 34px;"></span>
+    <span><span style="display: block; font: 600 19px/1 'Alan Sans', sans-serif; color: #fff;">Alma Animal</span><span style="display: block; font: 400 13px/1.2 'Gowun Batang', serif; color: #D1C1DD; margin-top: 4px;">Gestor interno</span></span>
+  </a>
+  <nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+  <span class="grp">CLÍNICA</span>
+  <nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a class="on" href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SPA</span>
+  <nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+  <span class="grp">TIENDA</span>
+  <nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SITIO WEB</span>
+  <nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+  <span class="grp">AJUSTES</span>
+  <nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+  <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgb(255 255 255/.08);">
+    <span style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 1px; width: 92px; max-width: none; transform: translateX(-46%);"></span>
+    <span style="min-width: 0;"><span style="display: block; font: 600 14px/1.2 'Alan Sans', sans-serif;">Dra. Mariana Hoyos</span><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Administradora</span></span>
+    <span class="ms" style="margin-left: auto; color: rgb(255 255 255/.7);">unfold_more</span>
+  </div>
+</aside>
+
+<main class="main">
+<!--GNAV-->
+<div class="gbar"><a class="gbar-logo" href="GestorHoy.dc.html"><span><img src="/_blob/409735a76ce80c9f522581004be4da71" alt=""></span>Alma Animal</a><a class="gbar-ic" href="GestorRegistro.dc.html" aria-label="Registrar paciente"><span class="ms">person_add</span></a></div>
+<nav class="gnav" aria-label="Menú del gestor"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a><a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a><a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a><a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos</a><details class="gmore on"><summary><span class="ms">menu</span>Más</summary><div class="gsheet">
+<span class="grp">GENERAL</span>
+<nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+<span class="grp">CLÍNICA</span>
+<nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a class="on" href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+<span class="grp">SPA</span>
+<nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+<span class="grp">TIENDA</span>
+<nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+<span class="grp">SITIO WEB</span>
+<nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+<span class="grp">AJUSTES</span>
+<nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+</div></details></nav>
+<!--/GNAV-->
+  <nav aria-label="Ruta" style="display: flex; gap: 6px; align-items: center; font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;"><a href="GestorPaciente.dc.html" style="color: #584E6E;">Pacientes</a><span class="ms" style="font-size: 16px;">chevron_right</span><span aria-current="page" style="color: #2B1E48;">Registrar paciente</span></nav>
+  <div style="display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 4px; margin-right: auto;">
+      <h1 style="font: 600 30px/1.1 'Alan Sans', sans-serif;">Registrar paciente</h1>
+      <p style="font: 400 16px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Primero el propietario, después la mascota. Toma un par de minutos y queda lista su historia clínica.</p>
+    </div>
+  </div>
+
+  <!-- pasos -->
+  <ol style="list-style: none; margin: 0; padding: 0; display: flex; gap: 8px;" aria-label="Pasos">
+    <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+      <li style="flex: 1;"><button type="button" onClick="{{s.go}}" aria-current="{{s.cur}}" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 0; cursor: pointer; background: {{s.bg}}; box-shadow: {{s.ring}}; text-align: left; font: inherit; color: #2B1E48;"><span style="width: 32px; height: 32px; border-radius: 50%; background: {{s.dot}}; color: {{s.dotFg}}; display: grid; place-items: center; font: 700 15px/1 'Alan Sans', sans-serif; flex: none;">{{s.num}}</span><span><b style="display: block; font: 600 16px/1.2 'Alan Sans', sans-serif;">{{s.title}}</b><span style="font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{s.sub}}</span></span></button></li>
+    </sc-for>
+  </ol>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 20px; align-items: start;">
+    <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+
+      <!-- ======== PASO 1: PROPIETARIO ======== -->
+      <sc-if value="{{step1}}" hint-placeholder-val="{{true}}">
+        <section class="card" aria-labelledby="s1">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <h2 id="s1" style="font: 600 20px/1.3 'Alan Sans', sans-serif; margin-right: auto;">Propietario</h2>
+            <div class="seg" role="group" aria-label="Tipo de propietario">
+              <button type="button" aria-pressed="{{isExisting}}" onClick="{{pickExisting}}" style="background: {{exBg}}; color: {{exFg}};"><span class="ms" style="font-size: 18px;">search</span>Ya es cliente</button>
+              <button type="button" aria-pressed="{{isNew}}" onClick="{{pickNew}}" style="background: {{nwBg}}; color: {{nwFg}};"><span class="ms" style="font-size: 18px;">person_add</span>Nuevo propietario</button>
+            </div>
+          </div>
+
+          <sc-if value="{{isExisting}}" hint-placeholder-val="{{false}}">
+            <div class="fld"><label for="bus">Buscar propietario</label><input id="bus" placeholder="Nombre, celular o cédula. Ej: Gómez, 300 123 4567" value="Gómez"></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <sc-for list="{{matches}}" as="m" hint-placeholder-count="2">
+                <button type="button" onClick="{{m.pick}}" style="display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 14px; border: 0; cursor: pointer; text-align: left; font: inherit; color: #2B1E48; background: {{m.bg}}; box-shadow: {{m.ring}};"><span style="width: 40px; height: 40px; border-radius: 50%; background: #EADDFF; color: #4D3F6C; display: grid; place-items: center; font: 700 15px/1 'Alan Sans', sans-serif;">{{m.ini}}</span><span style="flex: 1;"><b style="display: block; font: 600 16px/1.3 'Alan Sans', sans-serif;">{{m.name}}</b><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{m.info}}</span></span><span class="ms" style="color: #655785;">{{m.icon}}</span></button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isNew}}" hint-placeholder-val="{{true}}">
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px;">
+              <div class="fld"><label for="o-n">Nombre <span class="req">*</span></label><input id="o-n" placeholder="Ej: Laura" value="{{ownerName}}" onChange="{{onOwner}}"></div>
+              <div class="fld"><label for="o-a">Apellidos <span class="req">*</span></label><input id="o-a" placeholder="Ej: Gómez Restrepo"></div>
+              <div class="fld"><span class="lb">Documento</span><div style="display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 8px;"><select aria-label="Tipo de documento"><option>C.C.</option><option>C.E.</option><option>Pasaporte</option><option>NIT</option></select><input aria-label="Número de documento" placeholder="Ej: 1.088.234.567"></div></div>
+              <div class="fld"><label for="o-c">Celular (WhatsApp) <span class="req">*</span></label><input id="o-c" type="tel" placeholder="Ej: 300 123 4567"></div>
+              <div class="fld"><label for="o-e">Correo <span class="req">*</span></label><input id="o-e" type="email" placeholder="Ej: laura@correo.com"><span style="font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Aquí le llega el acceso al portal.</span></div>
+              <div class="fld"><label for="o-s">¿Cómo nos conoció?</label><select id="o-s"><option>Instagram</option><option>Facebook</option><option>Google</option><option>Recomendación</option><option>Pasaba por el consultorio</option><option>Otro</option></select></div>
+              <div class="fld"><label for="o-d">Dirección</label><input id="o-d" placeholder="Ej: Calle 19 # 8-34, apto 302"></div>
+              <div class="fld"><label for="o-b">Barrio</label><input id="o-b" placeholder="Ej: Álamos"></div>
+              <div class="fld"><label for="o-dep">Departamento</label><select id="o-dep"><option>Risaralda</option><option>Caldas</option><option>Quindío</option><option>Valle del Cauca</option><option>Antioquia</option><option>Otro</option></select></div>
+              <div class="fld"><label for="o-ci">Ciudad</label><select id="o-ci"><option>Pereira</option><option>Dosquebradas</option><option>Santa Rosa de Cabal</option><option>La Virginia</option><option>Otra</option></select></div>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: #F8F2F8;">
+            <label class="check"><input type="checkbox" checked><span><b>Autoriza el tratamiento de sus datos</b> según la Ley 1581 de 2012. <a href="#">Ver política</a><span style="display: block; font-size: 13px; color: #584E6E;">Queda guardado con la fecha y quién lo registró.</span></span></label>
+            <label class="check"><input type="checkbox" checked><span><b>Enviar correo de bienvenida al portal</b> con un enlace para crear su contraseña. Desde ahí verá el carnet, los exámenes e imágenes, y podrá agendar citas en horas libres.<span style="display: block; font-size: 13px; color: #584E6E;">Necesita correo. También le avisamos por WhatsApp que revise su bandeja.</span></span></label>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- ======== PASO 2: MASCOTA ======== -->
+      <sc-if value="{{step2}}" hint-placeholder-val="{{false}}">
+        <section class="card" aria-labelledby="s2">
+          <h2 id="s2" style="font: 600 20px/1.3 'Alan Sans', sans-serif;">Mascota</h2>
+          <div style="display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 20px; align-items: start;">
+            <label style="aspect-ratio: 1; border-radius: 50%; border: 2px dashed #CBC4D1; background: #F8F2F8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #655785; cursor: pointer; text-align: center; font: 600 13px/1.3 'Alan Sans', sans-serif;"><span class="ms" style="font-size: 32px;">add_a_photo</span>Agregar foto<input type="file" accept="image/*" style="position: absolute; width: 1px; height: 1px; opacity: 0;"></label>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px;">
+              <div class="fld"><label for="p-n">Nombre <span class="req">*</span></label><input id="p-n" placeholder="Ej: Luna" value="{{petName}}" onChange="{{onPet}}"></div>
+              <div class="fld"><span class="lb">Especie <span class="req">*</span></span><div class="seg" role="group" aria-label="Especie"><sc-for list="{{species}}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="background: {{o.bg}}; color: {{o.fg}};">{{o.label}}</button></sc-for></div></div>
+              <div class="fld"><label for="p-r">Raza</label><input id="p-r" placeholder="Ej: Shih Tzu, criollo"></div>
+              <div class="fld"><label for="p-c">Color</label><input id="p-c" placeholder="Ej: Blanco y dorado"></div>
+              <div class="fld"><span class="lb">Sexo <span class="req">*</span></span><div class="seg" role="group" aria-label="Sexo"><sc-for list="{{sexes}}" as="o" hint-placeholder-count="2"><button type="button" aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="background: {{o.bg}}; color: {{o.fg}};">{{o.label}}</button></sc-for></div></div>
+              <div class="fld"><span class="lb">Estado reproductivo</span><div class="seg" role="group" aria-label="Estado reproductivo"><sc-for list="{{repro}}" as="o" hint-placeholder-count="2"><button type="button" aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="background: {{o.bg}}; color: {{o.fg}};">{{o.label}}</button></sc-for></div></div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 18px;">
+            <div class="fld"><label for="p-f">Fecha de nacimiento</label><input id="p-f" type="date"></div>
+            <div class="fld"><label for="p-e">O edad aproximada</label><input id="p-e" placeholder="Ej: 4 años"></div>
+            <div class="fld"><label for="p-p">Peso (kg)</label><input id="p-p" inputmode="decimal" placeholder="Ej: 8,4"></div>
+            <div class="fld"><label for="p-m">Microchip</label><input id="p-m" placeholder="Ej: 900 108 000 123 456"></div>
+            <div class="fld"><label for="p-al">Alimento</label><input id="p-al" placeholder="Ej: Concentrado raza pequeña adulto"></div>
+            <div class="fld"><label for="p-ca">Cantidad de alimento</label><input id="p-ca" placeholder="Ej: 110 g al día, en 2 tomas"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px;">
+            <div class="fld"><label for="p-alg">Alergias</label><input id="p-alg" placeholder="Ej: Amoxicilina, pollo"><span style="font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Se mostrarán en rojo en la ficha.</span></div>
+            <div class="fld"><label for="p-cr">Condiciones crónicas</label><input id="p-cr" placeholder="Ej: Piel sensible, displasia de cadera"></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #F8F2F8;">
+            <b style="font: 600 15px/1.3 'Alan Sans', sans-serif;">Campos personalizados</b>
+            <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) 40px; gap: 8px; align-items: center;"><input aria-label="Nombre del campo" value="Le teme a…" style="height: 44px; border-radius: 10px; border: 1px solid #CBC4D1; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif;"><input aria-label="Valor del campo" placeholder="Ej: El secador" style="height: 44px; border-radius: 10px; border: 1px solid #CBC4D1; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif;"><button type="button" aria-label="Quitar campo" style="width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: #584E6E; cursor: pointer;"><span class="ms">close</span></button></div>
+            <button type="button" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #655785; font: 600 14px/1 'Alan Sans', sans-serif; cursor: pointer; padding: 6px 0;"><span class="ms" style="font-size: 18px;">add</span>Agregar campo</button>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- ======== PASO 2b: LO QUE YA TRAE ======== -->
+      <sc-if value="{{step2}}" hint-placeholder-val="{{false}}">
+        <section class="card" aria-labelledby="s2b">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <h2 id="s2b" style="font: 600 20px/1.3 'Alan Sans', sans-serif;">Vacunas y desparasitaciones anteriores</h2>
+            <p style="font: 400 15px/1.45 'Alan Sans', sans-serif; color: #584E6E;">Si llega vacunada de otra veterinaria, anótalo aquí. Con esto el gestor sabe qué le toca y cuándo.</p>
+          </div>
+          <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 2fr) 40px; gap: 8px; font: 600 13px/1.2 'Alan Sans', sans-serif; color: #584E6E;"><span>Qué se le aplicó</span><span>Fecha</span><span>Laboratorio (opcional)</span><span></span></div>
+          <sc-for list="{{prevs}}" as="p" hint-placeholder-count="2">
+            <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr) minmax(0, 2fr) 40px; gap: 8px; align-items: center;">
+              <select aria-label="Qué se le aplicó" value="{{p.name}}" onChange="{{p.setName}}" style="height: 46px; border-radius: 12px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif; color: #2B1E48; background: #fff;">
+                <option>Polivalente</option><option>Antirrábica</option><option>Tos de las perreras</option><option>Triple felina</option><option>Leucemia felina</option><option>Desparasitación interna</option><option>Desparasitación externa</option>
+              </select>
+              <input type="date" aria-label="Fecha de aplicación" value="{{p.date}}" onChange="{{p.setDate}}" style="height: 46px; border-radius: 12px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif; color: #2B1E48;">
+              <input aria-label="Laboratorio" placeholder="Ej: [Laboratorio]" style="height: 46px; border-radius: 12px; border: 1px solid #7A7580; padding: 0 12px; font: 400 15px/1 'Alan Sans', sans-serif; color: #2B1E48;">
+              <button type="button" aria-label="Quitar" onClick="{{p.remove}}" style="width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: #584E6E; cursor: pointer;"><span class="ms">close</span></button>
+            </div>
+          </sc-for>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <button type="button" onClick="{{addPrev}}" style="display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #655785; font: 600 14px/1 'Alan Sans', sans-serif; cursor: pointer; padding: 6px 0;"><span class="ms" style="font-size: 18px;">add</span>Agregar otra</button>
+            <label style="margin-left: auto; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px; border: 1px dashed #CBC4D1; color: #655785; font: 600 14px/1 'Alan Sans', sans-serif; cursor: pointer;"><span class="ms" style="font-size: 18px;">photo_camera</span>Subir foto del carnet anterior<input type="file" accept="image/*,application/pdf" style="position: absolute; width: 1px; height: 1px; opacity: 0;"></label>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- ======== PASO 3: REVISIÓN ======== -->
+      <sc-if value="{{step3}}" hint-placeholder-val="{{false}}">
+        <section class="card" aria-labelledby="s3">
+          <h2 id="s3" style="font: 600 20px/1.3 'Alan Sans', sans-serif;">Revisa y guarda</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+            <div style="padding: 16px; border-radius: 16px; box-shadow: 0 0 0 1px #E6E1E7; display: flex; flex-direction: column; gap: 6px;"><span style="font: 600 13px/1 'Alan Sans', sans-serif; color: #655785;">PROPIETARIO</span><b style="font: 600 18px/1.3 'Alan Sans', sans-serif;">{{ownerTxt}}</b><span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Datos autorizados · se le envía correo para crear su contraseña del portal</span><button type="button" onClick="{{go1}}" style="align-self: flex-start; border: 0; background: transparent; color: #655785; font: 600 14px/1 'Alan Sans', sans-serif; cursor: pointer; padding: 4px 0;">Editar</button></div>
+            <div style="padding: 16px; border-radius: 16px; box-shadow: 0 0 0 1px #E6E1E7; display: flex; flex-direction: column; gap: 6px;"><span style="font: 600 13px/1 'Alan Sans', sans-serif; color: #655785;">MASCOTA</span><b style="font: 600 18px/1.3 'Alan Sans', sans-serif;">{{petTxt}}</b><span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">{{petDesc}}</span><button type="button" onClick="{{go2}}" style="align-self: flex-start; border: 0; background: transparent; color: #655785; font: 600 14px/1 'Alan Sans', sans-serif; cursor: pointer; padding: 4px 0;">Editar</button></div>
+          </div>
+          <!-- lo que le toca, calculado con lo que ya trae y el esquema de la especie -->
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #F8F2F8;">
+            <div style="display: flex; align-items: center; gap: 8px;"><span class="ms" style="color: #655785;">vaccines</span><b style="font: 600 16px/1.3 'Alan Sans', sans-serif;">Lo que le toca a {{petTxt}}</b><span style="margin-left: auto; font: 400 13px/1 'Alan Sans', sans-serif; color: #584E6E;">Según el esquema de {{spLower}}</span></div>
+            <sc-for list="{{todo}}" as="t" hint-placeholder-count="3">
+              <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px #E6E1E7;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <span style="flex: 1; min-width: 0;"><b style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">{{t.name}}</b><span style="font: 400 14px/1.35 'Alan Sans', sans-serif; color: #584E6E;">{{t.when}}</span></span>
+                  <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; font: 600 12px/1 'Alan Sans', sans-serif; background: {{t.stBg}}; color: {{t.stFg}};">{{t.st}}</span>
+                  <sc-if value="{{t.canPick}}" hint-placeholder-val="{{true}}"><button class="btn out" type="button" onClick="{{t.openPick}}" style="height: 36px; padding: 0 14px; font-size: 14px;"><span class="ms" style="font-size: 17px;">event</span>Agendar</button></sc-if>
+                </div>
+                <sc-if value="{{t.picking}}" hint-placeholder-val="{{false}}">
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;"><span style="font: 500 13px/1 'Alan Sans', sans-serif; color: #584E6E;">Horas libres con la doctora:</span><sc-for list="{{t.slots}}" as="h" hint-placeholder-count="3"><button type="button" onClick="{{h.pick}}" style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid #CBC4D1; background: #fff; color: #2B1E48; font: 600 13px/1 'Alan Sans', sans-serif; cursor: pointer;">{{h.t}}</button></sc-for><a href="GestorAgenda.dc.html" style="font: 600 13px/1 'Alan Sans', sans-serif;">Ver agenda</a></div>
+                </sc-if>
+                <sc-if value="{{t.booked}}" hint-placeholder-val="{{false}}"><span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; background: #B8F1B9; color: #1D5128; font: 600 13px/1 'Alan Sans', sans-serif;"><span class="ms fill" style="font-size: 16px;">check_circle</span>Agendada: {{t.bookedTxt}}</span></sc-if>
+              </div>
+            </sc-for>
+            <span style="font: 400 13px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Lo que no se agende ahora queda en Vacunas y recordatorios, con su aviso automático.</span>
+          </div>
+
+          <sc-if value="{{notSaved}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn" type="button" onClick="{{save}}"><span class="ms" style="font-size: 18px;">check</span>Guardar y abrir la ficha</button>
+              <button class="btn peach" type="button" onClick="{{save}}"><span class="ms" style="font-size: 18px;">event</span>Guardar y agendar cita</button>
+              <button class="btn out" type="button" onClick="{{save}}"><span class="ms" style="font-size: 18px;">add</span>Guardar y registrar otra mascota</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{saved}}" hint-placeholder-val="{{false}}">
+            <div role="status" style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128;"><span class="ms fill" style="font-size: 26px;">check_circle</span><span style="flex: 1; font: 500 16px/1.4 'Alan Sans', sans-serif;"><b>{{petTxt}}</b> quedó registrada con su historia clínica y su carnet. Enviamos el correo de bienvenida para que el propietario cree su contraseña.</span><a class="btn out" href="GestorPaciente.dc.html" style="height: 40px;">Abrir ficha</a></div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- navegación entre pasos -->
+      <div style="display: flex; gap: 10px; justify-content: space-between;">
+        <sc-if value="{{hasPrev}}" hint-placeholder-val="{{false}}"><button class="btn out" type="button" onClick="{{prev}}"><span class="ms" style="font-size: 18px;">arrow_back</span>Atrás</button></sc-if>
+        <span></span>
+        <sc-if value="{{hasNext}}" hint-placeholder-val="{{true}}"><button class="btn" type="button" onClick="{{next}}">Continuar<span class="ms" style="font-size: 18px;">arrow_forward</span></button></sc-if>
+      </div>
+    </div>
+
+    <!-- resumen en vivo -->
+    <aside class="card" aria-label="Resumen del registro" style="gap: 14px; position: relative; overflow: hidden;">
+      <span aria-hidden="true" style="position: absolute; right: -40px; top: -40px; width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); opacity: .5;"></span>
+      <b style="font: 600 17px/1.3 'Alan Sans', sans-serif; position: relative;">Así va el registro</b>
+      <div style="display: flex; gap: 12px; align-items: center; position: relative;"><span style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); display: grid; place-items: center; font: 700 20px/1 'Alan Sans', sans-serif; color: #4D3F6C;">{{petIni}}</span><span><b style="display: block; font: 600 17px/1.3 'Alan Sans', sans-serif;">{{petTxt}}</b><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{petDesc}}</span></span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 12px; border-top: 1px solid #F2ECF2;"><span style="font: 500 13px/1 'Alan Sans', sans-serif; color: #584E6E;">Propietario</span><b style="font: 600 16px/1.3 'Alan Sans', sans-serif;">{{ownerTxt}}</b></div>
+      <p style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E;">Al guardar se crea su historia clínica y su carnet de vacunas. Si invitas al propietario, verá todo desde su portal.</p>
+    </aside>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const step = s.step || 1;
+    const mode = s.mode || 'nuevo';
+    const sp = s.sp || 'Perro';
+    const sex = s.sex || 'Hembra';
+    const rep = s.rep || 'Esterilizada';
+    const ownerSel = s.ownerSel || 1;
+    const petName = s.petName || '';
+    const ownerName = s.ownerName || '';
+    const segOpt = (list, cur, key) => list.map((l) => ({ label: l, on: l === cur, bg: l === cur ? '#2B1E48' : '#FFFFFF', fg: l === cur ? '#FFFFFF' : '#2B1E48', pick: () => this.setState({ [key]: l }) }));
+    const owners = [
+      { id: 1, name: 'Laura Gómez Restrepo', info: '300 123 4567 · Luna, Toby', ini: 'LG' },
+      { id: 2, name: 'Pedro Gómez', info: '316 900 1122 · Max', ini: 'PG' }
+    ];
+    const ownerTxt = mode === 'existente' ? owners.find((o) => o.id === ownerSel).name : (ownerName || 'Nuevo propietario');
+    // ---- vacunas que ya trae y lo que le toca (esquemas de ejemplo; los define la doctora) ----
+    const TODAY = new Date(2026, 9, 27);
+    const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const fmtD = (d) => d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    const EVERY = { 'Polivalente': 12, 'Antirrábica': 12, 'Tos de las perreras': 12, 'Triple felina': 12, 'Leucemia felina': 12, 'Desparasitación interna': 3, 'Desparasitación externa': 1 };
+    const CORE = sp === 'Gato' ? ['Triple felina', 'Antirrábica', 'Desparasitación interna'] : ['Polivalente', 'Antirrábica', 'Desparasitación interna'];
+    const prevs = s.prevs || [{ name: 'Polivalente', date: '2025-11-15' }, { name: 'Desparasitación interna', date: '2026-08-01' }];
+    const setPrevs = (next) => this.setState({ prevs: next });
+    const latest = {};
+    prevs.forEach((p) => { if (p.date && (!latest[p.name] || p.date > latest[p.name])) latest[p.name] = p.date; });
+    const names = CORE.concat(Object.keys(latest).filter((n) => CORE.indexOf(n) < 0));
+    const SLOTS = ['mié 28 · 2:00 p. m.', 'jue 29 · 8:30 a. m.', 'vie 30 · 9:30 a. m.'];
+    const bookedMap = s.bookedMap || {};
+    const todo = names.map((n) => {
+      let when, st, stBg, stFg;
+      if (latest[n]) {
+        const d = new Date(latest[n] + 'T00:00:00');
+        d.setMonth(d.getMonth() + EVERY[n]);
+        const days = Math.round((d - TODAY) / 86400000);
+        if (days < 0) { when = 'Se le venció el ' + fmtD(d); st = 'Pendiente'; stBg = '#FFDAD5'; stFg = '#910809'; }
+        else if (days <= 30) { when = 'Le toca el ' + fmtD(d); st = 'Pronto'; stBg = '#FFDDB2'; stFg = '#624000'; }
+        else { when = 'Le toca el ' + fmtD(d); st = 'Al día'; stBg = '#B8F1B9'; stFg = '#1D5128'; }
+      } else { when = 'Sin registro: aplicar en la primera cita'; st = 'Sin registro'; stBg = '#FFDAD5'; stFg = '#910809'; }
+      const booked = !!bookedMap[n];
+      return {
+        name: n, when, st, stBg, stFg,
+        booked, bookedTxt: bookedMap[n] || '',
+        canPick: !booked && s.pickOpen !== n,
+        picking: !booked && s.pickOpen === n,
+        openPick: () => this.setState({ pickOpen: n }),
+        slots: SLOTS.map((t) => ({ t, pick: () => this.setState({ bookedMap: { ...bookedMap, [n]: t }, pickOpen: null }) }))
+      };
+    });
+    const TITLES = [['Propietario', 'Busca o crea'], ['Mascota', 'Ficha y datos de salud'], ['Revisión', 'Guarda y sigue']];
+    return {
+      steps: TITLES.map((t, k) => ({
+        num: k + 1 < step ? '✓' : String(k + 1), title: t[0], sub: t[1],
+        cur: k + 1 === step ? 'step' : 'false',
+        bg: k + 1 === step ? '#FFFFFF' : '#F2ECF2',
+        ring: k + 1 === step ? '0 0 0 2px #655785' : 'none',
+        dot: k + 1 <= step ? '#655785' : '#FFFFFF',
+        dotFg: k + 1 <= step ? '#FFFFFF' : '#584E6E',
+        go: () => this.setState({ step: k + 1 })
+      })),
+      step1: step === 1, step2: step === 2, step3: step === 3,
+      go1: () => this.setState({ step: 1 }), go2: () => this.setState({ step: 2 }),
+      hasPrev: step > 1, hasNext: step < 3,
+      prev: () => this.setState({ step: step - 1 }),
+      next: () => this.setState({ step: step + 1 }),
+      isExisting: mode === 'existente', isNew: mode === 'nuevo',
+      pickExisting: () => this.setState({ mode: 'existente' }), pickNew: () => this.setState({ mode: 'nuevo' }),
+      exBg: mode === 'existente' ? '#2B1E48' : '#FFFFFF', exFg: mode === 'existente' ? '#FFFFFF' : '#2B1E48',
+      nwBg: mode === 'nuevo' ? '#2B1E48' : '#FFFFFF', nwFg: mode === 'nuevo' ? '#FFFFFF' : '#2B1E48',
+      matches: owners.map((o) => ({ ...o, bg: o.id === ownerSel ? '#F8F2F8' : '#FFFFFF', ring: o.id === ownerSel ? '0 0 0 2px #655785' : '0 0 0 1px #E6E1E7', icon: o.id === ownerSel ? 'check_circle' : 'radio_button_unchecked', pick: () => this.setState({ ownerSel: o.id }) })),
+      ownerName, onOwner: (e) => this.setState({ ownerName: e.target.value }),
+      petName, onPet: (e) => this.setState({ petName: e.target.value }),
+      species: segOpt(['Perro', 'Gato', 'Otro'], sp, 'sp'),
+      sexes: segOpt(['Hembra', 'Macho'], sex, 'sex'),
+      repro: segOpt(sex === 'Hembra' ? ['Entera', 'Esterilizada'] : ['Entero', 'Castrado'], sex === 'Hembra' ? (rep === 'Castrado' ? 'Esterilizada' : rep === 'Entero' ? 'Entera' : rep) : (rep === 'Esterilizada' ? 'Castrado' : rep === 'Entera' ? 'Entero' : rep), 'rep'),
+      ownerTxt,
+      petTxt: petName || 'Nueva mascota',
+      petIni: (petName || '?')[0].toUpperCase(),
+      petDesc: sp + ' · ' + sex.toLowerCase(),
+      saved: !!s.saved, notSaved: !s.saved,
+      save: () => this.setState({ saved: true }),
+      prevs: prevs.map((p, k) => ({
+        ...p,
+        setName: (e) => setPrevs(prevs.map((x, j) => (j === k ? { ...x, name: e.target.value } : x))),
+        setDate: (e) => setPrevs(prevs.map((x, j) => (j === k ? { ...x, date: e.target.value } : x))),
+        remove: () => setPrevs(prevs.filter((_, j) => j !== k))
+      })),
+      addPrev: () => setPrevs(prevs.concat([{ name: 'Antirrábica', date: '' }])),
+      todo,
+      spLower: sp === 'Otro' ? 'la especie' : sp.toLowerCase()
+    };
+  }
+}
+</script>
+</body>
+</html>

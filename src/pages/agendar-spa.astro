@@ -1,0 +1,475 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { whatsapp, PHONES, HOURS, LEGAL } from '../data/site';
+
+const STEPS = ['Tu mascota', 'El servicio', 'Fecha y hora', 'Tus datos', 'Revisar'];
+// horas de inicio posibles (cada baño toma unas 2 horas); el sábado solo en la mañana
+const SLOTS = [
+  { value: '08:00', label: '8:00 a. m.', sat: true },
+  { value: '09:30', label: '9:30 a. m.', sat: true },
+  { value: '11:00', label: '11:00 a. m.', sat: false },
+  { value: '14:00', label: '2:00 p. m.', sat: false },
+  { value: '15:30', label: '3:30 p. m.', sat: false }
+];
+---
+<Base
+  title="Agenda el baño de tu mascota · Spa Alma Animal"
+  description="Agenda el baño de tu perro o gato en el spa de Alma Animal en Pereira. Llena el formulario y te confirmamos por WhatsApp la hora y el precio."
+  waMessage="Hola, Alma Animal. Quiero agendar un baño en el spa."
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== TÍTULO ======== -->
+  <div class="wrap intro">
+    <a class="back" href="/spa"><span class="ms" aria-hidden="true">arrow_back</span>Spa</a>
+    <h1 class="h-section">Agenda el <b class="gt">baño</b> de tu mascota</h1>
+    <p class="lead">Llena el formulario y te confirmamos por WhatsApp la hora y el precio, según la raza y el estado del manto.</p>
+  </div>
+
+  <!-- ======== FORMULARIO POR PASOS ======== -->
+  <section class="wrap booking" aria-label="Formulario de cita de spa">
+    <form id="spa-form" class="booking__form" novalidate data-whatsapp={PHONES.vet.e164} data-legal={LEGAL.updated}>
+      <ol class="wiz" aria-label="Pasos para agendar">
+        {STEPS.map((s, i) => (
+          <li class:list={[{ now: i === 0, todo: i > 0 }]} data-wiz-item>
+            <button type="button" data-wiz-go={i} disabled={i > 0}><i>Paso {i + 1}</i><span>{s}</span></button>
+          </li>
+        ))}
+      </ol>
+      <p class="sr-only" aria-live="polite" data-step-announce>Paso 1 de 5: Tu mascota</p>
+
+      <!-- 1 · MASCOTA -->
+      <fieldset class="panel" data-step="0">
+        <legend class="step"><i>1</i>Tu mascota</legend>
+        <div class="fld">
+          <span class="fld__label" id="sp-label">Es un… <span class="req">*</span></span>
+          <div class="seg" role="radiogroup" aria-labelledby="sp-label">
+            <label><input type="radio" name="especie" value="perro" checked /><span class="ms" aria-hidden="true">pets</span>Perro</label>
+            <label><input type="radio" name="especie" value="gato" /><span class="ms" aria-hidden="true">pets</span>Gato</label>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><label for="m-nombre">Nombre de la mascota <span class="req">*</span></label><input id="m-nombre" name="mascota" placeholder="Ej: Luna" required autocomplete="off" /><span class="err" data-err-for="m-nombre">Escribe el nombre de tu mascota.</span></div>
+          <div class="fld"><label for="m-raza">Raza <span class="req">*</span></label><input id="m-raza" name="raza" placeholder="Ej: Shih Tzu, French Poodle o criollo" required autocomplete="off" /><span class="err" data-err-for="m-raza">Escribe la raza (o «criollo»).</span></div>
+          <div class="fld"><label for="m-peso">Peso aproximado (kg) <span class="req">*</span></label><input id="m-peso" name="peso" inputmode="decimal" placeholder="Ej: 8" required pattern="[0-9]+([.,][0-9]+)?" /><span class="hint">Si no sabes, un aproximado está bien.</span><span class="err" data-err-for="m-peso">Escribe el peso en kilos, solo el número. Ej: 8</span></div>
+          <div class="fld"><label for="m-edad">Edad</label><input id="m-edad" name="edad" placeholder="Ej: 4 años" /></div>
+          <div class="fld full"><label for="m-notas">¿Algo que debamos saber?</label><textarea id="m-notas" name="notas" placeholder="Ej: Tiene la piel sensible, nudos detrás de las orejas y se pone nerviosa con el secador."></textarea></div>
+        </div>
+      </fieldset>
+
+      <!-- 2 · SERVICIO -->
+      <fieldset class="panel" data-step="1" hidden>
+        <legend class="step"><i>2</i>El servicio</legend>
+        <div class="opt opt--fixed"><span class="ms fill" aria-hidden="true">check_circle</span><span><b>Baño completo</b><small>Incluye los 8 cuidados, secado y el cierre con perfume, accesorio y snack.</small></span></div>
+        <label class="opt"><input type="checkbox" name="corte" /><span><b>Corte según la raza</b><small>Valor según la raza y el manto.</small></span></label>
+        <label class="opt"><input type="checkbox" name="medicado" /><span><b>Baño medicado para piel sensible</b><small>+$5.000 para mascotas de hasta 10 kg.</small></span></label>
+      </fieldset>
+
+      <!-- 3 · FECHA Y HORA -->
+      <fieldset class="panel" data-step="2" hidden>
+        <legend class="step"><i>3</i>Fecha y hora</legend>
+        <div class="fld fld--date"><label for="f-fecha">Día <span class="req">*</span></label><input id="f-fecha" name="fecha" type="date" required /><span class="err" data-err-for="f-fecha">Elige un día de lunes a sábado, desde hoy.</span></div>
+        <div class="fld">
+          <span class="fld__label" id="h-label">Hora preferida <span class="req">*</span></span>
+          <div class="slots" role="radiogroup" aria-labelledby="h-label">
+            {SLOTS.map((s) => <label class="slot" data-sat={String(s.sat)}><input type="radio" name="hora" value={s.value} data-label={s.label} required />{s.label}</label>)}
+          </div>
+          <span class="err" data-err-for="hora">Elige una hora.</span>
+        </div>
+        <p class="hint">{HOURS.map((h) => `${h.days}: ${h.time}.`).join(' ')} Si la hora no está libre, te proponemos otra por WhatsApp.</p>
+      </fieldset>
+
+      <!-- 4 · TUS DATOS -->
+      <fieldset class="panel" data-step="3" hidden>
+        <legend class="step"><i>4</i>Tus datos</legend>
+        <div class="grid2">
+          <div class="fld"><label for="p-nombre">Nombre <span class="req">*</span></label><input id="p-nombre" name="nombre" placeholder="Ej: Laura" autocomplete="given-name" required /><span class="err" data-err-for="p-nombre">Escribe tu nombre.</span></div>
+          <div class="fld"><label for="p-apellido">Apellido <span class="req">*</span></label><input id="p-apellido" name="apellido" placeholder="Ej: Gómez Restrepo" autocomplete="family-name" required /><span class="err" data-err-for="p-apellido">Escribe tu apellido.</span></div>
+          <div class="fld"><label for="p-cel">Celular (WhatsApp) <span class="req">*</span></label><input id="p-cel" name="celular" type="tel" inputmode="tel" placeholder="Ej: 300 123 4567" autocomplete="tel" required pattern="[0-9 +()-]{10,}" /><span class="hint">Por aquí te confirmamos la cita.</span><span class="err" data-err-for="p-cel">Escribe un celular de 10 dígitos. Ej: 300 123 4567</span></div>
+          <div class="fld"><label for="p-correo">Correo (opcional)</label><input id="p-correo" name="correo" type="email" placeholder="Ej: laura@correo.com" autocomplete="email" /><span class="hint">Para enviarte el recordatorio de la cita.</span><span class="err" data-err-for="p-correo">Revisa el correo. Ej: laura@correo.com</span></div>
+        </div>
+        <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos#citas" target="_blank">términos de las citas</a> y la <a href="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012).</span></label>
+        <span class="err" data-err-for="datos">Para agendar necesitamos tu autorización.</span>
+      </fieldset>
+
+      <!-- 5 · REVISAR -->
+      <div class="panel review" data-step="4" hidden>
+        <div class="review__head">
+          <h2 class="step"><i>5</i>Revisa tu cita</h2>
+          <p class="hint">Si todo está bien, envíala. Te escribimos por WhatsApp para confirmar la hora y el precio.</p>
+        </div>
+        <dl class="review__list" data-review></dl>
+        <button class="btn btn--alma btn--send" type="submit"><span class="ms" aria-hidden="true">check</span><span data-send-txt>Solicitar cita</span></button>
+        <!-- solicitud recibida: queda en el gestor (Hoy · Por atender) -->
+        <div class="sent" role="status" data-sent hidden>
+          <span class="ms fill" aria-hidden="true">check_circle</span>
+          <span><b>¡Listo, <span data-sent-name></span>!</b> Recibimos tu solicitud para <span data-sent-pet></span>. En breve te escribimos por WhatsApp para confirmar la hora y el precio.
+            <span class="sent__alt">¿Prefieres escribirnos primero? <a href="#" data-sent-wa target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.</span></span>
+        </div>
+        <!-- no se pudo guardar: la solicitud sale completa por WhatsApp -->
+        <div class="sent sent--warn" role="alert" data-fail hidden>
+          <span class="ms" aria-hidden="true">wifi_off</span>
+          <span><b>No pudimos enviar tu solicitud.</b> Revisa tu conexión e inténtalo de nuevo, o <a href="#" data-fail-wa target="_blank" rel="noopener">envíala por WhatsApp</a> (ya va escrita).</span>
+        </div>
+      </div>
+
+      <div class="wiz-nav" data-wiz-nav>
+        <button class="btn btn--outlined" type="button" data-back hidden><span class="ms" aria-hidden="true">arrow_back</span>Atrás</button>
+        <button class="btn wiz-nav__next" type="button" data-next>Siguiente<span class="ms" aria-hidden="true">arrow_forward</span></button>
+      </div>
+    </form>
+
+    <!-- ======== RESUMEN (escritorio) ======== -->
+    <aside class="booking__aside" aria-label="Tu cita">
+      <div class="panel summary">
+        <div class="summary__deco" aria-hidden="true"></div>
+        <h2>Tu cita</h2>
+        <dl>
+          <div><dt>Mascota</dt><dd data-sum="mascota">—</dd></div>
+          <div><dt>Servicio</dt><dd data-sum="servicio">Baño completo</dd></div>
+          <div><dt>Día y hora</dt><dd data-sum="cuando">—</dd></div>
+          <div class="summary__price"><dt>Precio</dt><dd>Te lo confirmamos por WhatsApp</dd></div>
+        </dl>
+        <p class="hint" data-sum="paso">Paso 1 de 5 · la envías en el último paso.</p>
+      </div>
+      <div class="chat-card">
+        <b>¿Prefieres agendar por chat?</b>
+        <p>Mándanos una foto de tu mascota y te agendamos en minutos.</p>
+        <a class="wa-o" href={whatsapp.vet('Hola, Alma Animal. Quiero agendar un baño en el spa.')} target="_blank" rel="noopener"><WaIcon size={22} />Agendar por WhatsApp</a>
+      </div>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  import { insert, supabaseReady } from '../scripts/supabase';
+  const form = document.querySelector<HTMLFormElement>('#spa-form')!;
+  const panels = [...form.querySelectorAll<HTMLElement>('[data-step]')];
+  const wizItems = [...form.querySelectorAll<HTMLElement>('[data-wiz-item]')];
+  const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
+  const next = form.querySelector<HTMLButtonElement>('[data-next]')!;
+  const nav = form.querySelector<HTMLElement>('[data-wiz-nav]')!;
+  const announce = form.querySelector<HTMLElement>('[data-step-announce]')!;
+  const TITLES = ['Tu mascota', 'El servicio', 'Fecha y hora', 'Tus datos', 'Revisar'];
+  const LAST = panels.length - 1;
+  let step = 0;
+
+  const val = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | null)?.value.trim() ?? '';
+  const checked = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | null)?.checked ?? false;
+  const radio = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`);
+
+  // fecha: desde hoy; domingos cerrado; el sábado solo hay horas de la mañana
+  const date = form.querySelector<HTMLInputElement>('#f-fecha')!;
+  const today = new Date();
+  const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  date.min = iso(today);
+  const dayOf = (s: string) => (s ? new Date(s + 'T12:00:00') : null);
+  const syncSlots = () => {
+    const d = dayOf(date.value);
+    const sat = d?.getDay() === 6;
+    form.querySelectorAll<HTMLElement>('.slot').forEach((el) => {
+      const off = sat && el.dataset.sat === 'false';
+      el.hidden = off;
+      const input = el.querySelector('input')!;
+      if (off && input.checked) input.checked = false;
+    });
+  };
+  date.addEventListener('change', syncSlots);
+
+  const fmtDay = (s: string) => {
+    const d = dayOf(s);
+    const s2 = d ? d.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+    return s2.charAt(0).toUpperCase() + s2.slice(1);
+  };
+  const service = () => ['Baño completo', checked('corte') ? 'corte' : '', checked('medicado') ? 'baño medicado' : ''].filter(Boolean).join(' + ');
+  const when = () => {
+    const h = radio('hora');
+    return date.value ? `${fmtDay(date.value)}${h ? ', ' + h.dataset.label : ''}` : '';
+  };
+  const petLine = () => {
+    const name = val('mascota');
+    if (!name) return '';
+    const parts = [`${name} (${radio('especie')?.value ?? 'perro'})`, val('raza'), val('peso') ? `${val('peso')} kg` : '', val('edad')].filter(Boolean);
+    return parts.join(', ');
+  };
+
+  // validación por paso: muestra el error al lado del campo
+  const showErr = (key: string, on: boolean) => {
+    const el = form.querySelector<HTMLElement>(`[data-err-for="${key}"]`);
+    if (el) el.classList.toggle('is-on', on);
+    const input = form.querySelector<HTMLElement>(`#${key}`);
+    input?.setAttribute('aria-invalid', String(on));
+    if (input && el) { el.id = `${key}-err`; if (on) input.setAttribute('aria-describedby', el.id); }
+  };
+  const validators: Record<number, () => string | null> = {
+    0: () => {
+      let first: string | null = null;
+      for (const id of ['m-nombre', 'm-raza', 'm-peso']) {
+        const el = form.querySelector<HTMLInputElement>(`#${id}`)!;
+        const bad = !el.value.trim() || !el.checkValidity();
+        showErr(id, bad); if (bad && !first) first = id;
+      }
+      return first;
+    },
+    1: () => null,
+    2: () => {
+      const d = dayOf(date.value);
+      const badDate = !d || date.value < date.min || d.getDay() === 0;
+      showErr('f-fecha', badDate);
+      const badHour = !radio('hora');
+      showErr('hora', badHour);
+      return badDate ? 'f-fecha' : badHour ? 'hora' : null;
+    },
+    3: () => {
+      let first: string | null = null;
+      for (const id of ['p-nombre', 'p-apellido', 'p-cel']) {
+        const el = form.querySelector<HTMLInputElement>(`#${id}`)!;
+        const digits = el.value.replace(/\D/g, '');
+        const bad = !el.value.trim() || (id === 'p-cel' && digits.length < 10);
+        showErr(id, bad); if (bad && !first) first = id;
+      }
+      const mail = form.querySelector<HTMLInputElement>('#p-correo')!;
+      const badMail = !!mail.value && !mail.checkValidity();
+      showErr('p-correo', badMail); if (badMail && !first) first = 'p-correo';
+      const badConsent = !checked('datos');
+      showErr('datos', badConsent); if (badConsent && !first) first = 'datos';
+      return first;
+    }
+  };
+
+  const updateSummary = () => {
+    const set = (k: string, v: string) => { const el = document.querySelector(`[data-sum="${k}"]`); if (el) el.textContent = v || '—'; };
+    set('mascota', petLine());
+    set('servicio', service());
+    set('cuando', when());
+    set('paso', `Paso ${step + 1} de ${panels.length} · la envías en el último paso.`);
+  };
+  form.addEventListener('input', updateSummary);
+  form.addEventListener('change', updateSummary);
+
+  const renderReview = () => {
+    const rows: [string, string, number][] = [
+      ['Mascota', petLine() + (val('notas') ? ` · ${val('notas')}` : ''), 0],
+      ['Servicio', service(), 1],
+      ['Día y hora preferida', when(), 2],
+      ['Te confirmamos por WhatsApp a', `${val('nombre')} ${val('apellido')} · ${val('celular')}`, 3]
+    ];
+    const dl = form.querySelector<HTMLElement>('[data-review]')!;
+    dl.innerHTML = '';
+    for (const [k, v, s] of rows) {
+      const row = document.createElement('div');
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Cambiar'; b.addEventListener('click', () => go(s));
+      row.append(dt, dd, b); dl.append(row);
+    }
+  };
+
+  const go = (n: number, focus = true) => {
+    step = n;
+    panels.forEach((p, i) => { p.hidden = i !== n; });
+    wizItems.forEach((li, i) => {
+      li.className = i < n ? 'done' : i === n ? 'now' : 'todo';
+      const b = li.querySelector('button')!; b.disabled = i >= n;
+      if (i === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    back.hidden = n === 0;
+    next.hidden = n === LAST;
+    next.firstChild!.textContent = n === LAST - 1 ? 'Revisar mi cita' : 'Siguiente';
+    if (n === LAST) renderReview();
+    announce.textContent = `Paso ${n + 1} de ${panels.length}: ${TITLES[n]}`;
+    updateSummary();
+    if (focus) {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      (panels[n].querySelector('legend, h2') as HTMLElement | null)?.setAttribute('tabindex', '-1');
+      (panels[n].querySelector('legend, h2') as HTMLElement | null)?.focus({ preventScroll: true });
+    }
+  };
+
+  next.addEventListener('click', () => {
+    const bad = validators[step]?.();
+    if (bad) { form.querySelector<HTMLElement>(`#${bad}, [name="${bad}"]`)?.focus(); return; }
+    go(step + 1);
+  });
+  back.addEventListener('click', () => go(Math.max(0, step - 1)));
+  wizItems.forEach((li, i) => li.querySelector('button')!.addEventListener('click', () => { if (i < step) go(i); }));
+
+  // envío: la solicitud queda en la agenda del gestor como "por confirmar" (el cliente no tiene que escribir nada)
+  const wa = (t: string) => `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(t)}`;
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+  let enviando = false;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (enviando) return;
+    const msg = [
+      'Hola, Alma Animal. Quiero agendar un baño en el spa.',
+      `Mascota: ${petLine()}`,
+      val('notas') ? `Notas: ${val('notas')}` : '',
+      `Servicio: ${service()}`,
+      `Día y hora preferida: ${when()}`,
+      `Mis datos: ${val('nombre')} ${val('apellido')} · ${val('celular')}${val('correo') ? ' · ' + val('correo') : ''}`
+    ].filter(Boolean).join('\n');
+    const hora = radio('hora')!.value; // "09:30"
+    const inicio = new Date(`${date.value}T${hora}:00`);
+    const fin = new Date(inicio.getTime() + 120 * 60000);
+    enviando = true;
+    form.querySelector('[data-send-txt]')!.textContent = 'Enviando…';
+    const res = PREVIEW ? 'ok' : await insert('citas', {
+      servicio: 'spa', carril: 'spa', estado: 'solicitada', origen: 'web', sobrecupo: false,
+      inicio: inicio.toISOString(), fin: fin.toISOString(), acepto_datos: true, version_politicas: form.dataset.legal,
+      datos: {
+        mascota: val('mascota'), especie: radio('especie')?.value ?? 'perro', raza: val('raza'), peso: val('peso'), edad: val('edad'),
+        notas: val('notas'), servicio: service(), nombre: `${val('nombre')} ${val('apellido')}`.trim(), celular: val('celular'), correo: val('correo')
+      }
+    });
+    enviando = false;
+    form.querySelector('[data-send-txt]')!.textContent = 'Solicitar cita';
+    if (res === 'ok') {
+      form.querySelector('[data-sent-name]')!.textContent = val('nombre');
+      form.querySelector('[data-sent-pet]')!.textContent = val('mascota');
+      form.querySelector<HTMLAnchorElement>('[data-sent-wa]')!.href = wa(`Hola, Alma Animal. Acabo de pedir un baño para ${val('mascota')} (${when()}).`);
+      form.querySelector<HTMLElement>('[data-sent]')!.hidden = false;
+      form.querySelector<HTMLElement>('[data-fail]')!.hidden = true;
+      form.querySelector<HTMLElement>('.btn--send')!.hidden = true;
+      nav.hidden = true;
+    } else {
+      form.querySelector<HTMLAnchorElement>('[data-fail-wa]')!.href = wa(msg);
+      form.querySelector<HTMLElement>('[data-fail]')!.hidden = false;
+    }
+  });
+
+  // en celular el resumen va al final: se oculta mientras se llena el formulario
+  go(0, false);
+</script>
+
+<style>
+  .intro { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; padding-bottom: 24px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .back .ms { font-size: 18px; }
+  .intro .h-section { font-size: clamp(32px, 7vw, 56px); }
+  .intro .lead { max-width: 60ch; }
+
+  .booking { display: grid; gap: 20px; align-items: start; padding-bottom: var(--section); }
+  .booking__form { display: flex; flex-direction: column; gap: 20px; min-width: 0; scroll-margin-top: 80px; }
+
+  /* pasos */
+  .wiz { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+  .wiz li { flex: 1; min-width: 0; }
+  .wiz button { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0; border: 0; background: transparent; font: inherit; color: var(--ink-muted); text-align: left; cursor: pointer; }
+  .wiz button:disabled { cursor: default; }
+  .wiz button::before { content: ""; display: block; width: 100%; height: 4px; border-radius: 999px; background: var(--line-soft); transition: background .3s var(--ease); }
+  .wiz .done button::before, .wiz .now button::before { background: var(--primary); }
+  .wiz i { font: 700 11px/1 var(--font-sans); font-style: normal; color: var(--primary); }
+  .wiz span { font: 600 12.5px/1.25 var(--font-sans); }
+  .wiz .now span { color: var(--ink); }
+  @media (min-width: 768px) { .wiz i { font-size: 12px; } .wiz span { font-size: 14px; } }
+
+  /* tarjetas y campos */
+  .panel { margin: 0; min-width: 0; border: 0; background: #fff; border-radius: 22px; box-shadow: 0 0 0 1px var(--line); padding: 22px 18px; display: flex; flex-direction: column; gap: 18px; }
+  .step { display: flex; align-items: center; gap: 12px; padding: 0; font: 600 21px/1.3 var(--font-sans); }
+  .panel[hidden] { display: none; }
+  legend.step { float: left; width: 100%; }
+  .step:focus { outline: none; }
+  .step i { font-style: normal; width: 34px; height: 34px; border-radius: 50%; background: var(--grad-primary); color: #fff; display: grid; place-items: center; font: 700 16px/1 var(--font-sans); flex: none; }
+  .grid2 { display: grid; gap: 18px; }
+  .fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .fld label, .fld__label { font: 600 15px/1.3 var(--font-sans); color: var(--ink); }
+  .fld input:not([type="radio"]), .fld textarea { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 16px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; transition: border-color .15s, box-shadow .15s; }
+  .fld textarea { min-height: 110px; padding: 14px 16px; resize: vertical; }
+  .fld input::placeholder, .fld textarea::placeholder { color: #6E6585; }
+  .fld input:focus, .fld textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  .fld input[aria-invalid="true"] { border-color: #B4271F; }
+  .fld--date { max-width: 320px; }
+  .hint { font: 400 14px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .req { color: #B4271F; }
+  .err { display: none; font: 600 14px/1.4 var(--font-sans); color: #B4271F; }
+  .err.is-on { display: block; }
+  @media (min-width: 768px) {
+    .panel { padding: 28px; border-radius: var(--r-md); }
+    .step { font-size: 22px; }
+    .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+    .full { grid-column: 1 / -1; }
+  }
+
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; align-self: stretch; }
+  .seg label { flex: 1; min-height: 48px; padding: 0 22px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 16px/1 var(--font-sans); cursor: pointer; background: #fff; transition: background .15s, color .15s; }
+  .seg label + label { border-left: 1px solid var(--line); }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg label:has(input:checked) { background: var(--peach); color: var(--peach-ink); }
+  .seg label:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: -3px; }
+  @media (min-width: 768px) { .seg { align-self: flex-start; } }
+
+  .opt { display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); cursor: pointer; transition: border-color .2s, background .2s; }
+  .opt input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+  .opt:has(input:checked) { border-color: var(--primary); background: var(--surface-2); }
+  .opt b { display: block; font: 600 17px/1.3 var(--font-sans); }
+  .opt small { display: block; font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .opt--fixed { border-color: var(--primary); background: var(--surface-2); cursor: default; }
+  .opt--fixed .ms { font-size: 24px; color: var(--primary); font-variation-settings: "FILL" 1; }
+
+  .slots { display: flex; flex-wrap: wrap; gap: 8px; }
+  .slot { position: relative; flex: 1 1 calc(50% - 8px); min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 600 15px/1 var(--font-sans); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-variant-numeric: tabular-nums; transition: background .15s, color .15s; }
+  .slot[hidden] { display: none; }
+  .slot:hover { background: var(--surface-3); }
+  .slot input { position: absolute; opacity: 0; pointer-events: none; }
+  .slot:has(input:checked) { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .slot:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+  @media (min-width: 768px) { .slot { flex: 0 0 auto; } }
+
+  .consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
+  .consent input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+
+  /* revisar */
+  .review__head { display: flex; flex-direction: column; gap: 6px; }
+  .review__list { margin: 0; display: flex; flex-direction: column; }
+  .review__list :global(div) { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--surface-3); }
+  .review__list :global(dt) { font: 500 14px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .review__list :global(dd) { margin: 0; font: 600 16px/1.4 var(--font-sans); grid-column: 1; }
+  .review__list :global(button) { grid-column: 2; grid-row: 1 / span 2; border: 0; background: transparent; color: var(--primary); font: 600 14px/1 var(--font-sans); cursor: pointer; padding: 10px 4px; text-decoration: underline; text-underline-offset: 3px; }
+  .btn--send { width: 100%; min-height: 56px; font-size: 17px; }
+  .sent { display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128; font: 500 16px/1.45 var(--font-sans); }
+  .sent[hidden] { display: none; }
+  .sent a { color: #1D5128; font-weight: 600; }
+  .sent__alt { display: block; margin-top: 6px; font-size: 15px; }
+  .sent--warn { background: #FFDDB2; color: #624000; }
+  .sent--warn a { color: #624000; }
+  .btn--send[hidden] { display: none; }
+  .sent .ms { font-size: 26px; font-variation-settings: "FILL" 1; }
+
+  /* navegación de pasos: fija abajo en celular */
+  .wiz-nav { position: sticky; bottom: 0; z-index: 20; display: flex; gap: 12px; margin: 0 calc(var(--gutter) * -1); padding: 12px var(--gutter) max(12px, env(safe-area-inset-bottom)); background: rgb(254 247 254 / .96); box-shadow: 0 -1px 0 var(--line-soft); }
+  .wiz-nav[hidden] { display: none; }
+  .wiz-nav .btn { flex: 1; min-height: 52px; font-size: 17px; }
+  .wiz-nav .btn[hidden] { display: none; }
+  @media (min-width: 768px) {
+    .wiz-nav { position: static; margin: 0; padding: 0; background: none; box-shadow: none; }
+    .wiz-nav .btn { flex: 0 0 auto; padding: 0 26px; }
+    .wiz-nav__next { margin-left: auto; }
+  }
+
+  /* en celular la barra de pasos ocupa el sitio del botón flotante de WhatsApp */
+  @media (max-width: 767px) { :global(.fab-wa) { display: none !important; } }
+
+  /* resumen lateral */
+  .booking__aside { display: flex; flex-direction: column; gap: 16px; }
+  .summary { display: none; position: relative; overflow: hidden; }
+  .summary__deco { position: absolute; right: -56px; top: -56px; width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); opacity: .5; }
+  .summary h2 { position: relative; font: 600 22px/1.3 var(--font-sans); }
+  .summary dl { position: relative; margin: 0; display: flex; flex-direction: column; gap: 12px; font-size: 17px; line-height: 1.35; }
+  .summary dl div { display: flex; justify-content: space-between; gap: 12px; }
+  .summary dt { color: var(--ink-muted); flex: none; }
+  .summary dd { margin: 0; font-weight: 600; text-align: right; text-transform: none; }
+  .summary [data-sum="cuando"]::first-letter { text-transform: uppercase; }
+  .summary__price { padding-top: 12px; border-top: 1px solid var(--line); }
+  .summary__price dd { max-width: 22ch; font-weight: 400; }
+  .chat-card { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 2px var(--wa); }
+  .chat-card b { font: 600 18px/1.3 var(--font-sans); }
+  .chat-card p { font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 1000px) {
+    .booking { grid-template-columns: minmax(0, 1fr) 380px; gap: 32px; }
+    .booking__aside { position: sticky; top: 24px; }
+    .summary { display: flex; }
+  }
+</style>

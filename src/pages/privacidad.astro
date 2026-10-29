@@ -1,0 +1,140 @@
+---
+// Política de Tratamiento de Datos Personales (Ley 1581 de 2012 y Decreto 1074 de 2015, cap. 25).
+// Borrador para revisión de la doctora o un abogado antes de publicar.
+import LegalDoc from '../components/LegalDoc.astro';
+import { LEGAL, ADDRESS, PHONES, whatsapp } from '../data/site';
+
+const SECTIONS = [
+  { id: 'responsable', title: 'Quién es el responsable' },
+  { id: 'datos', title: 'Qué datos recogemos' },
+  { id: 'finalidades', title: 'Para qué los usamos' },
+  { id: 'autorizacion', title: 'Tu autorización' },
+  { id: 'compartir', title: 'Con quién los compartimos' },
+  { id: 'derechos', title: 'Tus derechos' },
+  { id: 'como', title: 'Cómo ejercer tus derechos' },
+  { id: 'seguridad', title: 'Seguridad y conservación' },
+  { id: 'mensajes', title: 'Mensajes y boletín' },
+  { id: 'navegador', title: 'Cookies y almacenamiento del navegador' },
+  { id: 'cambios', title: 'Cambios a esta política' }
+];
+const waData = whatsapp.vet('Hola, Alma Animal. Quiero hacer una solicitud sobre mis datos personales.');
+---
+<LegalDoc
+  title="Política de tratamiento de datos"
+  lead="Así cuidamos la información que nos das de ti y de tu mascota, según la Ley 1581 de 2012. Está escrita para que se entienda: si te queda una duda, escríbenos."
+  description="Política de tratamiento de datos personales de Alma Animal (Ley 1581 de 2012): qué datos recogemos, para qué, tus derechos y cómo ejercerlos."
+  sections={SECTIONS}
+>
+  <section id="responsable">
+    <h2>1. Quién es el responsable</h2>
+    <p>El responsable del tratamiento de tus datos personales es:</p>
+    <dl>
+      <div><dt>Responsable</dt><dd>{LEGAL.holder} (Alma Animal: consultorio veterinario, spa y petshop)</dd></div>
+      <div><dt>{LEGAL.idLabel}</dt><dd>{LEGAL.id ?? <span class="pending">Pendiente</span>}</dd></div>
+      <div><dt>Dirección</dt><dd>{ADDRESS.line}, {ADDRESS.city}</dd></div>
+      <div><dt>Teléfonos</dt><dd>{PHONES.vet.label}: {PHONES.vet.display} · {PHONES.shop.label}: {PHONES.shop.display}</dd></div>
+      <div><dt>Correo para tus datos</dt><dd>{LEGAL.email ? <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> : <span class="pending">Pendiente</span>}</dd></div>
+      <div><dt>Sitio web</dt><dd>almaanimal.netlify.app</dd></div>
+    </dl>
+  </section>
+
+  <section id="datos">
+    <h2>2. Qué datos recogemos</h2>
+    <p>Solo pedimos lo necesario para atender a tu mascota, enviarte tus pedidos y comunicarnos contigo:</p>
+    <ul>
+      <li><b>Tus datos de identificación y contacto:</b> nombre, apellido, celular, correo y, cuando hace falta, documento de identidad.</li>
+      <li><b>Datos de entrega:</b> departamento, ciudad, dirección, barrio e indicaciones para la entrega.</li>
+      <li><b>Datos de tu mascota:</b> nombre, especie, raza, peso, edad, historia clínica, vacunas, exámenes, fotos y servicios de spa.</li>
+      <li><b>Datos de tus citas y compras:</b> fechas, servicios, productos, valores y estado de tus pedidos.</li>
+      <li><b>Datos de pago:</b> solo el medio y la confirmación del pago. No guardamos números de tarjetas: cuando se pague en línea, lo procesa directamente la pasarela de pagos.</li>
+    </ul>
+    <p>No pedimos datos sensibles (como origen racial, salud de las personas u orientación política) ni datos de niños, niñas y adolescentes. Si un menor de edad nos da sus datos, los usaremos solo con la autorización de su representante legal.</p>
+  </section>
+
+  <section id="finalidades">
+    <h2>3. Para qué los usamos</h2>
+    <ul>
+      <li>Atender a tu mascota en el consultorio, a domicilio y en el spa, y llevar su historia clínica.</li>
+      <li>Agendar, confirmar y recordarte citas, vacunas y desparasitaciones.</li>
+      <li>Procesar tus pedidos de la tienda: confirmarlos, cobrarlos, enviarlos y atender cambios, garantías o devoluciones.</li>
+      <li>Darte acceso a tu portal de cliente, con los datos de tus mascotas, citas y pedidos.</li>
+      <li>Responder tus preguntas, peticiones, quejas y reclamos.</li>
+      <li>Enviarte el boletín del blog y novedades, solo si lo autorizas.</li>
+      <li>Mostrar tu nombre (sin apellido) y tu ciudad en los avisos de compras de la página, solo si lo autorizas.</li>
+      <li>Cumplir obligaciones legales, contables y tributarias, como la facturación.</li>
+    </ul>
+  </section>
+
+  <section id="autorizacion">
+    <h2>4. Tu autorización</h2>
+    <p>Usamos tus datos solo con tu autorización previa, expresa e informada. La das cuando marcas la casilla de aceptación en nuestros formularios (agendar, comprar, suscribirte), por escrito en el consultorio o por mensaje en nuestros canales. Guardamos la prueba de esa autorización.</p>
+    <p>Autorizaciones opcionales, que puedes dar o no sin que cambie la atención:</p>
+    <ul>
+      <li><b>Avisos de compras:</b> que la página muestre «Laura, de Pereira, compró…» con tu nombre sin apellido y tu ciudad.</li>
+      <li><b>Boletín:</b> recibir por correo los artículos de la doctora.</li>
+      <li><b>Fotos de tu mascota:</b> publicarlas en nuestras redes o en la página (por ejemplo, cómo salió del spa). Siempre te preguntamos antes.</li>
+    </ul>
+    <p>Puedes retirar cualquier autorización cuando quieras, siguiendo el punto 7.</p>
+  </section>
+
+  <section id="compartir">
+    <h2>5. Con quién los compartimos</h2>
+    <p><b>No vendemos ni alquilamos tus datos.</b> Solo los compartimos con proveedores que nos ayudan a prestar el servicio, que los tratan por cuenta nuestra y bajo contratos que los obligan a protegerlos:</p>
+    <ul>
+      <li><b>Alojamiento de la página y base de datos</b> (Netlify y Supabase).</li>
+      <li><b>Mensajería:</b> WhatsApp (Meta), para confirmar citas y pedidos.</li>
+      <li><b>Correo electrónico:</b> el servicio que usemos para enviar recordatorios y el boletín.</li>
+      <li><b>Pasarela de pagos</b>, cuando pagues en línea.</li>
+      <li><b>Empresas de envíos</b>, solo con los datos necesarios para entregar tu pedido.</li>
+      <li><b>Autoridades</b>, cuando la ley lo exija.</li>
+    </ul>
+    <p>Algunos de estos proveedores guardan la información en servidores fuera de Colombia (por ejemplo, en Estados Unidos). En esos casos la transmisión se hace a países con un nivel adecuado de protección de datos o con las garantías que exige la ley colombiana.</p>
+  </section>
+
+  <section id="derechos">
+    <h2>6. Tus derechos</h2>
+    <p>Como titular de tus datos tienes derecho a:</p>
+    <ul>
+      <li>Conocer, actualizar y rectificar tus datos.</li>
+      <li>Pedir prueba de la autorización que nos diste.</li>
+      <li>Saber, si lo pides, qué uso le hemos dado a tus datos.</li>
+      <li>Revocar la autorización o pedir que borremos tus datos, cuando no exista un deber legal o contractual de conservarlos.</li>
+      <li>Acceder gratis a tus datos personales.</li>
+      <li>Presentar quejas ante la Superintendencia de Industria y Comercio (SIC) por infracciones a la ley, después de haber hecho tu consulta o reclamo ante nosotros.</li>
+    </ul>
+  </section>
+
+  <section id="como">
+    <h2>7. Cómo ejercer tus derechos</h2>
+    <p>Escríbenos al correo {LEGAL.email ? <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> : <span class="pending">Pendiente</span>}, por <a href={waData} target="_blank" rel="noopener">WhatsApp al {PHONES.vet.display}</a> o visítanos en {ADDRESS.line}. Atiende estas solicitudes {LEGAL.holder}.</p>
+    <h3>Consultas (para conocer tus datos)</h3>
+    <p>Te respondemos en máximo <b>10 días hábiles</b> desde que la recibimos. Si no alcanzamos, te avisamos el motivo y te respondemos en máximo 5 días hábiles más.</p>
+    <h3>Reclamos (para corregir, actualizar, borrar o revocar)</h3>
+    <p>Incluye tu nombre y documento, qué pides y por qué, cómo te respondemos y los documentos que quieras aportar. Si falta algo, te lo pedimos en los 5 días hábiles siguientes; si pasan 2 meses sin que lo envíes, entenderemos que desististe.</p>
+    <p>Te respondemos en máximo <b>15 días hábiles</b>. Si no alcanzamos, te avisamos el motivo y te respondemos en máximo 8 días hábiles más.</p>
+    <p class="box">Si eres cliente del consultorio, también puedes ver y actualizar los datos de tus mascotas desde tu portal.</p>
+  </section>
+
+  <section id="seguridad">
+    <h2>8. Seguridad y conservación</h2>
+    <p>Protegemos tus datos con conexiones cifradas, accesos con contraseña solo para el equipo que los necesita y reglas que impiden que la página pública lea la información de otros clientes.</p>
+    <p>Guardamos tus datos mientras seas cliente y durante el tiempo que exijan las normas sobre historia clínica, contabilidad y facturación. Cuando ya no los necesitemos, los borramos o los anonimizamos.</p>
+  </section>
+
+  <section id="mensajes">
+    <h2>9. Mensajes y boletín</h2>
+    <p>Usamos WhatsApp, llamadas y correo para lo relacionado con tus citas y pedidos. Los mensajes de promociones o novedades solo te llegan si los autorizaste, por el canal que elegiste y en los horarios que permite la Ley 2300 de 2023: de lunes a viernes de 7:00 a. m. a 7:00 p. m. y los sábados de 8:00 a. m. a 3:00 p. m., nunca domingos ni festivos.</p>
+    <p>Puedes darte de baja del boletín cuando quieras, desde el enlace que trae cada correo o escribiéndonos.</p>
+  </section>
+
+  <section id="navegador">
+    <h2>10. Cookies y almacenamiento del navegador</h2>
+    <p>La página no usa cookies de publicidad ni de seguimiento. Solo guarda en tu propio navegador lo necesario para que funcione, como los productos de tu carrito o si cerraste un aviso. Esa información no nos llega hasta que haces un pedido, y puedes borrarla desde la configuración de tu navegador.</p>
+    <p>Para mostrar las letras e íconos, tu navegador los descarga de Google Fonts, que puede registrar tu dirección IP.</p>
+  </section>
+
+  <section id="cambios">
+    <h2>11. Cambios a esta política</h2>
+    <p>Si cambiamos algo importante de esta política te avisaremos en la página o por los datos de contacto que nos diste, antes de aplicar el cambio. La fecha de la versión vigente está al inicio de esta página. Las bases de datos estarán vigentes mientras se mantengan las finalidades descritas.</p>
+  </section>
+</LegalDoc>

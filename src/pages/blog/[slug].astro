@@ -1,0 +1,320 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import WaIcon from '../../components/WaIcon.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { whatsapp, DOCTOR } from '../../data/site';
+import { BLOG_DEMO, POSTS, shortDate, longDate, postUrl, rich, anchor, type Post } from '../../data/blog';
+import mariana from '../../assets/mariana-gato.png';
+import heart from '../../assets/corazon.png';
+import tigerDog from '../../assets/papel-tigre-perro-v3.png';
+
+export function getStaticPaths() {
+  return POSTS.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Post };
+
+const toc = p.body.flatMap((b) => (b.t === 'h2' ? [{ id: anchor(b.text), text: b.text }] : []));
+const url = new URL(postUrl(p), Astro.site).href;
+const waAsk = whatsapp.vet('Hola, doctora. Tengo una pregunta sobre mi mascota.');
+const shareWa = `https://wa.me/?text=${encodeURIComponent(`${p.title} ${url}`)}`;
+const shareFb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+// sigue leyendo: primero la misma categoría, luego lo más reciente
+const related = POSTS.filter((x) => x.slug !== p.slug)
+  .sort((a, b) => Number(b.cat === p.cat) - Number(a.cat === p.cat) || b.date.localeCompare(a.date))
+  .slice(0, 3);
+---
+<Base title={`${p.title} · Blog Alma Animal`} description={p.excerpt}>
+  <SiteHeader slot="top" />
+
+  <nav class="wrap crumbs" aria-label="Estás en">
+    <a href="/">Inicio</a><span class="ms" aria-hidden="true">chevron_right</span>
+    <a href="/blog">Blog</a><span class="ms" aria-hidden="true">chevron_right</span>
+    <a href={`/blog#${p.cat}`} aria-current="page">{p.cat}</a>
+    {BLOG_DEMO && <span class="pending">Texto de ejemplo · lo revisa la doctora</span>}
+  </nav>
+
+  <!-- ======== ENCABEZADO ======== -->
+  <header class="wrap ahead">
+    <span class="ahead__meta">{p.cat} · {p.min} min de lectura</span>
+    <h1 class="serif">{p.title}</h1>
+    <p>{p.excerpt}</p>
+    <div class="byline">
+      <span class="byline__pic"><Image src={mariana} alt="" width={240} /></span>
+      <span><b>{DOCTOR.name}</b><span>MVZ · {DOCTOR.tp} · <time datetime={p.date}>{longDate(p.date)}</time></span></span>
+    </div>
+  </header>
+
+  <div class="wrap cover-wrap">
+    <div class="cover" style={`background:${p.cover.bg}`}>
+      <span class="cover__ring" aria-hidden="true"></span>
+      <Image src={p.cover.img} alt="" width={880} style={`width:${Math.round(p.cover.w * 100)}%`} />
+    </div>
+  </div>
+
+  <!-- ======== CUERPO ======== -->
+  <div class="wrap abody">
+    <nav class="side" aria-label="En este artículo">
+      {toc.length > 1 && (
+        <div class="toc" data-toc>
+          <span class="side__label">En este artículo</span>
+          {toc.map((t) => <a href={`#${t.id}`} data-toc-link={t.id}>{t.text}</a>)}
+        </div>
+      )}
+      <span class="side__label side__label--share">Compartir</span>
+      <div class="share">
+        <a class="icon-btn share__wa" href={shareWa} target="_blank" rel="noopener" aria-label="Compartir por WhatsApp"><WaIcon size={20} class="" /></a>
+        <a class="icon-btn" href={shareFb} target="_blank" rel="noopener" aria-label="Compartir en Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21h3z"/></svg>
+        </a>
+        <button class="icon-btn" type="button" aria-label="Copiar enlace" data-copy={url}><span class="ms" aria-hidden="true">link</span></button>
+        <span class="share__ok" role="status" data-copied></span>
+      </div>
+    </nav>
+
+    <article class="prose">
+      {p.body.map((b) => {
+        if (b.t === 'p') return <p set:html={rich(b.text)} />;
+        if (b.t === 'h2') return <h2 id={anchor(b.text)} data-sec>{b.text}</h2>;
+        if (b.t === 'ul') return <ul>{b.items.map((i) => <li set:html={rich(i)} />)}</ul>;
+        if (b.t === 'tip') return (
+          <aside class="tip">
+            <Image src={heart} alt="" width={88} />
+            <span><b>Consejo de la doctora</b><span set:html={rich(b.text)} /></span>
+          </aside>
+        );
+        if (b.t === 'guide') return (
+          <div class="guide">
+            {b.items.map((g, i) => (
+              <div class="guide__item" data-tone={i % 3}>
+                <span class="ms" aria-hidden="true">{g.icon}</span>
+                <b>{g.title}</b>
+                <span class="guide__big">{g.big}</span>
+                <span>{g.text}</span>
+              </div>
+            ))}
+          </div>
+        );
+        // producto recomendado: se llena con el catálogo de la tienda (si no está a la venta, no aparece)
+        if (b.t === 'product') return <div class="reco" data-reco={b.id} hidden></div>;
+        if (b.t === 'spa') return (
+          <div class="ctas">
+            <a class="btn ctas__spa" href="/agendar-spa"><span class="ms" aria-hidden="true">shower</span>Agenda un baño en el spa</a>
+            <a class="wa-o" href={waAsk} target="_blank" rel="noopener"><WaIcon size={22} />Pregúntale a la doctora</a>
+          </div>
+        );
+        if (b.t === 'ask') return (
+          <div class="ask">
+            <span><b>¿Tienes una duda sobre tu mascota?</b> Escríbenos y la doctora te responde.</span>
+            <a class="wa-o" href={waAsk} target="_blank" rel="noopener"><WaIcon size={22} />Pregúntale a la doctora</a>
+          </div>
+        );
+        return null;
+      })}
+    </article>
+
+    <aside class="aside" aria-label="Spa y boletín">
+      <div class="spa-card">
+        <Image src={tigerDog} alt="" width={380} class="spa-card__art" />
+        <span class="spa-card__kicker">Spa Alma Animal</span>
+        <b>¿Le toca baño este mes?</b>
+        <span>Elige el día y te confirmamos la hora por WhatsApp.</span>
+        <a class="btn btn--alma" href="/agendar-spa">Agendar baño</a>
+      </div>
+      <a class="mail-card" href="#nl"><span class="ms" aria-hidden="true">mail</span><span>Un consejo al mes en tu correo. <u>Suscribirme</u></span></a>
+    </aside>
+  </div>
+
+  <!-- ======== SIGUE LEYENDO ======== -->
+  <section class="wrap related" aria-labelledby="rel">
+    <div class="section-head section-head--row">
+      <h2 id="rel" class="h-section">Sigue <b class="gt">leyendo</b></h2>
+      <a class="link" href="/blog">Ver todo el blog<span class="ms" aria-hidden="true">arrow_forward</span></a>
+    </div>
+    <div class="related__grid">
+      {related.map((r) => (
+        <a class="post" href={postUrl(r)}>
+          <span class="post__cover" style={`background:${r.cover.bg}`}><Image src={r.cover.img} alt="" width={400} style={`width:${Math.round(r.cover.w * 100)}%`} /></span>
+          <span class="post__body">
+            <span class="post__meta">{r.cat} · {r.min} min · <time datetime={r.date}>{shortDate(r.date)}</time></span>
+            <span class="serif post__title">{r.title}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <Newsletter origen="articulo" />
+</Base>
+
+<script>
+  import '../../scripts/add-buttons';
+  import { productoPorSlug, precioMin, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../../scripts/catalogo';
+  import { TAGS, money } from '../../data/shop';
+
+  document.querySelectorAll<HTMLElement>('[data-reco]').forEach(async (box) => {
+    const p = await productoPorSlug(box.dataset.reco!).catch(() => null);
+    if (!p || stockDe(p) === 0) return;
+    const multi = p.variantes.length > 1;
+    const url = productoUrl(p.slug);
+    box.innerHTML = `<a class="reco__img" href="${url}" style="background:${TONOS[p.tono] ?? TONOS.lav}" tabindex="-1" aria-hidden="true">${portada(p)}</a>
+      <span class="reco__txt"><span class="reco__tag">${TAGS.dra.label}</span><a href="${url}">${esc(p.nombre)}</a>
+        <span>${esc(p.descripcion.split('.')[0])} · ${multi ? 'desde ' : ''}${money(precioMin(p))}</span></span>
+      ${multi
+        ? `<a class="btn btn--alma reco__btn" href="${url}"><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</a>`
+        : `<button class="btn btn--alma reco__btn" type="button" data-add='${esc(JSON.stringify(itemCarrito(p, p.variantes[0])))}'><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</button>`}`;
+    box.hidden = false;
+  });
+
+  // copiar enlace
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+    const ok = document.querySelector<HTMLElement>('[data-copied]')!;
+    try { await navigator.clipboard.writeText(b.dataset.copy!); ok.textContent = 'Enlace copiado'; }
+    catch { ok.textContent = 'No se pudo copiar'; }
+    b.querySelector('.ms')!.textContent = 'check';
+    window.setTimeout(() => { ok.textContent = ''; b.querySelector('.ms')!.textContent = 'link'; }, 2500);
+  }));
+
+  // índice: marca la sección que se está leyendo
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+  if (links.length) {
+    const secs = [...document.querySelectorAll<HTMLElement>('[data-sec]')];
+    const mark = (id: string) => links.forEach((a) => {
+      const on = a.dataset.tocLink === id;
+      a.classList.toggle('is-on', on);
+      if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
+    const update = () => {
+      // la última sección cuyo título ya pasó el tercio superior de la pantalla
+      let cur = secs[0];
+      for (const s of secs) if (s.getBoundingClientRect().top < window.innerHeight * 0.35) cur = s;
+      mark(cur.id);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+</script>
+
+<style>
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding-top: 8px; padding-bottom: 24px; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .crumbs a { color: var(--ink-muted); text-decoration: none; }
+  .crumbs a:hover { color: var(--primary); text-decoration: underline; }
+  .crumbs [aria-current] { color: var(--ink); }
+  .crumbs .ms { font-size: 16px; }
+  .crumbs .pending { flex-basis: 100%; }
+  @media (min-width: 768px) { .crumbs { padding-bottom: 32px; } .crumbs .pending { flex-basis: auto; margin-left: auto; } }
+
+  /* ---------- ENCABEZADO ---------- */
+  .ahead { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding-bottom: 28px; }
+  .ahead__meta { font: 600 15px/1.3 var(--font-sans); color: var(--primary); }
+  .ahead h1 { font-size: clamp(30px, 8vw, 58px); font-weight: 400; line-height: 1.12; letter-spacing: -.01em; max-width: 20ch; text-wrap: balance; }
+  .ahead > p { font-size: 17px; line-height: 1.6; color: var(--ink-muted); max-width: 54ch; }
+  .byline { display: flex; align-items: center; gap: 12px; text-align: left; }
+  .byline__pic { position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: var(--peach); flex: none; }
+  .byline__pic :global(img) { position: absolute; left: 50%; top: 2px; width: 120px; max-width: none; height: auto; transform: translateX(-46%); }
+  .byline b { display: block; font: 600 16px/1.3 var(--font-sans); }
+  .byline span > span { font: 400 14px/1.35 var(--font-sans); color: var(--ink-muted); }
+  @media (min-width: 900px) { .ahead { gap: 22px; padding-bottom: 40px; } .ahead > p { font-size: 20px; } }
+
+  .cover-wrap { padding-bottom: 32px; }
+  .cover { position: relative; height: 220px; border-radius: var(--r-lg); display: grid; place-items: center; overflow: hidden; }
+  .cover__ring { position: absolute; width: 300px; height: 300px; border-radius: 50%; border: 2px dashed rgb(255 255 255 / .6); }
+  .cover :global(img) { position: relative; max-width: 240px; height: auto; }
+  @media (min-width: 900px) {
+    .cover-wrap { padding-bottom: 56px; }
+    .cover { height: 440px; border-radius: var(--r-xl); }
+    .cover__ring { width: 520px; height: 520px; }
+    .cover :global(img) { max-width: 440px; }
+  }
+
+  /* ---------- CUERPO ---------- */
+  .abody { display: grid; gap: 28px; padding-bottom: var(--section); }
+  .side { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+  .toc { display: none; }
+  .side__label { font: 600 13px/1 var(--font-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted); }
+  .share { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .share__wa { background: #DCF5E3; color: var(--wa-ink); }
+  .share__wa:hover { background: #C3EED0; color: var(--wa-ink); }
+  .share__ok { font: 600 13px/1.3 var(--font-sans); color: #1D5128; }
+
+  .prose { display: flex; flex-direction: column; gap: 16px; min-width: 0; font: 400 17px/1.75 var(--font-serif); color: var(--ink); }
+  .prose h2 { margin-top: 12px; font: 600 23px/1.25 var(--font-sans); letter-spacing: -.02em; scroll-margin-top: 90px; }
+  .prose ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .prose li::marker { color: var(--primary); }
+  .tip { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: 20px; background: var(--surface-2); box-shadow: inset 4px 0 0 var(--primary); font-size: 16.5px; line-height: 1.6; }
+  .tip :global(img) { width: 40px; height: auto; flex: none; }
+  .tip b { display: block; margin-bottom: 4px; font: 600 15px/1.3 var(--font-sans); color: var(--primary); }
+  .guide { display: grid; gap: 12px; font-family: var(--font-sans); }
+  .guide__item { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 20px; background: #FFF4EC; }
+  .guide__item[data-tone="1"] { background: var(--surface-2); }
+  .guide__item[data-tone="2"] { background: #F4F0FA; }
+  .guide__item .ms { font-size: 28px; color: var(--primary); }
+  .guide__item b { font: 600 17px/1.3 var(--font-sans); }
+  .guide__big { font: 700 21px/1.15 var(--font-sans); color: var(--primary-strong); }
+  .guide__item > span:last-child { font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); }
+  @media (min-width: 640px) { .guide { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  .reco[hidden] { display: none; }
+  .reco { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; padding: 16px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-family: var(--font-sans); }
+  .reco :global(.reco__img) { width: 80px; height: 80px; border-radius: 16px; display: grid; place-items: center; color: rgb(54 41 84 / .55); flex: none; }
+  .reco :global(.reco__img img) { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+  .reco :global(.reco__img .ms) { font-size: 34px; }
+  .reco :global(.reco__txt) { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .reco :global(.reco__tag) { font: 600 13px/1.2 var(--font-sans); color: var(--primary); }
+  .reco :global(.reco__txt a) { font: 600 18px/1.3 var(--font-sans); color: var(--ink); text-decoration: none; }
+  .reco :global(.reco__txt a:hover) { text-decoration: underline; }
+  .reco :global(.reco__txt > span:last-child) { font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .reco :global(.reco__btn) { flex: 1 1 100%; }
+  .reco :global(.reco__btn.is-added) { background: var(--primary); color: #fff; }
+  @media (min-width: 640px) { .reco :global(.reco__btn) { flex: none; } .reco :global(.reco__img) { width: 96px; height: 96px; } }
+
+  .ctas { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; font-family: var(--font-sans); }
+  .ctas > * { width: 100%; }
+  .ctas__spa { min-height: 52px; padding: 0 26px; font-size: 17px; }
+  @media (min-width: 640px) { .ctas { flex-direction: row; flex-wrap: wrap; } .ctas > * { width: auto; } }
+  .ask { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; padding: 18px 20px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 2px var(--wa); font: 400 16px/1.5 var(--font-sans); }
+  @media (min-width: 640px) { .ask { flex-direction: row; align-items: center; justify-content: space-between; } .ask .wa-o { flex: none; } }
+
+  .aside { display: flex; flex-direction: column; gap: 14px; }
+  .spa-card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: var(--r-lg); background: var(--ink); color: #fff; overflow: hidden; isolation: isolate; }
+  .spa-card :global(.spa-card__art) { position: absolute; right: -40px; bottom: -10px; width: 190px; height: auto; opacity: .18; z-index: -1; }
+  .spa-card__kicker { font: 600 13px/1 var(--font-sans); color: var(--peach); }
+  .spa-card b { font: 600 22px/1.25 var(--font-sans); }
+  .spa-card > span:not(.spa-card__kicker) { font: 400 15px/1.5 var(--font-sans); color: rgb(255 255 255 / .82); }
+  .spa-card .btn { align-self: flex-start; }
+  .mail-card { display: flex; gap: 12px; align-items: center; padding: 16px 18px; border-radius: 22px; background: var(--surface-2); color: var(--ink); text-decoration: none; font: 500 14.5px/1.4 var(--font-sans); }
+  .mail-card:hover { color: var(--ink); background: var(--surface-3); }
+  .mail-card .ms { font-size: 26px; color: var(--primary); }
+  .mail-card u { color: var(--primary); text-underline-offset: 3px; }
+
+  @media (min-width: 900px) {
+    .abody { grid-template-columns: minmax(0, 1fr) 280px; gap: 40px; align-items: start; }
+    .side { grid-column: 1 / -1; }
+    .prose { font-size: 19px; gap: 20px; }
+    .prose h2 { font-size: 28px; margin-top: 20px; }
+    .aside { position: sticky; top: 24px; }
+  }
+  @media (min-width: 1200px) {
+    .abody { grid-template-columns: 200px minmax(0, 680px) 280px; justify-content: center; }
+    .side { grid-column: auto; position: sticky; top: 24px; flex-direction: column; align-items: stretch; gap: 4px; }
+    .toc { display: flex; flex-direction: column; gap: 4px; }
+    .toc .side__label { padding-bottom: 10px; }
+    .toc a { display: block; padding: 8px 0 8px 14px; border-left: 2px solid var(--line-soft); font: 500 15px/1.35 var(--font-sans); color: var(--ink-muted); text-decoration: none; transition: color .15s, border-color .15s; }
+    .toc a:hover { color: var(--ink); }
+    .toc a.is-on { color: var(--ink); border-color: var(--primary); font-weight: 600; }
+    .side__label--share { padding: 28px 0 10px; }
+  }
+
+  /* ---------- SIGUE LEYENDO ---------- */
+  .related { display: flex; flex-direction: column; gap: 20px; padding-bottom: var(--section); }
+  .related__grid { display: grid; gap: 16px; }
+  .post { display: flex; flex-direction: column; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line); color: inherit; text-decoration: none; transition: box-shadow .25s var(--ease), transform .25s var(--ease-out); }
+  .post:hover { color: inherit; box-shadow: var(--shadow-2); transform: translateY(-3px); }
+  .post__cover { aspect-ratio: 16 / 9; display: grid; place-items: center; }
+  .post__cover :global(img) { max-width: 150px; height: auto; opacity: .9; }
+  .post__body { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 22px; }
+  .post__meta { font: 600 13px/1.3 var(--font-sans); color: var(--primary); }
+  .post__title { font-size: 21px; line-height: 1.3; color: var(--ink); }
+  @media (min-width: 700px) { .related__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; } }
+</style>

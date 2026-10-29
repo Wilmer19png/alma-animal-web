@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Producto · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.alma:hover{color:#362954;background-position:100% 0}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn:hover{background:#ECE6ED;color:#4D3F6C}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#FBCFAF;color:#623F21;font:700 10px/16px "Alan Sans",sans-serif;text-align:center;padding:0 4px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pending{display:inline-flex;align-items:center;gap:6px;font:600 13px/1.3 "Alan Sans",sans-serif;color:#372C42;background:#D1C1DD;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.qty{display:inline-flex;align-items:center;border:1px solid #CBC4D1;border-radius:999px;height:56px;background:#fff}
+.qty button{width:52px;height:54px;border:0;background:transparent;color:#655785;cursor:pointer;border-radius:999px;display:grid;place-items:center}
+.qty button:hover{background:#F2ECF2}
+.qty span{min-width:32px;text-align:center;font:600 18px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.prod{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:#2B1E48;transition:box-shadow .25s cubic-bezier(.2,0,0,1),transform .25s cubic-bezier(.05,.7,.1,1)}
+.prod:hover{color:#2B1E48;box-shadow:0 4px 8px 3px rgb(54 41 84/.09),0 1px 3px rgb(54 41 84/.18);transform:translateY(-3px)}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;padding:0 22px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 17px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+/* Agregar al carrito: un solo color (durazno de la marca) y un pequeño salto cada pocos segundos */
+.cta{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;padding:0 24px;border-radius:999px;border:0;background:#F0BC95;color:#48290D;font:600 18px/1 "Alan Sans",sans-serif;cursor:pointer;box-shadow:0 2px 6px rgb(176 120 80/.25);transition:background .2s,box-shadow .2s;animation:cta-hop 5s cubic-bezier(.2,0,0,1) infinite}
+.cta:hover{background:#E8AC80;box-shadow:0 6px 14px rgb(176 120 80/.3);animation-play-state:paused}
+.cta:active{transform:scale(.98)}
+@keyframes cta-hop{0%,82%,100%{transform:translateY(0)}86%{transform:translateY(-5px)}90%{transform:translateY(0)}94%{transform:translateY(-2px)}97%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.cta{animation:none}}
+.shipbar{height:10px;border-radius:999px;background:#fff;overflow:hidden;flex:1;min-width:120px}
+.shipbar i{display:block;height:100%;border-radius:999px;background:var(--grad-primary);transition:width 1.2s cubic-bezier(.2,0,0,1)}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+.tag{position:relative;display:inline-flex;align-items:center;gap:4px;font:600 12px/1 "Alan Sans",sans-serif;padding:5px 9px;border-radius:999px;background:rgb(255 255 255/.94);color:#2B1E48;box-shadow:0 1px 2px rgb(54 41 84/.14);white-space:nowrap}
+.tag.sale{color:#910809}
+.buzz{position:fixed;left:20px;bottom:20px;z-index:20;display:flex;align-items:center;gap:10px;width:300px;padding:8px 8px 8px 8px;border-radius:16px;background:rgb(255 255 255/.97);box-shadow:0 0 0 1px #E6E1E7,0 6px 14px rgb(54 41 84/.12);animation:buzz-in .55s cubic-bezier(.05,.7,.1,1)}
+@keyframes buzz-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.buzz{animation:none}}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  [aria-label="Fotos del producto"] > div:first-child{flex-direction:row !important;order:2;overflow-x:auto}
+  [aria-label="Fotos del producto"] > div:first-child button{width:64px !important;height:64px !important;flex:none}
+  [aria-label="Fotos del producto"] > div:last-child{border-radius:24px !important}
+  [aria-label="Fotos del producto"] .ms[style*="font-size: 160px"]{font-size:100px !important;width:100px !important;height:100px !important}
+  .aa div[role="status"][style*="border-radius: 999px"]{position:relative;overflow:hidden;flex-wrap:nowrap !important;padding:12px 16px 14px !important;gap:10px !important}
+  .aa div[role="status"][style*="border-radius: 999px"] > .ms{font-size:20px !important}
+  .aa div[role="status"][style*="border-radius: 999px"] span{font-size:14.5px !important;white-space:nowrap !important}
+  .shipbar{position:absolute !important;left:0;right:0;bottom:0;height:4px !important;min-width:0 !important;border-radius:0 !important;background:rgb(101 87 133/.12) !important}
+  .shipbar i{border-radius:0 !important}
+  section[aria-labelledby="rel"] > div.m-g{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important}
+  section[aria-labelledby="pn"] > div{gap:18px !important}
+  /* agregar al carrito siempre a mano: barra fija abajo */
+  .aa div:has(> .cta){position:fixed;left:0;right:0;bottom:0;z-index:30;flex-wrap:nowrap !important;gap:10px !important;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;box-shadow:0 -1px 0 #E6E1E7,0 -8px 20px rgb(54 41 84/.08)}
+  .cta{flex:1;height:52px !important;font-size:15px !important;padding:0 14px !important}
+  .fab-wa{bottom:92px !important}
+  .buzz{bottom:92px !important}
+  .wrap[style*="padding-bottom: 112px"]:last-of-type{padding-bottom:110px !important}
+}
+/*MOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA ======== -->
+<div class="wrap m-top" style="padding-top: 24px; padding-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <nav class="navpill" aria-label="Principal" style="margin-left: 24px;">
+    <a href="Main.dc.html">Inicio</a><a href="Consultorio.dc.html">Consultorio</a><a href="Spa.dc.html">Spa</a><a class="on" href="Petshop.dc.html">Petshop</a><a href="Main.dc.html#nosotros">Nosotros</a><a href="Blog.dc.html">Blog</a><a href="Main.dc.html#contacto">Contacto</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a class="icon-btn" href="Carrito.dc.html" aria-label="Carrito"><span class="ms">shopping_bag</span><span class="badge">{{cartCount}}</span></a>
+    <a class="btn" href="PortalAcceso.dc.html">Ingresar</a>
+      <details class="mnav"><summary aria-label="Abrir el menú"><span class="ms m-open">menu</span><span class="ms m-close">close</span></summary><div class="mpanel"><a href="Main.dc.html">Inicio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Consultorio.dc.html">Consultorio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Spa.dc.html">Spa<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="on" href="Petshop.dc.html">Petshop<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main.dc.html#nosotros">Nosotros<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Blog.dc.html">Blog<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main.dc.html#contacto">Contacto<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="btn mlogin" href="PortalAcceso.dc.html"><span class="ms" style="font-size: 18px;">person</span>Ingresar a mi portal</a></div></details>
+  </div>
+</div>
+
+<!-- barra de envío gratis: se llena según lo que hay en el carrito -->
+<div class="wrap" style="padding-bottom: 20px;">
+  <div role="status" style="display: flex; align-items: center; gap: 16px; padding: 14px 22px; border-radius: 999px; background: #F2ECF2;">
+    <span class="ms" style="font-size: 24px; color: #655785;">local_shipping</span>
+    <sc-if value="{{shipNeed}}" hint-placeholder-val="{{true}}"><span class="m-nw" style="font: 500 16px/1.3 'Alan Sans', sans-serif; white-space: nowrap;">Te faltan <b>{{toFreeTxt}}</b> para envío gratis<span class="m-hide"> a toda Colombia</span></span></sc-if>
+    <sc-if value="{{shipFree}}" hint-placeholder-val="{{false}}"><span class="m-nw" style="font: 600 16px/1.3 'Alan Sans', sans-serif; white-space: nowrap; color: #1D5128;">¡Ya tienes envío gratis<span class="m-hide"> a toda Colombia</span>!</span></sc-if>
+    <div class="shipbar" aria-hidden="true"><i style="width: {{shipPct}};"></i></div>
+    <span class="m-hide m-nw" style="font: 400 15px/1.3 'Alan Sans', sans-serif; color: #584E6E; white-space: nowrap;">En Pereira y Dosquebradas siempre es gratis</span>
+  </div>
+</div>
+
+<!-- migas -->
+<nav class="wrap" aria-label="Ruta" style="padding-bottom: 24px; display: flex; gap: 8px; align-items: center; font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;">
+  <a href="Main.dc.html" style="color: #584E6E;">Inicio</a><span class="ms" style="font-size: 16px;">chevron_right</span><a href="Petshop.dc.html" style="color: #584E6E;">Petshop</a><span class="ms" style="font-size: 16px;">chevron_right</span><a href="Petshop.dc.html" style="color: #584E6E;">Higiene</a><span class="ms" style="font-size: 16px;">chevron_right</span><span aria-current="page" style="color: #2B1E48;">Shampoo hipoalergénico</span>
+</nav>
+
+<!-- ======== PRODUCTO ======== -->
+<section class="wrap m-g m-gap" aria-labelledby="pn" style="padding-bottom: 96px; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: start;">
+
+  <!-- galería: carrusel automático + miniaturas -->
+  <div class="m-g" aria-roledescription="carrusel" aria-label="Fotos del producto" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px;">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <sc-for list="{{shots}}" as="t" hint-placeholder-count="4">
+        <button type="button" aria-label="{{t.label}}" onClick="{{t.pick}}" style="width: 96px; height: 96px; border-radius: 16px; border: 0; cursor: pointer; background: {{t.bg}}; box-shadow: {{t.ring}}; display: grid; place-items: center; color: rgb(255 255 255 / .9); transition: box-shadow .2s;"><span class="ms" style="font-size: 30px;">{{t.icon}}</span></button>
+      </sc-for>
+    </div>
+    <div style="position: relative; aspect-ratio: 1; border-radius: 32px; overflow: hidden; background: #F2ECF2;">
+      <sc-for list="{{shots}}" as="t" hint-placeholder-count="4">
+        <div style="position: absolute; inset: 0; display: grid; place-items: center; background: {{t.bg}}; opacity: {{t.op}}; transition: opacity .6s cubic-bezier(.2,0,0,1);">
+          <span class="ms" style="font-size: 160px; width: 160px; height: 160px; color: rgb(255 255 255 / .75);">{{t.icon}}</span>
+          <span class="pending" style="position: absolute; left: 50%; bottom: 32px; transform: translateX(-50%); background: #fff;"><span class="ms" style="font-size: 14px;">photo_camera</span>{{t.ph}}</span>
+        </div>
+      </sc-for>
+      <span style="position: absolute; top: 20px; left: 20px; font: 600 14px/1 'Alan Sans', sans-serif; padding: 8px 12px; border-radius: 999px; background: #B8F1B9; color: #1D5128;">En stock</span>
+      <div style="position: absolute; right: 20px; top: 20px; display: flex; gap: 8px;">
+        <button type="button" onClick="{{prev}}" aria-label="Foto anterior" class="icon-btn" style="background: #fff;"><span class="ms">chevron_left</span></button>
+        <button type="button" onClick="{{next}}" aria-label="Foto siguiente" class="icon-btn" style="background: #fff;"><span class="ms">chevron_right</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- información -->
+  <div style="display: flex; flex-direction: column; gap: 22px;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><span style="font: 600 15px/1 'Alan Sans', sans-serif; color: #655785; margin-right: 4px;">Higiene · Perros y gatos</span><span class="tag">🔥 Más vendido</span><span class="tag">🩺 Lo recomienda la Dra.</span></div>
+    <h1 class="m-d3" id="pn" style="font: 400 44px/1.08 'Alan Sans', sans-serif; letter-spacing: -.03em;">Shampoo <b class="gt" style="font-weight: 700;">hipoalergénico</b></h1>
+    <div style="display: flex; align-items: baseline; gap: 12px;"><b style="font: 700 34px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{priceTxt}}</b><span style="font: 400 14px/1 'Alan Sans', sans-serif; color: #584E6E;">Precio de ejemplo</span></div>
+    <p class="m-lead" style="font: 400 18px/1.6 'Alan Sans', sans-serif; color: #584E6E;">El mismo que usamos en el spa. Libre de parabenos, para pieles sensibles. [Descripción del producto]</p>
+
+    <!-- variantes: cada una con su precio y su stock -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span style="font: 600 16px/1.3 'Alan Sans', sans-serif;">Presentación: <span style="font-weight: 400; color: #584E6E;">{{varName}}</span></span>
+      <div role="radiogroup" aria-label="Presentación" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <sc-for list="{{vars}}" as="v" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{v.on}}" aria-disabled="{{v.out}}" onClick="{{v.pick}}" style="min-width: 124px; padding: 12px 16px; border-radius: 16px; border: 0; box-shadow: {{v.ring}}; background: {{v.bg}}; color: #2B1E48; cursor: {{v.cur}}; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; text-align: left; transition: box-shadow .15s;"><b style="font: 600 16px/1.2 'Alan Sans', sans-serif; text-decoration: {{v.strike}};">{{v.name}}</b><span style="font: 400 14px/1.2 'Alan Sans', sans-serif; color: {{v.subFg}};">{{v.sub}}</span></button></sc-for>
+      </div>
+      <sc-if value="{{varOut}}" hint-placeholder-val="{{false}}"><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Esta presentación está agotada. <a href="#">Avísame por WhatsApp cuando llegue</a></span></sc-if>
+    </div>
+
+    <dl class="m-g" style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; border-radius: 20px; overflow: hidden; background: #CBC4D1; box-shadow: 0 0 0 1px #CBC4D1;">
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Marca</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">[Marca]</dd></div>
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Presentación</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">{{varName}}</dd></div>
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Para</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">Perros y gatos</dd></div>
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Tipo de piel</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">Sensible</dd></div>
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Libre de</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">Parabenos</dd></div>
+      <div style="background: #fff; padding: 14px 16px;"><dt style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Modo de uso</dt><dd style="margin: 4px 0 0; font: 600 17px/1.3 'Alan Sans', sans-serif;">[Indicaciones]</dd></div>
+    </dl>
+
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <span class="qty"><button type="button" aria-label="Quitar uno" onClick="{{dec}}" style="font: 500 26px/1 'Alan Sans', sans-serif;">−</button><span>{{qty}}</span><button type="button" aria-label="Agregar uno" onClick="{{inc}}" style="font: 500 26px/1 'Alan Sans', sans-serif;">+</button></span>
+      <button class="cta" type="button" onClick="{{add}}"><span class="ms" style="font-size: 22px;">add_shopping_cart</span>{{ctaTxt}}</button>
+    </div>
+    <sc-if value="{{justAdded}}" hint-placeholder-val="{{false}}">
+      <div class="m-sb" role="status" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128; font: 500 16px/1.3 'Alan Sans', sans-serif;"><span style="display: flex; align-items: center; gap: 8px;"><span class="ms fill">check_circle</span>Agregado al carrito</span><a href="Carrito.dc.html" style="color: #1D5128; font-weight: 600;">Ver carrito</a></div>
+    </sc-if>
+    <a class="wa-o" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20un%20producto." target="_blank" rel="noopener"><svg class="wa-ic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>¿Es el indicado? Pregúntale a la doctora</a>
+
+    <div style="display: flex; gap: 10px; align-items: center; padding: 14px 16px; border-radius: 16px; background: var(--grad-alma); color: #362954;"><span class="ms" style="font-size: 24px;">redeem</span><span style="font: 500 16px/1.4 'Alan Sans', sans-serif;">Agrega <b>$15.000</b> más a tu carrito y llévate un <b>obsequio</b>.</span></div>
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font: 400 16px/1.4 'Alan Sans', sans-serif;">
+      <li style="display: flex; gap: 10px; align-items: center;"><span class="ms" style="color: #655785;">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+      <li style="display: flex; gap: 10px; align-items: center;"><span class="ms" style="color: #655785;">public</span>Gratis a toda Colombia en compras desde $70.000</li>
+      <li style="display: flex; gap: 10px; align-items: center;"><span class="ms" style="color: #655785;">bolt</span>Envío prioritario por $5.000</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======== RELACIONADOS ======== -->
+<section class="wrap" aria-labelledby="rel" style="padding-bottom: 112px; display: flex; flex-direction: column; gap: 24px;">
+  <h2 class="m-d4" id="rel" style="font: 400 40px/1.05 'Alan Sans', sans-serif; letter-spacing: -.03em;">Te puede <b class="gt" style="font-weight: 700;">interesar</b></h2>
+  <div class="m-g" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px;">
+    <a class="prod" href="Producto.dc.html"><span style="aspect-ratio: 1; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1;"><span class="ms" style="font-size: 40px;">photo_camera</span></span><span style="padding: 16px; display: flex; flex-direction: column; gap: 4px;"><span style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #655785;">Higiene</span><b style="font: 600 17px/1.35 'Alan Sans', sans-serif;">Toallitas para patas</b><span style="font: 700 18px/1 'Alan Sans', sans-serif; margin-top: 6px;">$15.000</span></span></a>
+    <a class="prod" href="Producto.dc.html"><span style="aspect-ratio: 1; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1;"><span class="ms" style="font-size: 40px;">photo_camera</span></span><span style="padding: 16px; display: flex; flex-direction: column; gap: 4px;"><span style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #655785;">Higiene</span><b style="font: 600 17px/1.35 'Alan Sans', sans-serif;">Cepillo deslanador</b><span style="font: 700 18px/1 'Alan Sans', sans-serif; margin-top: 6px;">$24.000</span></span></a>
+    <a class="prod" href="Producto.dc.html"><span style="aspect-ratio: 1; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1;"><span class="ms" style="font-size: 40px;">photo_camera</span></span><span style="padding: 16px; display: flex; flex-direction: column; gap: 4px;"><span style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #655785;">Snacks</span><b style="font: 600 17px/1.35 'Alan Sans', sans-serif;">Snack dental</b><span style="font: 700 18px/1 'Alan Sans', sans-serif; margin-top: 6px;">$8.000</span></span></a>
+    <a class="prod" href="Producto.dc.html"><span style="aspect-ratio: 1; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1;"><span class="ms" style="font-size: 40px;">photo_camera</span></span><span style="padding: 16px; display: flex; flex-direction: column; gap: 4px;"><span style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #655785;">Accesorios</span><b style="font: 600 17px/1.35 'Alan Sans', sans-serif;">Collar con placa</b><span style="font: 700 18px/1 'Alan Sans', sans-serif; margin-top: 6px;">$22.000</span></span></a>
+  </div>
+  <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Productos y precios de ejemplo.</span>
+</section>
+
+<footer data-dark="1" class="wrap" style="padding-bottom: 32px;">
+  <div class="m-sb" style="border-radius: 32px; background: #2B1E48; color: rgb(255 255 255 / .75); padding: 28px 40px; display: flex; justify-content: space-between; gap: 24px; font: 400 15px/1.5 'Alan Sans', sans-serif;">
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206</span>
+    <span><a href="#" style="color: #fff;">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </div>
+</footer>
+
+<!-- aviso de compras: solo pedidos confirmados de clientes que dieron permiso (nombre sin apellido + ciudad) -->
+<sc-if value="{{buzzOn}}" hint-placeholder-val="{{true}}">
+  <div class="buzz" role="status" aria-live="polite">
+    <span style="width: 40px; height: 40px; border-radius: 10px; background: {{buzz.bg}}; display: grid; place-items: center; color: #fff; flex: none;"><span class="ms" style="font-size: 20px;">{{buzz.icon}}</span></span>
+    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+      <span style="font: 400 13px/1.35 'Alan Sans', sans-serif;">🔥 <b>{{buzz.who}}</b>, de {{buzz.city}}, compró <a href="Producto.dc.html" style="color: #2B1E48; font-weight: 600; text-decoration: none;">{{buzz.prod}}</a></span>
+      <span style="font: 400 11px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{buzz.ago}} · compra verificada</span>
+    </span>
+    <button type="button" aria-label="Cerrar aviso" onClick="{{buzzClose}}" style="align-self: flex-start; width: 24px; height: 24px; border: 0; border-radius: 50%; background: transparent; color: #7A7580; cursor: pointer; display: grid; place-items: center;"><span class="ms" style="font-size: 16px;">close</span></button>
+  </div>
+</sc-if>
+
+<a class="fab-wa" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20un%20producto." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.setState({ i: 0, qty: 1 });
+    this.timer = setInterval(() => this.setState({ i: (((this.state && this.state.i) || 0) + 1) % 4 }), 3500);
+    // la barra de envío gratis se llena al entrar
+    this.fillTimer = setTimeout(() => this.setState({ ready: true }), 150);
+    this.buzzTimer = setInterval(() => this.setState({ b: (((this.state && this.state.b) || 0) + 1) }), 3000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.fillTimer); clearInterval(this.buzzTimer); }
+  renderVals() {
+    const s = this.state || {};
+    const i = s.i || 0;
+    const qty = s.qty || 1;
+    const VARS = [['250 ml', 28000, 14], ['500 ml', 45000, 6], ['1 litro', 78000, 0]];
+    const vi = s.v || 0;
+    const PRICE = VARS[vi][1];
+    const money = (n) => '$' + n.toLocaleString('es-CO');
+    const pics = [
+      ['soap', '[Foto: producto de frente]', 'linear-gradient(160deg,#EADDFF,#D1C1DD)'],
+      ['flip', '[Foto: etiqueta posterior]', 'linear-gradient(160deg,#FBCFAF,#E8C6CF)'],
+      ['pets', '[Foto: en uso en el spa]', 'linear-gradient(160deg,#D1C1DD,#B4A3D6)'],
+      ['straighten', '[Foto: tamaño en la mano]', 'linear-gradient(160deg,#FFDCC3,#FBCFAF)']
+    ];
+    const go = (n) => this.setState({ i: (n + 4) % 4 });
+    // carrito de ejemplo: $52.000 antes de agregar este producto
+    const CART = 52000, FREE = 70000;
+    const added = s.added || 0;
+    const cart = CART + added * PRICE;
+    const lineTxt = '$' + (PRICE * qty).toLocaleString('es-CO');
+    // aviso de compras: 6 s visible, 3 s oculto, rota entre los pedidos confirmados recientes
+    const BUZZ = [
+      ['Laura', 'Pereira', 'Shampoo hipoalergénico · 250 ml', 'hace 12 minutos', 'soap', 'linear-gradient(160deg,#B4A3D6,#8F7FB0)'],
+      ['Andrés', 'Dosquebradas', 'Concentrado adulto raza pequeña · 4 kg', 'hace 1 hora', 'set_meal', 'linear-gradient(160deg,#F0BC95,#E8A6B4)'],
+      ['Valentina', 'Manizales', 'Pechera ajustable · talla M', 'hace 3 horas', 'pets', 'linear-gradient(160deg,#8F7FB0,#655785)'],
+      ['Camilo', 'Pereira', 'Galletas para entrenamiento', 'ayer', 'cookie', 'linear-gradient(160deg,#E8A6B4,#B4A3D6)']
+    ];
+    const bt = (this.state && this.state.b) || 0;
+    const bz = BUZZ[Math.floor(bt / 3) % BUZZ.length];
+    return {
+      buzzOn: !(this.state && this.state.buzzOff) && bt % 3 !== 0,
+      buzz: { who: bz[0], city: bz[1], prod: bz[2], ago: bz[3], icon: bz[4], bg: bz[5] },
+      buzzClose: () => this.setState({ buzzOff: true }),
+      priceTxt: money(PRICE),
+      varName: VARS[vi][0],
+      varOut: VARS[vi][2] === 0,
+      vars: VARS.map((v, n) => ({
+        name: v[0], on: n === vi, out: v[2] === 0,
+        sub: v[2] === 0 ? 'Agotado' : (v[2] <= 3 ? money(v[1]) + ' · últimas ' + v[2] : money(v[1])),
+        subFg: v[2] === 0 ? '#910809' : '#584E6E',
+        strike: v[2] === 0 ? 'line-through' : 'none',
+        bg: n === vi ? '#F8F2F8' : '#FFFFFF',
+        ring: n === vi ? '0 0 0 2px #655785' : '0 0 0 1px #CBC4D1',
+        cur: 'pointer',
+        pick: () => this.setState({ v: n })
+      })),
+      cartCount: 3 + added,
+      shipNeed: cart < FREE,
+      shipFree: cart >= FREE,
+      toFreeTxt: '$' + Math.max(0, FREE - cart).toLocaleString('es-CO'),
+      shipPct: s.ready ? Math.min(100, (cart / FREE) * 100) + '%' : '0%',
+      add: () => this.setState({ added: added + qty }),
+      justAdded: added > 0,
+      ctaTxt: (added > 0 ? 'Agregar más · ' : 'Agregar al carrito · ') + lineTxt,
+      shots: pics.map((p, n) => ({
+        icon: p[0], ph: p[1], bg: p[2],
+        op: n === i ? 1 : 0,
+        ring: n === i ? '0 0 0 3px #655785' : '0 0 0 1px #CBC4D1',
+        label: 'Ver foto ' + (n + 1),
+        pick: () => go(n)
+      })),
+      prev: () => go(i - 1),
+      next: () => go(i + 1),
+      qty,
+      inc: () => this.setState({ qty: qty + 1 }),
+      dec: () => this.setState({ qty: Math.max(1, qty - 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>
