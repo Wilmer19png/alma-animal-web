@@ -10,7 +10,7 @@ const legible = process.env.VISTA === '1';
 export default defineConfig({
   // React solo se usa en el gestor (/gestor); el sitio público no lo carga
   integrations: [react()],
-  site: 'https://almaanimal.netlify.app',
+  site: 'https://almaanimalvet.netlify.app',
   trailingSlash: 'never',
   compressHTML: !legible,
   build: { format: 'file', inlineStylesheets: legible ? 'never' : 'auto' },
