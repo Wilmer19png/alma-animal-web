@@ -12,7 +12,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
     { id: 'agenda', txt: 'Agenda', icon: 'calendar_month', href: '/gestor/agenda', listo: true },
     { id: 'pacientes', txt: 'Pacientes', icon: 'pets', href: '/gestor/pacientes', listo: true },
     { id: 'propietarios', txt: 'Propietarios', icon: 'group', href: '/gestor/propietarios', listo: true },
-    { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: false }
+    { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: true }
   ] },
   { grp: 'Spa', items: [
     { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: false },

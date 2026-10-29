@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Vacunas y recordatorios">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Vacunas from '../../gestor/Vacunas';
+    montar(Vacunas);
+  </script>
+</GestorLayout>

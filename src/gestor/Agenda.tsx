@@ -27,7 +27,11 @@ export default function Agenda() {
   const [props, setProps] = useState<Propietario[]>([]);
   const [filtro, setFiltro] = useState<Filtro>('todo');
   const [diaM, setDiaM] = useState(() => Math.min(diaSemana(new Date()), 5)); // celular: día visible
-  const [panel, setPanel] = useState<{ modo: 'nueva'; dia?: Date; min?: number; servicio?: Servicio; mover?: Cita } | { modo: 'ver'; cita: Cita }>({ modo: 'nueva' });
+  const [panel, setPanel] = useState<{ modo: 'nueva'; dia?: Date; min?: number; servicio?: Servicio; mover?: Cita; paciente?: string } | { modo: 'ver'; cita: Cita }>(() => {
+    const u = new URLSearchParams(location.search);
+    const sv = u.get('servicio') as Servicio | null;
+    return { modo: 'nueva', paciente: u.get('paciente') ?? undefined, servicio: sv && sv in SERVICIOS ? sv : undefined };
+  });
   const [error, setError] = useState('');
   const [aviso, setAviso] = useState('');
 
@@ -199,12 +203,12 @@ function VerCita({ c, paciente, dueño, cambiar, mover, cerrar }: { c: Cita; pac
 
 /* ---------- agendar (o cambiar la hora) ---------- */
 function Agendar({ inicial, lunes, h, dur, cierres, citas, pacs, props, autor, listo, avisar }: {
-  inicial: { dia?: Date; min?: number; servicio?: Servicio; mover?: Cita }; lunes: Date; h: Horario; dur: Duraciones; cierres: Cierre[]; citas: Cita[];
+  inicial: { dia?: Date; min?: number; servicio?: Servicio; mover?: Cita; paciente?: string }; lunes: Date; h: Horario; dur: Duraciones; cierres: Cierre[]; citas: Cita[];
   pacs: Paciente[]; props: Propietario[]; autor: string; listo: (c: Cita, msg: string) => void; avisar: (m: string) => void;
 }) {
   const mover = inicial.mover;
   const [q, setQ] = useState('');
-  const [pid, setPid] = useState<string | null>(mover?.paciente_id ?? null);
+  const [pid, setPid] = useState<string | null>(mover?.paciente_id ?? inicial.paciente ?? null);
   const [sv, setSv] = useState<Servicio>(inicial.servicio ?? 'consulta');
   const [dia, setDia] = useState<Date>(inicial.dia ?? (diaSemana(new Date()) < 6 && lunes <= new Date() ? new Date() : lunes));
   const [min, setMin] = useState<number | null>(inicial.min ?? null);
