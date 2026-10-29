@@ -16,7 +16,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   ] },
   { grp: 'Spa', items: [
     { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: true },
-    { id: 'tarifas', txt: 'Servicios y tarifas', icon: 'sell', href: '/gestor/tarifas', listo: false }
+    { id: 'tarifas', txt: 'Servicios y tarifas', icon: 'sell', href: '/gestor/tarifas', listo: true }
   ] },
   { grp: 'Tienda', items: [
     { id: 'pedidos', txt: 'Pedidos', icon: 'receipt_long', href: '/gestor/pedidos', listo: true },

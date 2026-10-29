@@ -105,7 +105,8 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
     <div class="price">
       <div>
         <h2 id="pr" class="h-section price__title">¿Cuánto <b class="gt">cuesta?</b></h2>
-        <p>Depende de la raza, el tamaño y el estado del manto. Escríbenos con una foto de tu mascota y te damos el valor antes de agendar.</p>
+        <p data-precio-txt>Depende de la raza, el tamaño y el estado del manto. Escríbenos con una foto de tu mascota y te damos el valor antes de agendar.</p>
+        <ul class="tarifas" data-precios hidden></ul>
       </div>
       <div class="price__actions">
         <a class="wa-o" href={waPrice} target="_blank" rel="noopener"><WaIcon size={24} />Pedir precio por WhatsApp</a>
@@ -132,6 +133,35 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
 </Base>
 
 <script>
+  // Precios del spa: salen del gestor (Servicios y tarifas). Si allá eligen «sin precios», queda el texto de siempre.
+  interface Tarifas { mostrar: 'desde' | 'tabla' | 'no'; servicios: { nombre: string; tipo: string; desc: string; web: boolean; precios: Record<string, number | null> }[] }
+  const SB = import.meta.env.PUBLIC_SUPABASE_URL, KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const lista = document.querySelector<HTMLUListElement>('[data-precios]');
+  if (SB && KEY && lista) {
+    fetch(`${SB}/rest/v1/ajustes?clave=eq.tarifas&select=valor`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((filas: { valor: Tarifas }[]) => { const t = filas[0]?.valor; if (t && t.mostrar !== 'no') pintarPrecios(t, lista); })
+      .catch(() => {});
+  }
+  function pintarPrecios(t: Tarifas, ul: HTMLUListElement) {
+    const plata = (n: number) => '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const esc = (x: string) => x.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+    const TALLAS: [string, string][] = [['pequeno', 'Pequeño'], ['mediano', 'Mediano'], ['grande', 'Grande'], ['gigante', 'Gigante'], ['gato', 'Gato']];
+    const svs = t.servicios.filter((s) => s.web && Object.values(s.precios).some((p) => p != null));
+    if (!svs.length) return;
+    ul.innerHTML = svs.map((s) => {
+      const ps = TALLAS.filter(([k]) => s.precios[k] != null);
+      const mas = s.tipo === 'adicional' ? '+' : '';
+      const val = t.mostrar === 'desde'
+        ? `<b>${mas || 'Desde '}${plata(Math.min(...ps.map(([k]) => s.precios[k]!)))}</b>`
+        : `<span class="tarifas__t">${ps.map(([k, n]) => `<i>${n} <b>${mas}${plata(s.precios[k]!)}</b></i>`).join('')}</span>`;
+      return `<li><span><strong>${esc(s.nombre)}</strong><small>${esc(s.desc)}</small></span>${val}</li>`;
+    }).join('');
+    ul.hidden = false;
+    const p = document.querySelector('[data-precio-txt]');
+    if (p) p.textContent = 'El valor final depende del peso y del estado del manto. Te lo confirmamos por WhatsApp antes de agendar.';
+  }
+
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Carrusel de la portada: cambia cada 4 s, se pausa al pasar el mouse.
@@ -288,6 +318,18 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   .price__title { font-size: clamp(30px, 6vw, 44px); }
   .price p { margin-top: 14px; font-size: 17px; line-height: 1.6; max-width: 48ch; }
   .price__actions { display: flex; flex-direction: column; gap: 12px; }
+  .tarifas[hidden] { display: none; }
+  .tarifas { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; max-width: 560px; }
+  .tarifas :global(li) { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 16px; background: rgb(255 255 255 / .55); }
+  .tarifas :global(li:first-child) { border-radius: 16px 16px 0 0; }
+  .tarifas :global(li:last-child) { border-radius: 0 0 16px 16px; }
+  .tarifas :global(li > span) { display: flex; flex-direction: column; min-width: 0; }
+  .tarifas :global(strong) { font-weight: 600; font-size: 16px; }
+  .tarifas :global(small) { font-size: 13.5px; line-height: 1.35; opacity: .8; }
+  .tarifas :global(li > b) { font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tarifas :global(li:has(.tarifas__t)) { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .tarifas :global(.tarifas__t) { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tarifas :global(.tarifas__t i) { font-style: normal; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: #fff; }
   .price__actions > * { width: 100%; }
   @media (min-width: 768px) {
     .price__actions { flex-direction: row; flex-wrap: wrap; }
