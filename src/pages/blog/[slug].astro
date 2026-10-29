@@ -6,7 +6,6 @@ import WaIcon from '../../components/WaIcon.astro';
 import Newsletter from '../../components/Newsletter.astro';
 import { whatsapp, DOCTOR } from '../../data/site';
 import { BLOG_DEMO, POSTS, shortDate, longDate, postUrl, rich, anchor, type Post } from '../../data/blog';
-import { PRODUCTS, TAGS, money, minPrice, productUrl, cartPayload } from '../../data/shop';
 import mariana from '../../assets/mariana-gato.png';
 import heart from '../../assets/corazon.png';
 import tigerDog from '../../assets/papel-tigre-perro-v3.png';
@@ -97,24 +96,8 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
             ))}
           </div>
         );
-        if (b.t === 'product') {
-          const pr = PRODUCTS.find((x) => x.id === b.id);
-          if (!pr) return null;
-          const multi = pr.variants.length > 1;
-          return (
-            <div class="reco">
-              <a class="reco__img" href={productUrl(pr)} style={`background:${pr.tone}`} tabindex="-1" aria-hidden="true"><span class="ms">{pr.icon}</span></a>
-              <span class="reco__txt">
-                <span class="reco__tag">{TAGS.dra.label}</span>
-                <a href={productUrl(pr)}>{pr.name}</a>
-                <span>{pr.text.split('.')[0]} · {multi ? 'desde ' : ''}{money(minPrice(pr))}</span>
-              </span>
-              {multi
-                ? <a class="btn btn--alma reco__btn" href={productUrl(pr)}><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</a>
-                : <button class="btn btn--alma reco__btn" type="button" data-add={JSON.stringify(cartPayload(pr, pr.variants[0]))}><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</button>}
-            </div>
-          );
-        }
+        // producto recomendado: se llena con el catálogo de la tienda (si no está a la venta, no aparece)
+        if (b.t === 'product') return <div class="reco" data-reco={b.id} hidden></div>;
         if (b.t === 'spa') return (
           <div class="ctas">
             <a class="btn ctas__spa" href="/agendar-spa"><span class="ms" aria-hidden="true">shower</span>Agenda un baño en el spa</a>
@@ -167,6 +150,22 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
 
 <script>
   import '../../scripts/add-buttons';
+  import { productoPorSlug, precioMin, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../../scripts/catalogo';
+  import { TAGS, money } from '../../data/shop';
+
+  document.querySelectorAll<HTMLElement>('[data-reco]').forEach(async (box) => {
+    const p = await productoPorSlug(box.dataset.reco!).catch(() => null);
+    if (!p || stockDe(p) === 0) return;
+    const multi = p.variantes.length > 1;
+    const url = productoUrl(p.slug);
+    box.innerHTML = `<a class="reco__img" href="${url}" style="background:${TONOS[p.tono] ?? TONOS.lav}" tabindex="-1" aria-hidden="true">${portada(p)}</a>
+      <span class="reco__txt"><span class="reco__tag">${TAGS.dra.label}</span><a href="${url}">${esc(p.nombre)}</a>
+        <span>${esc(p.descripcion.split('.')[0])} · ${multi ? 'desde ' : ''}${money(precioMin(p))}</span></span>
+      ${multi
+        ? `<a class="btn btn--alma reco__btn" href="${url}"><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</a>`
+        : `<button class="btn btn--alma reco__btn" type="button" data-add='${esc(JSON.stringify(itemCarrito(p, p.variantes[0])))}'><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar</button>`}`;
+    box.hidden = false;
+  });
 
   // copiar enlace
   document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
@@ -256,17 +255,19 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
   .guide__item > span:last-child { font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); }
   @media (min-width: 640px) { .guide { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
+  .reco[hidden] { display: none; }
   .reco { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; padding: 16px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-family: var(--font-sans); }
-  .reco__img { width: 80px; height: 80px; border-radius: 16px; display: grid; place-items: center; color: rgb(54 41 84 / .55); flex: none; }
-  .reco__img .ms { font-size: 34px; }
-  .reco__txt { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .reco__tag { font: 600 13px/1.2 var(--font-sans); color: var(--primary); }
-  .reco__txt a { font: 600 18px/1.3 var(--font-sans); color: var(--ink); text-decoration: none; }
-  .reco__txt a:hover { text-decoration: underline; }
-  .reco__txt > span:last-child { font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
-  .reco__btn { flex: 1 1 100%; }
-  .reco__btn.is-added { background: var(--primary); color: #fff; }
-  @media (min-width: 640px) { .reco__btn { flex: none; } .reco__img { width: 96px; height: 96px; } }
+  .reco :global(.reco__img) { width: 80px; height: 80px; border-radius: 16px; display: grid; place-items: center; color: rgb(54 41 84 / .55); flex: none; }
+  .reco :global(.reco__img img) { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+  .reco :global(.reco__img .ms) { font-size: 34px; }
+  .reco :global(.reco__txt) { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .reco :global(.reco__tag) { font: 600 13px/1.2 var(--font-sans); color: var(--primary); }
+  .reco :global(.reco__txt a) { font: 600 18px/1.3 var(--font-sans); color: var(--ink); text-decoration: none; }
+  .reco :global(.reco__txt a:hover) { text-decoration: underline; }
+  .reco :global(.reco__txt > span:last-child) { font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .reco :global(.reco__btn) { flex: 1 1 100%; }
+  .reco :global(.reco__btn.is-added) { background: var(--primary); color: #fff; }
+  @media (min-width: 640px) { .reco :global(.reco__btn) { flex: none; } .reco :global(.reco__img) { width: 96px; height: 96px; } }
 
   .ctas { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; font-family: var(--font-sans); }
   .ctas > * { width: 100%; }

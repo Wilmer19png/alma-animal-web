@@ -20,7 +20,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   ] },
   { grp: 'Tienda', items: [
     { id: 'pedidos', txt: 'Pedidos', icon: 'receipt_long', href: '/gestor/pedidos', listo: true },
-    { id: 'productos', txt: 'Productos e inventario', icon: 'inventory_2', href: '/gestor/productos', listo: false }
+    { id: 'productos', txt: 'Productos e inventario', icon: 'inventory_2', href: '/gestor/productos', listo: true }
   ] },
   { grp: 'Sitio web', items: [
     { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: false },

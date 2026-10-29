@@ -3,11 +3,9 @@ import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp, PHONES, LEGAL } from '../data/site';
-import { DEMO, PRODUCTS, SHIPPING, GIFT, money, stockOf, productUrl, cartPayload } from '../data/shop';
+import { DEMO, SHIPPING, GIFT, money } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
-// sugerencias: productos de una sola presentación (se agregan con un toque), los más baratos primero
-const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0).sort((a, b) => a.variants[0].price - b.variants[0].price);
 const DEPTS = ['Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bogotá D.C.', 'Bolívar', 'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta', 'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada'];
 const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virginia', 'Marsella', 'Apía', 'Balboa', 'Belén de Umbría', 'Guática', 'La Celia', 'Mistrató', 'Pueblo Rico', 'Quinchía', 'Santuario'];
 ---
@@ -80,18 +78,8 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
         </div>
         <div class="extras" data-extras>
           <h2 class="panel__t">Súmale a tu pedido</h2>
-          <div class="extras__grid">
-            {extras.map((p) => {
-              const v = p.variants[0];
-              return (
-                <div class="extra" data-extra={p.id}>
-                  <span class="extra__ic" style={`background:${p.tone}`} aria-hidden="true"><span class="ms">{p.icon}</span></span>
-                  <span class="extra__txt"><a href={productUrl(p)}>{p.name}</a><span>{money(v.price)}</span></span>
-                  <button class="add add--sm" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify(cartPayload(p, v))}><span class="ms" aria-hidden="true">add</span></button>
-                </div>
-              );
-            })}
-          </div>
+          <!-- sugerencias del catálogo (se llenan en el navegador) -->
+          <div class="extras__grid" data-extras-grid></div>
         </div>
       </div>
 
@@ -176,6 +164,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   import { cart, money, type CartItem } from '../scripts/cart';
   import { insert, supabaseReady } from '../scripts/supabase';
   import '../scripts/add-buttons';
+  import { catalogo, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
 
   const root = document.querySelector<HTMLElement>('[data-checkout]')!;
   const C = root.dataset;
@@ -448,6 +437,19 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   syncCity();
   paint();
+  catalogo().then((lista) => {
+    const extras = lista.filter((p) => p.variantes.length === 1 && stockDe(p) > 0)
+      .sort((a, b) => a.variantes[0].precio - b.variantes[0].precio).slice(0, 8);
+    $('[data-extras-grid]').innerHTML = extras.map((p) => {
+      const v = p.variantes[0];
+      return `<div class="extra" data-extra="${esc(p.slug)}">
+        <span class="extra__ic" style="background:${TONOS[p.tono] ?? TONOS.lav}" aria-hidden="true">${portada(p)}</span>
+        <span class="extra__txt"><a href="${productoUrl(p.slug)}">${esc(p.nombre)}</a><span>${money(v.precio)}</span></span>
+        <button class="add add--sm" type="button" aria-label="Agregar ${esc(p.nombre)} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add</span></button>
+      </div>`;
+    }).join('');
+    paint();
+  }).catch(() => { /* sin sugerencias si no carga el catálogo */ });
   cart.onChange(paint);
 </script>
 
@@ -513,15 +515,16 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   }
 
   .extras { display: flex; flex-direction: column; gap: 14px; }
-  .extras[hidden], .extra[hidden] { display: none; }
+  .extras[hidden], .extras :global(.extra[hidden]) { display: none; }
   .extras__grid { display: grid; gap: 12px; }
-  .extra { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
-  .extra__ic { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
-  .extra__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 600 15px/1.3 var(--font-sans); }
-  .extra__txt a { color: var(--ink); text-decoration: none; }
-  .extra__txt a:hover { text-decoration: underline; }
-  .extra__txt span { font-weight: 400; color: var(--ink-muted); }
-  @media (min-width: 700px) { .extras__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .extra { flex-direction: column; align-items: flex-start; } .extra .add { align-self: flex-end; margin-top: -40px; } }
+  .extras :global(.extra) { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+  .extras :global(.extra__ic) { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
+  .extras :global(.extra__txt) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 600 15px/1.3 var(--font-sans); }
+  .extras :global(.extra__txt a) { color: var(--ink); text-decoration: none; }
+  .extras :global(.extra__txt a:hover) { text-decoration: underline; }
+  .extras :global(.extra__txt span) { font-weight: 400; color: var(--ink-muted); }
+  @media (min-width: 700px) { .extras__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .extras :global(.extra) { flex-direction: column; align-items: flex-start; } .extras :global(.extra .add) { align-self: flex-end; margin-top: -40px; } }
+  .extras :global(.extra__ic img) { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
 
   /* envío */
   .ship { display: flex; flex-direction: column; gap: 20px; }

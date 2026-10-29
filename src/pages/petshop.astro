@@ -6,12 +6,10 @@ import WaStrip from '../components/WaStrip.astro';
 import Steps from '../components/Steps.astro';
 import SalesBuzz from '../components/SalesBuzz.astro';
 import { whatsapp } from '../data/site';
-import ProductCard from '../components/ProductCard.astro';
-import { DEMO, CATEGORIES, PRODUCTS, BUY_STEPS, SHIPPING, money, minPrice, stockOf, productUrl, cartPayload } from '../data/shop';
+import '../styles/tienda.css';
+import { CATEGORIES, BUY_STEPS, SHIPPING, money } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tienda.');
-// productos baratos para "Súmale a tu pedido"
-const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0).sort((a, b) => minPrice(a) - minPrice(b));
 ---
 <Base
   title="Petshop · Alma Animal"
@@ -82,7 +80,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
 
     <div class="results">
       <div class="results__bar">
-        <span class="results__count" aria-live="polite"><b data-count>{PRODUCTS.length}</b> productos{DEMO && <em> de ejemplo</em>}</span>
+        <span class="results__count" aria-live="polite"><b data-count>…</b> productos<em data-demo hidden> de ejemplo</em></span>
         <div class="results__tools">
           <button class="filter-btn" type="button" aria-expanded="false" aria-controls="filtros" data-filter-toggle><span class="ms" aria-hidden="true">tune</span>Filtros<i data-filter-n hidden></i></button>
           <label class="sort">Ordenar
@@ -97,8 +95,15 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
         </div>
       </div>
 
-      <div class="grid" data-grid>
-        {PRODUCTS.map((p, i) => <ProductCard p={p} i={i} />)}
+      <!-- las tarjetas se dibujan con el catálogo de Supabase (scripts/catalogo.ts) -->
+      <div class="grid" data-grid aria-busy="true">
+        {Array.from({ length: 6 }, () => <div class="prod prod--cargando" aria-hidden="true"><span></span><span></span><span></span></div>)}
+      </div>
+      <div class="empty" data-fail hidden>
+        <span class="ms" aria-hidden="true">wifi_off</span>
+        <b>No pudimos cargar los productos.</b>
+        <p>Revisa tu conexión y vuelve a intentarlo, o escríbenos y te ayudamos con tu pedido.</p>
+        <div class="empty__actions"><button class="btn btn--outlined" type="button" onclick="location.reload()">Intentar de nuevo</button><a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />Pedir por WhatsApp</a></div>
       </div>
 
       <div class="empty" data-empty hidden>
@@ -123,16 +128,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
       <p class="mini__gift" data-gift><span class="ms" aria-hidden="true">redeem</span><span data-gift-text></span></p>
       <div class="mini__extras" data-extras>
         <span>Súmale a tu pedido</span>
-        {extras.map((p) => {
-          const v = p.variants[0];
-          return (
-            <div class="extra" data-extra={p.id}>
-              <span class="extra__ic" style={`background:${p.tone}`} aria-hidden="true"><span class="ms">{p.icon}</span></span>
-              <span class="extra__txt"><a href={productUrl(p)}>{p.name}</a><span>{money(v.price)}</span></span>
-              <button class="add add--sm" type="button" aria-label={`Agregar ${p.name} al carrito`} data-add={JSON.stringify(cartPayload(p, v))}><span class="ms" aria-hidden="true">add</span></button>
-            </div>
-          );
-        })}
+        <div data-extras-list></div>
       </div>
       <a class="btn btn--alma mini__go" href="/carrito" data-mini-filled hidden>Ver carrito y pagar<span class="ms" aria-hidden="true">arrow_forward</span></a>
       <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
@@ -163,10 +159,13 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
 
 <script>
   import { cart, progress, money } from '../scripts/cart';
+  import { catalogo, tarjeta, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
+  import { supabaseReady } from '../scripts/supabase';
+  import '../scripts/add-buttons';
 
   /* ---------- filtros, búsqueda y orden ---------- */
   const grid = document.querySelector<HTMLElement>('[data-grid]')!;
-  const cards = [...grid.querySelectorAll<HTMLElement>('[data-prod]')];
+  let cards: HTMLElement[] = [];
   const filters = document.querySelector<HTMLElement>('[data-filters]')!;
   const search = document.querySelector<HTMLInputElement>('[data-search]')!;
   const sort = document.querySelector<HTMLSelectElement>('[data-sort]')!;
@@ -198,14 +197,14 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
     }
     const by: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
       dest: (a, b) => Number(a.dataset.i) - Number(b.dataset.i),
-      top: (a, b) => Number(b.dataset.sold) - Number(a.dataset.sold),
+      top: (a, b) => Number(b.dataset.top) - Number(a.dataset.top) || Number(a.dataset.i) - Number(b.dataset.i),
       new: (a, b) => b.dataset.added!.localeCompare(a.dataset.added!),
       asc: (a, b) => Number(a.dataset.price) - Number(b.dataset.price),
       desc: (a, b) => Number(b.dataset.price) - Number(a.dataset.price)
     };
     [...cards].sort(by[sort.value]).forEach((c) => grid.append(c));
     document.querySelector('[data-count]')!.textContent = String(shown);
-    document.querySelector<HTMLElement>('[data-empty]')!.hidden = shown > 0;
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = shown > 0 || !cards.length;
     const n = para.length + talla.length + (min ? 1 : 0) + (max ? 1 : 0) + (inStock.checked ? 0 : 1);
     const badge = document.querySelector<HTMLElement>('[data-filter-n]')!;
     badge.textContent = String(n); badge.hidden = n === 0;
@@ -294,9 +293,32 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
     paint();
     dock.classList.remove('bump'); void dock.offsetWidth; dock.classList.add('bump');
   });
-  // /petshop#higiene abre la categoría (lo usan las migas de la ficha)
-  const fromHash = chips.find((b) => b.dataset.cat && b.dataset.cat === location.hash.slice(1));
-  if (fromHash) fromHash.click(); else apply();
+  /* ---------- catálogo ---------- */
+  catalogo().then((lista) => {
+    grid.innerHTML = lista.map(tarjeta).join('');
+    grid.removeAttribute('aria-busy');
+    cards = [...grid.querySelectorAll<HTMLElement>('[data-prod]')];
+    document.querySelector<HTMLElement>('[data-demo]')!.hidden = supabaseReady;
+    // "Súmale a tu pedido": productos de una sola presentación, los más baratos primero
+    const extras = lista.filter((p) => p.variantes.length === 1 && stockDe(p) > 0)
+      .sort((a, b) => a.variantes[0].precio - b.variantes[0].precio).slice(0, 6);
+    mini.querySelector('[data-extras-list]')!.innerHTML = extras.map((p) => {
+      const v = p.variantes[0];
+      return `<div class="extra" data-extra="${esc(p.slug)}">
+        <span class="extra__ic" style="background:${TONOS[p.tono] ?? TONOS.lav}" aria-hidden="true">${portada(p)}</span>
+        <span class="extra__txt"><a href="${productoUrl(p.slug)}">${esc(p.nombre)}</a><span>${money(v.precio)}</span></span>
+        <button class="add add--sm" type="button" aria-label="Agregar ${esc(p.nombre)} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add</span></button>
+      </div>`;
+    }).join('');
+    paint();
+    // /petshop#higiene abre la categoría (lo usan las migas de la ficha)
+    const fromHash = chips.find((b) => b.dataset.cat && b.dataset.cat === location.hash.slice(1));
+    if (fromHash) fromHash.click(); else apply();
+  }).catch(() => {
+    grid.hidden = true;
+    document.querySelector<HTMLElement>('[data-fail]')!.hidden = false;
+    document.querySelector('[data-count]')!.textContent = '0';
+  });
 </script>
 
 <style>
@@ -374,12 +396,16 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
     .fgroup { border: 0; padding: 0; }
   }
 
+  .prod--cargando { min-height: 300px; background: linear-gradient(100deg, #fff 40%, var(--surface-2) 50%, #fff 60%) 0 0 / 200% 100%; animation: cargando 1.4s linear infinite; }
+  .prod--cargando span { display: none; }
+  @keyframes cargando { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .prod--cargando { animation: none; } }
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
 
 
   .empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); text-align: center; }
-  .empty[hidden] { display: none; }
+  .empty[hidden], .grid[hidden] { display: none; }
   .empty > .ms { font-size: 36px; color: var(--primary); }
   .empty b { font: 600 18px/1.3 var(--font-sans); }
   .empty p { color: var(--ink-muted); max-width: 40ch; }
@@ -390,7 +416,7 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
   .mini h2 { display: flex; align-items: center; gap: 8px; font: 600 22px/1.3 var(--font-sans); }
   .mini h2 .ms { color: var(--primary); }
   .mini__empty { font-size: 15px; line-height: 1.5; color: var(--ink-muted); }
-  .mini__empty[hidden], [data-mini-filled][hidden], .mini__gift[hidden], .mini__extras[hidden], .extra[hidden] { display: none; }
+  .mini__empty[hidden], [data-mini-filled][hidden], .mini__gift[hidden], .mini__extras[hidden], .mini :global(.extra[hidden]) { display: none; }
   .mini__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
   .mini__list :global(li) { display: flex; align-items: center; gap: 12px; }
   .mini__list :global(.mini__ic) { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
@@ -410,13 +436,14 @@ const extras = PRODUCTS.filter((p) => p.variants.length === 1 && stockOf(p) > 0)
   .mini__gift .ms { font-size: 24px; }
   .mini__extras { display: flex; flex-direction: column; gap: 10px; }
   .mini__extras > span { font: 600 14px/1 var(--font-sans); color: var(--ink-muted); }
-  .extra { display: flex; align-items: center; gap: 10px; }
-  .extra__ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
-  .extra__ic .ms { font-size: 20px; }
-  .extra__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; font: 500 14.5px/1.3 var(--font-sans); }
-  .extra__txt a { color: var(--ink); text-decoration: none; }
-  .extra__txt a:hover { text-decoration: underline; }
-  .extra__txt span { color: var(--ink-muted); }
+  .mini :global(.extra) { display: flex; align-items: center; gap: 10px; }
+  .mini :global(.extra__ic) { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
+  .mini :global(.extra__ic .ms) { font-size: 20px; }
+  .mini :global(.extra__ic img) { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+  .mini :global(.extra__txt) { flex: 1; min-width: 0; display: flex; flex-direction: column; font: 500 14.5px/1.3 var(--font-sans); }
+  .mini :global(.extra__txt a) { color: var(--ink); text-decoration: none; }
+  .mini :global(.extra__txt a:hover) { text-decoration: underline; }
+  .mini :global(.extra__txt span) { color: var(--ink-muted); }
   .mini__go { height: 52px; font-size: 17px; }
 
   @media (min-width: 1200px) {

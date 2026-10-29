@@ -1,13 +1,13 @@
 ---
 // Molde de las páginas del gestor interno (/gestor). No aparece en Google ni carga lo del sitio público
-// (pie de página, botón de WhatsApp). Cada página monta su módulo de React con client:only.
+// (pie de página, botón de WhatsApp). Cada página monta su pantalla de React con src/gestor/montar.ts.
 import '../styles/global.css';
 import '../gestor/gestor.css';
 
 interface Props { title: string }
 const { title } = Astro.props;
 // íconos del gestor (deben ir en orden alfabético)
-const ICONS = ['account_balance', 'add', 'admin_panel_settings', 'arrow_back', 'arrow_forward', 'article', 'badge', 'bolt', 'calendar_month', 'cancel', 'chat', 'check', 'check_circle', 'close', 'done_all', 'group', 'help', 'inbox', 'inventory_2', 'local_atm', 'local_shipping', 'lock', 'logout', 'mail', 'menu', 'notifications', 'person_add', 'pets', 'print', 'receipt_long', 'redeem', 'refresh', 'schedule', 'search', 'sell', 'send', 'shower', 'space_dashboard', 'storefront', 'undo', 'vaccines', 'visibility', 'visibility_off', 'web'];
+const ICONS = ['account_balance', 'add', 'add_photo_alternate', 'admin_panel_settings', 'arrow_back', 'arrow_forward', 'article', 'badge', 'bolt', 'brush', 'calendar_month', 'campaign', 'cancel', 'chat', 'check', 'check_circle', 'checkroom', 'clean_hands', 'close', 'content_copy', 'cookie', 'delete', 'done_all', 'group', 'help', 'hourglass_top', 'inbox', 'inventory_2', 'list_alt', 'local_atm', 'local_shipping', 'lock', 'logout', 'loyalty', 'mail', 'medication', 'menu', 'notifications', 'payments', 'person_add', 'pets', 'point_of_sale', 'print', 'receipt_long', 'redeem', 'refresh', 'schedule', 'search', 'sell', 'send', 'set_meal', 'shopping_bag', 'shower', 'soap', 'space_dashboard', 'sports_baseball', 'storefront', 'tune', 'undo', 'vaccines', 'visibility', 'visibility_off', 'web'];
 ---
 <!doctype html>
 <html lang="es-CO">

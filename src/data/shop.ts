@@ -1,6 +1,6 @@
-// Tienda. Más adelante los productos, precios, existencias y ventas saldrán del gestor (Supabase).
-// Mientras tanto el catálogo es de EJEMPLO: la página lo dice y no se publica así.
-export const DEMO = true;
+// Tienda: reglas de envío, categorías y etiquetas. Los productos salen de Supabase (los maneja el gestor);
+// los de este archivo son de EJEMPLO y solo se usan si Supabase no está configurado.
+export const DEMO = !(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
 
 // Reglas de envío y obsequio (confirmadas con la Dra.)
 export const SHIPPING = {
@@ -105,13 +105,3 @@ export const BUY_STEPS = [
 ];
 
 export const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-export const minPrice = (p: Product) => Math.min(...p.variants.map((v) => v.price));
-export const stockOf = (p: Product) => p.variants.reduce((s, v) => s + v.stock, 0);
-export const productUrl = (p: Product) => `/producto/${p.id}`;
-export const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)!.label;
-export const forLabel = (p: Product) => (p.for.length > 1 ? 'Perros y gatos' : p.for[0] === 'perro' ? 'Perros' : 'Gatos');
-// lo que guarda el carrito de cada producto/variante (data-add)
-export const cartPayload = (p: Product, v: Variant) => ({ id: p.id, name: p.name, variant: v.label, price: v.price, icon: p.icon, tone: p.tone, max: v.stock });
-// "250 ml, 500 ml, 1 litro" o "4 tallas"
-export const variantSummary = (p: Product) =>
-  p.variants.length < 2 ? '' : p.variants.length > 3 ? `${p.variants.length} ${p.variantKind === 'Talla' ? 'tallas' : 'opciones'}` : p.variants.map((v) => v.label).join(', ');

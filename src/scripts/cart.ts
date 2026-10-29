@@ -2,7 +2,7 @@
 // hasta que hace el pedido). Si el navegador bloquea el almacenamiento, funciona solo en memoria.
 import { SHIPPING, GIFT } from '../data/shop';
 
-export interface CartItem { key: string; id: string; name: string; variant: string; price: number; qty: number; icon: string; tone: string; max: number }
+export interface CartItem { key: string; id: string; vid?: string; name: string; variant: string; price: number; qty: number; icon: string; tone: string; max: number }
 
 const KEY = 'alma-carrito';
 let memory: CartItem[] = [];
@@ -21,7 +21,7 @@ export const cart = {
   count: () => read().reduce((s, i) => s + i.qty, 0),
   subtotal: () => read().reduce((s, i) => s + i.qty * i.price, 0),
   add(item: Omit<CartItem, 'key' | 'qty'>, qty = 1) {
-    const key = `${item.id}:${item.variant}`;
+    const key = item.vid ?? `${item.id}:${item.variant}`;
     const items = read();
     const found = items.find((i) => i.key === key);
     if (found) found.qty = Math.min(found.qty + qty, item.max);
