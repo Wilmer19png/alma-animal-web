@@ -39,7 +39,10 @@ export const when = (iso: string) => {
   const lead = diff === 0 ? 'Hoy' : diff === 1 ? 'Ayer' : diff < 7 ? DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1) : `${d.getDate()} ${MESES[d.getMonth()]}`;
   return `${lead}, ${hora(d)}`;
 };
-export const longDay = (d = new Date()) => `${DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1)} ${d.getDate()} de ${['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][d.getMonth()]}`;
+// "23 oct 2026" (y "oct 26" para gráficas)
+export const fechaCorta = (iso: string) => { const d = new Date(iso); return `${d.getDate()} ${MESES[d.getMonth()]} ${d.getFullYear()}`; };
+export const mesCorto = (iso: string) => { const d = new Date(iso); return `${MESES[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`; };
+export const longDay =(d = new Date()) => `${DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1)} ${d.getDate()} de ${['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][d.getMonth()]}`;
 
 // celular colombiano → número para wa.me (57 + 10 dígitos)
 export const waNumber = (cel: string) => {

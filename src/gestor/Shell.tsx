@@ -10,8 +10,8 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   { grp: 'General', items: [{ id: 'hoy', txt: 'Hoy', icon: 'space_dashboard', href: '/gestor', listo: false }] },
   { grp: 'Clínica', items: [
     { id: 'agenda', txt: 'Agenda', icon: 'calendar_month', href: '/gestor/agenda', listo: false },
-    { id: 'pacientes', txt: 'Pacientes', icon: 'pets', href: '/gestor/pacientes', listo: false },
-    { id: 'propietarios', txt: 'Propietarios', icon: 'group', href: '/gestor/propietarios', listo: false },
+    { id: 'pacientes', txt: 'Pacientes', icon: 'pets', href: '/gestor/pacientes', listo: true },
+    { id: 'propietarios', txt: 'Propietarios', icon: 'group', href: '/gestor/propietarios', listo: true },
     { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: false }
   ] },
   { grp: 'Spa', items: [

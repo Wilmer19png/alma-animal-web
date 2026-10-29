@@ -60,7 +60,7 @@ y lee y guarda en Supabase. Código en `src/gestor/`; cada pantalla se monta des
 Sin Supabase conectado funciona con **datos de ejemplo** (botón «Entrar con datos de ejemplo»), también en la vista previa:
 abre `vista-previa/gestor/ingresar.html`.
 
-Módulos listos: Pedidos y Productos e inventario. Los demás aparecen en el menú como «Pronto».
+Módulos listos: Pedidos, Productos e inventario, Propietarios, Pacientes (ficha e historia clínica) y Registrar paciente. Los demás aparecen en el menú como «Pronto».
 
 La tienda (Petshop, ficha `/producto?p=…`, sugerencias del carrito, producto recomendado del blog y avisos de compra)
 lee el catálogo de Supabase en el navegador: lo que se cambia en el gestor se ve al instante, sin volver a publicar.
