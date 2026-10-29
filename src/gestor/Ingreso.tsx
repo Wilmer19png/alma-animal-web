@@ -38,7 +38,7 @@ export function Ingreso() {
   const [clave, setClave] = useState('');
   const [error, setError] = useState('');
   const [ocupado, setOcupado] = useState(false);
-  useEffect(() => { if (s.estado === 'dentro') go('/gestor/pedidos'); }, [s.estado]);
+  useEffect(() => { if (s.estado === 'dentro') go('/gestor'); }, [s.estado]);
 
   const enviar = async (e: FormEvent) => {
     e.preventDefault();
@@ -75,7 +75,7 @@ export function Ingreso() {
       {DEMO && (
         <div className="ing__demo">
           <span>La base de datos todavía no está conectada.</span>
-          <button className="gbtn out ing__btn" type="button" onClick={() => { entrarEjemplo(); go('/gestor/pedidos'); }}>Entrar con datos de ejemplo</button>
+          <button className="gbtn out ing__btn" type="button" onClick={() => { entrarEjemplo(); go('/gestor'); }}>Entrar con datos de ejemplo</button>
         </div>
       )}
     </Marco>
@@ -98,7 +98,7 @@ export function NuevaClave() {
   if (listo) {
     return (
       <Marco titulo="Contraseña guardada" sub="Ya puedes entrar al gestor con tu contraseña nueva.">
-        <button className="gbtn ing__btn" type="button" onClick={() => go('/gestor/pedidos')}>Ir al gestor</button>
+        <button className="gbtn ing__btn" type="button" onClick={() => go('/gestor')}>Ir al gestor</button>
       </Marco>
     );
   }

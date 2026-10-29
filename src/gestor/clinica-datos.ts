@@ -137,6 +137,25 @@ export async function registrosDe(pacienteIds: string[]): Promise<Registro[]> {
   if (error) throw falla('la historia clínica');
   return data as Registro[];
 }
+// vacunas y desparasitaciones cuya próxima dosis ya pasó o llega pronto (solo la aplicación más reciente de cada una)
+export async function proximasDosis(dias = 15): Promise<Registro[]> {
+  let regs: Registro[];
+  if (DEMO) regs = ej.regs().filter((r) => r.tipo === 'vacuna' || r.tipo === 'desparasitacion');
+  else {
+    const { data, error } = await sb!.from('registros').select('*').in('tipo', ['vacuna', 'desparasitacion']).order('fecha', { ascending: false }).limit(5000);
+    if (error) return [];
+    regs = data as Registro[];
+  }
+  const vistos = new Set<string>();
+  const limite = new Date(Date.now() + dias * 86400000).toISOString().slice(0, 10);
+  return regs.sort((a, b) => b.fecha.localeCompare(a.fecha)).filter((r) => {
+    const k = r.paciente_id + '|' + r.titulo;
+    if (vistos.has(k)) return false;
+    vistos.add(k);
+    return !!r.datos.proxima && r.datos.proxima <= limite;
+  }).sort((a, b) => a.datos.proxima.localeCompare(b.datos.proxima));
+}
+
 // compras de la tienda con el mismo celular
 export async function comprasDe(celular: string): Promise<Compra[]> {
   const n = celNorm(celular);

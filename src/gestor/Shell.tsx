@@ -7,9 +7,9 @@ import { link, go, asset, DEMO } from './lib';
 
 interface Item { id: string; txt: string; icon: string; href: string; listo: boolean }
 const GRUPOS: { grp: string; items: Item[] }[] = [
-  { grp: 'General', items: [{ id: 'hoy', txt: 'Hoy', icon: 'space_dashboard', href: '/gestor', listo: false }] },
+  { grp: 'General', items: [{ id: 'hoy', txt: 'Hoy', icon: 'space_dashboard', href: '/gestor', listo: true }] },
   { grp: 'Clínica', items: [
-    { id: 'agenda', txt: 'Agenda', icon: 'calendar_month', href: '/gestor/agenda', listo: false },
+    { id: 'agenda', txt: 'Agenda', icon: 'calendar_month', href: '/gestor/agenda', listo: true },
     { id: 'pacientes', txt: 'Pacientes', icon: 'pets', href: '/gestor/pacientes', listo: true },
     { id: 'propietarios', txt: 'Propietarios', icon: 'group', href: '/gestor/propietarios', listo: true },
     { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: false }
@@ -29,7 +29,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   ] },
   { grp: 'Ajustes', items: [
     { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: false },
-    { id: 'horarios', txt: 'Horarios', icon: 'schedule', href: '/gestor/horarios', listo: false },
+    { id: 'horarios', txt: 'Horarios', icon: 'schedule', href: '/gestor/horarios', listo: true },
     { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: false }
   ] }
 ];
@@ -104,7 +104,7 @@ export default function Shell({ activo, insignias = {}, children }: { activo: st
     <div className="g">
       <a className="skip" href="#modulo">Saltar al contenido</a>
       <aside className="side" aria-label="Menú del gestor">
-        <a className="side__logo" href={link('/gestor/pedidos')}>
+        <a className="side__logo" href={link('/gestor')}>
           <span><img src={asset(heart.src)} alt="" width={34} /></span>
           <span><b>Alma Animal</b><small>Gestor interno</small></span>
         </a>
@@ -113,7 +113,7 @@ export default function Shell({ activo, insignias = {}, children }: { activo: st
       </aside>
 
       <div className="gbar">
-        <a className="gbar__logo" href={link('/gestor/pedidos')}><span><img src={asset(heart.src)} alt="" width={26} /></span>Alma Animal</a>
+        <a className="gbar__logo" href={link('/gestor')}><span><img src={asset(heart.src)} alt="" width={26} /></span>Alma Animal</a>
         <button type="button" className="gbar__ic" aria-label="Salir del gestor" onClick={() => salir().then(() => go('/gestor/ingresar'))}><span className="ms" aria-hidden="true">logout</span></button>
       </div>
 

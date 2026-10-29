@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
-import { whatsapp, PHONES, HOURS } from '../data/site';
+import { whatsapp, PHONES, HOURS, LEGAL } from '../data/site';
 
 const STEPS = ['Tu mascota', 'El servicio', 'Fecha y hora', 'Tus datos', 'Revisar'];
 // horas de inicio posibles (cada baño toma unas 2 horas); el sábado solo en la mañana
@@ -30,7 +30,7 @@ const SLOTS = [
 
   <!-- ======== FORMULARIO POR PASOS ======== -->
   <section class="wrap booking" aria-label="Formulario de cita de spa">
-    <form id="spa-form" class="booking__form" novalidate data-whatsapp={PHONES.vet.e164}>
+    <form id="spa-form" class="booking__form" novalidate data-whatsapp={PHONES.vet.e164} data-legal={LEGAL.updated}>
       <ol class="wiz" aria-label="Pasos para agendar">
         {STEPS.map((s, i) => (
           <li class:list={[{ now: i === 0, todo: i > 0 }]} data-wiz-item>
@@ -98,13 +98,20 @@ const SLOTS = [
       <div class="panel review" data-step="4" hidden>
         <div class="review__head">
           <h2 class="step"><i>5</i>Revisa tu cita</h2>
-          <p class="hint">Si todo está bien, envíala. Se abre WhatsApp con tus datos listos y te confirmamos la hora y el precio.</p>
+          <p class="hint">Si todo está bien, envíala. Te escribimos por WhatsApp para confirmar la hora y el precio.</p>
         </div>
         <dl class="review__list" data-review></dl>
-        <button class="btn btn--alma btn--send" type="submit"><WaIcon size={22} class="" />Solicitar cita por WhatsApp</button>
+        <button class="btn btn--alma btn--send" type="submit"><span class="ms" aria-hidden="true">check</span><span data-send-txt>Solicitar cita</span></button>
+        <!-- solicitud recibida: queda en el gestor (Hoy · Por atender) -->
         <div class="sent" role="status" data-sent hidden>
           <span class="ms fill" aria-hidden="true">check_circle</span>
-          <span><b>¡Listo!</b> Se abrió WhatsApp con tu solicitud. Si no se abrió, <a href="#" data-sent-link target="_blank" rel="noopener">tócala aquí</a>.</span>
+          <span><b>¡Listo, <span data-sent-name></span>!</b> Recibimos tu solicitud para <span data-sent-pet></span>. En breve te escribimos por WhatsApp para confirmar la hora y el precio.
+            <span class="sent__alt">¿Prefieres escribirnos primero? <a href="#" data-sent-wa target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.</span></span>
+        </div>
+        <!-- no se pudo guardar: la solicitud sale completa por WhatsApp -->
+        <div class="sent sent--warn" role="alert" data-fail hidden>
+          <span class="ms" aria-hidden="true">wifi_off</span>
+          <span><b>No pudimos enviar tu solicitud.</b> Revisa tu conexión e inténtalo de nuevo, o <a href="#" data-fail-wa target="_blank" rel="noopener">envíala por WhatsApp</a> (ya va escrita).</span>
         </div>
       </div>
 
@@ -137,6 +144,7 @@ const SLOTS = [
 </Base>
 
 <script>
+  import { insert, supabaseReady } from '../scripts/supabase';
   const form = document.querySelector<HTMLFormElement>('#spa-form')!;
   const panels = [...form.querySelectorAll<HTMLElement>('[data-step]')];
   const wizItems = [...form.querySelectorAll<HTMLElement>('[data-wiz-item]')];
@@ -288,9 +296,13 @@ const SLOTS = [
   back.addEventListener('click', () => go(Math.max(0, step - 1)));
   wizItems.forEach((li, i) => li.querySelector('button')!.addEventListener('click', () => { if (i < step) go(i); }));
 
-  // envío: arma el mensaje y abre WhatsApp (cuando exista el gestor, también se guardará allá)
-  form.addEventListener('submit', (e) => {
+  // envío: la solicitud queda en la agenda del gestor como "por confirmar" (el cliente no tiene que escribir nada)
+  const wa = (t: string) => `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(t)}`;
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+  let enviando = false;
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (enviando) return;
     const msg = [
       'Hola, Alma Animal. Quiero agendar un baño en el spa.',
       `Mascota: ${petLine()}`,
@@ -299,12 +311,33 @@ const SLOTS = [
       `Día y hora preferida: ${when()}`,
       `Mis datos: ${val('nombre')} ${val('apellido')} · ${val('celular')}${val('correo') ? ' · ' + val('correo') : ''}`
     ].filter(Boolean).join('\n');
-    const url = `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank', 'noopener');
-    const sent = form.querySelector<HTMLElement>('[data-sent]')!;
-    sent.hidden = false;
-    form.querySelector<HTMLAnchorElement>('[data-sent-link]')!.href = url;
-    nav.hidden = true;
+    const hora = radio('hora')!.value; // "09:30"
+    const inicio = new Date(`${date.value}T${hora}:00`);
+    const fin = new Date(inicio.getTime() + 120 * 60000);
+    enviando = true;
+    form.querySelector('[data-send-txt]')!.textContent = 'Enviando…';
+    const res = PREVIEW ? 'ok' : await insert('citas', {
+      servicio: 'spa', carril: 'spa', estado: 'solicitada', origen: 'web', sobrecupo: false,
+      inicio: inicio.toISOString(), fin: fin.toISOString(), acepto_datos: true, version_politicas: form.dataset.legal,
+      datos: {
+        mascota: val('mascota'), especie: radio('especie')?.value ?? 'perro', raza: val('raza'), peso: val('peso'), edad: val('edad'),
+        notas: val('notas'), servicio: service(), nombre: `${val('nombre')} ${val('apellido')}`.trim(), celular: val('celular'), correo: val('correo')
+      }
+    });
+    enviando = false;
+    form.querySelector('[data-send-txt]')!.textContent = 'Solicitar cita';
+    if (res === 'ok') {
+      form.querySelector('[data-sent-name]')!.textContent = val('nombre');
+      form.querySelector('[data-sent-pet]')!.textContent = val('mascota');
+      form.querySelector<HTMLAnchorElement>('[data-sent-wa]')!.href = wa(`Hola, Alma Animal. Acabo de pedir un baño para ${val('mascota')} (${when()}).`);
+      form.querySelector<HTMLElement>('[data-sent]')!.hidden = false;
+      form.querySelector<HTMLElement>('[data-fail]')!.hidden = true;
+      form.querySelector<HTMLElement>('.btn--send')!.hidden = true;
+      nav.hidden = true;
+    } else {
+      form.querySelector<HTMLAnchorElement>('[data-fail-wa]')!.href = wa(msg);
+      form.querySelector<HTMLElement>('[data-fail]')!.hidden = false;
+    }
   });
 
   // en celular el resumen va al final: se oculta mientras se llena el formulario
@@ -399,6 +432,10 @@ const SLOTS = [
   .sent { display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128; font: 500 16px/1.45 var(--font-sans); }
   .sent[hidden] { display: none; }
   .sent a { color: #1D5128; font-weight: 600; }
+  .sent__alt { display: block; margin-top: 6px; font-size: 15px; }
+  .sent--warn { background: #FFDDB2; color: #624000; }
+  .sent--warn a { color: #624000; }
+  .btn--send[hidden] { display: none; }
   .sent .ms { font-size: 26px; font-variation-settings: "FILL" 1; }
 
   /* navegación de pasos: fija abajo en celular */
