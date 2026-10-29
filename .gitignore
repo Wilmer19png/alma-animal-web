@@ -9,3 +9,5 @@ dist/
 .impeccable/
 # vista previa para abrir con doble clic (npm run vista)
 vista-previa/
+# archivo de instalación de una sola vez
+supabase/PEGAR-EN-SUPABASE.sql
