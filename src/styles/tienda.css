@@ -12,6 +12,7 @@
 .stock.out { background: #fff; color: var(--ink-muted); }
 .tag { position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px); font: 600 11px/1.2 var(--font-sans); padding: 5px 8px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: 0 1px 2px rgb(54 41 84 / .14); }
 .tag.sale { color: #910809; }
+.off { position: absolute; right: 8px; top: 8px; font: 700 12px/1 var(--font-sans); padding: 6px 9px; border-radius: 999px; background: #BA1A1A; color: #fff; letter-spacing: .01em; }
 .prod__body { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 12px; }
 .prod__cat { font: 600 12.5px/1.3 var(--font-sans); color: var(--primary); }
 .prod__cat span { font-weight: 500; color: var(--ink-muted); }

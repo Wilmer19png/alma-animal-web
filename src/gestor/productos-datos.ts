@@ -5,7 +5,7 @@ import { sb, DEMO, store } from './lib';
 import { PRODUCTS } from '../data/shop';
 import { TONOS } from '../scripts/catalogo';
 
-export interface Var { id?: string; nombre: string; codigo: string | null; precio: number; costo: number; stock: number; orden: number; activo: boolean }
+export interface Var { id?: string; nombre: string; codigo: string | null; precio: number; precio_antes?: number | null; costo: number; stock: number; orden: number; activo: boolean }
 export interface Prod {
   id?: string; slug: string; nombre: string; categoria: string; para: string[]; tamanos: string[]; marca: string | null;
   descripcion: string; tipo_variante: string | null; etiquetas: string[]; icono: string; tono: string;
@@ -31,7 +31,7 @@ export const nuevoProducto = (): Prod => ({
 export const stockTotal = (p: Prod) => p.variantes.filter((v) => v.activo).reduce((s, v) => s + Math.max(0, v.stock), 0);
 export const pocoStock = (p: Prod) => p.variantes.some((v) => v.activo && v.stock <= p.aviso_stock);
 
-const CAMPOS = 'id,slug,nombre,categoria,para,tamanos,marca,descripcion,tipo_variante,etiquetas,icono,tono,caracteristicas,fotos,precio_antes,codigo,aviso_stock,pauta_mes,envio_unidad,visible,orden,creado,variantes(id,nombre,codigo,precio,costo,stock,orden,activo)';
+const CAMPOS = 'id,slug,nombre,categoria,para,tamanos,marca,descripcion,tipo_variante,etiquetas,icono,tono,caracteristicas,fotos,precio_antes,codigo,aviso_stock,pauta_mes,envio_unidad,visible,orden,creado,variantes(id,nombre,codigo,precio,precio_antes,costo,stock,orden,activo)';
 const ordenar = (p: Prod): Prod => ({ ...p, variantes: [...p.variantes].sort((a, b) => a.orden - b.orden) });
 
 /* ---------- modo de ejemplo ---------- */
@@ -44,7 +44,7 @@ function ejemplo(): Prod[] {
     tipo_variante: p.variants.length > 1 ? p.variantKind ?? 'Presentación' : null, etiquetas: p.tag && p.tag !== 'oferta' ? [p.tag] : [],
     icono: p.icon, tono: TONO_DE[p.tone] ?? 'lav', caracteristicas: p.specs ?? [], fotos: [], precio_antes: p.variants.find((v) => v.was)?.was ?? null,
     codigo: null, aviso_stock: 3, pauta_mes: 0, envio_unidad: 0, visible: true, orden: i, creado: p.added,
-    variantes: p.variants.map((v, k) => ({ id: `ej-${p.id}-${v.id}`, nombre: v.label, codigo: null, precio: v.price, costo: Math.round(v.price * 0.55 / 100) * 100, stock: v.stock, orden: k, activo: true }))
+    variantes: p.variants.map((v, k) => ({ id: `ej-${p.id}-${v.id}`, nombre: v.label, codigo: null, precio: v.price, precio_antes: v.was ?? null, costo: Math.round(v.price * 0.55 / 100) * 100, stock: v.stock, orden: k, activo: true }))
   }));
 }
 
@@ -93,7 +93,7 @@ export async function guardar(p: Prod, quitadas: string[]): Promise<Prod> {
   if (res.error) throw new Error('No se guardó el producto. Revisa los datos e inténtalo de nuevo.');
   const pid = res.data.id as string;
   for (const [k, v] of variantes.entries()) {
-    const datos = { nombre: v.nombre.trim() || 'Único', codigo: v.codigo?.trim() || null, precio: v.precio, costo: v.costo, orden: k, activo: true };
+    const datos = { nombre: v.nombre.trim() || 'Único', codigo: v.codigo?.trim() || null, precio: v.precio, precio_antes: v.precio_antes && v.precio_antes > v.precio ? v.precio_antes : null, costo: v.costo, orden: k, activo: true };
     const r = v.id
       ? await sb!.from('variantes').update(datos).eq('id', v.id)
       : await sb!.from('variantes').insert({ ...datos, producto_id: pid, stock: Math.max(0, v.stock) });

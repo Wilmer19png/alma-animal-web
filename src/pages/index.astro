@@ -1,4 +1,5 @@
 ---
+import SiteHeader from '../components/SiteHeader.astro';
 import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
@@ -37,6 +38,8 @@ const waVet = whatsapp.vet();
   title="Alma Animal · Veterinaria, spa y petshop en Pereira"
   description="Veterinaria en Pereira: consulta, vacunas, cirugía y atención a domicilio con la Dra. Mariana Hoyos. Spa con baño antipulgas y petshop con envío gratis."
 >
+  <SiteHeader slot="top" flotante />
+
   <!-- ======== HÉROE ======== -->
   <div class="wrap hero-wrap">
     <header class="hero">
