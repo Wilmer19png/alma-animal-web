@@ -1071,3 +1071,31 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 .eqcard > span:not(.eqcard__foto) { font: 400 14px/1.3 var(--font-serif, serif); color: var(--ink-muted); }
 .eqcard p { margin: 6px 0 0; font: 400 14px/1.5 var(--font-sans); color: var(--ink-muted); }
 .eqcard__vacio { font-style: italic; }
+
+/* ---------- ENVÍOS Y OBSEQUIO ---------- */
+.env { display: flex; flex-direction: column; gap: 16px; }
+.env__grid { display: grid; gap: 16px; align-items: start; }
+.env__col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (min-width: 1200px) { .env__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } .env__sim { position: sticky; top: 16px; } }
+.regla { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 8px 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line-soft); }
+.regla:first-of-type { border-top: 0; }
+.regla > .ms { color: var(--primary); align-self: start; margin-top: 2px; }
+.regla__t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.regla__t b { font: 600 15px/1.3 var(--font-sans); }
+.regla__t span { font: 400 13.5px/1.4 var(--font-sans); color: var(--ink-muted); }
+.regla__v { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.regla__v.filts { grid-column: 2 / -1; justify-content: flex-start; }
+.regla__v .filt .ms { font-size: 16px; }
+.regla__n { width: 130px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.regla__txt { width: 200px; }
+@media (max-width: 600px) {
+  .regla { grid-template-columns: 24px minmax(0, 1fr); }
+  .regla > .cell, .regla > .sw, .regla__v { grid-column: 2; justify-self: start; justify-content: flex-start; }
+}
+.sim { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 18px; background: var(--surface-2); }
+.sim small { font: 700 11px/1 var(--font-sans); letter-spacing: .08em; color: var(--ink-muted); }
+.sim__m { display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 14px; border-radius: 14px; background: #fff; font: 500 14.5px/1.4 var(--font-sans); }
+.sim__m .ms { color: var(--primary); }
+.sim__m--g { background: var(--grad-alma); color: #362954; }
+.sim__m--g .ms { color: #362954; }
+.sim .tot { border-radius: 14px; background: #fff; }

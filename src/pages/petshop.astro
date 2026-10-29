@@ -8,13 +8,13 @@ import Steps from '../components/Steps.astro';
 import SalesBuzz from '../components/SalesBuzz.astro';
 import { whatsapp } from '../data/site';
 import '../styles/tienda.css';
-import { CATEGORIES, BUY_STEPS, SHIPPING, money } from '../data/shop';
+import { CATEGORIES, BUY_STEPS, SHIPPING, money, CIUDADES } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tienda.');
 ---
 <Base
   title="Petshop · Alma Animal"
-  description="Alimento, higiene y accesorios recomendados por la doctora. Envío gratis en Pereira y Dosquebradas, y a toda Colombia desde $70.000."
+  description={`Alimento, higiene y accesorios recomendados por la doctora. Envío gratis en ${CIUDADES}, y a toda Colombia desde ${money(SHIPPING.freeFrom)}.`}
   waMessage="Hola, Alma Animal. Tengo una pregunta sobre la tienda."
   waArea="shop"
 >
@@ -28,9 +28,9 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
         <h1>Pet<span>shop</span></h1>
         <p data-c="petshop.heroe.texto" set:html={TX('petshop.heroe.texto')} />
         <ul class="perks">
-          <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+          <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en {CIUDADES}</li>
           <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia desde {money(SHIPPING.freeFrom)}</li>
-          <li><span class="ms" aria-hidden="true">bolt</span>Envío prioritario +{money(SHIPPING.priority)}</li>
+          {SHIPPING.priority > 0 && <li><span class="ms" aria-hidden="true">bolt</span>Envío prioritario +{money(SHIPPING.priority)}</li>}
         </ul>
       </div>
       <!-- empaques ilustrados (se cambian por fotos recortadas cuando las tengamos) -->
@@ -124,7 +124,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
       <div class="mini__ship">
         <span data-ship-text><span class="ms" aria-hidden="true">local_shipping</span> Envío gratis a toda Colombia desde <b>{money(SHIPPING.freeFrom)}</b></span>
         <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-ship-bar><i data-free-fill></i></div>
-        <small>En Pereira y Dosquebradas el envío siempre es gratis.</small>
+        <small>En {CIUDADES} el envío siempre es gratis.</small>
       </div>
       <p class="mini__gift" data-gift><span class="ms" aria-hidden="true">redeem</span><span data-gift-text></span></p>
       <div class="mini__extras" data-extras>
@@ -160,6 +160,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
 
 <script>
   import { cart, progress, money } from '../scripts/cart';
+  import { GIFT } from '../data/shop';
   import { catalogo, tarjeta, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
   import '../scripts/add-buttons';
@@ -269,7 +270,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
     fill.classList.toggle('is-full', p.freePct >= 100);
 
     const gift = mini.querySelector<HTMLElement>('[data-gift]')!;
-    gift.hidden = !has;
+    gift.hidden = !has || !GIFT.active;
     mini.querySelector('[data-gift-text]')!.innerHTML = p.toGift > 0
       ? `Agrega <b>${money(p.toGift)}</b> más y llévate un <b>obsequio</b>`
       : '¡Te ganaste un <b>snack dental</b> de obsequio!';

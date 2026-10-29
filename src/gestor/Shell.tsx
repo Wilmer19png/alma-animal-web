@@ -28,7 +28,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
     { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: true }
   ] },
   { grp: 'Ajustes', items: [
-    { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: false },
+    { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: true },
     { id: 'horarios', txt: 'Horarios', icon: 'schedule', href: '/gestor/horarios', listo: true },
     { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: false }
   ] }

@@ -2,14 +2,35 @@
 // los de este archivo son de EJEMPLO y solo se usan si Supabase no está configurado.
 export const DEMO = !(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
 
-// Reglas de envío y obsequio (confirmadas con la Dra.)
-export const SHIPPING = {
-  localCities: ['Pereira', 'Dosquebradas'], // siempre gratis
-  freeFrom: 70000, // gratis a toda Colombia desde este subtotal
-  flat: 20000, // valor fijo si no aplica lo anterior
-  priority: 5000 // envío prioritario
+// Reglas de envío, obsequio y pagos. Las cambia la doctora en el gestor (Envíos y obsequio) y llegan aquí al
+// publicar el sitio (ver astro.config.mjs). Estas son las de siempre, por si no hay conexión.
+export interface Envios {
+  ciudades: string[]; // envío siempre gratis
+  gratisDesde: number; // gratis a toda Colombia desde este subtotal
+  fijo: number; // valor del envío si no aplica lo anterior
+  prioritario: { activo: boolean; valor: number };
+  obsequio: { activo: boolean; desde: number; nombre: string };
+  pagos: { contraentrega: boolean; transferencia: boolean; consultorio: boolean };
+}
+export const ENVIOS_BASE: Envios = {
+  ciudades: ['Pereira', 'Dosquebradas'], gratisDesde: 70000, fijo: 20000,
+  prioritario: { activo: true, valor: 5000 },
+  obsequio: { activo: true, desde: 85000, nombre: 'snack dental' },
+  pagos: { contraentrega: true, transferencia: true, consultorio: true }
 };
-export const GIFT = { from: 85000, name: 'snack dental' };
+const CFG: Envios = { ...ENVIOS_BASE, ...(import.meta.env.PUBLIC_ENVIOS ? JSON.parse(import.meta.env.PUBLIC_ENVIOS) : {}) };
+export const SHIPPING = {
+  localCities: CFG.ciudades,
+  freeFrom: CFG.gratisDesde,
+  flat: CFG.fijo,
+  priority: CFG.prioritario.activo ? CFG.prioritario.valor : 0 // 0 = no se ofrece
+};
+const L = SHIPPING.localCities;
+export const CIUDADES = L.length > 1 ? L.slice(0, -1).join(', ') + ' y ' + L[L.length - 1] : L[0] ?? ''; // «Pereira y Dosquebradas»
+export const GIFT = { active: CFG.obsequio.activo, from: CFG.obsequio.activo ? CFG.obsequio.desde : Number.MAX_SAFE_INTEGER, name: CFG.obsequio.nombre };
+// "contraentrega, transferencia o en el consultorio"
+const PAGOS_TXT = [CFG.pagos.contraentrega && 'contraentrega', CFG.pagos.transferencia && 'transferencia', CFG.pagos.consultorio && 'en el consultorio'].filter(Boolean) as string[];
+export const PAGOS = PAGOS_TXT.length > 1 ? PAGOS_TXT.slice(0, -1).join(', ') + ' o ' + PAGOS_TXT[PAGOS_TXT.length - 1] : PAGOS_TXT[0] ?? 'transferencia';
 
 export const CATEGORIES = [
   { id: 'alimento', label: 'Alimento' },
