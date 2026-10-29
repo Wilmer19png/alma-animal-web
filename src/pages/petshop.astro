@@ -1,4 +1,5 @@
 ---
+import { TX, TT, CAMPOS } from '../data/contenido';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
@@ -25,7 +26,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
       <div class="shophead__copy">
         <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
         <h1>Pet<span>shop</span></h1>
-        <p>Alimento, higiene y accesorios recomendados por la doctora. Agrégalos al carrito y te los llevamos a casa.</p>
+        <p data-c="petshop.heroe.texto" set:html={TX('petshop.heroe.texto')} />
         <ul class="perks">
           <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
           <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia desde {money(SHIPPING.freeFrom)}</li>
@@ -136,14 +137,14 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   </section>
 
   <!-- ======== ASÍ COMPRAS ======== -->
-  <section class="wrap buy" aria-labelledby="cc">
+  <section class="wrap buy" aria-labelledby="cc" data-cb="petshop.compras">
     <div class="buy__panel">
-      <h2 id="cc" class="h-section">Así <b class="gt">compras</b></h2>
+      <h2 id="cc" class="h-section" data-ct="petshop.compras.titulo" set:html={TT('petshop.compras.titulo')} />
       <Steps steps={BUY_STEPS} />
     </div>
   </section>
 
-  <WaStrip href={waShop} title="¿No sabes cuál elegir?" text="Cuéntanos de tu mascota y la doctora te recomienda el producto." />
+  <WaStrip href={waShop} title={CAMPOS['petshop.wa.titulo'].def} text={CAMPOS['petshop.wa.texto'].def} k="petshop.wa.texto" kt="petshop.wa.titulo" />
 
   <!-- barra del carrito (celular y tableta) -->
   <div class="dock" data-dock hidden>

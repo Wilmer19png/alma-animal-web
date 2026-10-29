@@ -1,4 +1,5 @@
 ---
+import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -24,8 +25,8 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
       <div class="s-hero__copy">
         <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
         <h1>Spa <span>para mascotas</span></h1>
-        <p class="serif s-hero__motto">Un animalito limpio es un animalito sano.</p>
-        <p>Baño completo con shampoo hipoalergénico libre de parabenos, en el mismo lugar donde atiende la veterinaria.</p>
+        <p class="serif s-hero__motto" data-c="spa.heroe.lema" set:html={TX('spa.heroe.lema')} />
+        <p data-c="spa.heroe.texto" set:html={TX('spa.heroe.texto')} />
         <div class="s-hero__actions">
           <a class="btn btn--alma btn--lg" href="/agendar-spa">Agenda su baño<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
           <a class="wa-o" href={waSpa} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos por WhatsApp</a>
@@ -53,8 +54,8 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   <!-- ======== CADA BAÑO INCLUYE ======== -->
   <section class="wrap includes" aria-labelledby="inc" data-includes>
     <div class="section-head">
-      <h2 id="inc" class="h-section">Cada baño<br /><b class="gt">incluye</b></h2>
-      <p class="lead">Siempre con agua caliente, secado y protección de oídos.</p>
+      <h2 id="inc" class="h-section" data-ct="spa.incluye.titulo" set:html={TT('spa.incluye.titulo')} />
+      <p class="lead" data-c="spa.incluye.texto" set:html={TX('spa.incluye.texto')} />
     </div>
     <div class="includes__body">
       <div class="inc-arch" aria-live="polite">
@@ -88,11 +89,11 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   </section>
 
   <!-- ======== SEGÚN SU PELO Y SU PIEL ======== -->
-  <section class="wrap" aria-labelledby="pel">
+  <section class="wrap" aria-labelledby="pel" data-cb="spa.manto">
     <div class="coat">
       <div class="coat__intro">
-        <h2 id="pel" class="h-section coat__title">Según su <b class="gt">pelo y su piel</b></h2>
-        <p>No necesitas saber qué tipo de manto tiene tu mascota: lo revisamos al recibirla y te contamos qué le hace falta.</p>
+        <h2 id="pel" class="h-section coat__title" data-ct="spa.manto.titulo" set:html={TT('spa.manto.titulo')} />
+        <p data-c="spa.manto.texto" set:html={TX('spa.manto.texto')} />
       </div>
       <div class="coat__grid">
         {SPA_COAT.map((c) => <div class="coat__item"><b>{c.title}</b><p>{c.text}</p></div>)}
@@ -104,8 +105,8 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   <section class="wrap" aria-labelledby="pr">
     <div class="price">
       <div>
-        <h2 id="pr" class="h-section price__title">¿Cuánto <b class="gt">cuesta?</b></h2>
-        <p data-precio-txt>Depende de la raza, el tamaño y el estado del manto. Escríbenos con una foto de tu mascota y te damos el valor antes de agendar.</p>
+        <h2 id="pr" class="h-section price__title" data-ct="spa.precio.titulo" set:html={TT('spa.precio.titulo')} />
+        <p data-precio-txt data-c="spa.precio.texto" set:html={TX('spa.precio.texto')} />
         <ul class="tarifas" data-precios hidden></ul>
       </div>
       <div class="price__actions">
@@ -116,9 +117,9 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   </section>
 
   <!-- ======== ASÍ SALEN ======== -->
-  <section class="wrap results" aria-labelledby="ad">
+  <section class="wrap results" aria-labelledby="ad" data-cb="spa.salen">
     <div class="section-head section-head--row">
-      <h2 id="ad" class="h-section">Así <b class="gt">salen</b></h2>
+      <h2 id="ad" class="h-section" data-ct="spa.salen.titulo" set:html={TT('spa.salen.titulo')} />
       <a class="link" href="https://instagram.com/vet_alma_animal" target="_blank" rel="noopener">Ver más en Instagram<span class="ms" aria-hidden="true">arrow_forward</span></a>
     </div>
     <div class="results__grid">
@@ -129,7 +130,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   </section>
 
   <!-- ======== WHATSAPP ======== -->
-  <WaStrip href={waPrice} text="Mándanos una foto de tu mascota y te decimos el precio del baño." />
+  <WaStrip href={waPrice} text={CAMPOS['spa.wa.texto'].def} k="spa.wa.texto" />
 </Base>
 
 <script>
@@ -159,7 +160,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
     }).join('');
     ul.hidden = false;
     const p = document.querySelector('[data-precio-txt]');
-    if (p) p.textContent = 'El valor final depende del peso y del estado del manto. Te lo confirmamos por WhatsApp antes de agendar.';
+    if (p) { p.textContent = 'El valor final depende del peso y del estado del manto. Te lo confirmamos por WhatsApp antes de agendar.'; p.removeAttribute('data-c'); }
   }
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

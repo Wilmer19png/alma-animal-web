@@ -23,7 +23,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
     { id: 'productos', txt: 'Productos e inventario', icon: 'inventory_2', href: '/gestor/productos', listo: true }
   ] },
   { grp: 'Sitio web', items: [
-    { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: false },
+    { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: true },
     { id: 'blog', txt: 'Blog', icon: 'article', href: '/gestor/blog', listo: false },
     { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: false }
   ] },

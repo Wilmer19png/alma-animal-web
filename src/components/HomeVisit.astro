@@ -2,10 +2,10 @@
 // Tarjeta morada del servicio a domicilio: el texto llega por <slot />, la doctora en moto va a la derecha.
 import { Image } from 'astro:assets';
 import moto from '../assets/mariana-moto.png';
-interface Props { titleId: string }
-const { titleId } = Astro.props;
+interface Props { titleId: string; cb?: string }
+const { titleId, cb } = Astro.props;
 ---
-<section id="domicilio" class="wrap home-visit-wrap" aria-labelledby={titleId}>
+<section id="domicilio" class="wrap home-visit-wrap" aria-labelledby={titleId} data-cb={cb}>
   <div class="home-visit on-dark">
     <div class="home-visit__copy">
       <slot />
