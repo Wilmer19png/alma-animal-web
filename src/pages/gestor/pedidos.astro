@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Pedidos">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Pedidos from '../../gestor/Pedidos';
+    montar(Pedidos);
+  </script>
+</GestorLayout>

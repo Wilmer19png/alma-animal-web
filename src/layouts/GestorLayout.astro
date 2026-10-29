@@ -1,0 +1,29 @@
+---
+// Molde de las páginas del gestor interno (/gestor). No aparece en Google ni carga lo del sitio público
+// (pie de página, botón de WhatsApp). Cada página monta su módulo de React con client:only.
+import '../styles/global.css';
+import '../gestor/gestor.css';
+
+interface Props { title: string }
+const { title } = Astro.props;
+// íconos del gestor (deben ir en orden alfabético)
+const ICONS = ['account_balance', 'add', 'admin_panel_settings', 'arrow_back', 'arrow_forward', 'article', 'badge', 'bolt', 'calendar_month', 'cancel', 'chat', 'check', 'check_circle', 'close', 'done_all', 'group', 'help', 'inbox', 'inventory_2', 'local_atm', 'local_shipping', 'lock', 'logout', 'mail', 'menu', 'notifications', 'person_add', 'pets', 'print', 'receipt_long', 'redeem', 'refresh', 'schedule', 'search', 'sell', 'send', 'shower', 'space_dashboard', 'storefront', 'undo', 'vaccines', 'visibility', 'visibility_off', 'web'];
+---
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{title} · Gestor Alma Animal</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#2B1E48" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
+  <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&icon_names=${ICONS.join(',')}&display=block`} />
+</head>
+<body class="gestor">
+  <slot />
+</body>
+</html>

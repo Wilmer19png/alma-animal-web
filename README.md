@@ -53,12 +53,23 @@ Cada página tiene tres partes, en este orden:
 Teléfonos, mensajes de WhatsApp, dirección, horario y datos legales están en `src/data/site.ts`.
 Se cambian ahí una sola vez y se actualizan en todas las páginas.
 
-## Supabase (pedidos y boletín)
+## Gestor interno (/gestor)
+
+Lo usa el equipo: entra en `/gestor/ingresar` con su correo y contraseña. Está hecho con React (solo esa parte)
+y lee y guarda en Supabase. Código en `src/gestor/`; cada pantalla se monta desde `src/pages/gestor/`.
+Sin Supabase conectado funciona con **datos de ejemplo** (botón «Entrar con datos de ejemplo»), también en la vista previa:
+abre `vista-previa/gestor/ingresar.html`.
+
+Módulos listos: Pedidos. Los demás aparecen en el menú como «Pronto».
+
+## Supabase (pedidos, boletín y gestor)
 
 1. Crear el proyecto en supabase.com (plan gratis; se pausa tras 7 días sin uso).
 2. SQL Editor → pegar y ejecutar, en orden, los archivos de `supabase/`.
 3. Project Settings → API: copiar la URL y la clave `anon`.
 4. Local: copiar `.env.example` como `.env` y llenarlo. Netlify: mismas variables en Environment variables.
+
+5. Crear la primera administradora: instrucciones al final de `supabase/03-equipo.sql`.
 
 Sin estas variables, en local el pedido se simula (sale "¡Listo!") y en el sitio publicado se ofrece enviarlo por WhatsApp.
 

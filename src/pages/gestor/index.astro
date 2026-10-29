@@ -1,0 +1,11 @@
+---
+// /gestor: mientras se construye "Hoy", entra directo a Pedidos.
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Gestor">
+  <p class="g-splash">Entrando al gestor…</p>
+  <script>
+    import { go } from '../../gestor/lib';
+    go('/gestor/pedidos');
+  </script>
+</GestorLayout>

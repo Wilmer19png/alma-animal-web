@@ -3,11 +3,17 @@
 
 create table if not exists public.pedidos (
   id            uuid primary key default gen_random_uuid(),
+  numero        integer generated always as identity (start with 1001) unique, -- #1001, el que usa el equipo
   codigo        text not null unique,                -- AA-XXXXX, el que ve el cliente
   creado        timestamptz not null default now(),
+  actualizado   timestamptz not null default now(),
   estado        text not null default 'nuevo'
                 check (estado in ('nuevo', 'confirmado', 'pagado', 'enviado', 'entregado', 'cancelado')),
   origen        text not null default 'web' check (origen in ('web', 'consultorio')),
+  -- lo maneja el equipo desde el gestor
+  pago          text not null default 'pendiente'
+                check (pago in ('pendiente', 'transferencia', 'contraentrega', 'consultorio', 'en_linea')),
+  nota_interna  text check (nota_interna is null or length(nota_interna) <= 1000),
   -- cliente (se une a su ficha por el celular)
   nombre        text not null check (length(nombre) between 1 and 80),
   apellido      text not null check (length(apellido) between 1 and 80),
@@ -41,6 +47,9 @@ alter table public.pedidos enable row level security;
 drop policy if exists "web crea pedidos" on public.pedidos;
 create policy "web crea pedidos" on public.pedidos
   for insert to anon
-  with check (estado = 'nuevo' and origen = 'web');
+  with check (estado = 'nuevo' and origen = 'web' and pago = 'pendiente' and nota_interna is null);
 
-grant insert on public.pedidos to anon;
+-- la web no puede elegir el número, el estado de pago ni la nota interna
+grant insert (codigo, nombre, apellido, celular, correo, departamento, ciudad, direccion, barrio, indicaciones,
+              items, subtotal, envio, prioritario, total, obsequio, aviso_compras, acepto_terminos, version_politicas)
+  on public.pedidos to anon;

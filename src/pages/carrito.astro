@@ -406,6 +406,15 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   const send = async (order: NonNullable<typeof lastOrder>) => {
     setBusy(true);
     const ok = PREVIEW || (await insert('pedidos', order.row)) === 'ok';
+    // en la vista previa el pedido queda en este navegador para verlo en el gestor de ejemplo
+    if (PREVIEW) {
+      try {
+        const k = 'alma-pedidos-vista-previa';
+        const prev = JSON.parse(localStorage.getItem(k) || '[]');
+        prev.unshift({ ...order.row, id: 'vp-' + order.code, numero: 1044 + prev.length, creado: new Date().toISOString(), estado: 'nuevo', pago: 'pendiente', nota_interna: null });
+        localStorage.setItem(k, JSON.stringify(prev.slice(0, 20)));
+      } catch { /* sin almacenamiento */ }
+    }
     setBusy(false);
     if (ok) {
       done = true;
