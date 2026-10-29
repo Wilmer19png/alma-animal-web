@@ -9,7 +9,7 @@ import { buildSync } from 'esbuild';
 
 execSync('npx astro build', { stdio: 'inherit', env: { ...process.env, VISTA: '1' } });
 
-const OUT = 'C:/Users/wburi/OneDrive/Escritorio/Página web_Alma animal/vista-previa';
+const OUT = 'vista-previa';
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync('dist', OUT, { recursive: true });

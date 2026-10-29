@@ -1,0 +1,1064 @@
+<title>Sistema Alma Animal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Gowun+Batang:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block">
+<style>
+/* Layout: hoja de especificación desktop-first — índice fijo a la izquierda, láminas a la derecha sobre un grid de 12 columnas (1200px). */
+:root{
+  /* ---------- Marca (exactos del logo) ---------- */
+  --brand-purple:#8F7FB0;      /* texto del logo, rayas del tigre */
+  --brand-peach:#FBCFAF;       /* gato / tigre */
+  --brand-lavender:#D1C1DD;    /* perro en el logo */
+  --brand-lavender-soft:#DCCCE4;/* perro en la ilustración */
+  --brand-ink:#706884;         /* línea serif del logo */
+
+  /* ---------- M3 · roles claros ---------- */
+  --md-primary:#655785; --md-on-primary:#FFFFFF;
+  --md-primary-container:#EADDFF; --md-on-primary-container:#4D3F6C;
+  --md-secondary:#7D5636; --md-on-secondary:#FFFFFF;
+  --md-secondary-container:#FBCFAF; --md-on-secondary-container:#623F21;
+  --md-tertiary:#665971; --md-on-tertiary:#FFFFFF;
+  --md-tertiary-container:#D1C1DD; --md-on-tertiary-container:#372C42;
+  --md-error:#B4271F; --md-on-error:#FFFFFF;
+  --md-error-container:#FFDAD5; --md-on-error-container:#910809;
+  --md-success:#36693E; --md-success-container:#B8F1B9; --md-on-success-container:#1D5128;
+  --md-warning:#825500; --md-warning-container:#FFDDB2; --md-on-warning-container:#624000;
+  --md-surface:#FEF7FE; --md-on-surface:#1D1B1F; --md-on-surface-variant:#49454F;
+  --md-surface-lowest:#FFFFFF; --md-surface-low:#F8F2F8; --md-surface-container:#F2ECF2;
+  --md-surface-high:#ECE6ED; --md-surface-highest:#E6E1E7;
+  --md-outline:#7A7580; --md-outline-variant:#CBC4D1;
+  --md-inverse-surface:#322F34; --md-inverse-on-surface:#F5EFF5; --md-inverse-primary:#D0BEF3;
+  --md-shadow:54 41 84; /* rgb del morado tono 20 para sombras tintadas */
+  --whatsapp:#137A4A; --on-whatsapp:#FFFFFF;
+
+  /* ---------- Degradados (propuestos, inspirados en OkVet) ---------- */
+  --grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%); --on-grad-alma:#362954;
+  --grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%); --on-grad-primary:#FFFFFF;
+  --grad-wash:radial-gradient(55% 70% at 0% 0%,rgb(251 207 175/.45),transparent 70%),radial-gradient(60% 80% at 100% 100%,rgb(209 193 221/.55),transparent 70%);
+
+  /* ---------- Tipografía ---------- */
+  --font-sans:"Alan Sans", "Segoe UI", system-ui, sans-serif;
+  --font-serif:"Gowun Batang", "Iowan Old Style", Georgia, serif;
+  --display-lg:600 4rem/1.04 var(--font-sans);
+  --display-md:600 3rem/1.08 var(--font-sans);
+  --display-sm:600 2.25rem/1.15 var(--font-sans);
+  --headline-lg:600 2rem/1.2 var(--font-sans);
+  --headline-md:600 1.75rem/1.25 var(--font-sans);
+  --headline-sm:600 1.5rem/1.3 var(--font-sans);
+  --title-lg:600 1.375rem/1.3 var(--font-sans);
+  --title-md:600 1.125rem/1.4 var(--font-sans);
+  --title-sm:600 1rem/1.4 var(--font-sans);
+  --body-lg:400 1.125rem/1.6 var(--font-sans);
+  --body-md:400 1rem/1.55 var(--font-sans);
+  --body-sm:400 .875rem/1.5 var(--font-sans);
+  --label-lg:600 .9375rem/1.25 var(--font-sans);
+  --label-md:600 .8125rem/1.3 var(--font-sans);
+  --label-sm:600 .75rem/1.3 var(--font-sans);
+  --serif-lead:400 1.375rem/1.5 var(--font-serif);
+  --serif-body:400 1.125rem/1.75 var(--font-serif);
+
+  /* ---------- Espacio (base 4) ---------- */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px;
+  --sp-8:32px; --sp-10:40px; --sp-12:48px; --sp-16:64px; --sp-20:80px; --sp-24:96px; --sp-32:128px;
+  --container:1200px; --gutter:24px;
+
+  /* ---------- Forma ---------- */
+  --r-xs:4px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:28px; --r-full:999px;
+
+  /* ---------- Elevación (M3, sombra tintada morado) ---------- */
+  --elev-0:none;
+  --elev-1:0 1px 2px rgb(var(--md-shadow)/.18), 0 1px 3px 1px rgb(var(--md-shadow)/.08);
+  --elev-2:0 1px 2px rgb(var(--md-shadow)/.18), 0 2px 6px 2px rgb(var(--md-shadow)/.09);
+  --elev-3:0 4px 8px 3px rgb(var(--md-shadow)/.09), 0 1px 3px rgb(var(--md-shadow)/.18);
+  --elev-4:0 6px 10px 4px rgb(var(--md-shadow)/.10), 0 2px 3px rgb(var(--md-shadow)/.18);
+  --elev-5:0 8px 12px 6px rgb(var(--md-shadow)/.10), 0 4px 4px rgb(var(--md-shadow)/.18);
+
+  /* ---------- Movimiento (M3) ---------- */
+  --ease-standard:cubic-bezier(.2,0,0,1);
+  --ease-emph-decel:cubic-bezier(.05,.7,.1,1);
+  --ease-emph-accel:cubic-bezier(.3,0,.8,.15);
+  --dur-short:150ms; --dur-medium:250ms; --dur-long:400ms; --dur-xlong:600ms;
+
+  /* ---------- Capas de estado (M3) ---------- */
+  --state-hover:.08; --state-focus:.10; --state-pressed:.10;
+}
+/* ---------- Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{background:var(--md-surface);color:var(--md-on-surface);font:var(--body-md);-webkit-font-smoothing:antialiased;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));caret-color:var(--md-primary)}
+::selection{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--md-primary);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px;border-radius:var(--r-xs)}
+html{scrollbar-color:var(--md-outline-variant) transparent}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 20;-webkit-font-smoothing:antialiased;flex:none;width:1em;height:1em;overflow:hidden}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 20}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Estructura de la hoja ---------- */
+.shell{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:var(--sp-10);padding-block:var(--sp-10) var(--sp-24)}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:var(--sp-6)}
+.toc nav{display:flex;flex-direction:column;gap:2px}
+.toc a{font:var(--label-lg);color:var(--md-on-surface-variant);text-decoration:none;padding:var(--sp-2) var(--sp-3);border-radius:var(--r-full);transition:background var(--dur-short) var(--ease-standard),color var(--dur-short) var(--ease-standard)}
+.toc a:hover{background:color-mix(in srgb,var(--md-primary) 8%,transparent);color:var(--md-on-surface)}
+.toc a.on{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.theme{display:flex;flex-direction:column;gap:var(--sp-2)}
+.theme span{font:var(--label-sm);color:var(--md-on-surface-variant);padding-inline:var(--sp-3)}
+main{display:flex;flex-direction:column;gap:var(--sp-24);min-width:0}
+section{display:flex;flex-direction:column;gap:var(--sp-8);min-width:0}
+.sec-head{display:flex;flex-direction:column;gap:var(--sp-3);max-width:68ch}
+.sec-head h2{font:var(--headline-lg)}
+.sec-head p{font:var(--body-lg);color:var(--md-on-surface-variant)}
+h3.sub{font:var(--title-lg);margin-top:var(--sp-4)}
+.sub + .note{margin-top:calc(var(--sp-6) * -1)}
+.note{font:var(--body-sm);color:var(--md-on-surface-variant);max-width:72ch}
+.tok{font:500 .75rem/1.3 ui-monospace,"Cascadia Code",Consolas,monospace;color:var(--md-on-surface-variant)}
+.panel{background:var(--md-surface-low);border-radius:var(--r-xl);padding:var(--sp-8)}
+
+/* ---------- Portada / marca ---------- */
+.cover{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:var(--sp-10);align-items:center;background:var(--grad-wash),var(--md-surface-container);border-radius:var(--r-xl);padding:var(--sp-12);position:relative;overflow:hidden;isolation:isolate}
+.cover-copy{display:flex;flex-direction:column;gap:var(--sp-6)}
+.cover h1{font:var(--display-md);letter-spacing:-.02em;color:var(--md-on-surface)}
+.cover h1 em{font-style:normal;color:var(--md-primary)}
+.cover p{font:var(--body-lg);color:var(--md-on-surface-variant);max-width:52ch}
+.lema{font:var(--serif-lead);color:var(--md-on-surface)}
+.moon{justify-self:center;width:min(100%,380px);aspect-ratio:1;max-width:100%;border-radius:50%;background:#FFFFFF;
+  box-shadow:0 0 0 10px var(--md-surface-container),0 0 0 11px var(--md-outline-variant),var(--elev-2);display:grid;place-items:center;overflow:hidden}
+.moon img{width:88%;height:auto;display:block}
+
+.lockups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-6)}
+.lockup-card{border-radius:var(--r-xl);padding:var(--sp-10) var(--sp-8);display:grid;place-items:center;min-height:260px;position:relative}
+.lockup-card.light{background:#FFFFFF;border:1px solid var(--md-outline-variant)}
+.lockup-card.dark{background:#211A2E}
+.lockup-card .cap{position:absolute;left:var(--sp-5);bottom:var(--sp-4);font:var(--label-sm)}
+.lockup-card.light .cap{color:#615C67}.lockup-card.dark .cap{color:#CBC4D1}
+.lockup{display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);text-align:center}
+.lockup img{width:120px;height:auto}
+.lockup .wm{font:500 2.6rem/1 var(--font-sans);letter-spacing:-.01em;color:#8F7FB0}
+.lockup .tag{font:400 1rem/1.2 var(--font-serif);letter-spacing:.08em;color:#706884}
+.lockup-card.dark .wm{color:#D0BEF3}.lockup-card.dark .tag{color:#CBC4D1}
+.lockup-h{display:flex;align-items:center;gap:var(--sp-3);text-decoration:none}
+.lockup-h img{width:44px;height:auto}
+.lockup-h .wm{font:600 1.375rem/1 var(--font-sans);color:var(--brand-purple);letter-spacing:-.01em;display:block}
+.lockup-h .tag{font:400 .75rem/1.2 var(--font-serif);letter-spacing:.06em;color:var(--brand-ink);display:block;margin-top:3px}
+
+.motifs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6)}
+.motif{display:flex;flex-direction:column;gap:var(--sp-3)}
+.motif .art{aspect-ratio:1;border-radius:var(--r-xl);background:var(--md-surface-low);display:grid;place-items:center;overflow:hidden;position:relative}
+.motif h4{font:var(--title-md)}
+.motif p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.split{width:62%;aspect-ratio:1;border-radius:50%;background:linear-gradient(90deg,var(--brand-peach) 50%,var(--brand-lavender) 50%);display:grid;place-items:center;font:600 2.5rem/1 var(--font-sans);color:#4D3F6C}
+
+/* Sello: firma de la marca */
+.seal{--seal:var(--md-primary);width:132px;aspect-ratio:1;color:var(--seal);position:relative;display:grid;place-items:center}
+.seal svg{position:absolute;inset:0;width:100%;height:100%}
+.seal .core{width:52%;aspect-ratio:1;border-radius:50%;background:var(--seal);color:var(--md-surface-lowest);display:grid;place-items:center;text-align:center;font:700 .7rem/1.1 var(--font-sans);letter-spacing:.04em}
+.seal .core b{display:block;font:700 1.15rem/1 var(--font-sans);letter-spacing:0}
+.seal.stamp{animation:stamp var(--dur-xlong) var(--ease-emph-decel) both}
+@keyframes stamp{0%{transform:scale(1.35) rotate(-14deg);filter:blur(3px);opacity:.2}55%{transform:scale(.96) rotate(-4deg);filter:blur(0);opacity:1}100%{transform:scale(1) rotate(-6deg)}}
+
+/* ---------- Color ---------- */
+.brand-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--sp-4)}
+.chip-color{border-radius:var(--r-lg);overflow:hidden;background:var(--md-surface-lowest);border:1px solid var(--md-outline-variant);display:flex;flex-direction:column;cursor:copy;text-align:left;padding:0;font:inherit;color:inherit}
+.chip-color .sw{height:96px}
+.chip-color .meta{padding:var(--sp-3) var(--sp-4) var(--sp-4);display:flex;flex-direction:column;gap:2px}
+.chip-color b{font:var(--title-sm)}
+.chip-color .hex{font:var(--label-md);color:var(--md-on-surface-variant)}
+.chip-color .use{font:var(--body-sm);color:var(--md-on-surface-variant);margin-top:var(--sp-1)}
+.tonal-list{display:flex;flex-direction:column;gap:var(--sp-3)}
+.tonal-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:var(--sp-4);align-items:center}
+.tonal-row .lbl{font:var(--label-lg)}
+.tonal-row .lbl small{display:block;font:var(--label-sm);color:var(--md-on-surface-variant);margin-top:2px;font-weight:500}
+.tones{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));border-radius:var(--r-md);overflow:hidden}
+.tones span{height:48px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font:600 .625rem/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.tones span.key{box-shadow:inset 0 0 0 2px currentColor}
+.roles{display:block}
+.scheme{border-radius:var(--r-xl);padding:var(--sp-6);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+.scheme h4{font:var(--title-md);margin-bottom:var(--sp-1);grid-column:1/-1}
+.scheme.l{background:#FEF7FE;color:#1D1B1F;border:1px solid #CBC4D1}
+.scheme.d{background:#141317;color:#E6E1E7}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-radius:var(--r-md);padding:var(--sp-3) var(--sp-4);gap:var(--sp-3)}
+.pair .n{font:var(--label-lg)}
+.pair .n small{display:block;font:500 .7rem/1.3 ui-monospace,Consolas,monospace;opacity:.85;margin-top:2px}
+.pair .ratio{font:600 .75rem/1 var(--font-sans);padding:5px 8px;border-radius:var(--r-full);background:rgb(0 0 0/.08);font-variant-numeric:tabular-nums}
+.scheme.d .pair .ratio{background:rgb(255 255 255/.12)}
+.semantic{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-4)}
+.sem{border-radius:var(--r-lg);padding:var(--sp-4);display:flex;gap:var(--sp-3);align-items:flex-start}
+.sem b{font:var(--title-sm);display:block}
+.sem span{font:var(--body-sm)}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6)}
+.rule{display:flex;flex-direction:column;gap:var(--sp-2);padding-top:var(--sp-4);border-top:1px solid var(--md-outline-variant)}
+.rule b{font:var(--title-sm)}
+.rule p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+
+/* ---------- Tipografía ---------- */
+.faces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-6)}
+.face{border-radius:var(--r-xl);background:var(--md-surface-low);padding:var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-4)}
+.face .big{font-size:5.5rem;line-height:1;color:var(--md-primary)}
+.face .who{font:var(--title-md)}
+.face p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.scale{display:flex;flex-direction:column}
+.scale-row{display:grid;grid-template-columns:150px minmax(0,1fr) 150px;gap:var(--sp-6);align-items:baseline;padding-block:var(--sp-4);border-bottom:1px solid var(--md-outline-variant)}
+.scale-row .k{font:var(--label-md);color:var(--md-on-surface-variant)}
+.scale-row .spec{font:var(--label-sm);color:var(--md-on-surface-variant);text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.scale-row .s{min-width:0;overflow-wrap:anywhere}
+
+/* ---------- Espacio, forma, elevación ---------- */
+.spacing{display:flex;flex-direction:column;gap:var(--sp-2)}
+.sp-row{display:grid;grid-template-columns:70px 60px minmax(0,1fr);gap:var(--sp-4);align-items:center;font:var(--label-md)}
+.sp-row .bar{height:14px;background:var(--md-tertiary-container);border-radius:var(--r-xs)}
+.sp-row .px{color:var(--md-on-surface-variant);font-variant-numeric:tabular-nums}
+.grid-demo{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--sp-2);margin-top:var(--sp-4)}
+.grid-demo span{height:56px;background:color-mix(in srgb,var(--md-primary) 14%,transparent);border-radius:var(--r-xs)}
+.shapes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--sp-4)}
+.shape{display:flex;flex-direction:column;gap:var(--sp-2);align-items:flex-start}
+.shape div{width:100%;aspect-ratio:1;background:var(--md-primary-container);border:1px solid color-mix(in srgb,var(--md-primary) 30%,transparent)}
+.shape b{font:var(--label-lg)}
+.shape span{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.elev{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--sp-5);padding:var(--sp-8);background:var(--md-surface-container);border-radius:var(--r-xl)}
+.elev div{aspect-ratio:1.1;background:var(--md-surface-low);border-radius:var(--r-lg);display:flex;flex-direction:column;justify-content:flex-end;padding:var(--sp-3)}
+.elev b{font:var(--label-lg)}
+.elev span{font:var(--body-sm);color:var(--md-on-surface-variant)}
+
+/* ---------- Movimiento ---------- */
+.motion{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6)}
+.mcard{border-radius:var(--r-xl);background:var(--md-surface-low);padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-3)}
+.mcard b{font:var(--title-sm)}
+.mcard p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.track{height:44px;border-radius:var(--r-full);background:var(--md-surface-high);position:relative;margin-top:var(--sp-2)}
+.track i{position:absolute;top:6px;left:6px;width:32px;height:32px;border-radius:50%;background:var(--md-primary)}
+.track.go i{transform:translateX(calc(var(--w) - 44px))}
+.durs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-4)}
+.durs div{display:flex;flex-direction:column;gap:2px}
+.durs b{font:var(--title-sm);font-variant-numeric:tabular-nums}
+.durs span{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.stamp-demo{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--sp-8);align-items:center;background:var(--md-surface-low);border-radius:var(--r-xl);padding:var(--sp-8)}
+.stamp-demo .copy{display:flex;flex-direction:column;gap:var(--sp-3);align-items:flex-start}
+.stamp-demo h4{font:var(--title-lg)}
+.stamp-demo p{font:var(--body-md);color:var(--md-on-surface-variant);max-width:58ch}
+
+/* ================= COMPONENTES ================= */
+.demo{background:var(--md-surface-low);border-radius:var(--r-xl);padding:var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-6)}
+.demo-row{display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center}
+.demo-label{font:var(--label-md);color:var(--md-on-surface-variant);width:100%}
+
+/* Botones */
+.btn{--bg:var(--md-primary);--fg:var(--md-on-primary);--bd:transparent;
+  position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  height:44px;padding:0 var(--sp-6);border-radius:var(--r-full);border:1px solid var(--bd);background:var(--bg);color:var(--fg);
+  font:var(--label-lg);letter-spacing:.01em;text-decoration:none;cursor:pointer;overflow:hidden;
+  transition:box-shadow var(--dur-short) var(--ease-standard),transform var(--dur-short) var(--ease-standard)}
+.btn::before{content:"";position:absolute;inset:0;background:currentColor;opacity:0;z-index:-1;transition:opacity var(--dur-short) var(--ease-standard)}
+.btn:hover::before{opacity:var(--state-hover)}
+.btn:focus-visible::before{opacity:var(--state-focus)}
+.btn:active::before{opacity:var(--state-pressed)}
+.btn:active{transform:scale(.98)}
+.btn:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px;border-radius:var(--r-full)}
+.btn.lg{height:52px;padding:0 var(--sp-8);font:600 1rem/1 var(--font-sans)}
+.btn.sm{height:36px;padding:0 var(--sp-4);font:var(--label-md)}
+.btn .ms{font-size:20px}
+.btn.filled,.btn.alma{background-size:160% 100%;background-position:0 0;transition:box-shadow var(--dur-short) var(--ease-standard),transform var(--dur-short) var(--ease-standard),background-position var(--dur-long) var(--ease-standard)}
+.btn.filled{--bg:var(--grad-primary);--fg:var(--on-grad-primary)}
+.btn.alma{--bg:var(--grad-alma);--fg:var(--on-grad-alma)}
+.btn.filled:hover,.btn.alma:hover{box-shadow:var(--elev-2);background-position:100% 0}
+.btn.alma .ms{transition:transform var(--dur-medium) var(--ease-emph-decel)}
+.btn.alma:hover .ms{transform:translateX(3px)}
+.grads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6)}
+.grad-sw{display:flex;flex-direction:column;gap:var(--sp-2)}
+.grad-sw .bar{height:96px;border-radius:var(--r-xl);display:flex;align-items:flex-end;padding:var(--sp-4);font:var(--label-lg);border:1px solid var(--md-outline-variant)}
+.grad-sw b{font:var(--title-sm);margin-top:var(--sp-2)}
+.grad-sw p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.grad-preview{background:var(--grad-wash),var(--md-surface-lowest);border:1px solid var(--md-outline-variant);border-radius:var(--r-xl);padding:var(--sp-16) var(--sp-8);display:flex;flex-direction:column;align-items:center;gap:var(--sp-5);text-align:center}
+.grad-preview h3{font:700 3rem/1.08 var(--font-sans);letter-spacing:-.025em;max-width:16ch}
+.grad-preview h3 em{font-style:normal;color:var(--md-primary)}
+.grad-preview p{font:var(--body-lg);color:var(--md-on-surface-variant);max-width:46ch}
+.grad-preview .alt{font:var(--body-md);color:var(--md-on-surface-variant)}
+.grad-preview .alt a{font-weight:600}
+.btn.tonal{--bg:var(--md-secondary-container);--fg:var(--md-on-secondary-container)}
+.btn.outlined{--bg:transparent;--fg:var(--md-primary);--bd:var(--md-outline)}
+.btn.text{--bg:transparent;--fg:var(--md-primary);padding:0 var(--sp-3)}
+.btn.wa{--bg:var(--whatsapp);--fg:var(--on-whatsapp)}
+.btn[disabled],.btn.is-disabled{--bg:color-mix(in srgb,var(--md-on-surface) 12%,transparent);--fg:color-mix(in srgb,var(--md-on-surface) 38%,transparent);--bd:transparent;cursor:not-allowed;box-shadow:none}
+.btn[disabled]::before{display:none}
+.btn.outlined[disabled]{--bg:transparent;--bd:color-mix(in srgb,var(--md-on-surface) 12%,transparent)}
+.btn.loading{pointer-events:none}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;background:transparent;color:var(--md-on-surface-variant);cursor:pointer;position:relative;isolation:isolate;overflow:hidden}
+.icon-btn::before{content:"";position:absolute;inset:0;background:currentColor;opacity:0;z-index:-1;transition:opacity var(--dur-short) var(--ease-standard)}
+.icon-btn:hover::before{opacity:var(--state-hover)}
+.icon-btn.tonal{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:6px;right:6px;min-width:16px;height:16px;border-radius:var(--r-full);background:var(--md-error);color:var(--md-on-error);font:700 .625rem/16px var(--font-sans);text-align:center;padding:0 4px}
+.fab-wa{position:fixed;right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:20;
+  width:60px;height:60px;border-radius:50%;display:grid;place-items:center;padding:0;
+  background:var(--whatsapp);color:var(--on-whatsapp);box-shadow:var(--elev-3);border:0;cursor:pointer;
+  transition:box-shadow var(--dur-medium) var(--ease-standard),transform var(--dur-medium) var(--ease-emph-decel)}
+.fab-wa:hover{box-shadow:var(--elev-4);transform:translateY(-2px) scale(1.04)}
+.fab-wa:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px;border-radius:50%}
+.fab-wa svg{width:32px;height:32px}
+.fab-wa .tip{position:absolute;right:calc(100% + 12px);top:50%;transform:translate(6px,-50%);white-space:nowrap;background:var(--md-inverse-surface);color:var(--md-inverse-on-surface);
+  font:var(--label-md);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-sm);opacity:0;pointer-events:none;transition:opacity var(--dur-short) var(--ease-standard),transform var(--dur-short) var(--ease-standard)}
+.fab-wa:hover .tip,.fab-wa:focus-visible .tip{opacity:1;transform:translate(0,-50%)}
+.btn.wa svg{width:20px;height:20px}
+
+/* Campos */
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6) var(--sp-6);align-items:start}
+.field{position:relative;display:flex;flex-direction:column;gap:var(--sp-1)}
+.field .box{position:relative}
+.field input,.field select,.field textarea{width:100%;height:56px;border-radius:var(--r-sm);border:1px solid var(--md-outline);background:var(--md-surface-lowest);color:var(--md-on-surface);
+  font:var(--body-lg);padding:var(--sp-5) var(--sp-4) var(--sp-2);outline:0;appearance:none;transition:border-color var(--dur-short) var(--ease-standard),box-shadow var(--dur-short) var(--ease-standard)}
+.field textarea{height:112px;resize:vertical;padding-top:var(--sp-6)}
+.field select{padding-right:var(--sp-10);cursor:pointer}
+.field .chev{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--md-on-surface-variant)}
+.field label{position:absolute;left:var(--sp-4);top:50%;transform:translateY(-50%);font:var(--body-lg);color:var(--md-on-surface-variant);pointer-events:none;
+  transition:all var(--dur-short) var(--ease-standard);transform-origin:left}
+.field textarea + label{top:28px}
+.field input:focus + label,.field input:not(:placeholder-shown) + label,.field select + label,.field textarea:focus + label,.field textarea:not(:placeholder-shown) + label{top:16px;font:var(--label-sm);color:var(--md-on-surface-variant)}
+.field textarea:focus + label,.field textarea:not(:placeholder-shown) + label{top:14px}
+.field input:hover,.field select:hover,.field textarea:hover{border-color:var(--md-on-surface)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--md-primary);box-shadow:inset 0 0 0 1px var(--md-primary)}
+.field input:focus + label,.field select:focus + label,.field textarea:focus + label{color:var(--md-primary)}
+.field input::placeholder{color:transparent}
+.field .help{font:var(--body-sm);color:var(--md-on-surface-variant);padding-inline:var(--sp-4)}
+.field.err input{border-color:var(--md-error);box-shadow:inset 0 0 0 1px var(--md-error)}
+.field.err label,.field.err .help{color:var(--md-error)}
+.field .lead{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--md-on-surface-variant)}
+.field.has-lead input{padding-left:46px}
+.field.has-lead label{left:46px}
+.field.disabled input{background:transparent;border-color:color-mix(in srgb,var(--md-on-surface) 12%,transparent);color:color-mix(in srgb,var(--md-on-surface) 38%,transparent)}
+.field.disabled label{color:color-mix(in srgb,var(--md-on-surface) 38%,transparent)}
+.search{display:flex;align-items:center;gap:var(--sp-3);height:52px;border-radius:var(--r-full);background:var(--md-surface-high);padding:0 var(--sp-5);color:var(--md-on-surface-variant);max-width:420px;flex:1}
+.search input{flex:1;border:0;background:transparent;font:var(--body-lg);color:var(--md-on-surface);outline:0;min-width:0}
+.search:focus-within{box-shadow:0 0 0 2px var(--md-primary)}
+.search input::placeholder{color:var(--md-on-surface-variant)}
+
+/* Selección */
+.seg{display:inline-flex;border:1px solid var(--md-outline);border-radius:var(--r-full);overflow:hidden}
+.seg button{height:44px;padding:0 var(--sp-5);border:0;background:transparent;color:var(--md-on-surface);font:var(--label-lg);cursor:pointer;display:inline-flex;align-items:center;gap:var(--sp-2);
+  transition:background var(--dur-short) var(--ease-standard)}
+.seg button + button{border-left:1px solid var(--md-outline)}
+.seg button:hover{background:color-mix(in srgb,var(--md-on-surface) 6%,transparent)}
+.seg button[aria-pressed="true"]{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.seg button .ms{font-size:18px;width:0;opacity:0;transition:width var(--dur-short) var(--ease-standard),opacity var(--dur-short)}
+.seg button[aria-pressed="true"] .ms{width:18px;opacity:1}
+.chips{display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.chip{height:36px;padding:0 var(--sp-4);border-radius:var(--r-sm);border:1px solid var(--md-outline);background:transparent;color:var(--md-on-surface-variant);font:var(--label-lg);cursor:pointer;display:inline-flex;align-items:center;gap:var(--sp-2);
+  transition:background var(--dur-short) var(--ease-standard)}
+.chip:hover{background:color-mix(in srgb,var(--md-on-surface) 6%,transparent)}
+.chip[aria-pressed="true"]{background:var(--md-secondary-container);color:var(--md-on-secondary-container);border-color:transparent}
+.chip .ms{font-size:18px}
+.chip.assist{color:var(--md-on-surface);border-color:var(--md-outline-variant)}
+.chip.assist .ms{color:var(--md-primary)}
+.check,.switch{display:inline-flex;align-items:center;gap:var(--sp-3);cursor:pointer;font:var(--body-md);user-select:none}
+.check input{appearance:none;width:20px;height:20px;border:2px solid var(--md-on-surface-variant);border-radius:var(--r-xs);margin:0;display:grid;place-items:center;cursor:pointer;flex:none;
+  transition:background var(--dur-short) var(--ease-standard),border-color var(--dur-short)}
+.check input::after{content:"";width:10px;height:5px;border:2px solid var(--md-on-primary);border-top:0;border-right:0;transform:rotate(-45deg) scale(0);margin-top:-3px;transition:transform var(--dur-short) var(--ease-emph-decel)}
+.check input:checked{background:var(--md-primary);border-color:var(--md-primary)}
+.check input:checked::after{transform:rotate(-45deg) scale(1)}
+.check small{color:var(--md-on-surface-variant);font:var(--body-sm)}
+.switch input{appearance:none;width:52px;height:32px;border-radius:var(--r-full);background:var(--md-surface-highest);border:2px solid var(--md-outline);position:relative;margin:0;cursor:pointer;flex:none;
+  transition:background var(--dur-medium) var(--ease-standard),border-color var(--dur-medium)}
+.switch input::after{content:"";position:absolute;top:6px;left:6px;width:16px;height:16px;border-radius:50%;background:var(--md-outline);transition:all var(--dur-medium) var(--ease-emph-decel)}
+.switch input:checked{background:var(--md-primary);border-color:var(--md-primary)}
+.switch input:checked::after{left:22px;top:2px;width:24px;height:24px;background:var(--md-on-primary)}
+.radio-group{display:flex;gap:var(--sp-6);flex-wrap:wrap}
+.radio{display:inline-flex;align-items:center;gap:var(--sp-3);cursor:pointer;font:var(--body-md)}
+.radio input{appearance:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--md-on-surface-variant);margin:0;display:grid;place-items:center;cursor:pointer}
+.radio input::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--md-primary);transform:scale(0);transition:transform var(--dur-short) var(--ease-emph-decel)}
+.radio input:checked{border-color:var(--md-primary)}
+.radio input:checked::after{transform:scale(1)}
+
+/* Tarjetas */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6);align-items:start}
+.card{background:var(--md-surface-lowest);border-radius:var(--r-xl);border:1px solid var(--md-outline-variant);overflow:hidden;display:flex;flex-direction:column;
+  transition:box-shadow var(--dur-medium) var(--ease-standard),transform var(--dur-medium) var(--ease-emph-decel)}
+.card.link:hover{box-shadow:var(--elev-2);transform:translateY(-2px)}
+.card-body{padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-3)}
+.card h4{font:var(--title-lg)}
+.card p{font:var(--body-md);color:var(--md-on-surface-variant)}
+.example{font:var(--label-sm);color:var(--md-on-tertiary-container);background:var(--md-tertiary-container);border-radius:var(--r-full);padding:4px 10px;align-self:flex-start}
+.status{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--sp-3);border-radius:var(--r-full);font:var(--label-md);align-self:flex-start}
+.status .ms{font-size:16px}
+.status.ok{background:var(--md-success-container);color:var(--md-on-success-container)}
+.status.warn{background:var(--md-warning-container);color:var(--md-on-warning-container)}
+.status.bad{background:var(--md-error-container);color:var(--md-on-error-container)}
+.status.info{background:var(--md-primary-container);color:var(--md-on-primary-container)}
+/* servicio: sello circular + lista de lo que incluye */
+.svc .head{display:flex;gap:var(--sp-4);align-items:center}
+.svc .disc{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;flex:none;background:linear-gradient(90deg,var(--brand-peach) 50%,var(--brand-lavender) 50%);color:#4D3F6C}
+.svc .disc .ms{font-size:26px}
+.svc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-2)}
+.svc li{display:flex;gap:var(--sp-2);font:var(--body-sm);color:var(--md-on-surface)}
+.svc li .ms{font-size:18px;color:var(--md-primary)}
+.svc .foot{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-4) var(--sp-6);border-top:1px solid var(--md-outline-variant);margin-top:auto}
+.svc .price{font:var(--title-md);font-variant-numeric:tabular-nums}
+.svc .price small{display:block;font:var(--body-sm);color:var(--md-on-surface-variant)}
+/* producto */
+.prod .img{aspect-ratio:4/3;background:var(--md-surface-container);display:grid;place-items:center;position:relative;color:var(--md-on-surface-variant);font:var(--body-sm)}
+.prod .img .ph{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2)}
+.prod .img .ph .ms{font-size:36px;color:var(--md-outline)}
+.prod .img .fav{position:absolute;top:var(--sp-3);right:var(--sp-3);background:var(--md-surface-lowest)}
+.prod .img .status{position:absolute;top:var(--sp-4);left:var(--sp-4)}
+.prod .cat{font:var(--label-md);color:var(--md-primary)}
+.prod .row{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-top:var(--sp-2)}
+.prod .price{font:var(--headline-sm);font-variant-numeric:tabular-nums}
+/* cita */
+.appt .card-body{flex-direction:row;gap:var(--sp-5);align-items:flex-start}
+.date{width:72px;flex:none;border-radius:var(--r-lg);background:var(--md-primary-container);color:var(--md-on-primary-container);display:flex;flex-direction:column;align-items:center;padding:var(--sp-3) 0;font-variant-numeric:tabular-nums}
+.date b{font:700 1.75rem/1 var(--font-sans)}
+.date span{font:var(--label-sm);text-transform:uppercase;letter-spacing:.06em}
+.appt .info{display:flex;flex-direction:column;gap:var(--sp-2);min-width:0}
+.appt .meta{display:flex;flex-direction:column;gap:4px;font:var(--body-sm);color:var(--md-on-surface-variant)}
+.appt .meta span{display:flex;gap:6px;align-items:center}
+.appt .meta .ms{font-size:16px}
+.appt .actions{display:flex;gap:var(--sp-2);padding:0 var(--sp-6) var(--sp-5)}
+.pet{display:flex;align-items:center;gap:var(--sp-3)}
+.avatar{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 1rem/1 var(--font-sans);color:#4D3F6C;background:linear-gradient(90deg,var(--brand-peach) 50%,var(--brand-lavender) 50%)}
+/* carnet de vacunas */
+.vax{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-6);align-items:center;background:var(--md-surface-lowest);border:1px solid var(--md-outline-variant);border-radius:var(--r-xl);padding:var(--sp-6) var(--sp-8);position:relative;overflow:hidden}
+.vax::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--brand-peach) 50%,var(--brand-lavender) 50%)}
+.vax h4{font:var(--title-lg)}
+.vax dl{display:grid;grid-template-columns:repeat(4,auto);gap:var(--sp-2) var(--sp-8);margin:var(--sp-3) 0 0;justify-content:start}
+.vax dt{font:var(--label-sm);color:var(--md-on-surface-variant)}
+.vax dd{margin:0;font:var(--title-sm);font-variant-numeric:tabular-nums}
+
+/* Navegación */
+.appbar{display:flex;align-items:center;gap:var(--sp-8);height:76px;padding:0 var(--sp-6);background:var(--md-surface-lowest);border-radius:var(--r-xl);border:1px solid var(--md-outline-variant)}
+.appbar .links{display:flex;gap:var(--sp-1);margin-inline:auto}
+.appbar .links a{font:var(--label-lg);color:var(--md-on-surface-variant);text-decoration:none;padding:var(--sp-2) var(--sp-3);border-radius:var(--r-full);position:relative}
+.appbar .links a:hover{color:var(--md-on-surface);background:color-mix(in srgb,var(--md-on-surface) 6%,transparent)}
+.appbar .links a[aria-current]{color:var(--md-on-surface)}
+.appbar .links a[aria-current]::after{content:"";position:absolute;left:50%;bottom:-2px;width:6px;height:6px;border-radius:50%;background:var(--brand-purple);transform:translateX(-50%)}
+.appbar .end{display:flex;align-items:center;gap:var(--sp-2)}
+.nav-pair{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--sp-6);align-items:stretch}
+.rail{width:96px;background:var(--md-surface-container);border-radius:var(--r-xl);padding:var(--sp-5) 0;display:flex;flex-direction:column;align-items:center;gap:var(--sp-3)}
+.rail .mk{width:40px;margin-bottom:var(--sp-3)}
+.rail a{display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:var(--md-on-surface-variant);font:var(--label-sm);width:100%}
+.rail a .pill{width:56px;height:32px;border-radius:var(--r-full);display:grid;place-items:center;transition:background var(--dur-short) var(--ease-standard);position:relative}
+.rail a:hover .pill{background:color-mix(in srgb,var(--md-on-surface) 8%,transparent)}
+.rail a[aria-current] .pill{background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.rail a[aria-current]{color:var(--md-on-surface)}
+.rail a .ms{font-size:22px}
+.rail .dot{position:absolute;top:3px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--md-error)}
+.panel-side{background:var(--md-surface-lowest);border:1px solid var(--md-outline-variant);border-radius:var(--r-xl);padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-5);min-width:0}
+.crumbs{display:flex;gap:var(--sp-2);align-items:center;font:var(--body-sm);color:var(--md-on-surface-variant)}
+.crumbs a{color:var(--md-on-surface-variant)}
+.crumbs .ms{font-size:16px}
+.ptitle{display:flex;align-items:center;gap:var(--sp-4)}
+.ptitle .avatar{width:56px;height:56px;font-size:1.3rem}
+.ptitle h4{font:var(--headline-sm)}
+.ptitle p{font:var(--body-sm);color:var(--md-on-surface-variant)}
+.tabs{display:flex;gap:var(--sp-1);border-bottom:1px solid var(--md-outline-variant);overflow-x:auto}
+.tabs button{height:48px;padding:0 var(--sp-4);border:0;background:transparent;color:var(--md-on-surface-variant);font:var(--label-lg);cursor:pointer;position:relative;white-space:nowrap;display:inline-flex;gap:var(--sp-2);align-items:center}
+.tabs button:hover{color:var(--md-on-surface)}
+.tabs button[aria-selected="true"]{color:var(--md-primary)}
+.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:var(--sp-3);right:var(--sp-3);bottom:-1px;height:3px;border-radius:3px 3px 0 0;background:var(--md-primary)}
+.tabs .count{font:var(--label-sm);background:var(--md-surface-high);border-radius:var(--r-full);padding:2px 7px;color:var(--md-on-surface-variant)}
+.timeline{display:flex;flex-direction:column}
+.tl{display:grid;grid-template-columns:96px 20px minmax(0,1fr);gap:var(--sp-4);padding-bottom:var(--sp-5);position:relative}
+.tl .when{font:var(--label-md);color:var(--md-on-surface-variant);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+.tl .node{width:14px;height:14px;border-radius:50%;background:var(--md-surface-lowest);border:3px solid var(--md-primary);margin-top:4px;position:relative;z-index:1}
+.tl:not(:last-child)::before{content:"";position:absolute;left:calc(96px + 16px + 6px);top:18px;bottom:0;width:2px;background:var(--md-outline-variant)}
+.tl b{font:var(--title-sm);display:block}
+.tl span{font:var(--body-sm);color:var(--md-on-surface-variant)}
+
+/* Snackbar */
+.snack{display:inline-flex;align-items:center;gap:var(--sp-6);background:var(--md-inverse-surface);color:var(--md-inverse-on-surface);border-radius:var(--r-sm);padding:var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);box-shadow:var(--elev-3);font:var(--body-md)}
+.snack button{border:0;background:transparent;color:var(--md-inverse-primary);font:var(--label-lg);cursor:pointer;padding:var(--sp-2) var(--sp-3);border-radius:var(--r-full)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,calc(100% + 48px));visibility:hidden;transition:transform var(--dur-long) var(--ease-emph-decel),visibility 0s linear var(--dur-long);z-index:30}
+.toast.show{transform:translate(-50%,0);visibility:visible;transition:transform var(--dur-long) var(--ease-emph-decel),visibility 0s}
+
+/* Pendientes */
+.todo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6)}
+.todo .col{display:flex;flex-direction:column;gap:var(--sp-3)}
+.todo h3{font:var(--title-lg)}
+.todo ul,.todo ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:var(--sp-3);font:var(--body-md);color:var(--md-on-surface)}
+.todo li::marker{color:var(--md-primary)}
+.todo li small{display:block;color:var(--md-on-surface-variant);font:var(--body-sm);margin-top:2px}
+
+/* Pantallas angostas (el responsive real llega después; aquí solo evitamos que la hoja se rompa) */
+@media (max-width:1080px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .toc{position:static}.toc nav{flex-direction:row;flex-wrap:wrap}
+  .motifs,.semantic,.brand-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards,.fields,.motion,.rules,.todo{grid-template-columns:minmax(0,1fr)}
+  .cover,.roles,.faces,.lockups,.nav-pair{grid-template-columns:minmax(0,1fr)}
+  .shapes{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .elev{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .appbar{flex-wrap:wrap;height:auto;padding:var(--sp-4)}.appbar .links{flex-wrap:wrap;margin:0}
+  .scale-row{grid-template-columns:minmax(0,1fr)}.scale-row .spec{text-align:left}
+  .tones{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .tonal-row{grid-template-columns:minmax(0,1fr)}
+  .vax{grid-template-columns:minmax(0,1fr)}.vax dl{grid-template-columns:repeat(2,auto)}
+  .stamp-demo{grid-template-columns:minmax(0,1fr)}
+  .rail{width:100%;flex-direction:row;justify-content:space-around;padding:var(--sp-3)}.rail .mk{display:none}
+  .cover{padding:var(--sp-6)}.cover h1{font:var(--display-sm)}
+  .durs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important;scroll-behavior:auto!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"/></symbol>
+  </defs>
+</svg>
+
+<div class="shell">
+  <aside class="toc">
+    <a class="lockup-h" href="#marca" aria-label="Alma Animal, ir al inicio">
+      <img src="{{MARK}}" alt="">
+      <span><span class="wm">Alma Animal</span><span class="tag">Consultorio · Spa · Petshop</span></span>
+    </a>
+    <nav aria-label="Secciones de la hoja">
+      <a href="#marca" class="on">Marca</a>
+      <a href="#color">Color</a>
+      <a href="#tipografia">Tipografía</a>
+      <a href="#espacio">Espacio y forma</a>
+      <a href="#movimiento">Movimiento</a>
+      <a href="#botones">Botones</a>
+      <a href="#campos">Campos y selección</a>
+      <a href="#tarjetas">Tarjetas</a>
+      <a href="#navegacion">Navegación</a>
+      <a href="#pendientes">Pendientes</a>
+    </nav>
+  </aside>
+
+  <main>
+    <!-- ===== MARCA ===== -->
+    <section id="marca">
+      <div class="cover">
+        <div class="cover-copy">
+          <h1>Sistema de diseño de <em>Alma Animal</em></h1>
+          <p>Tokens y componentes base para el sitio, el portal de clientes y el panel clínico. Sale del logo de la Dra. Mariana: durazno del gato, lavanda del perro y el morado de las rayas del tigre, sobre Material Design 3.</p>
+          <p class="lema">Un animalito limpio es un animalito sano.</p>
+          <div class="demo-row">
+            <a class="btn alma lg" href="#botones"><span class="ms">event_available</span>Agenda tu cita</a>
+            <a class="btn wa lg" href="#botones"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbenos</a>
+          </div>
+        </div>
+        <div class="moon"><img src="{{YY}}" alt="Ilustración de un tigre durazno y un perro lavanda en composición circular, nariz con nariz"></div>
+      </div>
+
+      <div class="sec-head">
+        <h2>Logo</h2>
+        <p>El corazón del gato y el perro con "Alma Animal" en la misma letra del logo original y "Consultorio · Spa · Petshop" en la serif. Esta versión está recompuesta en código para la maqueta; el archivo final debe salir del vector que nos envíes.</p>
+      </div>
+      <div class="lockups">
+        <div class="lockup-card light">
+          <div class="lockup"><img src="{{MARK}}" alt="Logo de Alma Animal: gato y perro formando un corazón"><span class="wm">Alma Animal</span><span class="tag">Consultorio · Spa · Petshop</span></div>
+          <span class="cap">Sobre fondo claro</span>
+        </div>
+        <div class="lockup-card dark">
+          <div class="lockup"><img src="{{MARK}}" alt=""><span class="wm">Alma Animal</span><span class="tag">Consultorio · Spa · Petshop</span></div>
+          <span class="cap">Sobre fondo oscuro: el nombre pasa a lavanda tono 80</span>
+        </div>
+      </div>
+
+      <h3 class="sub">Motivos de inspiración china</h3>
+      <p class="note">Tres recursos, cada uno con un trabajo concreto. Se usan uno a la vez y en baja intensidad. Nada de faroles, dragones ni tipografía "oriental".</p>
+      <div class="motifs">
+        <div class="motif">
+          <div class="art"><div class="seal" aria-hidden="true">
+            <svg viewBox="0 0 132 132"><defs><path id="ring1" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"/></defs>
+              <circle cx="66" cy="66" r="63" fill="none" stroke="currentColor" stroke-width="2.5"/>
+              <circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1"/>
+              <text font-family="Alan Sans, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor"><textPath href="#ring1">ALMA ANIMAL · PEREIRA · MVZ TP 51206 ·</textPath></text></svg>
+            <div class="core"><span><b>2026</b>VERIFICADO</span></div>
+          </div></div>
+          <h4>Sello</h4>
+          <p>Como el sello rojo que firma un documento chino, pero en morado. Firma lo que la doctora certifica: vacuna aplicada, cita confirmada, carnet.</p>
+        </div>
+        <div class="motif">
+          <div class="art"><div class="moon" style="width:76%;box-shadow:0 0 0 6px var(--md-surface-low),0 0 0 7px var(--md-outline-variant)"><img src="{{YY}}" alt=""></div></div>
+          <h4>Puerta de luna</h4>
+          <p>El marco circular de los jardines chinos. Enmarca fotos de mascotas, del equipo y la ilustración del tigre y el perro.</p>
+        </div>
+        <div class="motif">
+          <div class="art"><div class="split">M</div></div>
+          <h4>Dos tonos</h4>
+          <p>Mitad durazno, mitad lavanda: el equilibrio del logo. Avatares de mascotas, iconos de servicio y el filo del carnet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== COLOR ===== -->
+    <section id="color">
+      <div class="sec-head">
+        <h2>Color</h2>
+        <p>Medidos directo del logo y de la ilustración. De ahí sale la paleta tonal de Material 3 (librería oficial de Google, HCT) y cada rol queda con su par de texto verificado contra WCAG AA. Toca un color para copiar su código.</p>
+      </div>
+      <div class="brand-row">
+        <button class="chip-color" data-hex="#8F7FB0"><span class="sw" style="background:#8F7FB0"></span><span class="meta"><b>Morado Alma</b><span class="hex">#8F7FB0 · brand-purple</span><span class="use">Nombre del logo, rayas. Texto solo desde 24 px (3,6:1).</span></span></button>
+        <button class="chip-color" data-hex="#FBCFAF"><span class="sw" style="background:#FBCFAF"></span><span class="meta"><b>Durazno</b><span class="hex">#FBCFAF · brand-peach</span><span class="use">Gato y tigre. Contenedor secundario, botón tonal.</span></span></button>
+        <button class="chip-color" data-hex="#D1C1DD"><span class="sw" style="background:#D1C1DD"></span><span class="meta"><b>Lavanda</b><span class="hex">#D1C1DD · brand-lavender</span><span class="use">Perro del logo. Contenedor terciario.</span></span></button>
+        <button class="chip-color" data-hex="#DCCCE4"><span class="sw" style="background:#DCCCE4"></span><span class="meta"><b>Lavanda suave</b><span class="hex">#DCCCE4 · lavender-soft</span><span class="use">Perro de la ilustración. Fondos ilustrados.</span></span></button>
+        <button class="chip-color" data-hex="#706884"><span class="sw" style="background:#706884"></span><span class="meta"><b>Tinta</b><span class="hex">#706884 · brand-ink</span><span class="use">Serif del logo. Texto secundario (5,3:1).</span></span></button>
+      </div>
+
+      <h3 class="sub">Paletas tonales M3</h3>
+      <div class="tonal-list" id="tonal"></div>
+      <p class="note">El tono 87 del secundario coincide con el durazno del logo y el tono 80 del terciario con la lavanda. Por eso los contenedores usan los colores exactos de la marca. El recuadro marca el tono que usa cada rol en tema claro.</p>
+
+      <h3 class="sub">Roles y contraste</h3>
+      <div class="roles">
+        <div class="scheme l" id="schemeL"><h4>Pares de texto y fondo</h4></div>
+      </div>
+
+      <h3 class="sub">Degradados</h3>
+      <p class="note">Inspirados en el botón principal de OkVet, pero con nuestros colores y en una sola dirección (100°). Los tres pasan AA en cada punto del recorrido. Son tokens nuevos: necesitan tu aprobación.</p>
+      <div class="grads">
+        <div class="grad-sw"><div class="bar" style="background:var(--grad-alma);color:var(--on-grad-alma)">Agenda tu cita</div><b>Degradado Alma</b><span class="tok">--grad-alma</span><p>Durazno a lavanda, el gato y el perro del logo. Solo para la acción principal del sitio público: una vez por pantalla.</p></div>
+        <div class="grad-sw"><div class="bar" style="background:var(--grad-primary);color:var(--on-grad-primary)">Guardar consulta</div><b>Degradado morado</b><span class="tok">--grad-primary</span><p>Reemplaza al morado plano en el botón relleno. Da profundidad sin cambiar de color. En el panel clínico también.</p></div>
+        <div class="grad-sw"><div class="bar" style="background:var(--grad-wash),var(--md-surface-lowest);color:var(--md-on-surface-variant)">Fondo</div><b>Lavado de fondo</b><span class="tok">--grad-wash</span><p>Durazno arriba a la izquierda, lavanda abajo a la derecha. Fondo del inicio, de portadas y del portal.</p></div>
+      </div>
+      <div class="grad-preview">
+        <h3>Un animalito <em>limpio</em> es un animalito <em>sano</em></h3>
+        <p>Consultorio veterinario, spa y tienda para tu mascota, en un mismo lugar en Pereira.</p>
+        <a class="btn alma lg" href="#color">Agenda tu cita<span class="ms">arrow_forward</span></a>
+        <span class="alt">o <a href="#color">escríbenos por WhatsApp</a></span>
+      </div>
+      <p class="note">Así se ven juntos: lavado de fondo, palabras clave en morado (color sólido, no degradado, para que se lean bien) y el botón Alma. Es una muestra de armonía, no la maqueta del Inicio: esa llega en el paso 2.</p>
+
+      <h3 class="sub">Estados</h3>
+      <div class="semantic">
+        <div class="sem" style="background:var(--md-success-container);color:var(--md-on-success-container)"><span class="ms fill">check_circle</span><div><b>Al día</b><span>Vacuna vigente, pedido entregado</span></div></div>
+        <div class="sem" style="background:var(--md-warning-container);color:var(--md-on-warning-container)"><span class="ms fill">schedule</span><div><b>Por vencer</b><span>Refuerzo en los próximos 15 días</span></div></div>
+        <div class="sem" style="background:var(--md-error-container);color:var(--md-on-error-container)"><span class="ms fill">error</span><div><b>Vencida</b><span>Vacuna o control atrasado</span></div></div>
+        <div class="sem" style="background:var(--md-primary-container);color:var(--md-on-primary-container)"><span class="ms fill">info</span><div><b>Informativo</b><span>Cita solicitada, en revisión</span></div></div>
+      </div>
+
+      <div class="rules">
+        <div class="rule"><b>Morado para actuar</b><p>Botones rellenos (con degradado), enlaces, foco y selección. El degradado Alma se reserva para una sola acción por pantalla.</p></div>
+        <div class="rule"><b>Durazno para acompañar</b><p>Botones secundarios, elemento activo de la navegación y chips seleccionados. Es el color cálido del sitio.</p></div>
+        <div class="rule"><b>Verde solo para WhatsApp</b><p>Token propuesto <span class="tok">--whatsapp #137A4A</span>. Es más oscuro que el verde oficial para que el texto blanco pase AA (5,3:1).</p></div>
+      </div>
+    </section>
+
+    <!-- ===== TIPOGRAFÍA ===== -->
+    <section id="tipografia">
+      <div class="sec-head">
+        <h2>Tipografía</h2>
+        <p>Comparé el logo contra el catálogo de Google Fonts. Las dos familias son gratuitas, se cargan desde Google Fonts y luego se alojan en el propio sitio.</p>
+      </div>
+      <div class="faces">
+        <div class="face">
+          <span class="big" style="font-family:var(--font-sans);font-weight:500">Aa</span>
+          <span class="who">Alan Sans · títulos, interfaz y texto</span>
+          <p>Es la coincidencia más cercana con "Dra. Mariana" del logo (distancia 0,29, la mejor por amplio margen). Pesos de 300 a 900: un solo archivo variable para todo el sitio y el panel.</p>
+        </div>
+        <div class="face">
+          <span class="big" style="font-family:var(--font-serif)">Aa</span>
+          <span class="who">Gowun Batang · voz de la marca</span>
+          <p>La más cercana a "Médica Veterinaria &amp; Zootecnista". Viene de la caligrafía de pincel coreana (Myeongjo), un guiño asiático sin disfraz. Se usa para el lema, los subtítulos del logo, las citas y el cuerpo de los artículos del blog.</p>
+        </div>
+      </div>
+      <div class="scale">
+        <div class="scale-row"><span class="k">display-lg</span><span class="s" style="font:var(--display-lg);letter-spacing:-.02em">Agenda su baño</span><span class="spec">64 / 1.04 · 600</span></div>
+        <div class="scale-row"><span class="k">display-md</span><span class="s" style="font:var(--display-md);letter-spacing:-.02em">Spa para mascotas</span><span class="spec">48 / 1.08 · 600</span></div>
+        <div class="scale-row"><span class="k">headline-lg</span><span class="s" style="font:var(--headline-lg)">Consultorio veterinario</span><span class="spec">32 / 1.2 · 600</span></div>
+        <div class="scale-row"><span class="k">headline-sm</span><span class="s" style="font:var(--headline-sm)">Carnet de vacunación de Luna</span><span class="spec">24 / 1.3 · 600</span></div>
+        <div class="scale-row"><span class="k">title-lg</span><span class="s" style="font:var(--title-lg)">Baño medicado para piel sensible</span><span class="spec">22 / 1.3 · 600</span></div>
+        <div class="scale-row"><span class="k">title-md</span><span class="s" style="font:var(--title-md)">Limpieza de oídos y dental</span><span class="spec">18 / 1.4 · 600</span></div>
+        <div class="scale-row"><span class="k">body-lg · sitio</span><span class="s" style="font:var(--body-lg)">Usamos shampoo hipoalergénico libre de parabenos, agua caliente, secado y protección de oídos.</span><span class="spec">18 / 1.6 · 400</span></div>
+        <div class="scale-row"><span class="k">body-md · panel</span><span class="s" style="font:var(--body-md)">Peso actual 8,4 kg · última desparasitación 12 sep 2026</span><span class="spec">16 / 1.55 · 400</span></div>
+        <div class="scale-row"><span class="k">body-sm</span><span class="s" style="font:var(--body-sm)">El valor es un estimado sujeto a valoración del manto.</span><span class="spec">14 / 1.5 · 400</span></div>
+        <div class="scale-row"><span class="k">label-lg</span><span class="s" style="font:var(--label-lg)">Agenda tu cita</span><span class="spec">15 / 1.25 · 600</span></div>
+        <div class="scale-row"><span class="k">serif-lead</span><span class="s" style="font:var(--serif-lead)">Un animalito limpio es un animalito sano.</span><span class="spec">22 / 1.5 · Gowun</span></div>
+        <div class="scale-row"><span class="k">serif-body · blog</span><span class="s" style="font:var(--serif-body)">Las pulgas no solo pican: pueden transmitir parásitos internos. Un baño antipulgas cada mes ayuda, pero no reemplaza la desparasitación.</span><span class="spec">18 / 1.75 · Gowun</span></div>
+      </div>
+      <p class="note">El sitio público usa <b>body-lg (18 px)</b> como texto base, pensando en clientes de todas las edades. El panel clínico usa <b>body-md (16 px)</b> porque muestra más datos por pantalla.</p>
+    </section>
+
+    <!-- ===== ESPACIO Y FORMA ===== -->
+    <section id="espacio">
+      <div class="sec-head">
+        <h2>Espacio, forma y elevación</h2>
+        <p>Todo sobre una base de 4 px. Las formas y las sombras siguen la escala de Material 3, con las sombras teñidas del morado oscuro en lugar de gris.</p>
+      </div>
+      <div class="panel">
+        <div class="spacing" id="spacing"></div>
+        <div class="grid-demo" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="note" style="margin-top:var(--sp-3)">Retícula de escritorio: 12 columnas, contenedor de 1200 px, separación de 24 px. Las secciones del sitio se separan con 96 px; dentro de una tarjeta, 24 px.</p>
+      </div>
+      <div class="shapes">
+        <div class="shape"><div style="border-radius:0"></div><b>none · 0</b><span>Bandas a todo el ancho</span></div>
+        <div class="shape"><div style="border-radius:var(--r-xs)"></div><b>xs · 4</b><span>Checkbox, tooltip</span></div>
+        <div class="shape"><div style="border-radius:var(--r-sm)"></div><b>sm · 8</b><span>Campos, chips</span></div>
+        <div class="shape"><div style="border-radius:var(--r-md)"></div><b>md · 12</b><span>Menús, miniaturas</span></div>
+        <div class="shape"><div style="border-radius:var(--r-lg)"></div><b>lg · 16</b><span>FAB, fecha de cita</span></div>
+        <div class="shape"><div style="border-radius:var(--r-xl)"></div><b>xl · 28</b><span>Tarjetas, diálogos</span></div>
+        <div class="shape"><div style="border-radius:50%"></div><b>full</b><span>Botones, avatares, sello</span></div>
+      </div>
+      <div class="elev">
+        <div style="box-shadow:var(--elev-0)"><b>Nivel 0</b><span>Tarjeta con borde</span></div>
+        <div style="box-shadow:var(--elev-1)"><b>Nivel 1</b><span>Hover de botón</span></div>
+        <div style="box-shadow:var(--elev-2)"><b>Nivel 2</b><span>Hover de tarjeta</span></div>
+        <div style="box-shadow:var(--elev-3)"><b>Nivel 3</b><span>FAB, snackbar</span></div>
+        <div style="box-shadow:var(--elev-4)"><b>Nivel 4</b><span>FAB en hover</span></div>
+        <div style="box-shadow:var(--elev-5)"><b>Nivel 5</b><span>Diálogo, carrito</span></div>
+      </div>
+    </section>
+
+    <!-- ===== MOVIMIENTO ===== -->
+    <section id="movimiento">
+      <div class="sec-head">
+        <h2>Movimiento</h2>
+        <p>Curvas y duraciones de Material 3. Rápido y suave en el uso diario, con un solo momento propio: el sello. Si el dispositivo pide reducir movimiento, todo se vuelve instantáneo.</p>
+      </div>
+      <div class="motion">
+        <div class="mcard"><b>Estándar</b><span class="tok">cubic-bezier(.2, 0, 0, 1)</span><p>Cambios dentro de la pantalla: hover, pestañas, interruptores.</p><div class="track" data-ease="var(--ease-standard)" data-dur="var(--dur-medium)"><i></i></div></div>
+        <div class="mcard"><b>Enfático · entrada</b><span class="tok">cubic-bezier(.05, .7, .1, 1)</span><p>Algo aparece: carrito, snackbar, resultado del cotizador.</p><div class="track" data-ease="var(--ease-emph-decel)" data-dur="var(--dur-long)"><i></i></div></div>
+        <div class="mcard"><b>Enfático · salida</b><span class="tok">cubic-bezier(.3, 0, .8, .15)</span><p>Algo se va: cerrar un diálogo, quitar un producto.</p><div class="track" data-ease="var(--ease-emph-accel)" data-dur="var(--dur-medium)"><i></i></div></div>
+      </div>
+      <div class="demo-row"><button class="btn outlined" id="playEase"><span class="ms">play_arrow</span>Reproducir curvas</button></div>
+      <div class="durs">
+        <div><b>150 ms</b><span>short · hover y foco</span></div>
+        <div><b>250 ms</b><span>medium · interruptores, chips</span></div>
+        <div><b>400 ms</b><span>long · paneles, snackbar</span></div>
+        <div><b>600 ms</b><span>xlong · solo el sello</span></div>
+      </div>
+      <div class="stamp-demo">
+        <div class="seal stamp" id="stampSeal" aria-hidden="true">
+          <svg viewBox="0 0 132 132"><defs><path id="ring2" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"/></defs>
+            <circle cx="66" cy="66" r="63" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1"/>
+            <text font-family="Alan Sans, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor"><textPath href="#ring2">ALMA ANIMAL · PEREIRA · MVZ TP 51206 ·</textPath></text></svg>
+          <div class="core"><span><b>14</b>OCT 2026</span></div>
+        </div>
+        <div class="copy">
+          <h4>El sello, el momento propio de la marca</h4>
+          <p>Cuando la doctora registra una vacuna o confirma una cita, el sello cae sobre el carnet: llega grande y algo borroso, se asienta y queda ladeado, como un sello de tinta. Es la única animación de 600 ms en todo el sistema.</p>
+          <button class="btn tonal" id="replayStamp"><span class="ms">verified</span>Sellar de nuevo</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BOTONES ===== -->
+    <section id="botones">
+      <div class="sec-head">
+        <h2>Botones</h2>
+        <p>Botones de Material 3 en forma de píldora. En el sitio público, las acciones principales usan el tamaño grande (52 px) para que sean fáciles de tocar.</p>
+      </div>
+      <div class="demo">
+        <div class="demo-row"><span class="demo-label">Jerarquía</span>
+          <button class="btn alma"><span class="ms">event_available</span>Agenda tu cita</button>
+          <button class="btn filled">Confirmar cita</button>
+          <button class="btn tonal"><span class="ms">calculate</span>Cotiza el spa</button>
+          <button class="btn outlined">Ver servicios</button>
+          <button class="btn text">Más información</button>
+          <button class="btn wa"><svg aria-hidden="true"><use href="#wa"/></svg>Escribir por WhatsApp</button>
+        </div>
+        <div class="demo-row"><span class="demo-label">Tamaños: grande (sitio), mediano (general), pequeño (tablas del panel)</span>
+          <button class="btn filled lg">Agenda tu cita</button>
+          <button class="btn filled">Guardar consulta</button>
+          <button class="btn filled sm"><span class="ms">add</span>Nueva vacuna</button>
+        </div>
+        <div class="demo-row"><span class="demo-label">Estados</span>
+          <button class="btn filled" disabled>Deshabilitado</button>
+          <button class="btn outlined" disabled>Deshabilitado</button>
+          <button class="btn filled loading" aria-busy="true"><span class="spin" aria-hidden="true"></span>Enviando…</button>
+          <span class="note">Pasa el cursor o navega con Tab para ver hover y foco.</span>
+        </div>
+        <div class="demo-row"><span class="demo-label">Botones de icono</span>
+          <button class="icon-btn" aria-label="Buscar"><span class="ms">search</span></button>
+          <button class="icon-btn" aria-label="Carrito, 2 productos"><span class="ms">shopping_bag</span><span class="badge">2</span></button>
+          <button class="icon-btn tonal" aria-label="Agregar a favoritos"><span class="ms">favorite</span></button>
+          <button class="icon-btn" aria-label="Más opciones"><span class="ms">more_vert</span></button>
+        </div>
+        <div class="demo-row"><span class="demo-label">Botón flotante de WhatsApp: solo el isotipo, 60 px, fijo abajo a la derecha en todas las páginas. Al pasar el cursor muestra "Escríbenos por WhatsApp" (lo ves en esta hoja).</span></div>
+      </div>
+    </section>
+
+    <!-- ===== CAMPOS ===== -->
+    <section id="campos">
+      <div class="sec-head">
+        <h2>Campos y selección</h2>
+        <p>Campos con contorno y etiqueta flotante de Material 3, a 56 px de alto. Los ejemplos usan las opciones reales del cotizador del spa.</p>
+      </div>
+      <div class="demo">
+        <div class="fields">
+          <div class="field"><div class="box"><input id="f-name" placeholder=" " value="Luna"><label for="f-name">Nombre de la mascota</label></div><span class="help">Como la llaman en casa</span></div>
+          <div class="field"><div class="box"><select id="f-species"><option>Perro</option><option>Gato</option></select><label for="f-species">Especie</label><span class="ms chev">expand_more</span></div></div>
+          <div class="field"><div class="box"><input id="f-weight" placeholder=" " inputmode="decimal" value="8,4"><label for="f-weight">Peso (kg)</label></div><span class="help">Usamos el peso para calcular el precio</span></div>
+          <div class="field err"><div class="box"><input id="f-phone" placeholder=" " value="324 679 66" aria-invalid="true" aria-describedby="f-phone-h"><label for="f-phone">Celular</label></div><span class="help" id="f-phone-h">Faltan dígitos: el celular tiene 10 números</span></div>
+          <div class="field has-lead"><div class="box"><span class="ms lead">mail</span><input id="f-mail" type="email" placeholder=" "><label for="f-mail">Correo electrónico</label></div><span class="help">Te enviamos la confirmación y el recordatorio</span></div>
+          <div class="field disabled"><div class="box"><input id="f-chip" placeholder=" " value="900 108 000 123 456" disabled><label for="f-chip">Microchip</label></div><span class="help">Lo registra la doctora en consulta</span></div>
+          <div class="field" style="grid-column:span 2"><div class="box"><textarea id="f-notes" placeholder=" ">Tiene nudos detrás de las orejas.</textarea><label for="f-notes">Algo que debamos saber</label></div></div>
+          <div class="search" style="align-self:center"><span class="ms">search</span><label class="sr" for="f-search">Buscar productos</label><input id="f-search" placeholder="Buscar en la tienda"></div>
+        </div>
+        <div class="demo-row" style="gap:var(--sp-8);align-items:flex-start">
+          <div style="display:flex;flex-direction:column;gap:var(--sp-3)"><span class="demo-label">Botón segmentado · largo del pelo</span>
+            <div class="seg" data-single>
+              <button type="button" aria-pressed="false"><span class="ms">check</span>Corto</button>
+              <button type="button" aria-pressed="true"><span class="ms">check</span>Medio</button>
+              <button type="button" aria-pressed="false"><span class="ms">check</span>Largo</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-3)"><span class="demo-label">Chips de filtro · tienda</span>
+            <div class="chips">
+              <button class="chip" aria-pressed="true"><span class="ms">check</span>Perros</button>
+              <button class="chip" aria-pressed="false">Gatos</button>
+              <button class="chip" aria-pressed="false">Alimento</button>
+              <button class="chip" aria-pressed="false">Accesorios</button>
+              <button class="chip assist"><span class="ms">tune</span>Más filtros</button>
+            </div>
+          </div>
+        </div>
+        <div class="demo-row" style="gap:var(--sp-8)">
+          <label class="check"><input type="checkbox" id="c-med" checked><span>Baño medicado para piel sensible <small>+$5.000 hasta 10 kg</small></span></label>
+          <label class="check"><input type="checkbox" id="c-cut"><span>Corte según raza</span></label>
+          <label class="switch"><input type="checkbox" id="s-rem" role="switch" checked><span>Recordarme la próxima vacuna por correo</span></label>
+        </div>
+        <div class="radio-group" role="radiogroup" aria-label="Estado del manto">
+          <span class="demo-label">Estado del manto</span>
+          <label class="radio"><input type="radio" name="manto" id="r1" checked>Sin nudos</label>
+          <label class="radio"><input type="radio" name="manto" id="r2">Algunos nudos</label>
+          <label class="radio"><input type="radio" name="manto" id="r3">Nudos severos (valor adicional)</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TARJETAS ===== -->
+    <section id="tarjetas">
+      <div class="sec-head">
+        <h2>Tarjetas</h2>
+        <p>Cuatro tarjetas con un trabajo cada una: servicio, producto, cita y registro de vacuna. Los precios y productos son de ejemplo hasta tener los reales.</p>
+      </div>
+      <div class="cards">
+        <article class="card svc link">
+          <div class="card-body">
+            <div class="head"><span class="disc"><span class="ms">shower</span></span><h4>Baño completo</h4></div>
+            <ul>
+              <li><span class="ms">check</span>Baño antipulgas con shampoo hipoalergénico</li>
+              <li><span class="ms">check</span>Limpieza de oídos y dental</li>
+              <li><span class="ms">check</span>Hidromasaje y aromaterapia</li>
+              <li><span class="ms">check</span>Cepillado, deslanado y uñas</li>
+              <li><span class="ms">check</span>Cierre con perfume, accesorio y snack</li>
+            </ul>
+          </div>
+          <div class="foot"><span class="price num">Desde $00.000<small>Precio de ejemplo</small></span><button class="btn tonal sm">Cotizar</button></div>
+        </article>
+
+        <article class="card prod link">
+          <div class="img"><span class="status ok"><span class="ms fill">inventory_2</span>En stock</span><div class="ph"><span class="ms">photo_camera</span>Foto del producto</div><button class="icon-btn fav" aria-label="Agregar a favoritos"><span class="ms">favorite</span></button></div>
+          <div class="card-body">
+            <span class="cat">Higiene · Perros</span>
+            <h4>Shampoo hipoalergénico 250 ml</h4>
+            <span class="example">Producto de ejemplo</span>
+            <div class="row"><span class="price num">$00.000</span><button class="btn filled sm"><span class="ms">add_shopping_cart</span>Agregar</button></div>
+          </div>
+        </article>
+
+        <article class="card appt">
+          <div class="card-body">
+            <div class="date"><span>Jue</span><b>30</b><span>Oct</span></div>
+            <div class="info">
+              <span class="status ok"><span class="ms fill">check_circle</span>Confirmada</span>
+              <h4>Spa · Baño y corte</h4>
+              <div class="pet"><span class="avatar">L</span><div class="meta"><span>Luna · Shih Tzu · 8,4 kg</span></div></div>
+              <div class="meta"><span><span class="ms">schedule</span>10:00 a. m. · 2 h aprox.</span><span><span class="ms">location_on</span>Consultorio Alma Animal, Pereira</span></div>
+            </div>
+          </div>
+          <div class="actions"><button class="btn outlined sm"><span class="ms">calendar_add_on</span>Añadir a mi calendario</button><button class="btn text sm">Reprogramar</button></div>
+        </article>
+      </div>
+
+      <div class="vax">
+        <div>
+          <span class="status ok"><span class="ms fill">verified</span>Aplicada y vigente</span>
+          <h4 style="margin-top:var(--sp-3)">Antirrábica · Luna</h4>
+          <dl>
+            <div><dt>Aplicada</dt><dd>14 oct 2026</dd></div>
+            <div><dt>Laboratorio</dt><dd>Ejemplo Lab</dd></div>
+            <div><dt>Lote</dt><dd>AR-2026-0411</dd></div>
+            <div><dt>Próxima dosis</dt><dd>14 oct 2027</dd></div>
+          </dl>
+        </div>
+        <div class="seal" style="transform:rotate(-6deg)" aria-label="Sello de Alma Animal, 14 de octubre de 2026" role="img">
+          <svg viewBox="0 0 132 132" aria-hidden="true"><defs><path id="ring3" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"/></defs>
+            <circle cx="66" cy="66" r="63" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1"/>
+            <text font-family="Alan Sans, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor"><textPath href="#ring3">ALMA ANIMAL · PEREIRA · MVZ TP 51206 ·</textPath></text></svg>
+          <div class="core" aria-hidden="true"><span><b>14</b>OCT 2026</span></div>
+        </div>
+      </div>
+      <p class="note">Registro del carnet de vacunas: lo verá el propietario en su portal. El sello lleva los datos de la doctora. El sello "según el laboratorio" del brief lo definimos en la maqueta del carnet: ¿es el logo del laboratorio o la etiqueta física del frasco?</p>
+    </section>
+
+    <!-- ===== NAVEGACIÓN ===== -->
+    <section id="navegacion">
+      <div class="sec-head">
+        <h2>Navegación</h2>
+        <p>Barra superior para el sitio público. Riel lateral y pestañas para el panel clínico, como en Material 3; el mismo riel se convierte en barra inferior cuando hagamos la app.</p>
+      </div>
+      <div class="appbar">
+        <a class="lockup-h" href="#marca" aria-label="Alma Animal, inicio"><img src="{{MARK}}" alt=""><span><span class="wm">Alma Animal</span><span class="tag">Consultorio · Spa · Petshop</span></span></a>
+        <nav class="links" aria-label="Principal">
+          <a href="#navegacion">Consultorio</a>
+          <a href="#navegacion" aria-current="page">Spa</a>
+          <a href="#navegacion">Tienda</a>
+          <a href="#navegacion">Quiénes somos</a>
+          <a href="#navegacion">Blog</a>
+          <a href="#navegacion">Contacto</a>
+        </nav>
+        <div class="end">
+          <button class="icon-btn" aria-label="Carrito, 2 productos"><span class="ms">shopping_bag</span><span class="badge">2</span></button>
+          <a class="btn text" href="#navegacion">Ingresar</a>
+          <a class="btn filled" href="#navegacion">Agenda tu cita</a>
+        </div>
+      </div>
+
+      <div class="nav-pair">
+        <nav class="rail" aria-label="Panel">
+          <img class="mk" src="{{MARK}}" alt="">
+          <a href="#navegacion"><span class="pill"><span class="ms">calendar_month</span></span>Agenda</a>
+          <a href="#navegacion" aria-current="page"><span class="pill"><span class="ms fill">pets</span></span>Pacientes</a>
+          <a href="#navegacion"><span class="pill"><span class="ms">group</span></span>Propietarios</a>
+          <a href="#navegacion"><span class="pill"><span class="ms">notifications</span><span class="dot"></span></span>Alertas</a>
+          <a href="#navegacion"><span class="pill"><span class="ms">storefront</span></span>Tienda</a>
+          <a href="#navegacion"><span class="pill"><span class="ms">edit_note</span></span>Sitio web</a>
+        </nav>
+        <div class="panel-side">
+          <div class="crumbs"><a href="#navegacion">Pacientes</a><span class="ms">chevron_right</span><span>Luna</span></div>
+          <div class="ptitle"><span class="avatar">L</span><div><h4>Luna</h4><p>Canino · Shih Tzu · Hembra esterilizada · 4 años · Propietaria: Camila R. (ejemplo)</p></div></div>
+          <div class="tabs" role="tablist">
+            <button role="tab" aria-selected="true">Línea de tiempo</button>
+            <button role="tab" aria-selected="false">Consultas <span class="count">6</span></button>
+            <button role="tab" aria-selected="false">Vacunas <span class="count">4</span></button>
+            <button role="tab" aria-selected="false">Spa <span class="count">11</span></button>
+            <button role="tab" aria-selected="false">Exámenes</button>
+          </div>
+          <div class="timeline">
+            <div class="tl"><span class="when">14 oct 2026</span><span class="node"></span><div><b>Vacuna antirrábica</b><span>Lote AR-2026-0411 · próxima dosis 14 oct 2027</span></div></div>
+            <div class="tl"><span class="when">02 oct 2026</span><span class="node"></span><div><b>Spa · Baño medicado</b><span>Piel sensible en abdomen · 8,4 kg</span></div></div>
+            <div class="tl"><span class="when">12 sep 2026</span><span class="node"></span><div><b>Consulta general</b><span>Otitis leve oído izquierdo · control en 15 días</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-row"><span class="demo-label">Snackbar · confirmación breve con acción</span>
+        <div class="snack"><span>Cita solicitada. Te escribimos para confirmar.</span><button>Ver cita</button></div>
+      </div>
+    </section>
+
+    <!-- ===== PENDIENTES ===== -->
+    <section id="pendientes">
+      <div class="sec-head">
+        <h2>Paso 1 aprobado</h2>
+        <p>Tokens, componentes y decisiones con los que se maquetan todas las secciones siguientes.</p>
+      </div>
+      <div class="todo">
+        <div class="col">
+          <h3>Tokens definidos</h3>
+          <ul>
+            <li>Marca: 5 colores exactos del logo<small>brand-purple, peach, lavender, lavender-soft, ink</small></li>
+            <li>Roles M3 (tema claro), más éxito, alerta y error<small>Todos los textos pasan AA</small></li>
+            <li>Tipografía: Alan Sans + Gowun Batang, 15 estilos</li>
+            <li>Espacio base 4 (13 pasos), retícula de 12 columnas</li>
+            <li>Forma: 0, 4, 8, 12, 16, 28 y círculo</li>
+            <li>Elevación 0–5 con sombra teñida</li>
+            <li>Movimiento: 3 curvas, 4 duraciones, estados M3 al 8/10 %</li>
+            <li>Nuevo: 3 degradados (Alma, morado, lavado)<small>Pendientes de tu aprobación</small></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Componentes nuevos</h3>
+          <ul>
+            <li>Botón: Alma (degradado), relleno, tonal, contorno, texto, WhatsApp; 3 tamaños</li>
+            <li>Botón de icono con contador, botón flotante de WhatsApp</li>
+            <li>Campo de texto, lista, área de texto, buscador</li>
+            <li>Segmentado, chips, casilla, interruptor, radio</li>
+            <li>Tarjetas de servicio, producto, cita y vacuna</li>
+            <li>Sello, puerta de luna, avatar de dos tonos</li>
+            <li>Barra superior, riel lateral, pestañas, migas, línea de tiempo, snackbar</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Decisiones aprobadas</h3>
+          <ul>
+            <li>Tipografías: Alan Sans + Gowun Batang</li>
+            <li>Degradados Alma, morado y lavado de fondo</li>
+            <li>Verde WhatsApp #137A4A; botón flotante solo con el isotipo</li>
+            <li>Sello morado como firma de la doctora</li>
+            <li>Solo tema claro: sin modo oscuro<small>Los tokens oscuros se retiraron del sistema</small></li>
+            <li>Sin trama de nubes por ahora</li>
+          </ul>
+          <h3 style="margin-top:var(--sp-4)">Pendiente de tu parte</h3>
+          <ul>
+            <li>Logo en vector: corazón, tigre y perro</li>
+            <li>Número de WhatsApp y dirección del consultorio</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button class="fab-wa" type="button" id="fab" aria-label="Escríbenos por WhatsApp"><svg aria-hidden="true"><use href="#wa"/></svg><span class="tip" aria-hidden="true">Escríbenos por WhatsApp</span></button>
+<div class="toast" id="toast" role="status" aria-live="polite"><div class="snack"><span id="toastMsg">Copiado</span></div></div>
+
+<script>
+(function(){
+  // Paletas tonales (generadas con material-color-utilities 0.3.0)
+  const T=[0,10,20,30,40,50,60,70,80,87,90,95,100];
+  const pal={
+    'Primario|Morado #8F7FB0':['#000000','#21133d','#362954','#4d3f6c','#655785','#7f6f9f','#9989ba','#b4a3d6','#d0bef3','#e3d3ff','#eaddff','#f6edff','#ffffff'],
+    'Secundario|Durazno #FBCFAF':['#000000','#2f1500','#48290d','#623f21','#7d5636','#996e4c','#b58764','#d2a17c','#f0bc95','#ffd1b0','#ffdcc3','#ffede3','#ffffff'],
+    'Terciario|Lavanda #D1C1DD':['#000000','#21172c','#372c42','#4e4259','#665971','#7f728b','#9a8ba5','#b5a6c1','#d1c1dd','#e5d4f1','#eddcf9','#f9ecff','#ffffff'],
+    'Neutro|Gris morado':['#000000','#1d1b1f','#322f34','#48464b','#605d63','#79767b','#938f95','#aeaab0','#cac5cb','#ded8df','#e6e1e7','#f5eff5','#ffffff']
+  };
+  const key={'Primario':40,'Secundario':87,'Terciario':80,'Neutro':10};
+  const tonal=document.getElementById('tonal');
+  for(const [k,arr] of Object.entries(pal)){
+    const [n,s]=k.split('|'); const row=document.createElement('div'); row.className='tonal-row';
+    row.innerHTML=`<span class="lbl">${n}<small>${s}</small></span><div class="tones">${arr.map((h,i)=>`<span style="background:${h};color:${T[i]>=60?'#1d1b1f':'#ffffff'}" class="${T[i]===key[n]?'key':''}" title="${n} ${T[i]} · ${h}">${T[i]}</span>`).join('')}</div>`;
+    tonal.appendChild(row);
+  }
+
+  // Roles con contraste calculado
+  const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+  const ratio=(a,b)=>{const x=lum(a),y=lum(b);return ((Math.max(x,y)+.05)/(Math.min(x,y)+.05)).toFixed(1).replace('.',',')};
+  const rolesL=[['primary','#655785','on-primary','#FFFFFF'],['primary-container','#EADDFF','on-primary-container','#4D3F6C'],['secondary-container','#FBCFAF','on-secondary-container','#623F21'],['tertiary-container','#D1C1DD','on-tertiary-container','#372C42'],['surface','#FEF7FE','on-surface','#1D1B1F'],['surface','#FEF7FE','on-surface-variant','#49454F'],['error','#B4271F','on-error','#FFFFFF']];
+  const fill=(id,list)=>{const el=document.getElementById(id);for(const [bn,bg,fn,fg] of list){const d=document.createElement('div');d.className='pair';d.style.background=bg;d.style.color=fg;d.innerHTML=`<span class="n">${fn} sobre ${bn}<small>${fg} / ${bg}</small></span><span class="ratio">${ratio(fg,bg)}:1</span>`;el.appendChild(d)}};
+  fill('schemeL',rolesL);
+
+  // Escala de espacio
+  const sp=[[1,4],[2,8],[3,12],[4,16],[5,20],[6,24],[8,32],[10,40],[12,48],[16,64],[20,80],[24,96],[32,128]];
+  const spEl=document.getElementById('spacing');
+  sp.forEach(([n,px])=>{const r=document.createElement('div');r.className='sp-row';r.innerHTML=`<span>sp-${n}</span><span class="px">${px} px</span><span class="bar" style="width:${px*3}px;max-width:100%"></span>`;spEl.appendChild(r)});
+
+  // Toast
+  const toast=document.getElementById('toast'),msg=document.getElementById('toastMsg');let tt;
+  const say=t=>{msg.textContent=t;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2200)};
+  document.querySelectorAll('.chip-color').forEach(b=>b.addEventListener('click',()=>{
+    const h=b.dataset.hex; try{navigator.clipboard.writeText(h).then(()=>say(h+' copiado'),()=>say(h))}catch(e){say(h)}
+  }));
+  document.getElementById('fab').addEventListener('click',()=>say('Aquí abrirá WhatsApp cuando tengamos el número'));
+
+  // Segmentado de selección única y chips
+  document.querySelectorAll('.seg[data-single]').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))}));
+  document.querySelectorAll('.chip:not(.assist)').forEach(c=>c.addEventListener('click',()=>c.setAttribute('aria-pressed',String(c.getAttribute('aria-pressed')!=='true'))));
+  document.querySelectorAll('.tabs').forEach(t=>t.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;t.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',String(x===b)))}));
+
+  // Curvas
+  document.getElementById('playEase').addEventListener('click',()=>{
+    document.querySelectorAll('.track').forEach(tr=>{const i=tr.querySelector('i');tr.style.setProperty('--w',tr.clientWidth+'px');
+      i.style.transition=`transform 900ms ${tr.dataset.ease}`; /* ralentizado para poder ver la curva */
+      tr.classList.toggle('go');});
+  });
+  // Sello
+  const seal=document.getElementById('stampSeal');
+  document.getElementById('replayStamp').addEventListener('click',()=>{seal.classList.remove('stamp');void seal.offsetWidth;seal.classList.add('stamp')});
+
+  // Índice activo
+  const links=[...document.querySelectorAll('.toc nav a')];
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id))}})},{rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('main section[id]').forEach(s=>io.observe(s));
+})();
+</script>

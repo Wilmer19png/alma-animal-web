@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestor · Citas de spa · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#F8F2F8}
+a{color:#655785}a:hover{color:#4D3F6C}
+.g{--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);--grad-alma:linear-gradient(100deg,#FBCFAF,#E8C6CF,#D1C1DD);font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#F8F2F8;-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-wrap:wrap}
+.g *{box-sizing:border-box}
+.g h1,.g h2,.g h3,.g p{margin:0}
+.g ::selection{background:#FBCFAF;color:#623F21}
+.g :focus-visible{outline:3px solid #655785;outline-offset:2px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.side{flex:0 0 256px;background:#2B1E48;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:18px;min-height:1900px}
+.side .grp{font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:0 12px;margin-top:6px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.85);text-decoration:none;font:500 15px/1 "Alan Sans",sans-serif;transition:background .15s}
+.side nav a:hover{background:rgb(255 255 255/.08);color:#fff}
+.side nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+.side nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+.side nav a.on .n{background:#2B1E48;color:#fff}
+.main{flex:999 1 900px;min-width:0;padding:24px 32px 48px;display:flex;flex-direction:column;gap:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);color:#fff;font:600 15px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{color:#fff;box-shadow:0 2px 6px rgb(54 41 84/.2)}
+.btn.out{background:#fff;color:#655785;border-color:#CBC4D1}
+.btn.out:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.sm{height:34px;padding:0 12px;font-size:14px}
+.card{background:#fff;border-radius:20px;box-shadow:0 0 0 1px #E6E1E7;padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card h2{font:600 17px/1.3 "Alan Sans",sans-serif;display:flex;align-items:center;gap:8px}
+.card h2 .ms{color:#655785}
+.sec{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:1px solid #F2ECF2}
+.sec h3{font:600 16px/1.3 "Alan Sans",sans-serif;display:flex;align-items:center;gap:8px}
+.sec h3 .ms{color:#655785}
+.sec h3 small{font:400 13px/1.3 "Alan Sans",sans-serif;color:#584E6E}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font:600 12px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.tg-mini{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:999px;font:700 11px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.tg-mini .ms{font-size:13px}
+.filt{height:38px;padding:0 14px;border-radius:999px;border:1px solid #CBC4D1;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto 22px;gap:12px;align-items:center;width:100%;padding:10px 12px;border:0;border-radius:14px;cursor:pointer;text-align:left;font:inherit;color:#2B1E48;transition:background .15s}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label,.fld .lb{font:600 14px/1.3 "Alan Sans",sans-serif}
+.fld input,.fld select,.fld textarea{width:100%;height:46px;border-radius:12px;border:1px solid #7A7580;background:#fff;padding:0 14px;font:400 16px/1.3 "Alan Sans",sans-serif;color:#2B1E48;outline:0}
+.fld textarea{height:80px;padding:12px 14px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:#6E6585}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#655785;box-shadow:0 0 0 3px rgb(101 87 133/.18)}
+.fld .hint{font:400 13px/1.35 "Alan Sans",sans-serif;color:#584E6E}
+.cell{height:40px;width:100%;border-radius:10px;border:1px solid #CBC4D1;padding:0 10px;font:400 15px/1 "Alan Sans",sans-serif;color:#2B1E48;background:#fff;font-variant-numeric:tabular-nums;min-width:0}
+.vrow{display:grid;grid-template-columns:minmax(0,1fr) 96px 96px 88px 112px 28px;gap:8px;align-items:center;padding:6px 8px;border-radius:12px}
+.step{display:inline-flex;align-items:center;border:1px solid #CBC4D1;border-radius:999px;height:40px;background:#fff}
+.step button{width:34px;height:38px;border:0;background:transparent;color:#655785;cursor:pointer;border-radius:999px;font:500 20px/1 "Alan Sans",sans-serif}
+.step b{min-width:28px;text-align:center;font:700 15px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.tagpick{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:0;cursor:pointer;font:600 14px/1 "Alan Sans",sans-serif;transition:box-shadow .15s,background .15s}
+.tg{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F2ECF2}
+.tg:last-child{border-bottom:0}
+.sw{position:relative;width:46px;height:26px;border-radius:999px;border:0;cursor:pointer;flex:none;transition:background .2s}
+.sw i{position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s cubic-bezier(.05,.7,.1,1);box-shadow:0 1px 2px rgb(0 0 0/.2)}
+.ex{font:500 12px/1 "Alan Sans",sans-serif;color:#584E6E;background:#F2ECF2;border-radius:999px;padding:5px 10px}
+.kpi{display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:20px;background:#fff;box-shadow:0 0 0 1px #E6E1E7}
+.mini{padding:14px;border-radius:14px;box-shadow:0 0 0 1px #E6E1E7}
+.mini span{font:500 13px/1.3 "Alan Sans",sans-serif;color:#584E6E}
+.mini b{display:block;font:700 22px/1.2 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.link-add{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:#655785;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;padding:4px 0}
+.filt{height:38px;padding:0 14px;border-radius:999px;border:1px solid #CBC4D1;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.arow{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:10px 12px;border:0;border-radius:14px;cursor:pointer;text-align:left;font:inherit;color:#2B1E48;transition:background .15s}
+.line{display:flex;align-items:center;gap:12px;padding:10px 4px;font:400 15px/1.35 "Alan Sans",sans-serif;cursor:pointer;border-bottom:1px solid #F2ECF2}
+.line input{width:20px;height:20px;margin:0;accent-color:#655785;flex:none}
+.slot{height:52px;padding:0 14px;border-radius:14px;border:1px solid #CBC4D1;font:600 14px/1.1 "Alan Sans",sans-serif;display:inline-flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px}
+.bubble{position:relative;max-width:520px;padding:14px 16px;border-radius:4px 18px 18px 18px;background:#DCF5E3;color:#123B24;font:400 15px/1.5 "Alan Sans",sans-serif;white-space:pre-line}
+.btn.wa{background:#00BC39;color:#06290F}
+.btn.wa:hover{background:#00A332;color:#06290F}
+.up{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:110px;padding:12px;border-radius:16px;border:2px dashed #CBC4D1;color:#655785;font:600 14px/1.2 "Alan Sans",sans-serif;text-align:center;cursor:pointer}
+.up small{font:400 12px/1.35 "Alan Sans",sans-serif;color:#584E6E;max-width:28ch}
+/*GMOVIL-INI*/
+.gbar,.gnav,.mdays{display:none}
+.lanebtn{border:0;cursor:pointer;font-family:inherit}
+@media (max-width:760px){
+  .g{display:block !important}
+  .side{display:none !important}
+  .main{padding:0 14px 104px !important;gap:14px !important}
+  /* barra superior */
+  .gbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;margin:0 -14px;padding:10px 14px;background:#2B1E48;color:#fff}
+  .gbar-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 17px/1 "Alan Sans",sans-serif}
+  .gbar-logo:hover{color:#fff}
+  .gbar-logo > span{width:34px;height:34px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center}
+  .gbar-logo img{width:26px}
+  .gbar-ic{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgb(255 255 255/.12);color:#fff;display:grid;place-items:center;text-decoration:none}
+  .gbar-ic:hover{color:#fff;background:rgb(255 255 255/.2)}
+  /* navegación inferior */
+  .gnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;gap:4px;background:#2B1E48;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgb(43 30 72/.25)}
+  .gnav > a,.gmore > summary{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:14px;color:rgb(255 255 255/.78);font:600 11.5px/1 "Alan Sans",sans-serif;text-decoration:none;list-style:none;cursor:pointer}
+  .gnav > a:hover{color:#fff}
+  .gnav .ms{font-size:22px}
+  .gnav .on,.gmore.on > summary{color:#2B1E48;background:#FBCFAF}
+  .gmore{flex:1;display:flex}
+  .gmore > summary::-webkit-details-marker{display:none}
+  .gmore[open] > summary{color:#fff;background:rgb(255 255 255/.14)}
+  .gsheet{position:fixed;left:8px;right:8px;bottom:78px;max-height:70vh;overflow:auto;background:#2B1E48;border-radius:22px;padding:8px 10px 12px;box-shadow:0 -10px 30px rgb(43 30 72/.35)}
+  .gsheet .grp{display:block;font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:14px 12px 6px}
+  .gsheet nav{display:flex;flex-direction:column;gap:2px}
+  .gsheet nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.88);text-decoration:none;font:500 15.5px/1.2 "Alan Sans",sans-serif}
+  .gsheet nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+  .gsheet nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+
+  /* encabezado de cada módulo */
+  .main h1{font-size:24px !important;line-height:1.15 !important}
+  .main > div:first-of-type{gap:10px !important;padding-top:14px}
+  .main > div:first-of-type > div:first-child{flex:1 1 100% !important}
+  .main > div:first-of-type p{font-size:14.5px !important}
+  .main > div:first-of-type > .btn,.main > div:first-of-type > a.btn{flex:1 1 auto}
+  .ex{order:-1}
+
+  /* rejillas: una columna; las de 4-5 columnas (indicadores) en dos; fotos en tres */
+  :where(.g) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  :where(.g) [style*="grid-template-columns: repeat(4"],:where(.g) [style*="grid-template-columns: repeat(5"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  :where(.g) [style*="grid-template-columns: repeat(6"]{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .main [style*="grid-column: 1 / -1"],.main [style*="grid-column: span"]{grid-column:auto !important}
+  .card{padding:14px !important;border-radius:18px !important}
+  .main div[style*="display: flex"]:not([role="tablist"]){flex-wrap:wrap}
+  .main [style*="white-space: nowrap"]{white-space:normal}
+  .main label[style*="width: 2"],.main label[style*="width: 3"]{width:100% !important;margin-left:0 !important}
+  .main [style*="margin-left: auto"]{margin-left:0}
+  .btn{min-height:44px}
+
+  /* tablas y filas anchas: se deslizan de lado dentro de su tarjeta */
+  .main div:has(> table),.card:has(> table){overflow-x:auto}
+  .main table{min-width:640px}
+  .main div:has(> .vrow),.main div:has(> .trow),.main section:has(> .trow),.main div:has(> .urow),.main section:has(> .urow){overflow-x:auto}
+  .vrow{min-width:560px}
+  .trow{min-width:760px}
+  .urow{min-width:700px}
+  .drow{grid-template-columns:46px minmax(0,1fr) !important;gap:8px 12px !important}
+  .drow > :nth-child(n+3){grid-column:2}
+  .main{overflow-wrap:break-word}
+  .main .card,.main .blk,.main .sec,.main section{min-width:0 !important;max-width:100%;overflow-wrap:anywhere}
+  .main .card *{max-width:100%}
+  .main .card table,.main .card .vrow,.main .card .trow,.main .card .urow,.main .card .prow,.main .card .lanes,.main .card [style*="46px repeat(6"]{max-width:none}
+  .main h3{flex-wrap:wrap}
+  .sec h3 small{flex-basis:100%}
+  /* agenda del día (Hoy): los 3 carriles se mantienen lado a lado */
+  .lanebtn[aria-pressed="true"]{box-shadow:0 0 0 2px #2B1E48}
+  :where(.g) .lanes{grid-template-columns:44px minmax(0,1fr) !important;gap:0 8px !important}
+  .lanes:not([data-lane="s"]) .ln-s,.lanes:not([data-lane="d"]) .ln-d,.lanes[data-lane="s"] .ln-c,.lanes[data-lane="d"] .ln-c{display:none !important}
+  .lanes-body > div[aria-hidden]{left:52px !important}
+  /* agenda de la semana: se desliza de lado, un día de ~110 px por columna */
+  .mdays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:6px}
+  .mdays button{border:0;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:inset 0 0 0 1px #E6E1E7;font-family:inherit}
+  .mdays span{font:600 11px/1 "Alan Sans",sans-serif;letter-spacing:.04em}
+  .mdays b{font:700 18px/1 "Alan Sans",sans-serif}
+  .wkday.m-off{display:none !important}
+  :where(.g) [style*="grid-template-columns: 46px repeat(6"]{grid-template-columns:40px minmax(0,1fr) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 4px"]{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 8px"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  /* spa: franja de hoy deslizable */
+  /* spa: la franja de hoy pasa a lista */
+  section[aria-labelledby="hoy"] div[style*="height: 92px"]{height:auto !important;display:flex;flex-direction:column;gap:8px}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] > div,section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="top: 0"],section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="dashed"]{display:none !important}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] button{position:static !important;width:auto !important;height:auto !important;min-height:56px;padding:10px 14px !important}
+  /* pasos en una sola fila */
+  :where(.g) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  .main ol[style*="repeat(5"] li > span:last-child{font-size:11px !important;line-height:1.2 !important;overflow-wrap:normal !important;hyphens:auto}
+  ol[aria-label="Pasos"]{gap:6px !important}
+  ol[aria-label="Pasos"] button{padding:10px 6px !important;flex-direction:column;gap:6px !important;text-align:center !important;justify-content:center}
+  ol[aria-label="Pasos"] button > span:last-child > span{display:none !important}
+  ol[aria-label="Pasos"] button b{font-size:13px !important;line-height:1.2 !important}
+  /* horarios */
+  h2 + .drow{display:none !important}
+  .rng{flex-wrap:nowrap !important}
+  .rng .cell{width:96px !important}
+  /* envíos: el valor va debajo del texto */
+  .rule{flex-wrap:wrap}
+  .rule > .cell,.rule > select{flex:1 1 calc(100% - 46px);margin-left:46px;width:auto !important}
+
+}
+/*GMOVIL-FIN*/
+</style>
+</helmet>
+<div class="g">
+
+<aside class="side" aria-label="Menú del gestor">
+  <a href="GestorHoy.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 8px; text-decoration: none;">
+    <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--grad-primary); display: grid; place-items: center;"><img src="/_blob/409735a76ce80c9f522581004be4da71" alt="" style="width: 34px;"></span>
+    <span><span style="display: block; font: 600 19px/1 'Alan Sans', sans-serif; color: #fff;">Alma Animal</span><span style="display: block; font: 400 13px/1.2 'Gowun Batang', serif; color: #D1C1DD; margin-top: 4px;">Gestor interno</span></span>
+  </a>
+  <nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+  <span class="grp">CLÍNICA</span>
+  <nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SPA</span>
+  <nav aria-label="Spa">
+    <a class="on" href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+  <span class="grp">TIENDA</span>
+  <nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SITIO WEB</span>
+  <nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+  <span class="grp">AJUSTES</span>
+  <nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+  <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgb(255 255 255/.08);">
+    <span style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 1px; width: 92px; max-width: none; transform: translateX(-46%);"></span>
+    <span style="min-width: 0;"><span style="display: block; font: 600 14px/1.2 'Alan Sans', sans-serif;">Dra. Mariana Hoyos</span><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Administradora</span></span>
+    <span class="ms" style="margin-left: auto; color: rgb(255 255 255/.7);">unfold_more</span>
+  </div>
+</aside>
+
+<main class="main">
+<!--GNAV-->
+<div class="gbar"><a class="gbar-logo" href="GestorHoy.dc.html"><span><img src="/_blob/409735a76ce80c9f522581004be4da71" alt=""></span>Alma Animal</a><a class="gbar-ic" href="GestorRegistro.dc.html" aria-label="Registrar paciente"><span class="ms">person_add</span></a></div>
+<nav class="gnav" aria-label="Menú del gestor"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a><a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a><a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a><a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos</a><details class="gmore on"><summary><span class="ms">menu</span>Más</summary><div class="gsheet">
+<span class="grp">GENERAL</span>
+<nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+<span class="grp">CLÍNICA</span>
+<nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+<span class="grp">SPA</span>
+<nav aria-label="Spa">
+    <a class="on" href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+<span class="grp">TIENDA</span>
+<nav aria-label="Tienda">
+    <a href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+<span class="grp">SITIO WEB</span>
+<nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+<span class="grp">AJUSTES</span>
+<nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+</div></details></nav>
+<!--/GNAV-->
+  <div style="display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 4px; margin-right: auto;">
+      <h1 style="font: 600 30px/1.1 'Alan Sans', sans-serif;">Citas de spa</h1>
+      <p style="font: 400 16px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Las solicitudes del formulario de la web llegan aquí. Confírmalas por WhatsApp con la hora y el precio.</p>
+    </div>
+    <span class="ex">Datos de ejemplo</span>
+    <a class="btn out" href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+    <button class="btn" type="button"><span class="ms">add</span>Nueva cita</button>
+  </div>
+
+  <!-- ======== HOY EN EL SPA ======== -->
+  <section class="card" aria-labelledby="hoy">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <h2 id="hoy" style="margin-right: auto;"><span class="ms">today</span>Hoy · martes 27 de octubre</h2>
+      <span style="font: 400 14px/1 'Alan Sans', sans-serif; color: #584E6E;">Atiende: <b style="color: #2B1E48;">Albert</b></span>
+      <a class="btn out sm" href="GestorAgenda.dc.html"><span class="ms" style="font-size: 17px;">calendar_month</span>Ver en la agenda</a>
+    </div>
+    <div style="position: relative; height: 92px;">
+      <div style="position: absolute; inset: 22px 0 0; border-radius: 14px; background: #F8F2F8;"></div>
+      <div aria-hidden="true" style="position: absolute; top: 22px; bottom: 0; left: 50%; width: 16.67%; border-radius: 10px; background: repeating-linear-gradient(135deg, #ECE6ED 0 6px, #F8F2F8 6px 12px); display: grid; place-items: center; font: 600 12px/1 'Alan Sans', sans-serif; color: #584E6E;">Almuerzo</div>
+      <sc-for list="{{hours}}" as="hr" hint-placeholder-count="10"><span style="position: absolute; top: 0; left: {{hr.left}}; transform: translateX({{hr.tx}}); font: 500 12px/1 'Alan Sans', sans-serif; color: #584E6E;">{{hr.t}}</span><span aria-hidden="true" style="position: absolute; top: 18px; bottom: 0; left: {{hr.left}}; border-left: 1px dashed #E6E1E7;"></span></sc-for>
+      <sc-for list="{{today}}" as="b" hint-placeholder-count="3">
+        <button type="button" onClick="{{b.pick}}" style="position: absolute; top: 28px; bottom: 6px; left: {{b.left}}; width: {{b.width}}; border: 0; border-radius: 12px; background: {{b.bg}}; color: {{b.fg}}; box-shadow: {{b.ring}}; padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; gap: 4px; text-align: left; cursor: pointer; font: inherit;"><b style="font: 600 15px/1.2 'Alan Sans', sans-serif;">{{b.pet}} · {{b.time}}</b><span style="font: 500 12px/1.2 'Alan Sans', sans-serif; opacity: .85;">{{b.stLabel}}</span></button>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 15fr); gap: 18px; align-items: start;">
+
+    <!-- ======== LISTA ======== -->
+    <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button class="filt" type="button" aria-pressed="{{f.on}}" onClick="{{f.pick}}" style="background: {{f.bg}}; color: {{f.fg}}; border-color: {{f.bd}};">{{f.label}}<span style="opacity: .8;">{{f.count}}</span></button></sc-for>
+      </div>
+      <section class="card" aria-label="Citas" style="padding: 10px; gap: 2px;">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+          <button class="arow" type="button" onClick="{{r.pick}}" aria-pressed="{{r.sel}}" style="background: {{r.bg}}; box-shadow: {{r.ring}};">
+            <span style="width: 48px; height: 48px; border-radius: 50%; background: {{r.avBg}}; color: #fff; display: grid; place-items: center;"><span class="ms" style="font-size: 24px;">pets</span></span>
+            <span style="min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+              <span style="display: flex; align-items: center; gap: 6px;"><b style="font: 600 16px/1.2 'Alan Sans', sans-serif;">{{r.pet}}</b><span style="font: 400 13px/1.2 'Alan Sans', sans-serif; color: #584E6E;">{{r.breed}}</span></span>
+              <span style="font: 400 14px/1.3 'Alan Sans', sans-serif;">{{r.svc}}</span>
+              <span style="font: 500 13px/1.3 'Alan Sans', sans-serif; color: #584E6E; display: flex; align-items: center; gap: 4px;"><span class="ms" style="font-size: 15px; opacity: {{r.webOp}};" title="Pedida desde la web">language</span>{{r.when}}</span>
+            </span>
+            <span class="chip" style="background: {{r.stBg}}; color: {{r.stFg}};">{{r.stLabel}}</span>
+          </button>
+        </sc-for>
+      </section>
+      <p style="font: 400 13px/1.45 'Alan Sans', sans-serif; color: #584E6E; padding: 0 6px;">Cada cita confirmada ocupa 2 horas en el carril de spa de la <a href="GestorAgenda.dc.html">Agenda</a>. Así no se cruza con otra.</p>
+    </div>
+
+    <!-- ======== DETALLE ======== -->
+    <section class="card" aria-labelledby="det" style="gap: 18px;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="width: 60px; height: 60px; border-radius: 50%; background: {{a.avBg}}; color: #fff; display: grid; place-items: center; flex: none;"><span class="ms" style="font-size: 30px;">pets</span></span>
+        <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+          <h2 id="det" style="font-size: 22px;">{{a.pet}}</h2>
+          <span style="font: 400 15px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{a.sp}} · {{a.breed}} · {{a.kg}} kg · {{a.age}} · <b style="color: #2B1E48;">talla {{a.sizeLow}}</b></span>
+        </div>
+        <sc-if value="{{a.patient}}" hint-placeholder-val="{{false}}"><a class="btn out sm" href="GestorPaciente.dc.html"><span class="ms" style="font-size: 17px;">clinical_notes</span>Ficha clínica</a></sc-if>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #F8F2F8;">
+        <span class="ms" style="color: #655785;">person</span>
+        <span style="flex: 1; font: 400 15px/1.3 'Alan Sans', sans-serif;"><b>{{a.owner}}</b> · {{a.phone}}</span>
+        <span style="font: 400 13px/1 'Alan Sans', sans-serif; color: #584E6E;">{{a.got}}</span>
+      </div>
+
+      <!-- estado -->
+      <ol aria-label="Estado de la cita" style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: relative;">
+        <span aria-hidden="true" style="position: absolute; left: 10%; right: 10%; top: 11px; height: 2px; background: #E6E1E7;"></span>
+        <span aria-hidden="true" style="position: absolute; left: 10%; top: 11px; height: 2px; width: {{a.stepFill}}; background: var(--grad-primary); transition: width .5s cubic-bezier(.2,0,0,1);"></span>
+        <sc-for list="{{a.steps}}" as="s" hint-placeholder-count="5">
+          <li aria-current="{{s.cur}}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;"><span style="width: 24px; height: 24px; border-radius: 50%; background: {{s.dot}}; box-shadow: inset 0 0 0 2px {{s.ringC}}, 0 0 0 {{s.halo}} rgb(101 87 133 / .16); display: grid; place-items: center; color: #fff;"><span class="ms" style="font-size: 15px; opacity: {{s.checkOp}};">check</span></span><span style="font: {{s.w}} 13px/1.25 'Alan Sans', sans-serif; color: {{s.fg}};">{{s.label}}</span></li>
+        </sc-for>
+      </ol>
+
+      <!-- lo que contó el dueño -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span style="font: 600 14px/1.3 'Alan Sans', sans-serif;">Lo que nos contó en el formulario</span>
+        <p style="font: 400 16px/1.5 'Gowun Batang', Georgia, serif; padding: 14px 16px; border-radius: 14px; box-shadow: inset 0 0 0 1px #E6E1E7;">«{{a.notes}}»</p>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;"><sc-for list="{{a.flags}}" as="f" hint-placeholder-count="2"><span class="chip" style="background: #FFDDB2; color: #624000;"><span class="ms" style="font-size: 15px;">info</span>{{f.t}}</span></sc-for></div>
+      </div>
+
+      <!-- servicio y precio (siempre visible) -->
+      <div class="sec">
+        <h3><span class="ms">shower</span>Servicio y precio <small>· talla {{a.sizeLow}} según el peso; tarifas de ejemplo</small></h3>
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <sc-for list="{{a.lines}}" as="l" hint-placeholder-count="4">
+            <label class="line" style="opacity: {{l.op}};"><input type="checkbox" checked="{{l.on}}" onChange="{{l.toggle}}" aria-disabled="{{l.fixed}}"><span style="flex: 1;"><b style="font-weight: 600;">{{l.name}}</b> <span style="color: #584E6E;">{{l.sub}}</span></span><b style="font-variant-numeric: tabular-nums;">{{l.priceTxt}}</b></label>
+          </sc-for>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 12px; border-top: 1px solid #E6E1E7;"><span style="font: 600 16px/1 'Alan Sans', sans-serif;">Total</span><b style="font: 700 24px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{a.totalTxt}}</b></div>
+      </div>
+
+      <!-- ===== 1 · SOLICITADA: confirmar ===== -->
+      <sc-if value="{{a.isNueva}}" hint-placeholder-val="{{true}}">
+        <div class="sec">
+          <h3><span class="ms">event_available</span>Elige la hora <small>· pidió {{a.pref}}; solo se ofrecen horas libres del spa</small></h3>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <sc-for list="{{a.slots}}" as="h" hint-placeholder-count="4"><button class="slot" type="button" aria-pressed="{{h.on}}" aria-disabled="{{h.busy}}" onClick="{{h.pick}}" title="{{h.why}}" style="background: {{h.bg}}; color: {{h.fg}}; border-color: {{h.bd}}; cursor: {{h.cur}};"><span style="text-decoration: {{h.strike}};">{{h.t}}</span><span style="font: 500 11px/1 'Alan Sans', sans-serif; opacity: .85;">{{h.tag}}</span></button></sc-for>
+          </div>
+        </div>
+        <div class="sec">
+          <h3><span class="ms">chat</span>Mensaje de confirmación <small>· se abre en tu WhatsApp, listo para enviar</small></h3>
+          <div class="bubble">{{a.msgConfirm}}</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <button class="btn wa" type="button" onClick="{{a.confirm}}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>Confirmar por WhatsApp</button>
+            <button class="btn out" type="button">Rechazar</button>
+            <span style="font: 400 13px/1.4 'Alan Sans', sans-serif; color: #584E6E; flex: 1; min-width: 200px;">Al confirmar, la cita queda en la agenda y el cliente la ve en su portal.</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== 2 · CONFIRMADA ===== -->
+      <sc-if value="{{a.isConf}}" hint-placeholder-val="{{false}}">
+        <div class="sec">
+          <h3><span class="ms">event</span>{{a.slotTxt}}</h3>
+          <div style="display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #F8F2F8; font: 400 14px/1.4 'Alan Sans', sans-serif;"><span class="ms" style="color: #655785;">mail</span><span style="flex: 1;">Un día antes le llega un recordatorio por correo (gratis). Por WhatsApp lo envías tú con un toque.</span><button class="btn out sm" type="button">Recordar por WhatsApp</button></div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn" type="button" onClick="{{a.next}}"><span class="ms" style="font-size: 18px;">login</span>Llegó · empezar el baño</button>
+            <button class="btn out" type="button">Cambiar hora</button>
+            <button class="btn out" type="button">No vino</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== 3 · EN EL SPA: ficha del baño ===== -->
+      <sc-if value="{{a.isSpa}}" hint-placeholder-val="{{false}}">
+        <div class="sec">
+          <h3><span class="ms">checklist</span>Ficha del baño <small>· lo que encontró el peluquero</small></h3>
+          <sc-for list="{{a.checks}}" as="c" hint-placeholder-count="5">
+            <div style="display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 12px; align-items: center; padding: 4px 0;">
+              <span style="font: 600 14px/1.3 'Alan Sans', sans-serif;">{{c.q}}</span>
+              <span style="display: flex; gap: 6px; flex-wrap: wrap;"><sc-for list="{{c.opts}}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{o.on}}" onClick="{{o.pick}}" style="height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid {{o.bd}}; background: {{o.bg}}; color: {{o.fg}}; font: 600 13px/1 'Alan Sans', sans-serif; cursor: pointer;">{{o.t}}</button></sc-for></span>
+            </div>
+          </sc-for>
+          <sc-if value="{{a.alert}}" hint-placeholder-val="{{false}}">
+            <div role="status" style="display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #FFDAD5; color: #910809; font: 500 14px/1.4 'Alan Sans', sans-serif;"><span class="ms fill">medical_services</span><span style="flex: 1;">Se le avisa a la Dra. Mariana y queda anotado en la historia clínica de {{a.pet}}.</span></div>
+          </sc-if>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+            <label class="up"><span class="ms" style="font-size: 26px;">add_a_photo</span>Foto de antes</label>
+            <label class="up"><span class="ms" style="font-size: 26px;">add_a_photo</span>Foto de después<small>Se le envía al dueño y puede ir al Instagram, si da permiso.</small></label>
+          </div>
+          <button class="btn" type="button" onClick="{{a.next}}" style="align-self: flex-start;"><span class="ms" style="font-size: 18px;">done_all</span>Terminó · está lista</button>
+        </div>
+      </sc-if>
+
+      <!-- ===== 4 · LISTA PARA RECOGER ===== -->
+      <sc-if value="{{a.isLista}}" hint-placeholder-val="{{false}}">
+        <div class="sec">
+          <h3><span class="ms">chat</span>Avisar que está lista</h3>
+          <div class="bubble">{{a.msgReady}}</div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: end;">
+            <div class="fld"><label for="pay">Cómo pagó</label><select id="pay"><option>Efectivo</option><option>Transferencia (Nequi, Daviplata o banco)</option><option>Tarjeta</option></select></div>
+            <button class="btn wa" type="button"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>Avisar por WhatsApp</button>
+            <button class="btn" type="button" onClick="{{a.next}}"><span class="ms" style="font-size: 18px;">check</span>Entregada y pagada</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== 5 · ENTREGADA ===== -->
+      <sc-if value="{{a.isEnt}}" hint-placeholder-val="{{false}}">
+        <div class="sec">
+          <div style="display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; background: var(--grad-alma); color: #362954;"><span class="ms" style="font-size: 26px;">event_repeat</span><span style="flex: 1; font: 500 15px/1.4 'Alan Sans', sans-serif;">Próximo baño sugerido: <b>en 4 semanas</b>. Le llega un recordatorio para agendar.</span><button class="btn sm" type="button" style="background: #2B1E48;">Agendar ya</button></div>
+          <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Queda en el historial de spa de {{a.pet}}, que el dueño también ve en su portal.</span>
+        </div>
+      </sc-if>
+    </section>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const fmt = (n) => '$' + Math.round(n).toLocaleString('es-CO');
+    // tarifas de ejemplo por talla (se editan en Servicios y tarifas)
+    const SIZE = (sp, kg) => (sp === 'Gato' ? 'Gato' : kg <= 10 ? 'Pequeño' : kg <= 25 ? 'Mediano' : kg <= 40 ? 'Grande' : 'Gigante');
+    const BASE = { Pequeño: 40000, Mediano: 50000, Grande: 65000, Gigante: 80000, Gato: 45000 };
+    const CUT = { Pequeño: 15000, Mediano: 20000, Grande: 25000, Gigante: 30000, Gato: 15000 };
+    const MED = (kg) => (kg <= 10 ? 5000 : 8000);
+    const KNOT = 10000;
+    const ST = [['nueva', 'Solicitada'], ['conf', 'Confirmada'], ['spa', 'En el spa'], ['lista', 'Lista para recoger'], ['ent', 'Entregada']];
+    const STC = { nueva: ['#FBCFAF', '#623F21'], conf: ['#EADDFF', '#4D3F6C'], spa: ['#655785', '#FFFFFF'], lista: ['#B8F1B9', '#1D5128'], ent: ['#F2ECF2', '#584E6E'] };
+    // horas libres del carril de spa (2 h por cita)
+    const SLOTS = {
+      1: [['jue 29 · 8:00 a. m.', '', 'Lo que pidió'], ['jue 29 · 10:00 a. m.', 'Ocupado: Lola'], ['mié 28 · 10:00 a. m.', ''], ['vie 30 · 8:00 a. m.', '']],
+      2: [['vie 30 · 2:00 p. m.', 'Ocupado: Nala'], ['vie 30 · 3:00 p. m.', '', 'Lo que pidió'], ['jue 29 · 2:00 p. m.', ''], ['sáb 31 · 8:00 a. m.', '']]
+    };
+    const A = [
+      { id: 1, pet: 'Luna', sp: 'Perro', breed: 'Schnauzer', kg: 8, age: '3 años', owner: 'Paula Andrea Ríos', first: 'Paula', phone: '310 555 1234', cut: true, med: false, knot: false, pref: 'jue 29 en la mañana', when: 'Pidió jue 29 · mañana', st: 'nueva', web: true, patient: false, got: 'Llegó hace 25 min',
+        notes: 'Le dan miedo los secadores. El corte como la última vez: corto en el cuerpo y la barba larga.', flags: ['Miedo al secador'] },
+      { id: 2, pet: 'Simón', sp: 'Gato', breed: 'Persa', kg: 4.5, age: '6 años', owner: 'Julián Ospina', first: 'Julián', phone: '301 444 2211', cut: false, med: true, knot: false, pref: 'vie 30 en la tarde', when: 'Pidió vie 30 · tarde', st: 'nueva', web: true, patient: true, got: 'Llegó hace 2 h',
+        notes: 'Tiene caspa; la doctora le recetó baño medicado en la última consulta.', flags: ['Piel sensible', 'Paciente de la Dra.'] },
+      { id: 3, pet: 'Coco', sp: 'Perro', breed: 'French poodle', kg: 6, age: '5 años', owner: 'Marta Cano', first: 'Marta', phone: '312 777 9090', cut: true, med: false, knot: true, start: 8, slotTxt: 'Hoy · 8:00 a. m.', st: 'lista', web: false, patient: true, got: 'Agendada en el consultorio',
+        notes: 'Corte de verano, bien cortico.', flags: [] },
+      { id: 4, pet: 'Toby', sp: 'Perro', breed: 'Golden retriever', kg: 30, age: '2 años', owner: 'Santiago Mejía', first: 'Santiago', phone: '315 222 3344', cut: false, med: false, knot: false, start: 10, slotTxt: 'Hoy · 10:00 a. m.', st: 'spa', web: true, patient: false, got: 'Confirmada el 24 oct',
+        notes: 'Suelta muchísimo pelo, por favor deslanar bien.', flags: ['Muda de pelo'] },
+      { id: 5, pet: 'Kira', sp: 'Perro', breed: 'Shih tzu', kg: 5, age: '4 años', owner: 'Daniela López', first: 'Daniela', phone: '300 888 1122', cut: true, med: false, knot: false, start: 14, slotTxt: 'Hoy · 2:00 p. m.', st: 'conf', web: true, patient: false, got: 'Confirmada el 25 oct',
+        notes: 'Primera vez en el spa.', flags: ['Primera vez'] },
+      { id: 6, pet: 'Max', sp: 'Perro', breed: 'Beagle', kg: 12, age: '7 años', owner: 'Felipe Arango', first: 'Felipe', phone: '318 123 4567', cut: false, med: false, knot: false, slotTxt: 'Lun 26 · 10:00 a. m.', st: 'ent', web: true, patient: true, got: 'Entregada el 26 oct',
+        notes: 'Sin novedades.', flags: [] }
+    ];
+    const ov = s.ov || {};
+    const items = A.map((a) => ({ ...a, ...(ov[a.id] || {}) }));
+    const a = items.find((x) => x.id === (s.sel || 1)) || items[0];
+    const setA = (patch) => this.setState({ ov: { ...ov, [a.id]: { ...(ov[a.id] || {}), ...patch } } });
+    const size = SIZE(a.sp, a.kg);
+    const kgTxt = String(a.kg).replace('.', ',');
+
+    // líneas del servicio
+    const lines = [
+      ['base', 'Baño completo', 'los 8 cuidados, secado y cierre', BASE[size], true],
+      ['cut', 'Corte según la raza', '', CUT[size], false],
+      ['med', 'Baño medicado', a.kg <= 10 ? 'hasta 10 kg' : 'más de 10 kg', MED(a.kg), false],
+      ['knot', 'Desenredado', 'si llega con nudos', KNOT, false]
+    ];
+    const isOn = (k) => (k === 'base' ? true : !!a[k]);
+    const total = lines.reduce((t, l) => t + (isOn(l[0]) ? l[3] : 0), 0);
+    const svcOf = (x) => ['Baño completo', x.cut ? 'corte' : null, x.med ? 'medicado' : null].filter(Boolean).join(' + ');
+
+    // hora elegida
+    const slots = SLOTS[a.id] || [];
+    const pickI = a.slotI != null ? a.slotI : Math.max(0, slots.findIndex((h) => h[2]));
+    const pickTxt = slots[pickI] ? slots[pickI][0] : '';
+    const longDay = (t) => t.replace('mié', 'miércoles').replace('jue', 'jueves').replace('vie', 'viernes').replace('sáb', 'sábado').replace(' · ', ' a las ');
+    const svcTxt = svcOf(a).replace('medicado', 'baño medicado');
+    const msgConfirm = '¡Hola, ' + a.first + '! Te escribimos de Alma Animal. Confirmamos el spa de ' + a.pet + ' para el ' + longDay(pickTxt) + '.\n' +
+      'Servicio: ' + svcTxt + ' (talla ' + size.toLowerCase() + ').\nValor: ' + fmt(total) + '.\n' +
+      'Te esperamos en la Calle 1 # 9-02, Alfonso López. Si necesitas cambiar la hora, respóndenos por aquí.';
+    const msgReady = '¡Hola, ' + a.first + '! ' + a.pet + ' ya terminó su spa. Puedes pasar cuando quieras, hoy antes de las 5:00 p. m.\nTotal: ' + fmt(total) + '. Gracias por confiar en nosotros.';
+
+    // ficha del baño
+    const CH = [['coat', 'Pelaje', ['Bien', 'Con nudos', 'Muy enredado']], ['skin', 'Piel', ['Sana', 'Irritada', 'Con heridas']], ['fleas', 'Pulgas o garrapatas', ['No', 'Sí']], ['ears', 'Oídos', ['Limpios', 'Con cera', 'Mal olor']], ['mood', 'Comportamiento', ['Tranquilo', 'Nervioso', 'Agresivo']]];
+    const chk = a.chk || { coat: 1, skin: 0, fleas: 0, ears: 1, mood: 0 };
+    const alert = chk.skin > 0 || chk.fleas > 0 || chk.ears === 2;
+
+    const si = ST.findIndex((x) => x[0] === a.st);
+    const filter = s.filter || 'activas';
+    const FIL = [['activas', 'Activas'], ['nueva', 'Por confirmar'], ['hoy', 'Hoy'], ['ent', 'Historial']];
+    const match = (x, f) => (f === 'activas' ? x.st !== 'ent' : f === 'hoy' ? x.start != null : x.st === f);
+    const AV = ['linear-gradient(160deg,#B4A3D6,#8F7FB0)', 'linear-gradient(160deg,#F0BC95,#E8A6B4)', 'linear-gradient(160deg,#8F7FB0,#655785)'];
+    const H = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+    const at = (h) => ((h - 8) / 9) * 100;
+
+    return {
+      hours: H.map((h) => ({ t: (h > 12 ? h - 12 : h) + (h < 12 ? ' a. m.' : ' p. m.'), left: at(h) + '%', tx: h === 8 ? '0' : h === 17 ? '-100%' : '-50%' })),
+      today: items.filter((x) => x.start != null).map((x) => ({
+        pet: x.pet, time: (x.start > 12 ? x.start - 12 : x.start) + ':00', stLabel: ST.find((y) => y[0] === x.st)[1],
+        left: 'calc(' + at(x.start) + '% + 3px)', width: 'calc(' + (2 / 9) * 100 + '% - 6px)',
+        bg: STC[x.st][0], fg: STC[x.st][1], ring: x.id === a.id ? '0 0 0 3px #2B1E48' : 'none',
+        pick: () => this.setState({ sel: x.id })
+      })),
+      filters: FIL.map((f) => ({ label: f[1], count: items.filter((x) => match(x, f[0])).length, on: f[0] === filter, bg: f[0] === filter ? '#2B1E48' : '#FFFFFF', fg: f[0] === filter ? '#FFFFFF' : '#2B1E48', bd: f[0] === filter ? '#2B1E48' : '#CBC4D1', pick: () => this.setState({ filter: f[0] }) })),
+      rows: items.filter((x) => match(x, filter)).map((x, n) => ({
+        pet: x.pet, breed: x.breed, svc: svcOf(x),
+        when: x.st === 'nueva' ? x.when : (x.slotTxt || x.when),
+        webOp: x.web ? 1 : 0,
+        stLabel: ST.find((y) => y[0] === x.st)[1], stBg: STC[x.st][0], stFg: STC[x.st][1],
+        avBg: AV[x.id % 3],
+        sel: x.id === a.id, bg: x.id === a.id ? '#F8F2F8' : '#FFFFFF', ring: x.id === a.id ? '0 0 0 2px #655785' : 'none',
+        pick: () => this.setState({ sel: x.id })
+      })),
+      a: {
+        pet: a.pet, sp: a.sp, breed: a.breed, kg: kgTxt, age: a.age, owner: a.owner, phone: a.phone, got: a.got, notes: a.notes, patient: a.patient, pref: a.pref,
+        avBg: AV[a.id % 3],
+        sizeLow: size.toLowerCase(),
+        flags: a.flags.map((t) => ({ t })),
+        steps: ST.map((x, n) => ({ label: x[1], cur: n === si ? 'step' : 'false', dot: n < si ? '#655785' : '#FFFFFF', ringC: n <= si ? '#655785' : '#CBC4D1', halo: n === si ? '6px' : '0px', checkOp: n < si ? 1 : 0, w: n === si ? '700' : '500', fg: n <= si ? '#2B1E48' : '#584E6E' })),
+        stepFill: (si / 4) * 80 + '%',
+        lines: lines.map((l) => ({ name: l[1], sub: l[2] ? '· ' + l[2] : '', priceTxt: (l[4] ? '' : '+') + fmt(l[3]), on: isOn(l[0]), fixed: l[4], op: isOn(l[0]) ? 1 : 0.7, toggle: () => { if (!l[4]) setA({ [l[0]]: !a[l[0]] }); } })),
+        totalTxt: fmt(total),
+        isNueva: a.st === 'nueva', isConf: a.st === 'conf', isSpa: a.st === 'spa', isLista: a.st === 'lista', isEnt: a.st === 'ent',
+        slots: slots.map((h, n) => {
+          const busy = !!h[1];
+          const on = n === pickI && !busy;
+          return { t: h[0], tag: busy ? h[1] : (h[2] || 'Libre'), busy, why: busy ? h[1] : 'Libre', on,
+            bg: busy ? '#F2ECF2' : on ? '#2B1E48' : '#FFFFFF', fg: busy ? '#7A7580' : on ? '#FFFFFF' : '#2B1E48', bd: busy ? '#E6E1E7' : on ? '#2B1E48' : '#CBC4D1',
+            strike: busy ? 'line-through' : 'none', cur: busy ? 'not-allowed' : 'pointer',
+            pick: () => { if (!busy) setA({ slotI: n }); } };
+        }),
+        msgConfirm,
+        msgReady,
+        confirm: () => setA({ st: 'conf', slotTxt: pickTxt.charAt(0).toUpperCase() + pickTxt.slice(1), got: 'Confirmada ahora' }),
+        slotTxt: a.slotTxt || '',
+        next: () => setA({ st: ST[Math.min(4, si + 1)][0] }),
+        checks: CH.map((c) => ({ q: c[1], opts: c[2].map((t, n) => {
+          const on = chk[c[0]] === n;
+          const bad = n > 0 && c[0] !== 'coat' && c[0] !== 'mood';
+          return { t, on, bg: on ? (bad ? '#FFDAD5' : '#2B1E48') : '#FFFFFF', fg: on ? (bad ? '#910809' : '#FFFFFF') : '#2B1E48', bd: on ? (bad ? '#F5B5AC' : '#2B1E48') : '#CBC4D1', pick: () => setA({ chk: { ...chk, [c[0]]: n } }) };
+        }) })),
+        alert
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

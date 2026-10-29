@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>¿Cada cuánto bañar a tu perro? · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.outlined{background:transparent;color:#655785;border-color:#CBC4D1}
+.btn.outlined:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.ghost{background:rgb(255 255 255/.14);color:#fff;border-color:rgb(255 255 255/.3)}
+.btn.wa{background:#00BC39;color:#06290F}
+.btn.wa:hover{background:#00A332;color:#06290F}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn:hover{background:#ECE6ED;color:#4D3F6C}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#FBCFAF;color:#623F21;font:700 10px/16px "Alan Sans",sans-serif;text-align:center;padding:0 4px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.lockup .wm{display:block;font:600 22px/1 "Alan Sans",sans-serif;color:#8F7FB0;letter-spacing:-.01em}
+.lockup .tag{display:block;font:400 12px/1.2 "Gowun Batang",Georgia,serif;letter-spacing:.06em;color:#706884;margin-top:4px}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.chip{height:40px;padding:0 18px;border-radius:999px;border:1px solid #CBC4D1;background:#fff;color:#584E6E;font:600 14px/1 "Alan Sans",sans-serif;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.chip:hover{background:#F2ECF2}
+.chip.on{background:#2B1E48;color:#fff;border-color:#2B1E48}
+.fgroup{display:flex;flex-direction:column;gap:12px;padding-bottom:24px;border-bottom:1px solid #CBC4D1}
+.fgroup h3{font:600 15px/1.3 "Alan Sans",sans-serif}
+.check{display:flex;align-items:center;gap:10px;font:400 15px/1.3 "Alan Sans",sans-serif;cursor:pointer}
+.check input{width:20px;height:20px;margin:0;accent-color:#655785}
+.prod{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s cubic-bezier(.2,0,0,1),transform .25s cubic-bezier(.05,.7,.1,1)}
+.prod:hover{box-shadow:0 4px 8px 3px rgb(54 41 84/.09),0 1px 3px rgb(54 41 84/.18);transform:translateY(-3px)}
+.prod .img{aspect-ratio:1;background:#F2ECF2;display:grid;place-items:center;position:relative;color:#CBC4D1}
+.prod .img .ms{font-size:40px}
+.prod .b{padding:16px;display:flex;flex-direction:column;gap:4px}
+.prod .c{font:600 13px/1.3 "Alan Sans",sans-serif;color:#655785}
+.prod h3{font:600 16px/1.35 "Alan Sans",sans-serif}
+.prod .p{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.prod .p b{font:700 18px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.add{width:40px;height:40px;border-radius:50%;border:0;background:#FBCFAF;color:#623F21;display:grid;place-items:center;cursor:pointer}
+.add:hover{background:#F0BC95}
+.stock{position:absolute;top:12px;left:12px;font:600 11px/1 "Alan Sans",sans-serif;padding:6px 10px;border-radius:999px;background:#B8F1B9;color:#1D5128}
+.stock.low{background:#FFDDB2;color:#624000}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+.foot a{color:#fff;text-decoration:none}.foot a:hover{color:#fff;text-decoration:underline}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+[data-dark] .gt{background:linear-gradient(100deg,#FFFFFF 0%,#FBCFAF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.social{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:rgb(255 255 255/.14);color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .15s}
+.aa .social:hover{background:rgb(255 255 255/.26);color:#fff;text-decoration:none}
+.plink{color:inherit;text-decoration:none}.plink:hover{color:#655785;text-decoration:underline}
+.bar{height:8px;border-radius:999px;background:#ECE6ED;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--grad-primary)}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+.tag{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:4px;font:600 12px/1 "Alan Sans",sans-serif;padding:5px 9px;border-radius:999px;background:rgb(255 255 255/.94);color:#2B1E48;box-shadow:0 1px 2px rgb(54 41 84/.14);white-space:nowrap}
+.tag.sale{color:#910809}
+.buzz{position:fixed;left:20px;bottom:20px;z-index:20;display:flex;align-items:center;gap:10px;width:300px;padding:8px 8px 8px 8px;border-radius:16px;background:rgb(255 255 255/.97);box-shadow:0 0 0 1px #E6E1E7,0 6px 14px rgb(54 41 84/.12);animation:buzz-in .55s cubic-bezier(.05,.7,.1,1)}
+@keyframes buzz-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.buzz{animation:none}}
+.pend{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 "Alan Sans",sans-serif;padding:6px 10px;border-radius:999px;background:#FFDDB2;color:#624000}
+.toc{display:block;padding:8px 0 8px 14px;border-left:2px solid #E6E1E7;font:500 15px/1.35 "Alan Sans",sans-serif;text-decoration:none;transition:color .15s,border-color .15s}
+.toc:hover{color:#2B1E48}
+.prose{display:flex;flex-direction:column;gap:20px;font:400 19px/1.75 "Gowun Batang",Georgia,serif;color:#2B1E48}
+.prose h2{font:600 28px/1.25 "Alan Sans",sans-serif;letter-spacing:-.02em;margin-top:20px}
+.prose ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:10px}
+.prose li::marker{color:#655785}
+.guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tip{display:flex;gap:16px;align-items:flex-start;padding:22px 24px;border-radius:24px;background:#F8F2F8;box-shadow:inset 4px 0 0 #655785;font:400 18px/1.6 "Gowun Batang",Georgia,serif}
+.reco{display:flex;align-items:center;gap:18px;padding:18px;border-radius:28px;background:#fff;box-shadow:0 0 0 1px #CBC4D1;font-family:"Alan Sans",sans-serif}
+.post{display:flex;flex-direction:column;border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 0 0 1px #CBC4D1;text-decoration:none;color:inherit;transition:box-shadow .25s cubic-bezier(.2,0,0,1),transform .25s cubic-bezier(.05,.7,.1,1)}
+.post:hover{box-shadow:0 4px 8px 3px rgb(54 41 84/.09),0 1px 3px rgb(54 41 84/.18);transform:translateY(-3px)}
+.link{font:600 16px/1 "Alan Sans",sans-serif;color:#655785;display:inline-flex;align-items:center;gap:6px}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  .wrap > div[style*="height: 440px"]{height:220px !important}
+  .wrap > div[style*="height: 440px"] img{width:210px !important}
+  .wrap > div[style*="height: 440px"] > span{width:260px !important;height:260px !important}
+  header.wrap{gap:16px !important;padding-bottom:24px !important}
+  :where(.aa) .m-art{gap:32px !important}
+  nav[aria-label="En este artículo"]{position:static !important;order:2}
+  nav[aria-label="En este artículo"] > span:first-child,nav[aria-label="En este artículo"] > .toc{display:none !important}
+  nav[aria-label="En este artículo"] > span{padding-top:0 !important}
+  .m-art > aside{position:static !important;order:3}
+  .prose{font-size:17px;gap:16px}
+  .prose h2{font-size:23px;margin-top:12px}
+  .guide{grid-template-columns:minmax(0,1fr) !important}
+  .tip{padding:18px !important;font-size:16.5px !important}
+  .reco{flex-wrap:wrap;gap:14px !important;padding:16px !important}
+  .reco > span:first-child{width:72px !important;height:72px !important}
+  .reco > span:nth-child(2){flex:1 1 160px !important}
+  .reco .btn{flex:1 1 100%}
+  nav[aria-label="Ruta"]{flex-wrap:wrap}
+  nav[aria-label="Ruta"] .pend{margin-left:0 !important}
+}
+/*MOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA ======== -->
+<div class="wrap m-top" style="padding-top: 24px; padding-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <nav class="navpill" aria-label="Principal" style="margin-left: 24px;">
+    <a href="Main.dc.html">Inicio</a>
+    <a href="Consultorio.dc.html">Consultorio</a>
+    <a href="Spa.dc.html">Spa</a>
+    <a href="Petshop.dc.html">Petshop</a>
+    <a href="Main.dc.html#nosotros">Nosotros</a>
+    <a class="on" href="Blog.dc.html">Blog</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a class="icon-btn" href="#contacto" aria-label="Llamar al 324 679 6695"><span class="ms">call</span></a>
+    <a class="icon-btn" href="Carrito.dc.html" aria-label="Carrito, 2 productos"><span class="ms">shopping_bag</span><span class="badge">2</span></a>
+    <a class="btn" href="PortalAcceso.dc.html">Ingresar</a>
+      <details class="mnav"><summary aria-label="Abrir el menú"><span class="ms m-open">menu</span><span class="ms m-close">close</span></summary><div class="mpanel"><a href="Main.dc.html">Inicio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Consultorio.dc.html">Consultorio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Spa.dc.html">Spa<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Petshop.dc.html">Petshop<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main.dc.html#nosotros">Nosotros<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="on" href="Blog.dc.html">Blog<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="#contacto">Contacto<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="btn mlogin" href="PortalAcceso.dc.html"><span class="ms" style="font-size: 18px;">person</span>Ingresar a mi portal</a></div></details>
+  </div>
+</div>
+
+<!-- migas -->
+<nav class="wrap" aria-label="Ruta" style="padding-top: 8px; padding-bottom: 32px; display: flex; gap: 8px; align-items: center; font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;">
+  <a href="Main.dc.html" style="color: #584E6E;">Inicio</a><span class="ms" style="font-size: 16px;">chevron_right</span><a href="Blog.dc.html" style="color: #584E6E;">Blog</a><span class="ms" style="font-size: 16px;">chevron_right</span><span aria-current="page" style="color: #2B1E48;">Cuidado</span>
+  <span class="pend" style="margin-left: auto;">Texto de ejemplo · lo revisa la doctora</span>
+</nav>
+
+<!-- ======== ENCABEZADO ======== -->
+<header class="wrap" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; padding-bottom: 40px;">
+  <span style="font: 600 15px/1 'Alan Sans', sans-serif; color: #655785;">Cuidado · 5 min de lectura</span>
+  <h1 class="m-d2" style="font: 400 58px/1.1 'Gowun Batang', Georgia, serif; letter-spacing: -.01em; max-width: 20ch; text-wrap: balance;">¿Cada cuánto bañar a tu perro según su tipo de pelo?</h1>
+  <p class="m-lead" style="font: 400 20px/1.6 'Alan Sans', sans-serif; color: #584E6E; max-width: 54ch;">No todos los perros necesitan el mismo ritmo. Te contamos cómo saberlo según el pelo y la piel de tu mascota.</p>
+  <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+    <span style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 2px; width: 120px; max-width: none; transform: translateX(-46%);"></span>
+    <span><b style="display: block; font: 600 16px/1.3 'Alan Sans', sans-serif;">Dra. Mariana Hoyos Giraldo</b><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">MVZ · TP 51206 · 12 de octubre de 2026</span></span>
+  </div>
+</header>
+
+<div class="wrap" style="padding-bottom: 56px;">
+  <div class="m-r" style="height: 440px; border-radius: 40px; background: linear-gradient(160deg, #FBCFAF, #E8C6CF 55%, #D1C1DD); display: grid; place-items: center; position: relative; overflow: hidden;">
+    <span aria-hidden="true" style="position: absolute; width: 520px; height: 520px; border-radius: 50%; border: 2px dashed rgb(255 255 255 / .7);"></span>
+    <img src="/_blob/b9a28d867a46de69c0acd5aa34c34f15" alt="Ilustración en papel recortado de un tigre y un perro" style="width: 440px; position: relative;">
+  </div>
+</div>
+
+<!-- ======== CUERPO ======== -->
+<div class="wrap m-g m-gap m-art" style="display: grid; grid-template-columns: 200px minmax(0, 680px) 280px; gap: 40px; justify-content: center; align-items: start; padding-bottom: 80px;">
+
+  <!-- índice -->
+  <nav aria-label="En este artículo" style="position: sticky; top: 24px; display: flex; flex-direction: column; gap: 4px;">
+    <span style="font: 600 13px/1 'Alan Sans', sans-serif; letter-spacing: .06em; color: #584E6E; padding-bottom: 10px;">EN ESTE ARTÍCULO</span>
+    <sc-for list="{{toc}}" as="t" hint-placeholder-count="4"><a href="#" onClick="{{t.pick}}" class="toc" style="color: {{t.fg}}; border-color: {{t.bd}}; font-weight: {{t.w}};">{{t.t}}</a></sc-for>
+    <span style="font: 600 13px/1 'Alan Sans', sans-serif; letter-spacing: .06em; color: #584E6E; padding: 28px 0 10px;">COMPARTIR</span>
+    <div style="display: flex; gap: 8px;">
+      <a class="icon-btn" href="#" aria-label="Compartir por WhatsApp" style="background: #DCF5E3; color: #00852A;"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+      <a class="icon-btn" href="#" aria-label="Compartir en Facebook"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.5V21h3z"></path></svg></a>
+      <button class="icon-btn" type="button" onClick="{{copy}}" aria-label="Copiar enlace"><span class="ms">{{copyIcon}}</span></button>
+    </div>
+    <sc-if value="{{copied}}" hint-placeholder-val="{{false}}"><span role="status" style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #1D5128; padding-top: 6px;">Enlace copiado</span></sc-if>
+  </nav>
+
+  <!-- texto -->
+  <article class="prose">
+    <p>Bañar a tu perro muy seguido puede resecarle la piel, y hacerlo muy poco deja que se acumulen grasa, mugre y malos olores. El ritmo ideal depende sobre todo de <b>su tipo de pelo</b> y de cómo está <b>su piel</b>.</p>
+
+    <h2>Una guía rápida según el pelo</h2>
+    <div class="guide">
+      <sc-for list="{{coats}}" as="c" hint-placeholder-count="3">
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 22px; background: {{c.bg}};">
+          <span class="ms" style="font-size: 28px; color: #655785;">{{c.icon}}</span>
+          <b style="font: 600 17px/1.3 'Alan Sans', sans-serif;">{{c.t}}</b>
+          <span style="font: 700 22px/1.1 'Alan Sans', sans-serif; color: #4D3F6C;">{{c.every}}</span>
+          <span style="font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E;">{{c.d}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <h2>Cuando la piel es sensible</h2>
+    <p>Si tu perro se rasca mucho, tiene caspa o la piel roja, no lo bañes más seguido para «limpiarlo»: puede empeorar. En esos casos lo mejor es un <b>baño medicado</b> con la frecuencia que indique la doctora.</p>
+
+    <aside class="tip">
+      <img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt="" style="width: 44px; flex: none;">
+      <span><b style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif; color: #655785; margin-bottom: 4px;">Consejo de la doctora</b>Si al bañarlo notas la piel roja o mucha caspa, escríbenos antes de cambiar de shampoo.</span>
+    </aside>
+
+    <h2>Entre baño y baño</h2>
+    <ul>
+      <li><b>Cepíllalo</b> dos o tres veces por semana: quita el pelo muerto y reparte la grasa natural.</li>
+      <li><b>Límpiale las patas</b> al volver del paseo, sobre todo si llovió.</li>
+      <li><b>Revisa sus oídos</b>: si huelen mal o tienen cera oscura, es momento de consulta.</li>
+    </ul>
+
+    <!-- producto recomendado -->
+    <div class="reco">
+      <span style="width: 96px; height: 96px; border-radius: 18px; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1; flex: none;"><span class="ms" style="font-size: 36px;">photo_camera</span></span>
+      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;"><span style="font: 600 13px/1 'Alan Sans', sans-serif; color: #655785;">🩺 Lo recomienda la Dra.</span><b style="font: 600 19px/1.3 'Alan Sans', sans-serif;">Shampoo hipoalergénico</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">El mismo que usamos en el spa · desde $28.000</span></span>
+      <button class="btn alma" type="button" onClick="{{add}}" style="flex: none;"><span class="ms" style="font-size: 20px;">{{addIcon}}</span>{{addTxt}}</button>
+    </div>
+
+    <h2>¿Y si prefieres que lo bañemos nosotros?</h2>
+    <p>En el spa ajustamos el baño a su pelo y su piel, y si vemos algo raro se lo contamos a la doctora, que está al lado. Sale con perfume, un accesorio y un snack.</p>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;">
+      <a class="btn" href="AgendaSpa.dc.html" style="height: 52px; padding: 0 26px; font-size: 17px;"><span class="ms">shower</span>Agenda un baño en el spa</a>
+      <a class="wa-o" href="https://wa.me/573246796695?text=Hola%2C%20doctora.%20Tengo%20una%20pregunta%20sobre%20mi%20mascota." target="_blank" rel="noopener" style="height: 52px;"><svg class="wa-ic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>Pregúntale a la doctora</a>
+    </div>
+  </article>
+
+  <!-- lateral -->
+  <aside style="position: sticky; top: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 28px; background: #2B1E48; color: #fff; position: relative; overflow: hidden; isolation: isolate;">
+      <img src="/_blob/fa9387fc12950c0379aa2aa59588842d" alt="" style="position: absolute; right: -40px; bottom: -10px; width: 190px; opacity: .25; z-index: -1;">
+      <span style="font: 600 13px/1 'Alan Sans', sans-serif; color: #FBCFAF;">Spa Alma Animal</span>
+      <b style="font: 600 22px/1.25 'Alan Sans', sans-serif;">¿Le toca baño este mes?</b>
+      <span style="font: 400 15px/1.5 'Alan Sans', sans-serif; color: rgb(255 255 255 / .8);">Elige el día y te confirmamos la hora por WhatsApp.</span>
+      <a class="btn alma" href="AgendaSpa.dc.html" style="align-self: flex-start;">Agendar baño</a>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center; padding: 16px 18px; border-radius: 22px; background: #F8F2F8;">
+      <span class="ms" style="font-size: 26px; color: #655785;">mail</span>
+      <span style="flex: 1; font: 500 14px/1.4 'Alan Sans', sans-serif;">Un consejo al mes en tu correo. <a href="Blog.dc.html">Suscribirme</a></span>
+    </div>
+  </aside>
+</div>
+
+<!-- ======== RELACIONADOS ======== -->
+<section class="wrap" aria-labelledby="rel" style="padding-bottom: 72px; display: flex; flex-direction: column; gap: 24px;">
+  <div class="m-sb" style="display: flex; align-items: baseline; justify-content: space-between;"><h2 class="m-d4" id="rel" style="font: 400 36px/1.1 'Alan Sans', sans-serif; letter-spacing: -.03em;">Sigue <b class="gt" style="font-weight: 700;">leyendo</b></h2><a class="link" href="Blog.dc.html">Ver todo el blog<span class="ms">arrow_forward</span></a></div>
+  <div class="m-g" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+    <sc-for list="{{related}}" as="a" hint-placeholder-count="3">
+      <a class="post" href="Articulo.dc.html">
+        <span style="aspect-ratio: 16 / 9; background: {{a.cover}}; display: grid; place-items: center;"><img src="{{a.img}}" alt="" style="width: 40%; opacity: .9;"></span>
+        <span style="padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px;"><span style="font: 600 13px/1 'Alan Sans', sans-serif; color: #655785;">{{a.cat}} · {{a.min}} min</span><span style="font: 400 21px/1.3 'Gowun Batang', Georgia, serif; color: #2B1E48;">{{a.title}}</span></span>
+      </a>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ======== CONTACTO / PIE ======== -->
+<div class="wrap" style="padding-bottom: 32px;">
+<footer id="contacto" class="foot m-p m-r" data-dark="1" style="border-radius: 40px; background: #2B1E48; color: #fff; position: relative; overflow: hidden; isolation: isolate; padding: 64px 48px 32px;">
+  <img src="/_blob/b9a28d867a46de69c0acd5aa34c34f15" alt="" style="position: absolute; right: -40px; top: -30px; width: 520px; opacity: .12; z-index: -1;">
+  <h2 class="m-d2" style="font: 400 56px/1 'Alan Sans', sans-serif; letter-spacing: -.03em; max-width: 12ch;">Te esperamos en <b class="gt" style="font-weight: 700;">Pereira</b></h2>
+  <div class="m-g" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; margin-top: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Dirección</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Pereira, Risaralda</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Calle 1 # 9-02, Alfonso López</span></div>
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Teléfonos y WhatsApp</span><a href="tel:+573246796695" style="font: 400 17px/1.5'Alan Sans', sans-serif;">Veterinaria y spa: 324 679 6695</a><a href="tel:+573017925910" style="font: 400 17px/1.5'Alan Sans', sans-serif;">Petshop: 301 792 5910</a></div>
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Horario</span><span style="font: 400 17px/1.5'Alan Sans', sans-serif;">Lunes a viernes: 8:00 a. m. – 12:30 p. m. y 2:00 – 5:00 p. m.<br>Sábados: 8:00 a. m. – 12:30 p. m.</span></div>
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;"><span style="font: 500 14px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Síguenos</span><a class="social" href="https://instagram.com/vet_alma_animal"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>@vet_alma_animal</a><a class="social" href="https://instagram.com/vet_marianahoyos"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>@vet_marianahoyos</a><a class="social" href="#"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.5V21h3z"></path></svg>Facebook</a></div>
+  </div>
+  <div style="display: flex; gap: 12px; margin-top: 40px;"><a class="btn alma" href="#">Agenda tu cita</a><a class="btn ghost" href="#"><span class="ms">map</span>Cómo llegar</a></div>
+  <div class="m-sb" style="display: flex; justify-content: space-between; gap: 24px; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgb(255 255 255/.14); font: 400 16px/1.5 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">
+    <nav aria-label="Pie" style="display: flex; gap: 20px;"><a href="Main.dc.html">Inicio</a><a href="Consultorio.dc.html">Consultorio</a><a href="Spa.dc.html">Spa</a><a href="Blog.dc.html">Blog</a></nav>
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206 · <a href="#" style="text-decoration: underline;">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </div>
+</footer>
+</div>
+
+<a class="fab-wa" href="https://wa.me/573246796695?text=Hola%2C%20doctora.%20Tengo%20una%20pregunta%20sobre%20mi%20mascota." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const B = (id) => '/_blob/' + id;
+    const TOC = ['Una guía rápida según el pelo', 'Cuando la piel es sensible', 'Entre baño y baño', '¿Y si prefieres que lo bañemos nosotros?'];
+    const at = s.toc || 0;
+    return {
+      toc: TOC.map((t, n) => ({ t, fg: n === at ? '#2B1E48' : '#584E6E', bd: n === at ? '#655785' : '#E6E1E7', w: n === at ? 600 : 500, pick: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ toc: n }); } })),
+      coats: [
+        ['pets', 'Pelo corto', 'Cada 4 a 6 semanas', 'Labrador, beagle, pinscher. Con un cepillado semanal basta entre baños.', '#FFF4EC'],
+        ['waves', 'Pelo largo o rizado', 'Cada 3 a 4 semanas', 'Poodle, shih tzu, schnauzer. Necesitan corte y cepillado frecuente para evitar nudos.', '#F8F2F8'],
+        ['air', 'Doble capa', 'Cada 6 a 8 semanas', 'Golden, husky, pastor. Más que bañarlos, hay que deslanarlos bien.', '#F4F0FA']
+      ].map((c) => ({ icon: c[0], t: c[1], every: c[2], d: c[3], bg: c[4] })),
+      added: !!s.added,
+      add: () => this.setState({ added: true }),
+      addIcon: s.added ? 'check' : 'add_shopping_cart',
+      addTxt: s.added ? 'En tu carrito' : 'Agregar',
+      copied: !!s.copied,
+      copy: () => this.setState({ copied: true }),
+      copyIcon: s.copied ? 'check' : 'link',
+      related: [
+        ['Spa', 'Baño medicado: qué es y cuándo lo necesita tu mascota', 3, 'linear-gradient(160deg,#EADDFF,#D1C1DD)', B('b75d83ff94aa4cb49ce7c702b10be136')],
+        ['Vacunas', 'El calendario de vacunas de un cachorro, paso a paso', 4, 'linear-gradient(160deg,#FFDCC3,#FBCFAF)', B('409735a76ce80c9f522581004be4da71')],
+        ['Gatos', 'Señales de que tu gato tiene dolor de dientes', 4, 'linear-gradient(160deg,#D1C1DD,#B4A3D6)', B('9c80c25889ab7a121a0d22a5af81b4d9')]
+      ].map((a) => ({ cat: a[0], title: a[1], min: a[2], cover: a[3], img: a[4] }))
+    };
+  }
+}
+</script>
+</body>
+</html>

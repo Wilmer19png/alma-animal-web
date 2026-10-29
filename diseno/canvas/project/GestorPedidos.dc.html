@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestor · Pedidos · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#F8F2F8}
+a{color:#655785}a:hover{color:#4D3F6C}
+.g{--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#F8F2F8;-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-wrap:wrap}
+.g *{box-sizing:border-box}
+.g h1,.g h2,.g h3,.g p{margin:0}
+.g ::selection{background:#FBCFAF;color:#623F21}
+.g :focus-visible{outline:3px solid #655785;outline-offset:2px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.side{flex:0 0 256px;background:#2B1E48;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:18px;min-height:1400px}
+.side .grp{font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:0 12px;margin-top:6px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.85);text-decoration:none;font:500 15px/1 "Alan Sans",sans-serif;transition:background .15s}
+.side nav a:hover{background:rgb(255 255 255/.08);color:#fff}
+.side nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+.side nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+.side nav a.on .n{background:#2B1E48;color:#fff}
+.main{flex:999 1 900px;min-width:0;padding:24px 32px 48px;display:flex;flex-direction:column;gap:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);color:#fff;font:600 15px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{color:#fff;box-shadow:0 2px 6px rgb(54 41 84/.2)}
+.btn.out{background:#fff;color:#655785;border-color:#CBC4D1}
+.btn.out:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.sm{height:36px;padding:0 14px;font-size:14px}
+.lk{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;font:600 12px/1 "Alan Sans",sans-serif;margin-top:6px}
+.lk .ms{font-size:14px}
+.who{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:18px}
+.btn.wa{background:#00BC39;color:#06290F}
+.btn.wa:hover{background:#00A332;color:#06290F}
+.btn.wa-o{background:#fff;color:#00852A;border:2px solid #00BC39}
+.btn.wa-o:hover{background:#00BC39;color:#06290F}
+.card{background:#fff;border-radius:20px;box-shadow:0 0 0 1px #E6E1E7;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font:600 12px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.filt{height:38px;padding:0 14px;border-radius:999px;border:1px solid #CBC4D1;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.row{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:14px 16px;border:0;border-radius:16px;cursor:pointer;text-align:left;font:inherit;color:#2B1E48;transition:background .15s,box-shadow .15s}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#E6E1E7;border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px #E6E1E7}
+.kv div{background:#fff;padding:12px 14px}
+.kv dt{font:500 13px/1.2 "Alan Sans",sans-serif;color:#584E6E}
+.kv dd{margin:4px 0 0;font:600 16px/1.3 "Alan Sans",sans-serif}
+.seg{display:inline-flex;border:1px solid #CBC4D1;border-radius:999px;overflow:hidden}
+.seg button{height:38px;padding:0 14px;border:0;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button+button{border-left:1px solid #CBC4D1}
+.ex{font:500 12px/1 "Alan Sans",sans-serif;color:#584E6E;background:#F2ECF2;border-radius:999px;padding:5px 10px}
+/*GMOVIL-INI*/
+.gbar,.gnav,.mdays{display:none}
+.lanebtn{border:0;cursor:pointer;font-family:inherit}
+@media (max-width:760px){
+  .g{display:block !important}
+  .side{display:none !important}
+  .main{padding:0 14px 104px !important;gap:14px !important}
+  /* barra superior */
+  .gbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;margin:0 -14px;padding:10px 14px;background:#2B1E48;color:#fff}
+  .gbar-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 17px/1 "Alan Sans",sans-serif}
+  .gbar-logo:hover{color:#fff}
+  .gbar-logo > span{width:34px;height:34px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center}
+  .gbar-logo img{width:26px}
+  .gbar-ic{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgb(255 255 255/.12);color:#fff;display:grid;place-items:center;text-decoration:none}
+  .gbar-ic:hover{color:#fff;background:rgb(255 255 255/.2)}
+  /* navegación inferior */
+  .gnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;gap:4px;background:#2B1E48;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgb(43 30 72/.25)}
+  .gnav > a,.gmore > summary{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:14px;color:rgb(255 255 255/.78);font:600 11.5px/1 "Alan Sans",sans-serif;text-decoration:none;list-style:none;cursor:pointer}
+  .gnav > a:hover{color:#fff}
+  .gnav .ms{font-size:22px}
+  .gnav .on,.gmore.on > summary{color:#2B1E48;background:#FBCFAF}
+  .gmore{flex:1;display:flex}
+  .gmore > summary::-webkit-details-marker{display:none}
+  .gmore[open] > summary{color:#fff;background:rgb(255 255 255/.14)}
+  .gsheet{position:fixed;left:8px;right:8px;bottom:78px;max-height:70vh;overflow:auto;background:#2B1E48;border-radius:22px;padding:8px 10px 12px;box-shadow:0 -10px 30px rgb(43 30 72/.35)}
+  .gsheet .grp{display:block;font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:14px 12px 6px}
+  .gsheet nav{display:flex;flex-direction:column;gap:2px}
+  .gsheet nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.88);text-decoration:none;font:500 15.5px/1.2 "Alan Sans",sans-serif}
+  .gsheet nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+  .gsheet nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+
+  /* encabezado de cada módulo */
+  .main h1{font-size:24px !important;line-height:1.15 !important}
+  .main > div:first-of-type{gap:10px !important;padding-top:14px}
+  .main > div:first-of-type > div:first-child{flex:1 1 100% !important}
+  .main > div:first-of-type p{font-size:14.5px !important}
+  .main > div:first-of-type > .btn,.main > div:first-of-type > a.btn{flex:1 1 auto}
+  .ex{order:-1}
+
+  /* rejillas: una columna; las de 4-5 columnas (indicadores) en dos; fotos en tres */
+  :where(.g) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  :where(.g) [style*="grid-template-columns: repeat(4"],:where(.g) [style*="grid-template-columns: repeat(5"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  :where(.g) [style*="grid-template-columns: repeat(6"]{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .main [style*="grid-column: 1 / -1"],.main [style*="grid-column: span"]{grid-column:auto !important}
+  .card{padding:14px !important;border-radius:18px !important}
+  .main div[style*="display: flex"]:not([role="tablist"]){flex-wrap:wrap}
+  .main [style*="white-space: nowrap"]{white-space:normal}
+  .main label[style*="width: 2"],.main label[style*="width: 3"]{width:100% !important;margin-left:0 !important}
+  .main [style*="margin-left: auto"]{margin-left:0}
+  .btn{min-height:44px}
+
+  /* tablas y filas anchas: se deslizan de lado dentro de su tarjeta */
+  .main div:has(> table),.card:has(> table){overflow-x:auto}
+  .main table{min-width:640px}
+  .main div:has(> .vrow),.main div:has(> .trow),.main section:has(> .trow),.main div:has(> .urow),.main section:has(> .urow){overflow-x:auto}
+  .vrow{min-width:560px}
+  .trow{min-width:760px}
+  .urow{min-width:700px}
+  .drow{grid-template-columns:46px minmax(0,1fr) !important;gap:8px 12px !important}
+  .drow > :nth-child(n+3){grid-column:2}
+  .main{overflow-wrap:break-word}
+  .main .card,.main .blk,.main .sec,.main section{min-width:0 !important;max-width:100%;overflow-wrap:anywhere}
+  .main .card *{max-width:100%}
+  .main .card table,.main .card .vrow,.main .card .trow,.main .card .urow,.main .card .prow,.main .card .lanes,.main .card [style*="46px repeat(6"]{max-width:none}
+  .main h3{flex-wrap:wrap}
+  .sec h3 small{flex-basis:100%}
+  /* agenda del día (Hoy): los 3 carriles se mantienen lado a lado */
+  .lanebtn[aria-pressed="true"]{box-shadow:0 0 0 2px #2B1E48}
+  :where(.g) .lanes{grid-template-columns:44px minmax(0,1fr) !important;gap:0 8px !important}
+  .lanes:not([data-lane="s"]) .ln-s,.lanes:not([data-lane="d"]) .ln-d,.lanes[data-lane="s"] .ln-c,.lanes[data-lane="d"] .ln-c{display:none !important}
+  .lanes-body > div[aria-hidden]{left:52px !important}
+  /* agenda de la semana: se desliza de lado, un día de ~110 px por columna */
+  .mdays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:6px}
+  .mdays button{border:0;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:inset 0 0 0 1px #E6E1E7;font-family:inherit}
+  .mdays span{font:600 11px/1 "Alan Sans",sans-serif;letter-spacing:.04em}
+  .mdays b{font:700 18px/1 "Alan Sans",sans-serif}
+  .wkday.m-off{display:none !important}
+  :where(.g) [style*="grid-template-columns: 46px repeat(6"]{grid-template-columns:40px minmax(0,1fr) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 4px"]{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 8px"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  /* spa: franja de hoy deslizable */
+  /* spa: la franja de hoy pasa a lista */
+  section[aria-labelledby="hoy"] div[style*="height: 92px"]{height:auto !important;display:flex;flex-direction:column;gap:8px}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] > div,section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="top: 0"],section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="dashed"]{display:none !important}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] button{position:static !important;width:auto !important;height:auto !important;min-height:56px;padding:10px 14px !important}
+  /* pasos en una sola fila */
+  :where(.g) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  .main ol[style*="repeat(5"] li > span:last-child{font-size:11px !important;line-height:1.2 !important;overflow-wrap:normal !important;hyphens:auto}
+  ol[aria-label="Pasos"]{gap:6px !important}
+  ol[aria-label="Pasos"] button{padding:10px 6px !important;flex-direction:column;gap:6px !important;text-align:center !important;justify-content:center}
+  ol[aria-label="Pasos"] button > span:last-child > span{display:none !important}
+  ol[aria-label="Pasos"] button b{font-size:13px !important;line-height:1.2 !important}
+  /* horarios */
+  h2 + .drow{display:none !important}
+  .rng{flex-wrap:nowrap !important}
+  .rng .cell{width:96px !important}
+  /* envíos: el valor va debajo del texto */
+  .rule{flex-wrap:wrap}
+  .rule > .cell,.rule > select{flex:1 1 calc(100% - 46px);margin-left:46px;width:auto !important}
+
+}
+/*GMOVIL-FIN*/
+</style>
+</helmet>
+<div class="g">
+
+<aside class="side" aria-label="Menú del gestor">
+  <a href="GestorHoy.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 8px; text-decoration: none;">
+    <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--grad-primary); display: grid; place-items: center;"><img src="/_blob/409735a76ce80c9f522581004be4da71" alt="" style="width: 34px;"></span>
+    <span><span style="display: block; font: 600 19px/1 'Alan Sans', sans-serif; color: #fff;">Alma Animal</span><span style="display: block; font: 400 13px/1.2 'Gowun Batang', serif; color: #D1C1DD; margin-top: 4px;">Gestor interno</span></span>
+  </a>
+  <nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+  <span class="grp">CLÍNICA</span>
+  <nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SPA</span>
+  <nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+  <span class="grp">TIENDA</span>
+  <nav aria-label="Tienda">
+    <a class="on" href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SITIO WEB</span>
+  <nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+  <span class="grp">AJUSTES</span>
+  <nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+  <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgb(255 255 255/.08);">
+    <span style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 1px; width: 92px; max-width: none; transform: translateX(-46%);"></span>
+    <span style="min-width: 0;"><span style="display: block; font: 600 14px/1.2 'Alan Sans', sans-serif;">Dra. Mariana Hoyos</span><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Administradora</span></span>
+    <span class="ms" style="margin-left: auto; color: rgb(255 255 255/.7);">unfold_more</span>
+  </div>
+</aside>
+
+<main class="main">
+<!--GNAV-->
+<div class="gbar"><a class="gbar-logo" href="GestorHoy.dc.html"><span><img src="/_blob/409735a76ce80c9f522581004be4da71" alt=""></span>Alma Animal</a><a class="gbar-ic" href="GestorRegistro.dc.html" aria-label="Registrar paciente"><span class="ms">person_add</span></a></div>
+<nav class="gnav" aria-label="Menú del gestor"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a><a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a><a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a><a class="on" aria-current="page" href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos</a><details class="gmore"><summary><span class="ms">menu</span>Más</summary><div class="gsheet">
+<span class="grp">GENERAL</span>
+<nav aria-label="General"><a href="GestorHoy.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+<span class="grp">CLÍNICA</span>
+<nav aria-label="Clínica">
+    <a href="GestorAgenda.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a href="GestorPaciente.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+<span class="grp">SPA</span>
+<nav aria-label="Spa">
+    <a href="GestorSpa.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+<span class="grp">TIENDA</span>
+<nav aria-label="Tienda">
+    <a class="on" href="GestorPedidos.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+<span class="grp">SITIO WEB</span>
+<nav aria-label="Sitio web">
+    <a href="GestorSitio.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+<span class="grp">AJUSTES</span>
+<nav aria-label="Ajustes">
+    <a href="GestorEnvios.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+</div></details></nav>
+<!--/GNAV-->
+  <div style="display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 4px; margin-right: auto;">
+      <h1 style="font: 600 30px/1.1 'Alan Sans', sans-serif;">Pedidos</h1>
+      <p style="font: 400 16px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Confirma cada pedido por WhatsApp, define cómo paga el cliente y avánzalo hasta entregarlo.</p>
+    </div>
+    <span class="ex">Datos de ejemplo</span>
+    <a class="btn out" href="#"><span class="ms">tune</span>Envíos y obsequio</a>
+  </div>
+
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;" role="group" aria-label="Filtrar por estado">
+    <sc-for list="{{filters}}" as="f" hint-placeholder-count="6"><button class="filt" type="button" aria-pressed="{{f.on}}" onClick="{{f.pick}}" style="background: {{f.bg}}; color: {{f.fg}}; border-color: {{f.bd}};">{{f.label}}<span style="font-variant-numeric: tabular-nums; opacity: .8;">{{f.count}}</span></button></sc-for>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start;">
+
+    <!-- lista -->
+    <section class="card" aria-label="Lista de pedidos" style="padding: 10px; gap: 4px;">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+        <button class="row" type="button" onClick="{{r.pick}}" aria-pressed="{{r.sel}}" style="background: {{r.bg}}; box-shadow: {{r.ring}};">
+          <span style="font: 700 15px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums; color: #655785;">#{{r.id}}</span>
+          <span style="min-width: 0;"><b style="display: block; font: 600 16px/1.3 'Alan Sans', sans-serif;">{{r.name}}</b><span style="display: block; font: 400 14px/1.35 'Alan Sans', sans-serif; color: #584E6E;">{{r.city}} · {{r.payTxt}}</span><span class="lk" style="background: {{r.lkBg}}; color: {{r.lkFg}};"><span class="ms">{{r.lkIcon}}</span>{{r.lkTxt}}</span></span>
+          <span style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;"><b style="font: 700 16px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{r.totalTxt}}</b><span class="chip" style="background: {{r.stBg}}; color: {{r.stFg}};">{{r.stTxt}}</span></span>
+        </button>
+      </sc-for>
+      <sc-if value="{{empty}}" hint-placeholder-val="{{false}}"><p style="padding: 24px; font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E;">No hay pedidos en este estado.</p></sc-if>
+    </section>
+
+    <!-- detalle -->
+    <section class="card" aria-labelledby="det" style="gap: 18px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <h2 id="det" style="font: 600 24px/1.2 'Alan Sans', sans-serif;">Pedido #{{d.id}}</h2>
+        <span class="chip" style="background: {{d.stBg}}; color: {{d.stFg}};">{{d.stTxt}}</span>
+        <span style="font: 400 14px/1 'Alan Sans', sans-serif; color: #584E6E;">{{d.when}}</span>
+        <sc-if value="{{d.prio}}" hint-placeholder-val="{{true}}"><span class="chip" style="background: #2B1E48; color: #fff;"><span class="ms" style="font-size: 15px;">bolt</span>Envío prioritario</span></sc-if>
+        <sc-if value="{{d.gift}}" hint-placeholder-val="{{false}}"><span class="chip" style="background: #FFDCC3; color: #623F21;"><span class="ms" style="font-size: 15px;">redeem</span>Lleva obsequio</span></sc-if>
+      </div>
+
+      <!-- avance del pedido -->
+      <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));">
+        <sc-for list="{{d.steps}}" as="s" hint-placeholder-count="5">
+          <li style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; position: relative;">
+            <span aria-hidden="true" style="position: absolute; top: 13px; left: -50%; width: 100%; height: 3px; background: {{s.line}};"></span>
+            <span style="position: relative; width: 28px; height: 28px; border-radius: 50%; background: {{s.dot}}; color: {{s.ic}}; display: grid; place-items: center; box-shadow: inset 0 0 0 2px {{s.ring}};"><span class="ms" style="font-size: 17px;">{{s.icon}}</span></span>
+            <span style="font: 600 13px/1.25 'Alan Sans', sans-serif; color: {{s.fg}};">{{s.label}}</span>
+          </li>
+        </sc-for>
+      </ol>
+
+      <!-- acciones -->
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <button class="btn wa" type="button" onClick="{{d.togglePreview}}"><span class="ms" style="font-size: 18px;">chat</span>Confirmar pedido por WhatsApp</button>
+        <sc-if value="{{d.canAdvance}}" hint-placeholder-val="{{true}}"><button class="btn" type="button" onClick="{{d.advance}}"><span class="ms" style="font-size: 18px;">arrow_forward</span>{{d.nextTxt}}</button></sc-if>
+        <a class="btn out" href="#"><span class="ms" style="font-size: 18px;">print</span>Imprimir rótulo</a>
+      </div>
+
+      <!-- mensaje automático para WhatsApp -->
+      <sc-if value="{{d.preview}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 18px; background: #EFE7DE; box-shadow: inset 0 0 0 1px #E2D6C8;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="width: 36px; height: 36px; border-radius: 50%; background: #00BC39; color: #fff; display: grid; place-items: center;"><span class="ms">chat</span></span>
+            <span><b style="display: block; font: 600 15px/1.2 'Alan Sans', sans-serif;">Mensaje para {{d.first}} · {{d.phone}}</b><span style="font: 400 13px/1.3 'Alan Sans', sans-serif; color: #584E6E;">Se arma solo con los datos del pedido. Puedes editarlo antes de enviar.</span></span>
+          </div>
+          <div style="align-self: flex-end; max-width: 92%; background: #DCF3D9; border-radius: 14px 14px 4px 14px; padding: 12px 14px; box-shadow: 0 1px 1px rgb(0 0 0/.08); font: 400 15px/1.5 'Alan Sans', sans-serif; color: #1B2A1E; white-space: pre-line;">{{d.msg}}</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a class="btn wa" href="{{d.waLink}}" target="_blank" rel="noopener"><span class="ms" style="font-size: 18px;">send</span>Abrir en WhatsApp</a>
+            <button class="btn out" type="button" onClick="{{d.togglePreview}}">Cerrar</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- método de pago -->
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border-radius: 16px; background: #F8F2F8;">
+        <b style="font: 600 15px/1.2 'Alan Sans', sans-serif;">Cómo paga</b>
+        <div class="seg" role="group" aria-label="Método de pago">
+          <sc-for list="{{d.pays}}" as="p" hint-placeholder-count="3"><button type="button" aria-pressed="{{p.on}}" onClick="{{p.pick}}" style="background: {{p.bg}}; color: {{p.fg}};"><span class="ms" style="font-size: 17px;">{{p.icon}}</span>{{p.label}}</button></sc-for>
+        </div>
+        <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">{{d.payHint}}</span>
+      </div>
+
+      <!-- ¿de quién es este pedido? se une por celular (y correo) con Propietarios -->
+      <div class="who" style="background: {{d.who.bg}};">
+        <span class="ms" style="font-size: 26px; color: {{d.who.fg}};">{{d.who.icon}}</span>
+        <span style="flex: 1; min-width: 240px;"><b style="display: block; font: 600 16px/1.3 'Alan Sans', sans-serif;">{{d.who.title}}</b><span style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E;">{{d.who.sub}}</span></span>
+        <sc-if value="{{d.who.isMaybe}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 8px;"><button class="btn sm" type="button" onClick="{{d.who.yes}}"><span class="ms" style="font-size: 17px;">link</span>Sí, vincular</button><button class="btn out sm" type="button" onClick="{{d.who.no}}">No, es otra persona</button></span></sc-if>
+        <sc-if value="{{d.who.isNew}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 8px;"><button class="btn sm" type="button" onClick="{{d.who.create}}"><span class="ms" style="font-size: 17px;">person_add</span>Crear ficha con estos datos</button><button class="btn out sm" type="button">Buscar propietario</button></span></sc-if>
+        <sc-if value="{{d.who.isLinked}}" hint-placeholder-val="{{true}}"><a class="btn out sm" href="GestorPropietarios.dc.html"><span class="ms" style="font-size: 17px;">person</span>Ver ficha</a></sc-if>
+      </div>
+
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <h3 style="font: 600 16px/1.3 'Alan Sans', sans-serif;">Cliente y envío</h3>
+          <dl class="kv" style="margin: 0;">
+            <div><dt>Nombre</dt><dd>{{d.first}}</dd></div>
+            <div><dt>Apellido</dt><dd>{{d.last}}</dd></div>
+            <div><dt>Celular</dt><dd style="font-variant-numeric: tabular-nums;">{{d.phone}}</dd></div>
+            <div><dt>Correo</dt><dd style="overflow-wrap: anywhere;">{{d.email}}</dd></div>
+            <div><dt>Departamento</dt><dd>{{d.dept}}</dd></div>
+            <div><dt>Ciudad</dt><dd>{{d.city}}</dd></div>
+            <div style="grid-column: 1 / -1;"><dt>Dirección</dt><dd>{{d.address}}</dd></div>
+            <div><dt>Barrio</dt><dd>{{d.hood}}</dd></div>
+            <div><dt>Envío prioritario</dt><dd>{{d.prioTxt}}</dd></div>
+            <div style="grid-column: 1 / -1;"><dt>Indicaciones</dt><dd style="font-weight: 400;">{{d.notes}}</dd></div>
+          </dl>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <h3 style="font: 600 16px/1.3 'Alan Sans', sans-serif;">Productos</h3>
+          <div style="display: flex; flex-direction: column; border-radius: 16px; box-shadow: 0 0 0 1px #E6E1E7; overflow: hidden;">
+            <sc-for list="{{d.items}}" as="it" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid #F2ECF2;">
+                <span style="width: 44px; height: 44px; border-radius: 10px; background: #F2ECF2;"></span>
+                <span style="min-width: 0;"><b style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">{{it.name}}</b><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{it.qty}} × {{it.priceTxt}}</span></span>
+                <b style="font: 700 15px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{it.lineTxt}}</b>
+              </div>
+            </sc-for>
+            <dl style="margin: 0; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; font: 400 15px/1.3 'Alan Sans', sans-serif; background: #F8F2F8;">
+              <div style="display: flex; justify-content: space-between;"><dt>Subtotal</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">{{d.subTxt}}</dd></div>
+              <div style="display: flex; justify-content: space-between;"><dt>Envío</dt><dd style="margin: 0;">{{d.shipTxt}}</dd></div>
+              <div style="display: flex; justify-content: space-between;"><dt>Prioritario</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">{{d.prioAmt}}</dd></div>
+              <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #CBC4D1; font: 700 18px/1 'Alan Sans', sans-serif;"><dt>Total</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">{{d.totalTxt}}</dd></div>
+            </dl>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 16px; background: #F8F2F8;">
+            <label for="nota" style="font: 600 14px/1.2 'Alan Sans', sans-serif;">Nota interna</label>
+            <textarea id="nota" placeholder="Ej: Confirmó por WhatsApp, paga contraentrega. Sale mañana con Interrapidísimo." style="height: 72px; border-radius: 10px; border: 1px solid #CBC4D1; padding: 10px 12px; font: 400 15px/1.4 'Alan Sans', sans-serif; color: #2B1E48; resize: vertical;"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const fmt = (n) => '$' + Math.round(n).toLocaleString('es-CO');
+    // estados del pedido; el paso de pago se adapta al método
+    const ORDER = ['nuevo', 'confirmado', 'pagado', 'enviado', 'entregado'];
+    const ST = {
+      nuevo: { t: 'Nuevo', bg: '#FFDCC3', fg: '#623F21' },
+      confirmado: { t: 'Cliente confirmó', bg: '#EADDFF', fg: '#4D3F6C' },
+      pagado: { t: 'Pago recibido', bg: '#D1C1DD', fg: '#372C42' },
+      enviado: { t: 'Enviado', bg: '#F2ECF2', fg: '#2B1E48' },
+      entregado: { t: 'Entregado', bg: '#B8F1B9', fg: '#1D5128' }
+    };
+    const PAY = {
+      pendiente: { t: 'Por definir', icon: 'help' },
+      transferencia: { t: 'Transferencia o Nequi', icon: 'account_balance' },
+      contraentrega: { t: 'Contraentrega', icon: 'local_atm' }
+    };
+    const base = [
+      { id: 1043, first: 'Laura', last: 'Gómez Restrepo', phone: '300 123 4567', email: 'laura@correo.com', dept: 'Risaralda', city: 'Pereira', address: 'Calle 19 # 8-34, apto 302', hood: 'Álamos', notes: 'Dejar en portería, torre 2.', prio: true, when: 'Hoy, 10:28 a. m.', st: 'nuevo', pay: 'pendiente',
+        items: [{ name: 'Shampoo hipoalergénico 250 ml', qty: 1, price: 28000 }, { name: 'Galletas para entrenamiento', qty: 2, price: 12000 }] },
+      { id: 1042, first: 'Andrés', last: 'Ospina', phone: '312 456 7890', email: 'andres.ospina@correo.com', dept: 'Caldas', city: 'Manizales', address: 'Carrera 23 # 45-10', hood: 'Palermo', notes: 'Llamar antes de llegar.', prio: false, when: 'Hoy, 8:40 a. m.', st: 'nuevo', pay: 'pendiente',
+        items: [{ name: 'Concentrado adulto raza pequeña 2 kg', qty: 2, price: 38000 }, { name: 'Toallitas para patas', qty: 1, price: 15000 }] },
+      { id: 1041, first: 'Valentina', last: 'Ríos', phone: '311 222 0099', email: '—', dept: 'Risaralda', city: 'Dosquebradas', address: 'Manzana 4, casa 12', hood: 'La Pradera', notes: '—', prio: false, when: 'Ayer, 4:15 p. m.', st: 'confirmado', pay: 'contraentrega',
+        items: [{ name: 'Collar con placa', qty: 1, price: 22000 }, { name: 'Pelota de caucho', qty: 1, price: 9000 }] },
+      { id: 1040, first: 'Camilo', last: 'Herrera', phone: '301 987 6543', email: 'camilo.h@correo.com', dept: 'Valle del Cauca', city: 'Cali', address: 'Avenida 6N # 28-15, apto 501', hood: 'Granada', notes: '—', prio: true, when: 'Lunes, 11:02 a. m.', st: 'enviado', pay: 'transferencia',
+        items: [{ name: 'Cepillo deslanador', qty: 1, price: 24000 }, { name: 'Snack dental', qty: 5, price: 8000 }] },
+      { id: 1039, first: 'Sofía', last: 'Arango', phone: '310 555 1212', email: 'sofia.arango@correo.com', dept: 'Risaralda', city: 'Pereira', address: 'Calle 1 # 12-40', hood: 'Alfonso López', notes: '—', prio: false, when: 'Sábado, 3:30 p. m.', st: 'entregado', pay: 'contraentrega',
+        items: [{ name: 'Alimento húmedo para gato', qty: 6, price: 6500 }] }
+    ];
+    const stOver = s.st || {};
+    const payOver = s.pay || {};
+    const orders = base.map((o) => {
+      const sub = o.items.reduce((a, it) => a + it.qty * it.price, 0);
+      const free = o.city === 'Pereira' || o.city === 'Dosquebradas' || sub >= 70000;
+      return { ...o, st: stOver[o.id] || o.st, pay: payOver[o.id] || o.pay, sub, free, gift: sub >= 85000, total: sub + (o.prio ? 5000 : 0) + (free ? 0 : 20000) };
+    });
+    // vínculo con Propietarios: login = compró con su cuenta; auto = coinciden celular y correo; maybe = solo el celular; new = no está
+    const WHO = { 1043: ['login', 'Laura Gómez Restrepo'], 1042: ['new', ''], 1041: ['maybe', 'Juan Pablo Ríos'], 1040: ['new', ''], 1039: ['auto', 'Sofía Arango'] };
+    const lkOver = s.lk || {};
+    const whoOf = (o) => { const w = WHO[o.id] || ['new', '']; const v = lkOver[o.id]; return v === 'yes' ? ['yes', w[1]] : v === 'no' ? ['new', ''] : v === 'created' ? ['created', o.first + ' ' + o.last] : w; };
+    const LK = { login: ['Vinculado', 'link', '#B8F1B9', '#1D5128'], auto: ['Vinculado', 'link', '#B8F1B9', '#1D5128'], yes: ['Vinculado', 'link', '#B8F1B9', '#1D5128'], created: ['Vinculado', 'link', '#B8F1B9', '#1D5128'], maybe: ['Posible cliente', 'help', '#FFDDB2', '#624000'], new: ['Cliente nuevo', 'person_add', '#EADDFF', '#4D3F6C'] };
+    const filter = s.filter || 'todos';
+    const FILTERS = [['todos', 'Todos'], ['nuevo', 'Nuevos'], ['confirmado', 'Cliente confirmó'], ['pagado', 'Pago recibido'], ['enviado', 'Enviados'], ['entregado', 'Entregados']];
+    const visible = orders.filter((o) => filter === 'todos' || o.st === filter);
+    const selId = s.sel || 1043;
+    const d = orders.find((o) => o.id === selId) || orders[0];
+    const cod = d.pay === 'contraentrega';
+    const idx = ORDER.indexOf(d.st);
+    // siguiente estado: con contraentrega se salta "pago recibido"
+    const nextSt = d.st === 'confirmado' && cod ? 'enviado' : ORDER[Math.min(idx + 1, ORDER.length - 1)];
+    const NEXT = { nuevo: 'Marcar cliente confirmado', confirmado: cod ? 'Marcar como enviado' : 'Marcar pago recibido', pagado: 'Marcar como enviado', enviado: cod ? 'Marcar entregado y cobrado' : 'Marcar como entregado' };
+    const shipTxt = d.free ? 'Gratis' : '$20.000';
+    const lines = d.items.map((it) => '• ' + it.qty + ' × ' + it.name + ' — ' + fmt(it.qty * it.price)).join('\n');
+    const msg =
+      'Hola ' + d.first + ', te escribimos de Alma Animal para confirmar tu pedido #' + d.id + ':\n\n' +
+      lines + '\n' +
+      'Subtotal: ' + fmt(d.sub) + '\n' +
+      'Envío: ' + shipTxt + '\n' +
+      (d.prio ? 'Envío prioritario: $5.000\n' : '') +
+      'Total: ' + fmt(d.total) + '\n' +
+      (d.gift ? 'Tu pedido lleva un obsequio de regalo.\n' : '') +
+      '\nDatos de envío:\n' +
+      d.first + ' ' + d.last + '\n' +
+      'Celular: ' + d.phone + '\n' +
+      d.address + ' · ' + d.hood + '\n' +
+      d.city + ', ' + d.dept + '\n' +
+      (d.notes && d.notes !== '—' ? 'Indicaciones: ' + d.notes + '\n' : '') +
+      '\n¿Nos confirmas que todo está bien? Cuéntanos si pagas por transferencia o Nequi, o contraentrega.';
+    const phoneDigits = '57' + d.phone.replace(/\D/g, '');
+    const stepDefs = [
+      ['nuevo', 'Recibido', 'inbox'],
+      ['confirmado', 'Cliente confirmó', 'how_to_reg'],
+      ['pagado', cod ? 'Contraentrega' : 'Pago recibido', cod ? 'local_atm' : 'payments'],
+      ['enviado', 'Enviado', 'local_shipping'],
+      ['entregado', cod ? 'Entregado y cobrado' : 'Entregado', 'check']
+    ];
+    return {
+      filters: FILTERS.map((f) => ({
+        label: f[1],
+        count: f[0] === 'todos' ? orders.length : orders.filter((o) => o.st === f[0]).length,
+        on: f[0] === filter,
+        bg: f[0] === filter ? '#2B1E48' : '#FFFFFF',
+        fg: f[0] === filter ? '#FFFFFF' : '#2B1E48',
+        bd: f[0] === filter ? '#2B1E48' : '#CBC4D1',
+        pick: () => this.setState({ filter: f[0] })
+      })),
+      empty: visible.length === 0,
+      rows: visible.map((o) => ({
+        id: o.id,
+        name: o.first + ' ' + o.last,
+        city: o.city,
+        payTxt: PAY[o.pay].t,
+        totalTxt: fmt(o.total),
+        stTxt: ST[o.st].t, stBg: ST[o.st].bg, stFg: ST[o.st].fg,
+        sel: o.id === d.id,
+        bg: o.id === d.id ? '#F8F2F8' : '#FFFFFF',
+        ring: o.id === d.id ? '0 0 0 2px #655785' : 'none',
+        lkTxt: LK[whoOf(o)[0]][0], lkIcon: LK[whoOf(o)[0]][1], lkBg: LK[whoOf(o)[0]][2], lkFg: LK[whoOf(o)[0]][3],
+        pick: () => this.setState({ sel: o.id, preview: false })
+      })),
+      d: {
+        ...d,
+        stTxt: ST[d.st].t, stBg: ST[d.st].bg, stFg: ST[d.st].fg,
+        who: (() => {
+          const w = whoOf(d);
+          const set = (v) => this.setState({ lk: { ...lkOver, [d.id]: v } });
+          const T = {
+            login: ['verified_user', 'Compró con su cuenta: ' + w[1], 'Entró al portal antes de pagar. El pedido ya está en su ficha y en su portal.', '#E5F7E6', '#1D5128'],
+            auto: ['link', 'Vinculado a ' + w[1], 'Coinciden el celular y el correo con su ficha. Ya lo ve en su portal.', '#E5F7E6', '#1D5128'],
+            yes: ['link', 'Vinculado a ' + w[1], 'Lo confirmaste. Ya aparece en su ficha y en su portal.', '#E5F7E6', '#1D5128'],
+            created: ['person_check', 'Ficha creada: ' + w[1], 'Le enviamos el correo para crear su contraseña. Este pedido ya queda en su portal.', '#E5F7E6', '#1D5128'],
+            maybe: ['help', '¿Es de ' + w[1] + '?', 'Tiene su mismo celular (' + d.phone + '), pero otro nombre y sin correo. Puede ser alguien de su familia: confírmalo al escribirle por WhatsApp.', '#FFF1DE', '#624000'],
+            new: ['person_add', 'Cliente nuevo', 'Ni el celular ni el correo están en Propietarios. Si creas su ficha, tendrá portal y se le irán sumando sus compras.', '#F4EEFB', '#4D3F6C']
+          }[w[0]];
+          return { icon: T[0], title: T[1], sub: T[2], bg: T[3], fg: T[4], isMaybe: w[0] === 'maybe', isNew: w[0] === 'new', isLinked: ['login', 'auto', 'yes', 'created'].includes(w[0]),
+            yes: () => set('yes'), no: () => set('no'), create: () => set('created') };
+        })(),
+        prioTxt: d.prio ? 'Sí (+$5.000)' : 'No',
+        prioAmt: d.prio ? '$5.000' : '—',
+        subTxt: fmt(d.sub),
+        shipTxt,
+        totalTxt: fmt(d.total),
+        items: d.items.map((it) => ({ ...it, priceTxt: fmt(it.price), lineTxt: fmt(it.qty * it.price) })),
+        preview: !!s.preview,
+        togglePreview: () => this.setState({ preview: !s.preview }),
+        msg,
+        waLink: 'https://wa.me/' + phoneDigits + '?text=' + encodeURIComponent(msg),
+        canAdvance: d.st !== 'entregado',
+        nextTxt: NEXT[d.st] || '',
+        advance: () => this.setState({ st: { ...stOver, [d.id]: nextSt } }),
+        pays: ['transferencia', 'contraentrega', 'pendiente'].map((k) => ({
+          label: PAY[k].t, icon: PAY[k].icon, on: d.pay === k,
+          bg: d.pay === k ? '#2B1E48' : '#FFFFFF',
+          fg: d.pay === k ? '#FFFFFF' : '#2B1E48',
+          pick: () => this.setState({ pay: { ...payOver, [d.id]: k } })
+        })),
+        payHint: cod ? 'Se cobra al entregar. El pedido pasa de "Cliente confirmó" a "Enviado".' : (d.pay === 'transferencia' ? 'Marca "Pago recibido" cuando llegue el comprobante.' : 'Pregúntale al cliente en el mensaje de confirmación.'),
+        steps: stepDefs.map((x, k) => {
+          const reached = k <= idx || (cod && x[0] === 'pagado' && idx >= 1);
+          return {
+            label: x[1],
+            icon: reached && k < idx ? 'check' : x[2],
+            dot: reached ? '#655785' : '#FFFFFF',
+            ic: reached ? '#FFFFFF' : '#584E6E',
+            ring: reached ? '#655785' : '#CBC4D1',
+            fg: reached ? '#2B1E48' : '#584E6E',
+            line: k === 0 ? 'transparent' : (reached ? '#655785' : '#E6E1E7')
+          };
+        })
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

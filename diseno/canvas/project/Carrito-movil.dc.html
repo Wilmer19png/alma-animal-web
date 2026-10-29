@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Carrito · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.alma:hover{color:#362954;background-position:100% 0}
+.btn.outlined{background:transparent;color:#655785;border-color:#CBC4D1}
+.btn.outlined:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.ghost{background:rgb(255 255 255/.14);color:#fff;border-color:rgb(255 255 255/.3)}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn:hover{background:#ECE6ED;color:#4D3F6C}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#FBCFAF;color:#623F21;font:700 10px/16px "Alan Sans",sans-serif;text-align:center;padding:0 4px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-dark] .gt{background:linear-gradient(100deg,#FFFFFF 0%,#FBCFAF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.panel{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;padding:28px}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label{font:600 15px/1.3 "Alan Sans",sans-serif;color:#2B1E48}
+.fld input,.fld select,.fld textarea{width:100%;height:52px;border-radius:12px;border:1px solid #7A7580;background:#fff;padding:0 16px;font:400 17px/1.3 "Alan Sans",sans-serif;color:#2B1E48;outline:0;transition:border-color .15s,box-shadow .15s}
+.fld textarea{height:96px;padding:14px 16px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:#6E6585}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#655785;box-shadow:0 0 0 3px rgb(101 87 133/.18)}
+.fld .hint{font:400 14px/1.4 "Alan Sans",sans-serif;color:#584E6E}
+.req{color:#B4271F}
+.qty{display:inline-flex;align-items:center;border:1px solid #CBC4D1;border-radius:999px;height:40px}
+.qty button{width:40px;height:38px;border:0;background:transparent;color:#655785;cursor:pointer;border-radius:999px;display:grid;place-items:center}
+.qty button:hover{background:#F2ECF2}
+.qty span{min-width:28px;text-align:center;font:600 16px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:999px;background:#ECE6ED;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--grad-primary);transition:width .6s cubic-bezier(.2,0,0,1)}
+.add{height:36px;padding:0 14px;border-radius:999px;border:0;background:#FBCFAF;color:#623F21;font:600 14px/1 "Alan Sans",sans-serif;display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.add:hover{background:#F0BC95}
+.prio{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;border:2px solid #CBC4D1;cursor:pointer;transition:border-color .2s,background .2s}
+.prio input{width:22px;height:22px;margin:0;accent-color:#655785}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+
+.wiz{list-style:none;margin:0;padding:0;display:flex;gap:6px;counter-reset:w}
+.wiz li{flex:1;min-width:0}
+.wiz button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:inherit;color:#584E6E;text-align:left}
+.wiz button::before{content:"";display:block;width:100%;height:4px;border-radius:999px;background:#E6E1E7;transition:background .3s cubic-bezier(.2,0,0,1)}
+.wiz li.done button::before,.wiz li.now button::before{background:#655785}
+.wiz i{font-style:normal;font:700 12px/1 "Alan Sans",sans-serif;color:#655785;letter-spacing:.02em}
+.wiz span{font:600 14px/1.25 "Alan Sans",sans-serif}
+.wiz li.now span{color:#2B1E48}
+.wiz li.todo button{cursor:default}
+.wiz-nav{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.wiz-nav .btn{height:52px;padding:0 26px;font-size:17px}
+.wiz-nav .grow{margin-left:auto}
+.rv{display:flex;flex-direction:column}
+.rv > div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:14px 0;border-top:1px solid #F2ECF2}
+.rv dt{font:500 14px/1.3 "Alan Sans",sans-serif;color:#584E6E}
+.rv dd{margin:0;font:600 16px/1.4 "Alan Sans",sans-serif;grid-column:1}
+.rv button{grid-column:2;grid-row:1 / span 2;border:0;background:transparent;color:#655785;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;padding:10px 4px;text-decoration:underline;text-underline-offset:3px}
+.m-bar{display:none}
+.wiz2{max-width:420px}
+.m-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;align-items:center;gap:14px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;box-shadow:0 -1px 0 #E6E1E7,0 -8px 20px rgb(54 41 84/.08)}
+.m-bar .btn{flex:1;height:52px;font-size:16px}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  .aa > .wrap:nth-of-type(2){padding-bottom:16px !important}
+  .panel{padding:16px 14px !important}
+  .m-cartrow{grid-template-columns:52px minmax(0,1fr) auto !important;gap:4px 12px !important;padding:12px 0 !important}
+  .m-cartrow > :nth-child(1){grid-row:1 / span 2;width:52px !important;height:52px !important}
+  .m-cartrow > :nth-child(2){grid-column:2;grid-row:1}
+  .m-cartrow > :nth-child(2) a{font-size:15px !important}
+  .m-cartrow > :nth-child(5){grid-column:3;grid-row:1;justify-self:end}
+  .m-cartrow > :nth-child(3){grid-column:2;grid-row:2;justify-self:start;height:36px}
+  .m-cartrow > :nth-child(4){grid-column:3;grid-row:2;justify-self:end;min-width:0 !important;font-size:16px !important}
+  .qty button{width:36px;height:34px}
+  /* sugerencias: fila deslizable de tarjetas pequeñas */
+  .aa div:has(> h2 + .m-g) .m-g{display:flex !important;overflow-x:auto;gap:10px !important;margin:0 -16px;padding:0 16px 4px;scroll-snap-type:x mandatory}
+  .aa div:has(> h2 + .m-g) .m-g > div{flex:0 0 240px;scroll-snap-align:start;padding:12px 12px 12px 16px !important;gap:10px !important}
+  .aa div:has(> h2 + .m-g) .m-g > div > span:first-child{display:none !important}
+  .aa div:has(> h2 + .m-g) .m-g > div > span:nth-child(2) > span{font-size:15px !important}
+  .aa div:has(> h2 + .m-g) .add{width:44px;height:44px;padding:0;justify-content:center;font-size:0;flex:none;border-radius:50%}
+  .aa div:has(> h2 + .m-g) .add .ms{font-size:22px !important}
+  .m-cartrow > :nth-child(2) > span:first-child{display:none}
+  .aa div:has(> h2 + .m-g) h2{font-size:18px !important}
+  /* resumen: sin repetir el total ni los botones (van en la barra fija) */
+  aside[aria-labelledby="res"] dl > div:last-child{display:none !important}
+  aside[aria-labelledby="res"] .panel{gap:12px !important}
+  aside[aria-labelledby="res"] > .panel > p,aside[aria-labelledby="res"] > .panel > span:last-child,aside[aria-labelledby="res"] > .panel > .wa-o{display:none !important}
+  .fab-wa{bottom:92px !important}
+  section[aria-label="Carrito y datos de envío"]{gap:16px !important;padding-bottom:110px !important}
+  .wiz2{max-width:none}
+}
+/*MOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA ======== -->
+<div class="wrap m-top" style="padding-top: 24px; padding-bottom: 24px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main-movil.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <nav class="navpill" aria-label="Principal" style="margin-left: 24px;">
+    <a href="Main-movil.dc.html">Inicio</a><a href="Consultorio-movil.dc.html">Consultorio</a><a href="Spa-movil.dc.html">Spa</a><a class="on" href="Petshop-movil.dc.html">Petshop</a><a href="Main-movil.dc.html#nosotros">Nosotros</a><a href="Blog-movil.dc.html">Blog</a><a href="Main-movil.dc.html#contacto">Contacto</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a class="icon-btn" href="Carrito-movil.dc.html" aria-label="Carrito"><span class="ms">shopping_bag</span><span class="badge">{{count}}</span></a>
+    <a class="btn" href="PortalAcceso.dc.html">Ingresar</a>
+      <details class="mnav"><summary aria-label="Abrir el menú"><span class="ms m-open">menu</span><span class="ms m-close">close</span></summary><div class="mpanel"><a href="Main-movil.dc.html">Inicio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Consultorio-movil.dc.html">Consultorio<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Spa-movil.dc.html">Spa<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="on" href="Petshop-movil.dc.html">Petshop<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main-movil.dc.html#nosotros">Nosotros<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Blog-movil.dc.html">Blog<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a href="Main-movil.dc.html#contacto">Contacto<span class="ms" style="font-size: 18px; color: #655785;">chevron_right</span></a><a class="btn mlogin" href="PortalAcceso.dc.html"><span class="ms" style="font-size: 18px;">person</span>Ingresar a mi portal</a></div></details>
+  </div>
+</div>
+
+<!-- ======== TÍTULO + ENVÍOS ======== -->
+<div class="wrap" style="display: flex; flex-direction: column; gap: 20px; padding-bottom: 32px;">
+  <a href="Petshop-movil.dc.html" style="font: 500 15px/1 'Alan Sans', sans-serif; color: #584E6E; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><span class="ms" style="font-size: 18px;">arrow_back</span>Seguir comprando</a>
+  <div class="m-sb" style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap;">
+    <h1 class="m-d2" style="font: 400 56px/1 'Alan Sans', sans-serif; letter-spacing: -.035em;">Tu <b class="gt" style="font-weight: 700;">carrito</b></h1>
+    <div class="m-hide" style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 'Alan Sans', sans-serif; padding: 10px 14px; border-radius: 999px; background: #F2ECF2;"><span class="ms" style="color: #655785;">local_shipping</span>Envío gratis en Pereira y Dosquebradas</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 'Alan Sans', sans-serif; padding: 10px 14px; border-radius: 999px; background: #F2ECF2;"><span class="ms" style="color: #655785;">public</span>Gratis a toda Colombia desde $70.000</span>
+    </div>
+  </div>
+</div>
+
+<!-- ======== CONTENIDO ======== -->
+<section class="wrap" aria-label="Carrito y datos de envío" style="padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start;">
+
+  <div style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+    <ol class="wiz wiz2" aria-label="Pasos de la compra">
+      <sc-for list="{{wsteps}}" as="w" hint-placeholder-count="2"><li class="{{w.cls}}" aria-current="{{w.cur}}"><button type="button" onClick="{{w.go}}"><i>{{w.n}}</i><span>{{w.t}}</span></button></li></sc-for>
+    </ol>
+    <sc-if value="{{isCart}}" hint-placeholder-val="{{true}}">
+
+    <!-- productos -->
+    <div class="panel" style="display: flex; flex-direction: column; gap: 4px;">
+      <h2 style="font: 600 22px/1.3 'Alan Sans', sans-serif; margin-bottom: 8px;">Productos</h2>
+      <sc-if value="{{noItems}}" hint-placeholder-val="{{false}}"><p style="font: 400 17px/1.5 'Alan Sans', sans-serif; color: #584E6E; padding: 16px 0;">Tu carrito está vacío. <a href="Petshop-movil.dc.html">Ver productos</a></p></sc-if>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="2">
+        <div class="m-g m-cartrow" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) auto auto 32px; gap: 16px; align-items: center; padding: 14px 0; border-top: 1px solid #ECE6ED;">
+          <span style="width: 72px; height: 72px; border-radius: 14px; background: #F2ECF2; display: grid; place-items: center; color: #CBC4D1;"><span class="ms" style="font-size: 28px;">photo_camera</span></span>
+          <span style="min-width: 0;"><span style="display: block; font: 600 13px/1.3 'Alan Sans', sans-serif; color: #655785;">{{r.cat}}</span><a href="Producto-movil.dc.html" style="display: block; font: 600 17px/1.35 'Alan Sans', sans-serif; color: #2B1E48; text-decoration: none;">{{r.name}}</a><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">{{r.priceTxt}} c/u</span></span>
+          <span class="qty"><button type="button" aria-label="Quitar uno" onClick="{{r.dec}}" style="font: 500 22px/1 'Alan Sans', sans-serif;">−</button><span>{{r.qty}}</span><button type="button" aria-label="Agregar uno" onClick="{{r.inc}}" style="font: 500 22px/1 'Alan Sans', sans-serif;">+</button></span>
+          <b style="font: 700 18px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums; min-width: 92px; text-align: right;">{{r.lineTxt}}</b>
+          <button type="button" aria-label="Eliminar del carrito" onClick="{{r.del}}" style="width: 32px; height: 32px; border: 0; background: transparent; color: #584E6E; cursor: pointer; border-radius: 50%; display: grid; place-items: center;"><span class="ms">close</span></button>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- sugerencias -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="font: 600 22px/1.3 'Alan Sans', sans-serif;">Súmale a tu pedido</h2>
+      <div class="m-g" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+        <sc-for list="{{sugg}}" as="g" hint-placeholder-count="3">
+          <div style="background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px #CBC4D1; padding: 14px; display: flex; gap: 12px; align-items: center;">
+            <span style="width: 56px; height: 56px; border-radius: 12px; background: #F2ECF2; flex: none;"></span>
+            <span style="flex: 1; min-width: 0;"><span style="display: block; font: 600 15px/1.3 'Alan Sans', sans-serif;">{{g.name}}</span><span style="font: 400 15px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{g.priceTxt}}</span></span>
+            <button class="add" type="button" onClick="{{g.add}}"><span class="ms" style="font-size: 18px;">add</span>Agregar</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    </sc-if>
+
+    <!-- datos de envío: esto llega al gestor -->
+    <sc-if value="{{isShip}}" hint-placeholder-val="{{false}}">
+    <form class="panel" aria-labelledby="env" style="display: flex; flex-direction: column; gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;"><h2 id="env" style="font: 600 22px/1.3 'Alan Sans', sans-serif;">Datos de envío</h2><p style="font: 400 16px/1.5 'Alan Sans', sans-serif; color: #584E6E;">No necesitas crear cuenta. Los campos con <span class="req">*</span> son obligatorios.</p></div>
+      <sc-if value="{{guest}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 18px; border-radius: 18px; background: #F8F2F8;">
+          <span class="ms" style="font-size: 26px; color: #655785;">account_circle</span>
+          <span style="flex: 1; min-width: 260px; font: 400 15px/1.45 'Alan Sans', sans-serif;"><b>¿Ya eres cliente de Alma Animal?</b> Ingresa y llenamos tus datos. Si no, compra igual: lo unimos a tu ficha por tu celular.</span>
+          <button class="btn outlined" type="button" onClick="{{login}}" style="height: 40px; padding: 0 18px;">Ingresar</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{logged}}" hint-placeholder-val="{{false}}">
+        <div role="status" style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 18px; background: #E5F7E6; color: #1D5128;">
+          <span class="ms fill" style="font-size: 26px;">verified_user</span>
+          <span style="flex: 1; font: 400 15px/1.45 'Alan Sans', sans-serif;">Hola, <b>Laura</b>. Llenamos tus datos con tu cuenta y este pedido queda guardado en tu portal.</span>
+          <button type="button" onClick="{{logout}}" style="border: 0; background: transparent; color: #1D5128; font: 600 14px/1 'Alan Sans', sans-serif; text-decoration: underline; cursor: pointer;">No soy yo</button>
+        </div>
+      </sc-if>
+      <div class="m-g" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px;">
+        <div class="fld"><label for="c-nombre">Nombre <span class="req">*</span></label><input id="c-nombre" value="{{pf.n}}" placeholder="Ej: Laura" autocomplete="given-name"></div>
+        <div class="fld"><label for="c-apellido">Apellido <span class="req">*</span></label><input id="c-apellido" value="{{pf.a}}" placeholder="Ej: Gómez Restrepo" autocomplete="family-name"></div>
+        <div class="fld"><label for="c-cel">Celular <span class="req">*</span></label><input id="c-cel" value="{{pf.c}}" type="tel" inputmode="tel" placeholder="Ej: 300 123 4567" autocomplete="tel"><span class="hint">Te escribimos a este número por WhatsApp.</span></div>
+        <div class="fld"><label for="c-correo">Correo (opcional)</label><input id="c-correo" value="{{pf.e}}" type="email" placeholder="Ej: laura@correo.com" autocomplete="email"></div>
+        <div class="fld"><label for="c-depto">Departamento <span class="req">*</span></label>
+          <select id="c-depto" value="{{dept}}" onChange="{{onDept}}">
+            <option>Amazonas</option><option>Antioquia</option><option>Arauca</option><option>Atlántico</option><option>Bogotá D.C.</option><option>Bolívar</option><option>Boyacá</option><option>Caldas</option><option>Caquetá</option><option>Casanare</option><option>Cauca</option><option>Cesar</option><option>Chocó</option><option>Córdoba</option><option>Cundinamarca</option><option>Guainía</option><option>Guaviare</option><option>Huila</option><option>La Guajira</option><option>Magdalena</option><option>Meta</option><option>Nariño</option><option>Norte de Santander</option><option>Putumayo</option><option>Quindío</option><option>Risaralda</option><option>San Andrés y Providencia</option><option>Santander</option><option>Sucre</option><option>Tolima</option><option>Valle del Cauca</option><option>Vaupés</option><option>Vichada</option>
+          </select>
+        </div>
+        <div class="fld"><label for="c-ciudad">Ciudad o municipio <span class="req">*</span></label>
+          <select id="c-ciudad" value="{{city}}" onChange="{{onCity}}">
+            <optgroup label="Risaralda"><option>Pereira</option><option>Dosquebradas</option><option>Santa Rosa de Cabal</option><option>La Virginia</option><option>Marsella</option><option>Apía</option><option>Balboa</option><option>Belén de Umbría</option><option>Guática</option><option>La Celia</option><option>Mistrató</option><option>Pueblo Rico</option><option>Quinchía</option><option>Santuario</option></optgroup>
+            <optgroup label="Caldas"><option>Manizales</option><option>Chinchiná</option><option>Villamaría</option></optgroup>
+            <optgroup label="Quindío"><option>Armenia</option><option>Calarcá</option><option>Montenegro</option></optgroup>
+            <optgroup label="Valle del Cauca"><option>Cali</option><option>Cartago</option><option>Palmira</option><option>Tuluá</option></optgroup>
+            <optgroup label="Antioquia"><option>Medellín</option><option>Envigado</option><option>Bello</option><option>Itagüí</option><option>Rionegro</option></optgroup>
+            <optgroup label="Bogotá D.C."><option>Bogotá</option></optgroup>
+            <optgroup label="Cundinamarca"><option>Chía</option><option>Soacha</option><option>Zipaquirá</option><option>Fusagasugá</option><option>Facatativá</option></optgroup>
+            <optgroup label="Otras capitales"><option>Leticia</option><option>Arauca</option><option>Barranquilla</option><option>Cartagena</option><option>Tunja</option><option>Florencia</option><option>Yopal</option><option>Popayán</option><option>Valledupar</option><option>Quibdó</option><option>Montería</option><option>Inírida</option><option>San José del Guaviare</option><option>Neiva</option><option>Riohacha</option><option>Santa Marta</option><option>Villavicencio</option><option>Pasto</option><option>Cúcuta</option><option>Mocoa</option><option>San Andrés</option><option>Bucaramanga</option><option>Sincelejo</option><option>Ibagué</option><option>Mitú</option><option>Puerto Carreño</option></optgroup>
+          </select>
+          <span class="hint">En el sitio real la lista se filtra según el departamento.</span>
+        </div>
+        <div class="fld"><label for="c-dir">Dirección <span class="req">*</span></label><input id="c-dir" value="{{pf.d}}" placeholder="Ej: Calle 19 # 8-34, apto 302" autocomplete="street-address"></div>
+        <div class="fld"><label for="c-barrio">Barrio <span class="req">*</span></label><input id="c-barrio" value="{{pf.b}}" placeholder="Ej: Álamos"></div>
+        <div class="fld" style="grid-column: 1 / -1;"><label for="c-notas">Indicaciones para la entrega (opcional)</label><textarea id="c-notas" placeholder="Ej: Dejar en portería, torre 2. Timbre dañado."></textarea></div>
+      </div>
+      <label class="prio" style="border-color: {{prioBorder}}; background: {{prioBg}};">
+        <input type="checkbox" checked="{{prio}}" onChange="{{togglePrio}}">
+        <span class="ms" style="font-size: 28px; color: #655785;">bolt</span>
+        <span style="flex: 1;"><b style="display: block; font: 600 17px/1.3 'Alan Sans', sans-serif;">Envío prioritario</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Tu pedido sale primero.</span></span>
+        <b style="font: 700 18px/1 'Alan Sans', sans-serif;">+$5.000</b>
+      </label>
+      <label style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer; font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E;">
+        <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #655785; flex: none;">
+        <span>Pueden mostrar mi <b style="color: #2B1E48;">nombre (sin apellido) y mi ciudad</b> en los avisos de compra de la página. Ej: «Laura, de Pereira, compró…». Es opcional.</span>
+      </label>
+    </form>
+    </sc-if>
+  </div>
+
+  <!-- ======== RESUMEN ======== -->
+  <aside aria-labelledby="res" style="flex: 0 0 400px; display: flex; flex-direction: column; gap: 16px;">
+    <div class="panel" style="display: flex; flex-direction: column; gap: 18px;">
+      <h2 id="res" style="font: 600 22px/1.3 'Alan Sans', sans-serif;">Resumen</h2>
+
+      <!-- contador de envío gratis -->
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: #F8F2F8;">
+        <sc-if value="{{needFree}}" hint-placeholder-val="{{true}}"><span style="font: 500 16px/1.4 'Alan Sans', sans-serif; display: flex; gap: 8px;"><span class="ms" style="color: #655785;">local_shipping</span><span>Te faltan <b>{{toFreeTxt}}</b> para que tu envío sea <b>gratis</b>.</span></span></sc-if>
+        <sc-if value="{{pereira}}" hint-placeholder-val="{{false}}"><span style="font: 500 16px/1.4 'Alan Sans', sans-serif; display: flex; gap: 8px; color: #1D5128;"><span class="ms fill">check_circle</span><span>Envío <b>gratis</b> en {{city}}.</span></span></sc-if>
+        <sc-if value="{{freeByAmount}}" hint-placeholder-val="{{false}}"><span style="font: 500 16px/1.4 'Alan Sans', sans-serif; display: flex; gap: 8px; color: #1D5128;"><span class="ms fill">check_circle</span><span>¡Lograste el envío <b>gratis</b> a {{city}}!</span></span></sc-if>
+        <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis"><i style="width: {{freePct}};"></i></div>
+      </div>
+
+      <!-- obsequio -->
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 16px; background: var(--grad-alma); color: #362954;">
+        <sc-if value="{{giftPending}}" hint-placeholder-val="{{true}}"><span style="font: 500 16px/1.4 'Alan Sans', sans-serif; display: flex; gap: 8px;"><span class="ms">redeem</span><span>Agrega <b>{{toGiftTxt}}</b> más y llévate un <b>obsequio</b>.</span></span></sc-if>
+        <sc-if value="{{giftDone}}" hint-placeholder-val="{{false}}"><span style="font: 600 16px/1.4 'Alan Sans', sans-serif; display: flex; gap: 8px;"><span class="ms fill">redeem</span><span>¡Te ganaste un obsequio! Va con tu pedido.</span></span></sc-if>
+        <div class="bar" style="background: rgb(255 255 255 / .6);"><i style="width: {{giftPct}};"></i></div>
+      </div>
+
+      <dl style="margin: 0; display: flex; flex-direction: column; gap: 10px; font: 400 17px/1.3 'Alan Sans', sans-serif;">
+        <div class="m-sb" style="display: flex; justify-content: space-between;"><dt>Subtotal</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">{{subtotalTxt}}</dd></div>
+        <div class="m-sb" style="display: flex; justify-content: space-between;"><dt>Envío</dt><dd style="margin: 0;">{{shipTxt}}</dd></div>
+        <sc-if value="{{prio}}" hint-placeholder-val="{{false}}"><div class="m-sb" style="display: flex; justify-content: space-between;"><dt>Envío prioritario</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">$5.000</dd></div></sc-if>
+        <div class="m-sb" style="display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #CBC4D1; font: 700 22px/1 'Alan Sans', sans-serif;"><dt>Total</dt><dd style="margin: 0; font-variant-numeric: tabular-nums;">{{totalTxt}}</dd></div>
+      </dl>
+
+      <sc-if value="{{isCart}}" hint-placeholder-val="{{true}}">
+        <button class="btn alma m-hide" type="button" onClick="{{goShip}}" style="height: 56px; font-size: 18px; width: 100%;">Continuar con el envío<span class="ms">arrow_forward</span></button>
+      </sc-if>
+      <sc-if value="{{canPlace}}" hint-placeholder-val="{{false}}">
+        <button class="btn alma m-hide" type="button" onClick="{{place}}" style="height: 56px; font-size: 18px; width: 100%;">Confirmar pedido<span class="ms">arrow_forward</span></button>
+        <button type="button" onClick="{{goCart}}" style="border: 0; background: transparent; color: #655785; font: 600 15px/1 'Alan Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; align-self: center;"><span class="ms" style="font-size: 18px;">arrow_back</span>Volver al carrito</button>
+      </sc-if>
+      <sc-if value="{{placed}}" hint-placeholder-val="{{false}}">
+        <div role="status" style="display: flex; gap: 12px; padding: 16px; border-radius: 16px; background: #B8F1B9; color: #1D5128;"><span class="ms fill" style="font-size: 26px;">check_circle</span><span style="font: 500 16px/1.45 'Alan Sans', sans-serif;"><b>¡Recibimos tu pedido!</b> En unos minutos te escribimos por WhatsApp para confirmar el pago y la entrega.</span></div>
+      </sc-if>
+      <p style="font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E;">Al confirmar, te escribimos por WhatsApp para coordinar el pago: contraentrega, transferencia o en el consultorio.</p>
+      <a class="wa-o" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20mi%20pedido." target="_blank" rel="noopener"><svg class="wa-ic" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg>¿Dudas con tu pedido? Escríbenos</a>
+      <span style="font: 400 13px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Precios de ejemplo. Puedes cambiar cantidades y agregar productos para ver los contadores.</span>
+    </div>
+  </aside>
+</section>
+
+<sc-if value="{{showBar}}" hint-placeholder-val="{{true}}">
+  <div class="m-bar"><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font: 500 13px/1 'Alan Sans', sans-serif; color: #584E6E;">Total</span><b style="font: 700 20px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">{{totalTxt}}</b></span><button class="btn alma" type="button" onClick="{{barAct}}">{{barTxt}}<span class="ms">arrow_forward</span></button></div>
+</sc-if>
+
+<footer data-dark="1" class="wrap" style="padding-bottom: 32px;">
+  <div class="m-sb" style="border-radius: 32px; background: #2B1E48; color: rgb(255 255 255 / .75); padding: 28px 40px; display: flex; justify-content: space-between; gap: 24px; font: 400 15px/1.5 'Alan Sans', sans-serif;">
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206</span>
+    <span><a href="#" style="color: #fff;">Política de tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </div>
+</footer>
+
+<a class="fab-wa" href="https://wa.me/573017925910?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta%20sobre%20mi%20pedido." target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const fmt = (n) => '$' + Math.round(n).toLocaleString('es-CO');
+    // reglas editables desde el gestor
+    const FREE = 70000;   // envío gratis a toda Colombia desde
+    const GIFT = 85000;   // obsequio: $15.000 por encima del envío gratis
+    const PRIO = 5000;    // envío prioritario
+    const SHIP = 20000;   // envío nacional por debajo del mínimo
+    const items = s.items || [
+      { id: 'sh', name: 'Shampoo hipoalergénico 250 ml', cat: 'Higiene', price: 28000, qty: 1 },
+      { id: 'ga', name: 'Galletas para entrenamiento', cat: 'Snacks', price: 12000, qty: 2 }
+    ];
+    const catalog = [
+      { id: 'to', name: 'Toallitas para patas', cat: 'Higiene', price: 15000 },
+      { id: 'pe', name: 'Pelota de caucho', cat: 'Juguetes', price: 9000 },
+      { id: 'sd', name: 'Snack dental', cat: 'Snacks', price: 8000 },
+      { id: 'co', name: 'Collar con placa', cat: 'Accesorios', price: 22000 }
+    ];
+    const dept = s.dept || 'Risaralda';
+    const city = s.city || 'Pereira';
+    const prio = !!s.prio;
+    const setItems = (next) => this.setState({ items: next });
+    const subtotal = items.reduce((a, it) => a + it.price * it.qty, 0);
+    const pereira = city === 'Pereira' || city === 'Dosquebradas';
+    const freeShip = pereira || subtotal >= FREE;
+    return {
+      count: items.reduce((a, it) => a + it.qty, 0),
+      rows: items.map((it, k) => ({
+        ...it,
+        priceTxt: fmt(it.price),
+        lineTxt: fmt(it.price * it.qty),
+        inc: () => setItems(items.map((x, j) => (j === k ? { ...x, qty: x.qty + 1 } : x))),
+        dec: () => setItems(items.map((x, j) => (j === k ? { ...x, qty: Math.max(1, x.qty - 1) } : x))),
+        del: () => setItems(items.filter((_, j) => j !== k))
+      })),
+      noItems: items.length === 0,
+      sugg: catalog.filter((g) => !items.some((i) => i.id === g.id)).slice(0, 3).map((g) => ({
+        ...g, priceTxt: fmt(g.price), add: () => setItems(items.concat([{ ...g, qty: 1 }]))
+      })),
+      dept, city,
+      onDept: (e) => this.setState({ dept: e.target.value }),
+      onCity: (e) => this.setState({ city: e.target.value }),
+      prio,
+      togglePrio: () => this.setState({ prio: !prio }),
+      prioBorder: prio ? '#655785' : '#CBC4D1',
+      prioBg: prio ? '#F8F2F8' : '#FFFFFF',
+      pereira,
+      needFree: !pereira && subtotal < FREE,
+      freeByAmount: !pereira && subtotal >= FREE,
+      toFreeTxt: fmt(Math.max(0, FREE - subtotal)),
+      freePct: (pereira ? 100 : Math.min(100, (subtotal / FREE) * 100)) + '%',
+      giftPending: subtotal < GIFT,
+      giftDone: subtotal >= GIFT,
+      toGiftTxt: fmt(Math.max(0, GIFT - subtotal)),
+      giftPct: Math.min(100, (subtotal / GIFT) * 100) + '%',
+      subtotalTxt: fmt(subtotal),
+      shipTxt: freeShip ? 'Gratis' : fmt(SHIP),
+      totalTxt: fmt(subtotal + (prio ? PRIO : 0) + (freeShip ? 0 : SHIP)),
+      guest: !s.logged,
+      logged: !!s.logged,
+      login: () => this.setState({ logged: true }),
+      logout: () => this.setState({ logged: false }),
+      pf: s.logged ? { n: 'Laura', a: 'Gómez Restrepo', c: '300 123 4567', e: 'laura@correo.com', d: 'Calle 19 # 8-34, apto 302', b: 'Álamos' } : { n: '', a: '', c: '', e: '', d: '', b: '' },
+      wsteps: [['Paso 1', 'Tu carrito', 'cart'], ['Paso 2', 'Envío', 'ship']].map((w) => ({ n: w[0], t: w[1], cls: w[2] === (s.step || 'cart') ? 'now' : (w[2] === 'cart' ? 'done' : 'todo'), cur: w[2] === (s.step || 'cart') ? 'step' : 'false', go: () => { if (w[2] === 'cart' && !s.placed) this.setState({ step: 'cart' }); } })),
+      isCart: (s.step || 'cart') === 'cart',
+      isShip: s.step === 'ship',
+      canPlace: s.step === 'ship' && !s.placed,
+      goShip: () => this.setState({ step: 'ship' }),
+      goCart: () => this.setState({ step: 'cart' }),
+      showBar: !s.placed && items.length > 0,
+      barTxt: s.step === 'ship' ? 'Confirmar pedido' : 'Continuar',
+      barAct: () => (s.step === 'ship' ? this.setState({ placed: true }) : this.setState({ step: 'ship' })),
+      placed: !!s.placed,
+      notPlaced: !s.placed,
+      place: () => this.setState({ placed: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
