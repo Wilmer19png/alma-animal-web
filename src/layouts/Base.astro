@@ -4,8 +4,8 @@ import Footer from '../components/Footer.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp } from '../data/site';
 
-interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop' }
-const { title, description, waMessage, waArea = 'vet' } = Astro.props;
+interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop'; image?: string }
+const { title, description, waMessage, waArea = 'vet', image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const waHref = whatsapp[waArea](waMessage);
 // subconjunto de íconos (deben ir en orden alfabético)
@@ -26,6 +26,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
+  {image && <meta property="og:image" content={image} />}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />

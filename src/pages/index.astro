@@ -212,7 +212,7 @@ const waVet = whatsapp.vet();
     <div class="blog__grid">
       {POSTS.map((p) => (
         <a class="card post" href={postUrl(p)}>
-          <span class="post__cover" style={`background: ${p.cover.bg};`}><Image src={p.cover.img} alt="" width={300} style={`width: ${Math.round(p.cover.w * 100)}%; max-width: 150px;`} /></span>
+          <span class="post__cover" style={`background: ${p.cover.bg};`}>{p.cover.foto ? <img class="foto-cover" src={p.cover.foto} alt="" loading="lazy" decoding="async" /> : <Image src={p.cover.img} alt="" width={300} style={`width: ${Math.round(p.cover.w * 100)}%; max-width: 150px;`} />}</span>
           <span class="post__body">
             <span class="post__meta">{p.cat} · {p.min} min{BLOG_DEMO && ' · Artículo de ejemplo'}</span>
             <span class="serif post__title">{p.title}</span>
