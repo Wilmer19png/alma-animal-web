@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Equipo">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Equipo from '../../gestor/Equipo';
+    montar(Equipo);
+  </script>
+</GestorLayout>

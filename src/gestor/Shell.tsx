@@ -25,7 +25,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   { grp: 'Sitio web', items: [
     { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: true },
     { id: 'blog', txt: 'Blog', icon: 'article', href: '/gestor/blog', listo: true },
-    { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: false }
+    { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: true }
   ] },
   { grp: 'Ajustes', items: [
     { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: false },
