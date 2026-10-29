@@ -70,7 +70,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
 
 <script>
   import { cart, progress, money } from '../scripts/cart';
-  import { catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
+  import { catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
   import { TAGS } from '../data/shop';
   import '../scripts/add-buttons';
@@ -123,7 +123,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     info.innerHTML = `
       <div class="info__meta"><span class="info__cat">${categoria(p.categoria)} · ${paraTxt(p)}</span>${tags}</div>
       <h1 id="pn">${esc(words.slice(0, -1).join(' '))} <b class="gt">${esc(words[words.length - 1])}</b></h1>
-      <div class="price"><b data-price></b><s data-was hidden></s>${supabaseReady ? '' : '<span class="price__note">Precio de ejemplo</span>'}</div>
+      <div class="price"><b data-price></b><s data-was hidden></s><span class="off" data-off hidden></span>${supabaseReady ? '' : '<span class="price__note">Precio de ejemplo</span>'}</div>
       ${p.descripcion ? `<p class="info__text">${esc(p.descripcion)}</p>` : ''}
       ${multi ? `<fieldset class="vars"><legend>${esc(kind)}: <span data-var-name></span></legend><div class="vars__list">
         ${p.variantes.map((v) => `<label class="var${v.stock <= 0 ? ' is-out' : ''}"><input type="radio" name="variante" value="${esc(v.id)}"${v === start ? ' checked' : ''} /><b>${esc(v.nombre)}</b><span>${sub(v)}</span></label>`).join('')}
@@ -150,7 +150,9 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
       info.querySelector('[data-qty]')!.textContent = String(qty);
       info.querySelector('[data-price]')!.textContent = money(v.precio);
       const was = info.querySelector<HTMLElement>('[data-was]')!;
-      was.hidden = !p.precioAntes || p.precioAntes <= v.precio; was.textContent = p.precioAntes ? money(p.precioAntes) : '';
+      const pct = descuento(v), off = info.querySelector<HTMLElement>('[data-off]')!;
+      was.hidden = !pct; was.textContent = pct ? money(v.antes!) : '';
+      off.hidden = !pct; off.textContent = pct ? `-${pct}%` : '';
       info.querySelectorAll('[data-var-name]').forEach((el) => { el.textContent = v.nombre; });
       info.querySelector<HTMLElement>('[data-soldout]')!.hidden = !out;
       info.querySelector<HTMLAnchorElement>('[data-notify]')!.href = wa(`Hola, Alma Animal. Avísenme cuando llegue ${p.nombre}${multi ? ' · ' + v.nombre : ''}.`);
@@ -259,6 +261,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
   .pdp .price b { font: 700 32px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
   .pdp .price s { font-size: 18px; color: var(--ink-muted); }
   .pdp .price s[hidden] { display: none; }
+  .pdp .price .off { position: static; font-size: 14px; padding: 6px 10px; }
   .pdp .price__note { font-size: 14px; color: var(--ink-muted); }
   .pdp .info__text { font-size: 17px; line-height: 1.6; color: var(--ink-muted); max-width: 52ch; }
 

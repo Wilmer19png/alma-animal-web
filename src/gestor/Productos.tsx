@@ -267,6 +267,10 @@ function Editor({ base, ventas, volver, guardado, borrado, movido, avisar }: {
 
   // ganancia de la variante elegida
   const vc = variantes[Math.min(cv, variantes.length - 1)];
+  // promoción: precio anterior por variante; el % se calcula solo
+  const [promo, setPromo] = useState(() => d.variantes.some((v) => v.precio_antes) || !!d.precio_antes);
+  const pctDe = (v: Var) => (v.precio_antes && v.precio_antes > v.precio ? Math.round(((v.precio_antes - v.precio) / v.precio_antes) * 100) : 0);
+  const cambiarPromo = (on: boolean) => { setPromo(on); if (!on) setD((x) => ({ ...x, precio_antes: null, variantes: x.variantes.map((v) => ({ ...v, precio_antes: null })) })); };
   const unidadesMes = Math.max(1, vendidas(ventas, ids));
   const pautaU = d.pauta_mes ? Math.round(d.pauta_mes / unidadesMes) : 0;
   const ganancia = vc ? vc.precio - vc.costo - pautaU - d.envio_unidad : 0;
@@ -362,15 +366,18 @@ function Editor({ base, ventas, volver, guardado, borrado, movido, avisar }: {
             {TIPOS_VARIANTE.map((t) => <button key={t} type="button" role="radio" aria-checked={d.tipo_variante === t} onClick={() => set('tipo_variante', t)}>{t}</button>)}
           </div>
         )}
-        <div className="vtabla" role="table" aria-label="Variantes">
+        <Interruptor on={promo} label="En promoción: mostrar el precio anterior tachado y el % de descuento" onChange={cambiarPromo} />
+        {promo && variantes.some((v) => v.precio_antes && v.precio_antes <= v.precio) && <p className="hint-g">El precio de antes debe ser mayor que el precio actual.</p>}
+        <div className="vtabla" role="table" aria-label="Variantes" data-promo={promo || undefined}>
           <div className="vrow vrow--h" role="row">
             {conVariantes && <span role="columnheader">{d.tipo_variante}</span>}
-            <span role="columnheader">Precio</span><span role="columnheader">Costo</span><span role="columnheader">Ganancia</span><span role="columnheader">Stock</span>{conVariantes && <span />}
+            <span role="columnheader">Precio</span>{promo && <span role="columnheader">Antes</span>}<span role="columnheader">Costo</span><span role="columnheader">Ganancia</span><span role="columnheader">Stock</span>{conVariantes && <span />}
           </div>
           {(conVariantes ? variantes : variantes.slice(0, 1)).map((v, i) => (
             <div className="vrow" role="row" key={v.id ?? 'n' + i} data-sinvar={!conVariantes || undefined}>
               {conVariantes && <input className="cell" aria-label="Nombre de la variante" value={v.nombre} placeholder="Ej: 250 ml" onChange={(e) => setVar(i, { nombre: e.target.value })} />}
               <input className="cell" aria-label="Precio" inputMode="numeric" value={pesos(v.precio)} placeholder="$0" onChange={(e) => setVar(i, { precio: num(e.target.value) })} />
+              {promo && <span className="vrow__antes"><input className="cell" aria-label="Precio antes de la promoción" inputMode="numeric" value={pesos(v.precio_antes ?? 0)} placeholder="Antes" onChange={(e) => setVar(i, { precio_antes: num(e.target.value) || null })} />{pctDe(v) > 0 && <i>-{pctDe(v)}%</i>}</span>}
               <input className="cell" aria-label="Costo de compra" inputMode="numeric" value={pesos(v.costo)} placeholder="$0" onChange={(e) => setVar(i, { costo: num(e.target.value) })} />
               <b className="vrow__gain" data-neg={v.precio - v.costo < 0 || undefined}>{v.precio ? money(v.precio - v.costo) : '—'}</b>
               <span className="step" data-bajo={v.id && v.stock <= d.aviso_stock ? true : undefined}>
@@ -390,7 +397,6 @@ function Editor({ base, ventas, volver, guardado, borrado, movido, avisar }: {
         {conVariantes && <button className="link-add" type="button" onClick={() => set('variantes', [...variantes, { nombre: '', codigo: null, precio: variantes[variantes.length - 1]?.precio ?? 0, costo: 0, stock: 0, orden: variantes.length, activo: true }])}><span className="ms" aria-hidden="true">add</span>Agregar variante</button>}
         <p className="hint">Los botones + y − del stock se guardan al instante (entrada de mercancía o ajuste por conteo).</p>
         <div className="grid3g">
-          <div className="fld"><label htmlFor="po">Precio anterior <small>(si está en oferta)</small></label><Pesos id="po" value={d.precio_antes} onChange={(n) => set('precio_antes', n || null)} placeholder="Ej: $32.000" /></div>
           <div className="fld"><label htmlFor="ps">Código <small>(opcional)</small></label><input id="ps" value={d.codigo ?? ''} onChange={(e) => set('codigo', e.target.value)} placeholder="Ej: SH" /></div>
           <div className="fld"><label htmlFor="pm">Avisarme cuando queden</label><input id="pm" inputMode="numeric" value={d.aviso_stock} onChange={(e) => set('aviso_stock', num(e.target.value))} /></div>
         </div>
