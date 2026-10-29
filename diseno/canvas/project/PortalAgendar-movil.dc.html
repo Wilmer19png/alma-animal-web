@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Agendar · Mi portal · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#FEF7FE}
+a{color:#655785}a:hover{color:#4D3F6C}
+.aa{--grad-alma:linear-gradient(100deg,#FBCFAF 0%,#E8C6CF 50%,#D1C1DD 100%);--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);
+  font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#FEF7FE;-webkit-font-smoothing:antialiased;min-height:100%}
+.aa *{box-sizing:border-box}
+.aa h1,.aa h2,.aa h3,.aa h4,.aa p{margin:0;text-wrap:balance}
+.aa ::selection{background:#FBCFAF;color:#623F21}
+.aa :focus-visible{outline:3px solid #655785;outline-offset:3px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.wrap{max-width:1344px;margin:0 auto;padding-inline:32px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 24px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);background-size:160% 100%;color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;transition:box-shadow .15s cubic-bezier(.2,0,0,1),background-position .4s cubic-bezier(.2,0,0,1)}
+.btn:hover{color:#fff;background-position:100% 0;box-shadow:0 1px 2px rgb(54 41 84/.18),0 2px 6px 2px rgb(54 41 84/.09)}
+.btn.alma{background:var(--grad-alma);background-size:160% 100%;color:#362954}
+.btn.outlined{background:transparent;color:#655785;border-color:#CBC4D1}
+.btn.outlined:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.ghost{background:rgb(255 255 255/.14);color:#fff;border-color:rgb(255 255 255/.3)}
+.btn.wa{background:#00BC39;color:#06290F}
+.btn.wa:hover{background:#00A332;color:#06290F}
+.icon-btn{width:44px;height:44px;border-radius:50%;display:inline-grid;place-items:center;border:0;cursor:pointer;position:relative;text-decoration:none;background:#F2ECF2;color:#655785;transition:background .15s}
+.icon-btn:hover{background:#ECE6ED;color:#4D3F6C}
+.icon-btn .ms{font-size:22px}
+.badge{position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:#FBCFAF;color:#623F21;font:700 10px/16px "Alan Sans",sans-serif;text-align:center;padding:0 4px}
+.lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.lockup img{width:48px;height:auto}
+.lockup .wm{display:block;font:600 22px/1 "Alan Sans",sans-serif;color:#8F7FB0;letter-spacing:-.01em}
+.lockup .tag{display:block;font:400 12px/1.2 "Gowun Batang",Georgia,serif;letter-spacing:.06em;color:#706884;margin-top:4px}
+.navpill{display:flex;gap:2px;padding:5px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #CBC4D1}
+.navpill a{font:600 16px/1 "Alan Sans",sans-serif;color:#584E6E;text-decoration:none;padding:11px 16px;border-radius:999px;transition:background .15s}
+.navpill a:hover{background:#F2ECF2;color:#2B1E48}
+.navpill a.on{background:#2B1E48;color:#fff}
+.chip{height:40px;padding:0 18px;border-radius:999px;border:1px solid #CBC4D1;background:#fff;color:#584E6E;font:600 14px/1 "Alan Sans",sans-serif;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.chip:hover{background:#F2ECF2}
+.chip.on{background:#2B1E48;color:#fff;border-color:#2B1E48}
+.fgroup{display:flex;flex-direction:column;gap:12px;padding-bottom:24px;border-bottom:1px solid #CBC4D1}
+.fgroup h3{font:600 15px/1.3 "Alan Sans",sans-serif}
+.check{display:flex;align-items:center;gap:10px;font:400 15px/1.3 "Alan Sans",sans-serif;cursor:pointer}
+.check input{width:20px;height:20px;margin:0;accent-color:#655785}
+.prod{background:#fff;border-radius:24px;box-shadow:0 0 0 1px #CBC4D1;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s cubic-bezier(.2,0,0,1),transform .25s cubic-bezier(.05,.7,.1,1)}
+.prod:hover{box-shadow:0 4px 8px 3px rgb(54 41 84/.09),0 1px 3px rgb(54 41 84/.18);transform:translateY(-3px)}
+.prod .img{aspect-ratio:1;background:#F2ECF2;display:grid;place-items:center;position:relative;color:#CBC4D1}
+.prod .img .ms{font-size:40px}
+.prod .b{padding:16px;display:flex;flex-direction:column;gap:4px}
+.prod .c{font:600 13px/1.3 "Alan Sans",sans-serif;color:#655785}
+.prod h3{font:600 16px/1.35 "Alan Sans",sans-serif}
+.prod .p{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.prod .p b{font:700 18px/1 "Alan Sans",sans-serif;font-variant-numeric:tabular-nums}
+.add{width:40px;height:40px;border-radius:50%;border:0;background:#FBCFAF;color:#623F21;display:grid;place-items:center;cursor:pointer}
+.add:hover{background:#F0BC95}
+.stock{position:absolute;top:12px;left:12px;font:600 11px/1 "Alan Sans",sans-serif;padding:6px 10px;border-radius:999px;background:#B8F1B9;color:#1D5128}
+.stock.low{background:#FFDDB2;color:#624000}
+.fab-wa{position:fixed;right:24px;bottom:24px;z-index:20;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#00BC39;color:#fff;box-shadow:0 4px 8px 3px rgb(54 41 84/.12),0 1px 3px rgb(54 41 84/.2);text-decoration:none}
+.foot a{color:#fff;text-decoration:none}.foot a:hover{color:#fff;text-decoration:underline}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+[data-dark] .gt{background:linear-gradient(100deg,#FFFFFF 0%,#FBCFAF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.social{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:rgb(255 255 255/.14);color:#fff;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .15s}
+.aa .social:hover{background:rgb(255 255 255/.26);color:#fff;text-decoration:none}
+.plink{color:inherit;text-decoration:none}.plink:hover{color:#655785;text-decoration:underline}
+.bar{height:8px;border-radius:999px;background:#ECE6ED;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--grad-primary)}
+.wa-o{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border-radius:999px;border:2px solid #00BC39;background:#fff;color:#00852A;font:600 16px/1 "Alan Sans",sans-serif;text-decoration:none;transition:background .2s,color .2s,transform .25s cubic-bezier(.05,.7,.1,1)}
+.wa-o:hover{background:#00BC39;color:#06290F;transform:translateY(-2px)}
+.wa-ic{transform-origin:50% 60%;animation:wa-nudge 4s cubic-bezier(.2,0,0,1) infinite}
+@keyframes wa-nudge{0%,78%,100%{transform:rotate(0)}82%{transform:rotate(-14deg) scale(1.08)}86%{transform:rotate(12deg) scale(1.08)}90%{transform:rotate(-8deg)}94%{transform:rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.wa-ic{animation:none}}
+.tag{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:4px;font:600 12px/1 "Alan Sans",sans-serif;padding:5px 9px;border-radius:999px;background:rgb(255 255 255/.94);color:#2B1E48;box-shadow:0 1px 2px rgb(54 41 84/.14);white-space:nowrap}
+.tag.sale{color:#910809}
+.buzz{position:fixed;left:20px;bottom:20px;z-index:20;display:flex;align-items:center;gap:10px;width:300px;padding:8px 8px 8px 8px;border-radius:16px;background:rgb(255 255 255/.97);box-shadow:0 0 0 1px #E6E1E7,0 6px 14px rgb(54 41 84/.12);animation:buzz-in .55s cubic-bezier(.05,.7,.1,1)}
+@keyframes buzz-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.buzz{animation:none}}
+/*MOVIL-INI*/
+/* menú de celular (oculto en escritorio) */
+.mnav{display:none;position:relative}
+.mnav summary{list-style:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#2B1E48;color:#fff;cursor:pointer}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav .m-close{display:none}
+.mnav[open] .m-open{display:none}
+.mnav[open] .m-close{display:inline-block}
+.mnav .mpanel{position:absolute;right:0;top:54px;z-index:40;width:min(300px,calc(100vw - 32px));padding:10px;border-radius:24px;background:#fff;box-shadow:0 0 0 1px #E6E1E7,0 14px 32px rgb(54 41 84/.2);display:flex;flex-direction:column;gap:2px}
+.mnav .mpanel a{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;border-radius:14px;font:600 17px/1 "Alan Sans",sans-serif;color:#2B1E48;text-decoration:none}
+.mnav .mpanel a.on{background:#F2ECF2}
+.mnav .mpanel a.btn{justify-content:center;margin-top:8px;color:#fff}
+
+.m-only{display:none}
+.wa-o:not(:hover) .wa-ic{color:#00BC39}
+
+@media (max-width:760px){
+  /* ---------- base ---------- */
+  .aa{overflow-wrap:break-word}
+  .wrap{padding-inline:16px !important}
+  .navpill{display:none !important}
+  .mnav{display:block}
+  .m-hide{display:none !important}
+  .m-only{display:block}
+  .badge{font-size:11px}
+
+  /* barra superior: logo a la izquierda, carrito y menú a la derecha, siempre en una línea */
+  .m-top{flex-wrap:nowrap !important;gap:10px !important;padding-top:12px !important;padding-bottom:12px !important}
+  .m-top > div{flex-wrap:nowrap !important;gap:8px !important;margin-left:auto}
+  .lockup{gap:8px;flex:0 1 auto;min-width:0}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  .aa a.icon-btn[aria-label^="Llamar"],.aa a.btn[href="PortalAcceso-movil.dc.html"]:not(.mlogin),.aa a.icon-btn.solid[href="PortalAcceso-movil.dc.html"]{display:none !important}
+  .aa > .wrap.m-top{position:sticky;top:0;z-index:35;background:rgb(254 247 254/.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+
+  /* rejillas a una columna (las excepciones van abajo, con más peso) */
+  :where(.aa) .m-g{grid-template-columns:minmax(0,1fr) !important}
+
+  /* escala tipográfica de celular: nunca se sale del ancho */
+  .m-d1{font-size:clamp(36px,11.5vw,46px) !important;line-height:.98 !important;letter-spacing:-.035em !important}
+  .m-d2{font-size:clamp(28px,8.6vw,34px) !important;line-height:1.08 !important;letter-spacing:-.025em !important}
+  .m-d3{font-size:clamp(26px,8vw,31px) !important;line-height:1.1 !important}
+  .m-d4{font-size:clamp(23px,7vw,27px) !important;line-height:1.15 !important}
+  .m-d5{font-size:22px !important;line-height:1.2 !important}
+  .m-lead{font-size:16.5px !important;line-height:1.55 !important}
+
+  /* aire de las secciones */
+  .aa [style*="padding-top: 112px"],.aa [style*="padding-top: 96px"]{padding-top:44px !important}
+  .aa [style*="padding-bottom: 112px"],.aa [style*="padding-bottom: 96px"],.aa [style*="padding-bottom: 72px"]{padding-bottom:44px !important}
+  .m-r{border-radius:28px !important}
+  .m-p{padding:28px 20px !important}
+  .m-gap{gap:24px !important}
+  .m-sb{flex-wrap:wrap}
+  .aa p[style*="text-align: right"]{text-align:left !important}
+  .aa div[style*="display: flex"][style*="gap: 12px"]:not(.m-top *),.aa div[style*="display: flex"][style*="gap: 16px"]:not(.m-top *){flex-wrap:wrap}
+  .m-nw:not(.btn):not(.chip):not(.tag){white-space:normal !important}
+
+  /* botones: las acciones principales a todo el ancho */
+  .btn.lg{height:52px;padding:0 6px 0 22px;font-size:16px;gap:12px;justify-content:space-between}
+  .btn.lg .end{width:40px;height:40px}
+  .wa-o{height:52px !important;padding:0 18px 0 16px !important;font-size:16px !important;justify-content:center}
+  .aa :has(> .btn.lg) > .btn.lg,.aa :has(> .btn.lg) > .wa-o{flex:1 1 100%}
+
+  /* carruseles de los héroes: la foto en su tarjeta, completa */
+  .tagpill{display:none !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 380px"]{width:260px !important;height:260px !important;margin-left:-130px !important;top:30px !important}
+  [aria-roledescription="carrusel"] > div[style*="width: 424px"]{width:296px !important;height:296px !important;margin-left:-148px !important;top:12px !important}
+
+  /* tira de WhatsApp */
+  .m-wa{flex-direction:column !important;align-items:stretch !important;padding:22px 20px !important;gap:18px !important}
+  .m-wa > div{align-items:flex-start !important;gap:14px !important}
+  .m-wa > div > span:first-child{width:48px !important;height:48px !important}
+
+  /* pasos horizontales (Así funciona / Así compras) -> lista vertical */
+  .aa ol[style*="position: relative"]{gap:18px !important}
+  .aa ol[style*="position: relative"] > li{display:grid !important;grid-template-columns:24px minmax(0,1fr) !important;gap:2px 14px !important;text-align:left !important;align-items:start !important}
+  .aa ol[style*="position: relative"] > li > span{grid-row:span 2}
+  .aa ol[style*="position: relative"] > li > b{margin-top:1px !important}
+  .aa ol[style*="position: relative"] > li > p{max-width:none !important}
+  .aa div:has(> ol[style*="position: relative"]) > div[aria-hidden="true"]{display:none}
+
+  /* pie */
+  .foot{padding:36px 20px 24px !important}
+  .foot > img{width:260px !important;right:-70px !important}
+  .foot .m-g{gap:22px !important;margin-top:28px !important}
+  .foot [style*="margin-top: 64px"]{flex-direction:column !important;margin-top:32px !important;gap:16px !important}
+  .foot nav{flex-wrap:wrap}
+  .foot [style*="margin-top: 40px"]{flex-wrap:wrap;margin-top:28px !important}
+  footer.wrap > div{flex-direction:column !important;padding:22px 20px !important;gap:10px !important}
+
+  /* flotantes */
+  .fab-wa{right:16px !important;bottom:16px !important;width:56px !important;height:56px !important}
+  .buzz{left:12px !important;right:84px !important;width:auto !important;bottom:16px !important}
+
+  /* columnas laterales (resumen, carrito) debajo y a todo el ancho */
+  .aa [style*="flex: 999 1"]{flex-basis:100% !important}
+  .aa aside[style*="flex: 0 0"]{flex:1 1 100% !important;position:static !important}
+
+  /* pasos de formularios */
+  .wiz span{font-size:12.5px}
+  .wiz i{font-size:11px}
+  .wiz-nav{position:sticky;bottom:0;z-index:20;margin:0 -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  .panel{padding:22px 18px !important;border-radius:22px !important}
+  .m-bar{display:flex}
+  header.m-shophead{padding:26px 20px !important}
+  [aria-label^="Productos de la tienda"]{display:none !important}
+  aside[aria-label="Filtros"]{display:none !important}
+  section[aria-label="Catálogo"] div.m-g{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important}
+  .prod{border-radius:20px}
+  .prod .b{padding:12px}
+  .prod h3{font-size:15px}
+  .prod .p b{font-size:16px}
+  .tag{top:auto !important;bottom:8px !important;left:8px !important;right:auto !important;font-size:11px !important;padding:4px 8px !important}
+  .stock{top:8px !important;left:8px !important}
+  #pedido{display:none !important}
+}
+/*MOVIL-FIN*/
+.pchip{font:600 13px/1 "Alan Sans",sans-serif;padding:7px 12px;border-radius:999px;background:var(--grad-alma);color:#362954}
+.pc{background:#fff;border-radius:28px;box-shadow:0 0 0 1px #E6E1E7;padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.pc>h2{font:600 20px/1.3 "Alan Sans",sans-serif;display:flex;align-items:center;gap:10px}
+.pc>h2 .ms{color:#655785}
+.st{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:999px;font:600 13px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.gt{background:linear-gradient(100deg,#4D3F6C 0%,#655785 45%,#8F7FB0 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fld label,.fld .lb{font:600 15px/1.3 "Alan Sans",sans-serif}
+.fld input,.fld select,.fld textarea{width:100%;height:50px;border-radius:14px;border:1px solid #7A7580;background:#fff;padding:0 16px;font:400 17px/1.3 "Alan Sans",sans-serif;color:#2B1E48;outline:0}
+.fld textarea{height:88px;padding:12px 16px;resize:vertical}
+.fld input::placeholder,.fld textarea::placeholder{color:#6E6585}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#655785;box-shadow:0 0 0 3px rgb(101 87 133/.18)}
+.fld .hint{font:400 14px/1.4 "Alan Sans",sans-serif;color:#584E6E}
+.link{font:600 16px/1 "Alan Sans",sans-serif;color:#655785;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.link:hover{text-decoration:underline}
+.stp{display:flex;align-items:center;gap:12px;font:600 20px/1.3 "Alan Sans",sans-serif}
+.stp i{font-style:normal;width:32px;height:32px;border-radius:50%;background:#655785;color:#fff;display:grid;place-items:center;font:700 15px/1 "Alan Sans",sans-serif;flex:none}
+.opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border:0;border-radius:20px;cursor:pointer;text-align:left;font:inherit;color:#2B1E48;min-width:240px;transition:box-shadow .15s,background .15s}
+.day{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border:0;border-radius:18px;cursor:pointer;font:inherit;transition:background .15s}
+.hr{height:46px;min-width:112px;padding:0 16px;border-radius:999px;border:1px solid #CBC4D1;font:600 15px/1 "Alan Sans",sans-serif;cursor:pointer;font-variant-numeric:tabular-nums}
+
+.wiz{list-style:none;margin:0;padding:0;display:flex;gap:6px}
+.wiz li{flex:1;min-width:0}
+.wiz button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:0;border:0;background:transparent;cursor:pointer;font:inherit;color:#584E6E;text-align:left}
+.wiz button::before{content:"";display:block;width:100%;height:4px;border-radius:999px;background:#E6E1E7;transition:background .3s cubic-bezier(.2,0,0,1)}
+.wiz li.done button::before,.wiz li.now button::before{background:#655785}
+.wiz i{font-style:normal;font:700 12px/1 "Alan Sans",sans-serif;color:#655785}
+.wiz span{font:600 14px/1.25 "Alan Sans",sans-serif}
+.wiz li.now span{color:#2B1E48}
+.wiz-nav{display:flex;gap:12px;align-items:center}
+.wiz-nav .btn{height:52px;padding:0 26px;font-size:17px}
+.wiz-nav .grow{margin-left:auto}
+/*PMOVIL-INI*/
+@media (max-width:760px){
+  .wrap{padding-inline:16px !important}
+  /* barra superior: logo, avisos y cuenta */
+  .aa > .wrap:first-of-type{gap:10px !important;padding-top:12px !important;padding-bottom:12px !important;position:sticky;top:0;z-index:35;background:#FEF7FE;box-shadow:0 1px 0 #F2ECF2}
+  .aa footer{flex-direction:column !important;gap:8px !important;font-size:13.5px !important}
+  .aa > section.wrap:first-of-type[style*="justify-content: space-between"],.aa > section.wrap[style*="justify-content: space-between"]{flex-direction:column !important;align-items:flex-start !important;gap:14px !important}
+  .aa > .wrap:first-of-type .pchip,.aa > .wrap:first-of-type a[href="Main-movil.dc.html"]:not(.lockup),.aa > .wrap:first-of-type a[href="Main-movil.dc.html"]:not(.lockup){display:none !important}
+  .aa > .wrap:first-of-type,.aa > .wrap:first-of-type > div{flex-wrap:nowrap !important}
+  .aa > .wrap:first-of-type > div{gap:8px !important;margin-left:auto}
+  .aa > .wrap:first-of-type a[aria-label="Mi cuenta"] > span:not(:first-child){display:none}
+  .aa > .wrap:first-of-type a[aria-label="Mi cuenta"]{padding:3px !important}
+  .lockup img{width:36px}
+  .lockup svg{width:132px;height:36px}
+  /* menú del portal abajo, al alcance del pulgar */
+  nav.navpill[aria-label="Portal"]{display:flex !important;position:fixed;left:0;right:0;bottom:0;z-index:40;margin:0 !important;border-radius:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom));gap:4px;background:#fff;box-shadow:0 -1px 0 #E6E1E7,0 -8px 20px rgb(54 41 84/.08)}
+  nav.navpill[aria-label="Portal"] a{flex:1;min-width:0;flex-direction:column !important;gap:4px !important;padding:8px 0 !important;border-radius:14px;font-size:12px !important;justify-content:center}
+  nav.navpill[aria-label="Portal"] a .ms{font-size:22px !important}
+  .fab-wa{bottom:86px !important;right:14px !important;width:52px !important;height:52px !important}
+  .aa{padding-bottom:84px}
+
+  /* todo en una columna */
+  :where(.aa) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  .aa h1{font-size:clamp(30px,9vw,36px) !important;line-height:1.08 !important}
+  .aa [style*="padding: 40px 48px"]{padding:24px 20px !important;border-radius:28px !important}
+  .pc{padding:18px 16px !important;border-radius:22px !important}
+  .aa div[style*="display: flex"]{flex-wrap:wrap}
+  .aa [style*="position: sticky"]{position:static !important}
+  .aa .btn{min-height:46px}
+  .m-hide{display:none !important}
+  .aa{overflow-wrap:break-word}
+  .pc,.pet{min-width:0;max-width:100%}
+
+  /* inicio */
+  .pet{padding:18px !important}
+  .pet > span:nth-child(2){grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  section[aria-labelledby="ph"] > div{display:grid !important;grid-template-columns:44px minmax(0,1fr) !important;gap:6px 12px !important}
+  section[aria-labelledby="ph"] > div > :nth-child(3){grid-column:2;justify-self:start}
+  section[aria-labelledby="ph"] > div > .btn{grid-column:2;justify-self:start}
+
+  /* mascota */
+  div[role="tablist"]{flex-wrap:nowrap !important;overflow-x:auto;max-width:100%;align-self:stretch !important}
+  div[role="tablist"] button{flex:none}
+  .vrow{grid-template-columns:minmax(0,1fr) auto !important;gap:4px 10px !important}
+  .vrow > :nth-child(1){grid-column:1;grid-row:1}
+  .vrow > :nth-child(4){grid-column:2;grid-row:1 / span 2;align-self:center}
+  .vrow > :nth-child(2),.vrow > :nth-child(3){grid-column:1;font-size:13.5px !important;color:#584E6E}
+  .carnet > .vrow:first-of-type{display:none !important}
+  .seal{width:112px;height:112px}
+  :where(.aa) .exam,:where(.aa) [style*="repeat(3, minmax(0, 1fr)); gap: 16px"]{}
+  section[aria-label="Exámenes e imágenes"] > div:first-child{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+
+  /* agendar: días en una fila deslizable y horas a todo el ancho */
+  .day{padding:10px 0}
+  .opt{min-width:0 !important;width:100%}
+  .hr{flex:1 1 calc(50% - 8px)}
+  .wiz span{font-size:12.5px}
+  .wiz-nav{position:sticky;bottom:72px;z-index:20;margin:0 -16px;padding:12px 16px;background:rgb(254 247 254/.96);box-shadow:0 -1px 0 #E6E1E7}
+  .wiz-nav .btn{flex:1;padding:0 18px}
+  section[aria-labelledby="a3"] > div:first-of-type > .icon-btn{display:none}
+  section[aria-labelledby="a3"] > div:first-of-type > div{grid-template-columns:repeat(6,minmax(0,1fr)) !important;gap:6px !important}
+
+  /* pedidos: pasos en una sola fila */
+  :where(.aa) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  ol[aria-label="Estado del pedido"] li b{font-size:11px !important}
+  ol[aria-label="Estado del pedido"] li span:last-child{font-size:10.5px !important}
+}
+/*PMOVIL-FIN*/
+</style>
+</helmet>
+<div class="aa">
+
+<!-- ======== BARRA DEL PORTAL ======== -->
+<div class="wrap" style="padding-top: 20px; padding-bottom: 20px; display: flex; align-items: center; gap: 24px;">
+  <a class="lockup" href="Main-movil.dc.html" aria-label="Alma Animal, inicio"><img src="/_blob/c8c4de1be65c77c7ccc559b1d14073b2" alt=""><svg viewBox="0 0 184 50" width="184" height="50" aria-hidden="true" style="display: block; overflow: visible;"><text x="0" y="27" textLength="184" lengthAdjust="spacingAndGlyphs" fill="#8F7FB0" style="font: 600 30px 'Alan Sans', sans-serif;">Alma Animal</text><text x="1" y="46" textLength="182" lengthAdjust="spacing" fill="#706884" style="font: 400 13px 'Gowun Batang', Georgia, serif;">Consultorio · Spa · Petshop</text></svg></a>
+  <span class="pchip">Mi portal</span>
+  <nav class="navpill" aria-label="Portal" style="margin-left: 8px;">
+    <a href="PortalInicio-movil.dc.html" style="display: inline-flex; align-items: center; gap: 8px;"><span class="ms" style="font-size: 19px;">home</span>Inicio</a>
+    <a href="PortalMascota-movil.dc.html" style="display: inline-flex; align-items: center; gap: 8px;"><span class="ms" style="font-size: 19px;">pets</span>Mis mascotas</a>
+    <a class="on" aria-current="page" href="PortalAgendar-movil.dc.html" style="display: inline-flex; align-items: center; gap: 8px;"><span class="ms" style="font-size: 19px;">calendar_add_on</span>Agendar</a>
+    <a href="PortalPedidos-movil.dc.html" style="display: inline-flex; align-items: center; gap: 8px;"><span class="ms" style="font-size: 19px;">shopping_bag</span>Mis pedidos</a>
+  </nav>
+  <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+    <a href="Main-movil.dc.html" style="font: 600 15px/1 'Alan Sans', sans-serif; color: #655785; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><span class="ms" style="font-size: 18px;">open_in_new</span>Ir a la página</a>
+    <a class="icon-btn" href="#" aria-label="Avisos, 2 nuevos"><span class="ms">notifications</span><span class="badge">2</span></a>
+    <a href="#" aria-label="Mi cuenta" style="display: flex; align-items: center; gap: 10px; padding: 4px 14px 4px 4px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px #CBC4D1; text-decoration: none; color: #2B1E48;"><span style="width: 36px; height: 36px; border-radius: 50%; background: var(--grad-primary); color: #fff; display: grid; place-items: center; font: 700 14px/1 'Alan Sans', sans-serif;">PR</span><span style="font: 600 15px/1 'Alan Sans', sans-serif;">Paula</span><span class="ms" style="font-size: 18px; color: #584E6E;">expand_more</span></a>
+  </div>
+</div>
+
+<section class="wrap" style="padding-top: 8px; padding-bottom: 24px;">
+  <h1 style="font: 400 48px/1.05 'Alan Sans', sans-serif; letter-spacing: -.03em;">Agenda una <b class="gt" style="font-weight: 700;">cita</b></h1>
+  <p style="font: 400 18px/1.55 'Alan Sans', sans-serif; color: #584E6E; margin-top: 8px;">Solo te mostramos horas libres. Así nunca se cruza con otra cita.</p>
+</section>
+
+<div class="wrap" style="display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 24px; align-items: start; padding-bottom: 48px;">
+  <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+    <ol class="wiz" aria-label="Pasos para agendar">
+      <sc-for list="{{wsteps}}" as="w" hint-placeholder-count="4"><li class="{{w.cls}}" aria-current="{{w.cur}}"><button type="button" onClick="{{w.go}}"><i>{{w.n}}</i><span>{{w.t}}</span></button></li></sc-for>
+    </ol>
+
+    <!-- 1 · MASCOTA -->
+    <sc-if value="{{st1}}" hint-placeholder-val="{{true}}">
+    <section class="pc" aria-labelledby="a1">
+      <h2 id="a1" class="stp"><i>1</i>¿Para quién?</h2>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <sc-for list="{{pets}}" as="p" hint-placeholder-count="2"><button type="button" class="opt" aria-pressed="{{p.on}}" onClick="{{p.pick}}" style="box-shadow: {{p.ring}}; background: {{p.bg}};"><span style="width: 52px; height: 52px; border-radius: 50%; background: {{p.av}}; display: grid; place-items: center; overflow: hidden;"><img src="{{p.img}}" alt="" style="width: 48px;"></span><span><b style="display: block; font: 600 18px/1.2 'Alan Sans', sans-serif;">{{p.name}}</b><span style="font: 400 14px/1.3 'Alan Sans', sans-serif; color: #584E6E;">{{p.desc}}</span></span></button></sc-for>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- 2 · SERVICIO -->
+    <sc-if value="{{st2}}" hint-placeholder-val="{{false}}">
+    <section class="pc" aria-labelledby="a2">
+      <h2 id="a2" class="stp"><i>2</i>¿Qué necesita?</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+        <sc-for list="{{svcs}}" as="v" hint-placeholder-count="5"><button type="button" class="opt" aria-pressed="{{v.on}}" onClick="{{v.pick}}" style="box-shadow: {{v.ring}}; background: {{v.bg}};"><span class="ms" style="width: 44px; height: 44px; border-radius: 50%; background: {{v.icBg}}; color: {{v.icFg}}; display: grid; place-items: center; font-size: 22px;">{{v.icon}}</span><span style="flex: 1; min-width: 0;"><b style="display: block; font: 600 17px/1.25 'Alan Sans', sans-serif;">{{v.name}}</b><span style="font: 400 14px/1.35 'Alan Sans', sans-serif; color: #584E6E;">{{v.sub}}</span></span></button></sc-for>
+      </div>
+      <sc-if value="{{suggest}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 8px; align-items: center; font: 500 14px/1.4 'Alan Sans', sans-serif; color: #624000; padding: 10px 14px; border-radius: 14px; background: #FFF4EC;"><span class="ms" style="font-size: 18px;">tips_and_updates</span>{{suggestTxt}}</span></sc-if>
+      <sc-if value="{{isHome}}" hint-placeholder-val="{{false}}">
+        <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 14px; padding-top: 6px;">
+          <div class="fld"><label for="hd">Dirección de la visita</label><input id="hd" value="Calle 19 # 8-34, apto 302" placeholder="Ej: Calle 19 # 8-34, apto 302"></div>
+          <div class="fld"><label for="hb">Barrio</label><input id="hb" value="Álamos" placeholder="Ej: Álamos"></div>
+          <span class="hint" style="grid-column: 1 / -1; font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Cubrimos toda Pereira y Dosquebradas. La doctora llega en la franja que elijas.</span>
+        </div>
+      </sc-if>
+    </section>
+    </sc-if>
+
+    <!-- 3 · DÍA Y HORA -->
+    <sc-if value="{{st3}}" hint-placeholder-val="{{false}}">
+    <section class="pc" aria-labelledby="a3">
+      <h2 id="a3" class="stp"><i>3</i>Día y hora</h2>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="icon-btn" type="button" aria-label="Semana anterior"><span class="ms">chevron_left</span></button>
+        <div style="flex: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px;">
+          <sc-for list="{{days}}" as="d" hint-placeholder-count="6"><button type="button" class="day" aria-pressed="{{d.on}}" onClick="{{d.pick}}" style="background: {{d.bg}}; color: {{d.fg}}; box-shadow: {{d.ring}}; opacity: {{d.op}};"><span style="font: 600 12px/1 'Alan Sans', sans-serif; opacity: .8;">{{d.dow}}</span><b style="font: 700 24px/1 'Alan Sans', sans-serif;">{{d.n}}</b><span style="font: 500 11px/1 'Alan Sans', sans-serif; opacity: .85;">{{d.free}}</span></button></sc-for>
+        </div>
+        <button class="icon-btn" type="button" aria-label="Semana siguiente"><span class="ms">chevron_right</span></button>
+      </div>
+      <sc-if value="{{hasSlots}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font: 600 14px/1 'Alan Sans', sans-serif; color: #584E6E;">{{g.label}}</span><div style="display: flex; gap: 8px; flex-wrap: wrap;"><sc-for list="{{g.slots}}" as="h" hint-placeholder-count="4"><button type="button" class="hr" aria-pressed="{{h.on}}" onClick="{{h.pick}}" style="background: {{h.bg}}; color: {{h.fg}}; border-color: {{h.bd}};">{{h.t}}</button></sc-for></div></div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{noSlots}}" hint-placeholder-val="{{false}}"><p style="font: 400 16px/1.5 'Alan Sans', sans-serif; color: #584E6E;">Ese día ya no hay horas libres para este servicio. Prueba otro día o <a href="#">escríbenos por WhatsApp</a>.</p></sc-if>
+      <span style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E;">{{durTxt}} Lunes a viernes de 8:00 a. m. a 12:30 p. m. y de 2:00 a 5:00 p. m.; sábados hasta las 12:30 p. m.</span>
+    </section>
+    </sc-if>
+
+    <!-- 4 · NOTAS -->
+    <sc-if value="{{st4}}" hint-placeholder-val="{{false}}">
+    <section class="pc" aria-labelledby="a4">
+      <h2 id="a4" class="stp"><i>4</i>¿Algo que debamos saber? <span style="font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;">(opcional)</span></h2>
+      <div class="fld"><label for="nt" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Notas</label><textarea id="nt" placeholder="Ej: Está comiendo menos desde el domingo. Le dan miedo los secadores."></textarea></div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{showNav}}" hint-placeholder-val="{{true}}">
+      <div class="wiz-nav">
+        <sc-if value="{{canBack}}" hint-placeholder-val="{{false}}"><button class="btn outlined" type="button" onClick="{{back}}"><span class="ms" style="font-size: 18px;">arrow_back</span>Atrás</button></sc-if>
+        <sc-if value="{{canNext}}" hint-placeholder-val="{{true}}"><button class="btn grow" type="button" onClick="{{next}}" style="opacity: {{nextOp}};">{{nextTxt}}<span class="ms" style="font-size: 18px;">arrow_forward</span></button></sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- ======== RESUMEN ======== -->
+  <aside class="pc {{asideCls}}" aria-labelledby="rs" style="position: sticky; top: 24px;">
+    <h2 id="rs"><span class="ms">event_available</span>Tu cita</h2>
+    <dl style="margin: 0; display: flex; flex-direction: column; gap: 12px; font: 400 16px/1.35 'Alan Sans', sans-serif;">
+      <sc-for list="{{sum}}" as="r" hint-placeholder-count="4"><div style="display: flex; justify-content: space-between; gap: 12px;"><dt style="color: #584E6E;">{{r.k}}</dt><dd style="margin: 0; font-weight: 600; text-align: right; color: {{r.fg}};">{{r.v}}</dd></div></sc-for>
+    </dl>
+    <sc-if value="{{notDone}}" hint-placeholder-val="{{true}}">
+      <button class="btn alma" type="button" onClick="{{book}}" style="height: 56px; font-size: 18px; width: 100%; opacity: {{bookOp}};">{{bookTxt}}<span class="ms">arrow_forward</span></button>
+      <span style="font: 400 14px/1.45 'Alan Sans', sans-serif; color: #584E6E;">{{confirmNote}}</span>
+    </sc-if>
+    <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+      <div role="status" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 18px; background: #B8F1B9; color: #1D5128;">
+        <b style="display: flex; align-items: center; gap: 8px; font: 600 18px/1.3 'Alan Sans', sans-serif;"><span class="ms fill">check_circle</span>{{doneTitle}}</b>
+        <span style="font: 400 15px/1.45 'Alan Sans', sans-serif;">{{doneTxt}}</span>
+      </div>
+      <a class="btn" href="PortalInicio-movil.dc.html" style="width: 100%;">Volver al inicio</a>
+    </sc-if>
+  </aside>
+</div>
+
+<div class="wrap" style="padding-top: 24px; padding-bottom: 40px;">
+  <footer style="display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 24px; border-top: 1px solid #E6E1E7; font: 400 14px/1.5 'Alan Sans', sans-serif; color: #584E6E;">
+    <span>Alma Animal · Calle 1 # 9-02, Alfonso López, Pereira · 324 679 6695</span>
+    <span>Dra. Mariana Hoyos Giraldo · MVZ · TP 51206 · <a href="#">Tratamiento de datos (Ley 1581 de 2012)</a></span>
+  </footer>
+</div>
+<a class="fab-wa" href="https://wa.me/573246796695?text=Hola%2C%20Alma%20Animal.%20Tengo%20una%20pregunta." aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.4 3.9c1.6.7 2.3.8 3.1.6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.6-.3Z"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const PETS = [['luna', 'Luna', 'Schnauzer · 8 kg', '/_blob/b75d83ff94aa4cb49ce7c702b10be136', '#FBCFAF'], ['miel', 'Miel', 'Gata criolla · 3,8 kg', '/_blob/9c80c25889ab7a121a0d22a5af81b4d9', '#D1C1DD']];
+    // [clave, nombre, detalle, icono, duración en min, carril]
+    const SV = [
+      ['consulta', 'Consulta general', '30 min · con la Dra. Mariana', 'stethoscope', 30, 'dra'],
+      ['vacuna', 'Vacuna o desparasitación', '30 min · trae su carnet', 'vaccines', 30, 'dra'],
+      ['domicilio', 'Consulta a domicilio', '1 hora · Pereira y Dosquebradas', 'two_wheeler', 60, 'dra'],
+      ['spa', 'Baño en el spa', '2 horas · te confirmamos el precio', 'shower', 120, 'spa'],
+      ['cirugia', 'Valoración para cirugía', '30 min · primero una consulta', 'medical_services', 30, 'dra']
+    ];
+    // horas ocupadas por carril (las mismas de la agenda del gestor)
+    const BUSY = {
+      dra: { 28: ['8:00', '8:30', '9:00', '2:00', '2:30'], 29: ['8:00', '10:00', '10:30', '11:00', '3:00'], 30: ['9:30', '10:00'], 31: ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00'], 2: [], 3: ['8:00'] },
+      spa: { 28: ['8:00'], 29: ['8:00', '10:00'], 30: ['2:00'], 31: ['8:00', '10:00'], 2: [], 3: [] }
+    };
+    const DAYS = [['MIÉ', 28, false], ['JUE', 29, false], ['VIE', 30, false], ['SÁB', 31, true], ['LUN', 2, false, 'Festivo'], ['MAR', 3, false]];
+    const AM = ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00'];
+    const PM = ['2:00', '2:30', '3:00', '3:30', '4:00', '4:30'];
+    const pet = s.pet || 'miel';
+    const sv = SV.find((x) => x[0] === (s.sv || 'vacuna'));
+    const day = s.day != null ? s.day : 28;
+    const dd = DAYS.find((d) => d[1] === day);
+    const busy = (BUSY[sv[5]][day] || []);
+    const steps = sv[4] / 30;
+    const toMin = (t) => { const [h, m] = t.split(':').map(Number); return (h < 8 ? h + 12 : h) * 60 + m; };
+    const lunch = [12 * 60 + 30, 14 * 60], close = dd[2] ? 12 * 60 + 30 : 17 * 60;
+    const fits = (t) => {
+      const a = toMin(t), b = a + sv[4];
+      if (a < lunch[0] && b > lunch[0]) return false;
+      if (b > close) return false;
+      for (let k = 0; k < steps; k++) { const m = a + k * 30; const hh = Math.floor(m / 60), mm = m % 60; const lbl = (hh > 12 ? hh - 12 : hh) + ':' + (mm ? '30' : '00'); if (busy.includes(lbl)) return false; }
+      return true;
+    };
+    const free = (d) => {
+      if (d[3]) return [];
+      const list = d[2] ? AM : AM.concat(PM);
+      const b = BUSY[sv[5]][d[1]] || [];
+      return list.filter((t) => { const a = toMin(t), e = a + sv[4]; if (a < lunch[0] && e > lunch[0]) return false; if (e > (d[2] ? 750 : 1020)) return false; for (let k = 0; k < steps; k++) { const m = a + k * 30; const hh = Math.floor(m / 60), mm = m % 60; if (b.includes((hh > 12 ? hh - 12 : hh) + ':' + (mm ? '30' : '00'))) return false; } return true; });
+    };
+    const amFree = AM.filter(fits);
+    const pmFree = dd[2] ? [] : PM.filter(fits);
+    const all = dd[3] ? [] : amFree.concat(pmFree);
+    const hour = all.includes(s.hour) ? s.hour : null;
+    const label = (t) => t + (toMin(t) < 12 * 60 ? ' a. m.' : ' p. m.');
+    const DOW = { 'MIÉ': 'miércoles', 'JUE': 'jueves', 'VIE': 'viernes', 'SÁB': 'sábado', 'LUN': 'lunes', 'MAR': 'martes' };
+    const p = PETS.find((x) => x[0] === pet);
+    const spa = sv[0] === 'spa';
+    const slot = (t) => ({ t: label(t), on: t === hour, bg: t === hour ? '#2B1E48' : '#FFFFFF', fg: t === hour ? '#FFFFFF' : '#2B1E48', bd: t === hour ? '#2B1E48' : '#CBC4D1', pick: () => this.setState({ hour: t, done: false }) });
+    const when = hour ? DOW[dd[0]] + ' ' + day + ' · ' + label(hour) : 'Elige una hora';
+    const step = s.step || 1;
+    const go = (n) => this.setState({ step: n });
+    const STEPS = ['Mascota', 'Servicio', 'Día y hora', 'Revisar'];
+    return {
+      pets: PETS.map((x) => ({ name: x[1], desc: x[2], img: x[3], av: x[4], on: x[0] === pet, bg: x[0] === pet ? '#F8F2F8' : '#FFFFFF', ring: x[0] === pet ? '0 0 0 2px #655785' : '0 0 0 1px #CBC4D1', pick: () => this.setState({ pet: x[0], done: false }) })),
+      svcs: SV.map((x) => ({ name: x[1], sub: x[2], icon: x[3], on: x === sv, bg: x === sv ? '#F8F2F8' : '#FFFFFF', ring: x === sv ? '0 0 0 2px #655785' : '0 0 0 1px #CBC4D1', icBg: x[5] === 'spa' ? '#FBCFAF' : '#EADDFF', icFg: x[5] === 'spa' ? '#623F21' : '#4D3F6C', pick: () => this.setState({ sv: x[0], hour: null, done: false }) })),
+      suggest: pet === 'miel' && sv[0] === 'vacuna',
+      suggestTxt: 'A Miel le toca la Triple felina (venció el 10 de octubre) y la antirrábica el 10 de noviembre. Pueden ponérsele el mismo día.',
+      isHome: sv[0] === 'domicilio',
+      days: DAYS.map((d) => { const f = free(d).length; const on = d[1] === day; return { dow: d[0], n: d[1], free: d[3] ? d[3] : f ? f + ' libres' : 'Lleno', on, op: d[3] || !f ? 0.5 : 1, bg: on ? '#2B1E48' : '#F8F2F8', fg: on ? '#FFFFFF' : '#2B1E48', ring: on ? 'none' : 'inset 0 0 0 1px #E6E1E7', pick: () => { if (!d[3]) this.setState({ day: d[1], hour: null, done: false }); } }; }),
+      hasSlots: all.length > 0,
+      noSlots: all.length === 0,
+      groups: [['Mañana', amFree], ['Tarde', pmFree]].filter((g) => g[1].length).map((g) => ({ label: g[0], slots: g[1].map(slot) })),
+      durTxt: 'Este servicio dura ' + (sv[4] >= 60 ? sv[4] / 60 + (sv[4] === 60 ? ' hora.' : ' horas.') : sv[4] + ' minutos.'),
+      sum: [
+        { k: 'Mascota', v: p[1], fg: '#2B1E48' },
+        { k: 'Servicio', v: sv[1], fg: '#2B1E48' },
+        { k: 'Cuándo', v: when, fg: hour ? '#2B1E48' : '#7A7580' },
+        { k: 'Dónde', v: sv[0] === 'domicilio' ? 'Calle 19 # 8-34 · Álamos' : 'Calle 1 # 9-02, Alfonso López', fg: '#2B1E48' },
+        { k: 'Valor', v: spa ? 'Te lo confirmamos' : sv[0] === 'vacuna' ? 'Según la vacuna' : '[Tarifa]', fg: '#584E6E' }
+      ],
+      wsteps: STEPS.map((x, n) => ({ n: 'Paso ' + (n + 1), t: x, cls: n + 1 < step ? 'done' : n + 1 === step ? 'now' : 'todo', cur: n + 1 === step ? 'step' : 'false', go: () => { if (n + 1 < step && !s.done) go(n + 1); } })),
+      st1: step === 1, st2: step === 2, st3: step === 3, st4: step === 4,
+      canBack: step > 1, canNext: step < 4, showNav: !s.done,
+      nextTxt: step === 3 ? 'Revisar mi cita' : 'Siguiente',
+      nextOp: step === 3 && !hour ? 0.5 : 1,
+      next: () => { if (step === 3 && !hour) return; go(Math.min(4, step + 1)); },
+      back: () => go(Math.max(1, step - 1)),
+      asideCls: step === 4 ? '' : 'm-hide',
+      notDone: !s.done,
+      done: !!s.done,
+      bookOp: hour ? 1 : 0.5,
+      bookTxt: spa ? 'Pedir la cita' : 'Agendar cita',
+      book: () => { if (hour) this.setState({ done: true }); },
+      confirmNote: spa ? 'El spa te confirma la hora y el precio por WhatsApp, según la talla de ' + p[1] + '.' : 'Queda agendada de inmediato. Te llega la confirmación por correo y un recordatorio un día antes.',
+      doneTitle: spa ? '¡Solicitud enviada!' : '¡Cita agendada!',
+      doneTxt: spa ? 'Te escribimos por WhatsApp para confirmar la hora y el precio.' : when.charAt(0).toUpperCase() + when.slice(1) + '. Te enviamos la confirmación a tu correo. Puedes cambiarla hasta 24 horas antes.'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+---
+// Términos y condiciones de la tienda y los servicios (Ley 1480 de 2011, Estatuto del Consumidor,
+// y Decreto 587 de 2016 sobre reversión del pago). Borrador para revisión antes de publicar.
+import LegalDoc from '../components/LegalDoc.astro';
+import { LEGAL, ADDRESS, PHONES, whatsapp } from '../data/site';
+import { SHIPPING, GIFT, money } from '../data/shop';
+
+const SECTIONS = [
+  { id: 'quienes', title: 'Quiénes somos' },
+  { id: 'pagina', title: 'Uso de la página y del blog' },
+  { id: 'precios', title: 'Productos y precios' },
+  { id: 'compra', title: 'Cómo se hace una compra' },
+  { id: 'envios', title: 'Envíos y entregas' },
+  { id: 'retracto', title: 'Derecho de retracto' },
+  { id: 'reversion', title: 'Reversión del pago' },
+  { id: 'garantia', title: 'Garantía' },
+  { id: 'citas', title: 'Citas del consultorio y el spa' },
+  { id: 'pqr', title: 'Peticiones, quejas y reclamos' },
+  { id: 'otros', title: 'Propiedad intelectual y cambios' }
+];
+const waShop = whatsapp.shop('Hola, Alma Animal. Quiero hacer una solicitud sobre mi pedido.');
+const email = LEGAL.email;
+---
+<LegalDoc
+  title="Términos y condiciones"
+  lead="Las reglas de compra en la tienda y de nuestros servicios, con tus derechos como consumidor según la Ley 1480 de 2011."
+  description="Términos y condiciones de Alma Animal: precios, envíos, derecho de retracto, reversión del pago, garantías y citas del consultorio y el spa."
+  sections={SECTIONS}
+>
+  <section id="quienes">
+    <h2>1. Quiénes somos</h2>
+    <dl>
+      <div><dt>Vendedor y prestador</dt><dd>{LEGAL.holder} (Alma Animal: consultorio veterinario, spa y petshop)</dd></div>
+      <div><dt>{LEGAL.idLabel}</dt><dd>{LEGAL.id ?? <span class="pending">Pendiente</span>}</dd></div>
+      <div><dt>Dirección</dt><dd>{ADDRESS.line}, {ADDRESS.city}</dd></div>
+      <div><dt>Teléfonos y WhatsApp</dt><dd>{PHONES.vet.label}: {PHONES.vet.display} · {PHONES.shop.label}: {PHONES.shop.display}</dd></div>
+      <div><dt>Correo</dt><dd>{email ? <a href={`mailto:${email}`}>{email}</a> : <span class="pending">Pendiente</span>}</dd></div>
+    </dl>
+    <p>Al comprar o agendar en esta página aceptas estos términos. Te recomendamos leerlos junto con nuestra <a href="/privacidad">política de tratamiento de datos</a>.</p>
+  </section>
+
+  <section id="pagina">
+    <h2>2. Uso de la página y del blog</h2>
+    <p>Los artículos del blog son información general para cuidar a tu mascota en casa. <b>No reemplazan una consulta veterinaria.</b> Si tu mascota está enferma o tienes una urgencia, escríbenos o llévala a consulta.</p>
+  </section>
+
+  <section id="precios">
+    <h2>3. Productos y precios</h2>
+    <ul>
+      <li>Los precios están en pesos colombianos y son el <b>precio total a pagar</b>, con los impuestos que apliquen. El valor del envío se muestra aparte antes de confirmar.</li>
+      <li>Las fotos son de referencia. Te mostramos la presentación, talla o sabor de cada producto antes de agregarlo.</li>
+      <li>Las existencias pueden cambiar. Si un producto se agota después de tu pedido, te avisamos y puedes cambiarlo por otro o recibir la devolución de lo que pagaste por él.</li>
+      <li>Si hay un error evidente en un precio publicado, te avisamos antes de cobrar y puedes decidir si sigues o no con la compra.</li>
+    </ul>
+  </section>
+
+  <section id="compra">
+    <h2>4. Cómo se hace una compra</h2>
+    <ol>
+      <li>Agregas los productos al carrito y llenas tus datos de envío. No necesitas crear una cuenta.</li>
+      <li>Al confirmar, recibes un número de pedido y te escribimos por WhatsApp para confirmar tus datos, el valor total y la forma de pago.</li>
+      <li>El pedido queda en firme cuando lo confirmas y se recibe el pago, o cuando acordamos el pago contra entrega.</li>
+    </ol>
+    <p>Puedes pagar contra entrega, por transferencia o en el consultorio. Cuando habilitemos el pago en línea, lo procesará una pasarela de pagos autorizada; nosotros no vemos ni guardamos los datos de tu tarjeta.</p>
+  </section>
+
+  <section id="envios">
+    <h2>5. Envíos y entregas</h2>
+    <ul>
+      <li><b>Pereira y Dosquebradas:</b> envío gratis.</li>
+      <li><b>Resto de Colombia:</b> gratis en compras desde {money(SHIPPING.freeFrom)}. Si la compra es menor, el envío cuesta {money(SHIPPING.flat)}.</li>
+      <li><b>Envío prioritario:</b> {money(SHIPPING.priority)} adicionales; tu pedido se despacha primero.</li>
+      <li><b>Obsequio:</b> en compras desde {money(GIFT.from)} tu pedido incluye un {GIFT.name}.</li>
+    </ul>
+    <p>Al confirmar tu pedido te decimos el tiempo estimado de entrega según tu ciudad. En ningún caso será mayor a <b>30 días calendario</b>; si no podemos cumplir, te avisamos y puedes cancelar el pedido y recibir la devolución completa de lo que pagaste.</p>
+    <p>Revisa tu pedido al recibirlo. Si llega incompleto o dañado, escríbenos en los días siguientes con fotos y lo solucionamos.</p>
+  </section>
+
+  <section id="retracto">
+    <h2>6. Derecho de retracto</h2>
+    <p>Como compraste a distancia, puedes <b>arrepentirte de la compra dentro de los 5 días hábiles siguientes a la entrega</b>, sin dar explicaciones.</p>
+    <ul>
+      <li>Avísanos por los canales del punto 10 y devuelve el producto en el mismo estado en que lo recibiste: sin usar, sin abrir y con su empaque.</li>
+      <li>Los costos de transporte para devolverlo corren por tu cuenta.</li>
+      <li>Te devolvemos todo el dinero pagado en máximo <b>30 días calendario</b> desde que ejerces el retracto, sin descuentos ni retenciones.</li>
+    </ul>
+    <p>Según la ley, el retracto no aplica, entre otros, a <b>bienes perecederos</b> (como alimentos o snacks), a <b>productos de uso personal o de higiene que se hayan abierto</b> y a <b>productos hechos a tu medida o personalizados</b> (como un collar con placa grabada).</p>
+  </section>
+
+  <section id="reversion">
+    <h2>7. Reversión del pago</h2>
+    <p>Si pagaste con un medio electrónico (tarjeta de crédito o débito, PSE u otro), puedes pedir que se reverse el pago cuando:</p>
+    <ul>
+      <li>Fuiste víctima de fraude o la compra no la hiciste tú.</li>
+      <li>No recibiste el producto.</li>
+      <li>El producto que recibiste no es el que pediste o está defectuoso.</li>
+    </ul>
+    <p>Debes pedirlo dentro de los <b>5 días hábiles</b> siguientes a la fecha en que te enteraste: avísanos a nosotros y a la entidad que emitió tu medio de pago, y devuelve el producto si lo recibiste. La reversión se hace según el Decreto 587 de 2016.</p>
+  </section>
+
+  <section id="garantia">
+    <h2>8. Garantía</h2>
+    <p>Todos los productos tienen la garantía legal: deben servir para lo que se anuncian y llegar en buen estado. Si un producto sale defectuoso, escríbenos y, según el caso, lo reparamos, lo cambiamos o te devolvemos el dinero.</p>
+    <ul>
+      <li>La garantía es la que indique el fabricante o, si no la indica, de <b>1 año</b> para productos nuevos.</li>
+      <li>Para alimentos, snacks y productos con fecha de vencimiento, la garantía va hasta esa fecha, siempre que se hayan guardado como indica el empaque.</li>
+      <li>La garantía no cubre daños por mal uso o por no seguir las instrucciones del producto.</li>
+    </ul>
+  </section>
+
+  <section id="citas">
+    <h2>9. Citas del consultorio y el spa</h2>
+    <ul>
+      <li>Cuando pides una cita desde la página te la confirmamos por WhatsApp. Si la hora que elegiste no está libre, te proponemos otra.</li>
+      <li>El precio del baño depende de la raza y del estado del manto; te lo confirmamos <b>antes de empezar</b>. Si tiene nudos severos, te avisamos el valor adicional antes de hacerlo.</li>
+      <li>Si no puedes asistir, avísanos lo antes posible para darle el espacio a otra mascota.</li>
+      <li>Los procedimientos médicos y cirugías se hacen con tu autorización informada, después de explicarte los riesgos y el costo.</li>
+    </ul>
+  </section>
+
+  <section id="pqr">
+    <h2>10. Peticiones, quejas y reclamos</h2>
+    <p>Escríbenos al correo {email ? <a href={`mailto:${email}`}>{email}</a> : <span class="pending">Pendiente</span>}, por <a href={waShop} target="_blank" rel="noopener">WhatsApp al {PHONES.shop.display}</a> o visítanos en {ADDRESS.line}. Incluye tu nombre, tu número de pedido si lo tienes y lo que necesitas. Te respondemos en máximo <b>15 días hábiles</b>.</p>
+    <p class="box">Si no quedas conforme con nuestra respuesta, puedes acudir a la Superintendencia de Industria y Comercio, que es la autoridad de protección al consumidor: <a href="https://www.sic.gov.co" target="_blank" rel="noopener">www.sic.gov.co</a>.</p>
+  </section>
+
+  <section id="otros">
+    <h2>11. Propiedad intelectual y cambios</h2>
+    <p>Los textos, fotos, ilustraciones y la marca Alma Animal son de su titular. No pueden copiarse ni usarse con fines comerciales sin autorización.</p>
+    <p>Podemos actualizar estos términos. La compra se rige por los términos vigentes el día en que la hiciste, y la fecha de la versión actual está al inicio de esta página.</p>
+  </section>
+</LegalDoc>

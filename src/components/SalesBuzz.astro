@@ -1,0 +1,94 @@
+---
+// Aviso "🔥 Laura, de Pereira, compró…". Solo compras reales: pedidos confirmados de los últimos 7 días
+// de clientes que dieron permiso (función avisos_compra de Supabase). Se enciende, apaga y cambia de ritmo
+// desde el gestor (Productos e inventario). Sale a los 5 s, se queda 6 s y rota. Si la persona lo cierra,
+// no vuelve en esta visita. Sin compras para mostrar, no aparece nada.
+---
+<div class="buzz" role="status" aria-live="polite" data-buzz hidden>
+  <a class="buzz__item" href="#" data-buzz-link>
+    <span class="buzz__ic" aria-hidden="true" data-buzz-ic></span>
+    <span class="buzz__txt"><span data-buzz-txt></span><small data-buzz-when></small></span>
+  </a>
+  <button class="buzz__x" type="button" aria-label="Cerrar aviso" data-buzz-close><span class="ms" aria-hidden="true">close</span></button>
+</div>
+
+<script>
+  import { supabaseReady } from '../scripts/supabase';
+  import { productoUrl, TONOS, esc } from '../scripts/catalogo';
+  import { PRODUCTS, RECENT_SALES } from '../data/shop';
+
+  interface Aviso { nombre: string; ciudad: string; producto: string; slug: string; variante: string | null; icono: string; tono: string; creado: string }
+  const box = document.querySelector<HTMLElement>('[data-buzz]')!;
+  const KEY = 'alma-aviso-cerrado';
+  const URL = import.meta.env.PUBLIC_SUPABASE_URL as string;
+  const ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string;
+  const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
+
+  const hace = (iso: string) => {
+    const m = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+    return m < 60 ? `hace ${m} ${m === 1 ? 'minuto' : 'minutos'}` : m < 120 ? 'hace 1 hora' : m < 1440 ? `hace ${Math.round(m / 60)} horas` : m < 2880 ? 'ayer' : `hace ${Math.round(m / 1440)} días`;
+  };
+
+  async function cargar(): Promise<{ avisos: Aviso[]; cada: number }> {
+    if (!supabaseReady) {
+      // sin Supabase: compras de ejemplo para ver cómo se ve
+      const avisos = RECENT_SALES.flatMap((s) => {
+        const p = PRODUCTS.find((x) => x.id === s.product);
+        const tono = Object.keys(TONOS).find((k) => TONOS[k] === p?.tone) ?? 'lav';
+        return p ? [{ nombre: s.who, ciudad: s.city, producto: p.name, slug: p.id, variante: s.variant, icono: p.icon, tono, creado: new Date(Date.now() - s.minutesAgo * 60000).toISOString() }] : [];
+      });
+      return { avisos, cada: 20 };
+    }
+    const [r1, r2] = await Promise.all([
+      fetch(`${URL}/rest/v1/rpc/avisos_compra`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: '{}' }),
+      fetch(`${URL}/rest/v1/ajustes?clave=eq.avisos_compra&select=valor`, { headers: H })
+    ]);
+    const avisos = r1.ok ? ((await r1.json()) as Aviso[]) : [];
+    const ajuste = r2.ok ? ((await r2.json()) as { valor: { activo: boolean; cada: number } }[])[0]?.valor : null;
+    return { avisos: ajuste?.activo === false ? [] : avisos, cada: ajuste?.cada ?? 20 };
+  }
+
+  let cerrado = false;
+  try { cerrado = sessionStorage.getItem(KEY) === '1'; } catch { /* sin almacenamiento */ }
+  if (!cerrado) {
+    cargar().then(({ avisos, cada }) => {
+      if (!avisos.length) return;
+      let i = 0, timer: number | undefined;
+      const pintar = (a: Aviso) => {
+        const ic = box.querySelector<HTMLElement>('[data-buzz-ic]')!;
+        ic.style.background = TONOS[a.tono] ?? TONOS.lav;
+        ic.innerHTML = `<span class="ms">${esc(a.icono)}</span>`;
+        box.querySelector('[data-buzz-txt]')!.innerHTML = `🔥 <b>${esc(a.nombre)}</b>, de ${esc(a.ciudad)}, compró <u>${esc(a.producto)}${a.variante && !/^(único|única)$/i.test(a.variante) ? ' · ' + esc(a.variante) : ''}</u>`;
+        box.querySelector('[data-buzz-when]')!.textContent = `${hace(a.creado)} · compra verificada`;
+        box.querySelector<HTMLAnchorElement>('[data-buzz-link]')!.href = productoUrl(a.slug);
+      };
+      const show = () => { pintar(avisos[i]); box.hidden = false; timer = window.setTimeout(hide, 6000); };
+      const hide = () => { box.hidden = true; i = (i + 1) % avisos.length; timer = window.setTimeout(show, Math.max(6, cada - 6) * 1000); };
+      box.addEventListener('mouseenter', () => window.clearTimeout(timer));
+      box.addEventListener('mouseleave', () => { timer = window.setTimeout(hide, 3000); });
+      timer = window.setTimeout(show, 5000);
+      box.querySelector('[data-buzz-close]')!.addEventListener('click', () => {
+        window.clearTimeout(timer); box.remove();
+        try { sessionStorage.setItem(KEY, '1'); } catch { /* sin almacenamiento */ }
+      });
+    }).catch(() => { /* sin avisos si falla la conexión */ });
+  }
+</script>
+
+<style>
+  .buzz { position: fixed; left: 12px; right: 84px; bottom: calc(16px + var(--dock, 0px)); z-index: 35; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 16px; background: rgb(255 255 255 / .97); box-shadow: 0 0 0 1px var(--line-soft), 0 6px 14px rgb(54 41 84 / .12); animation: buzz-in .55s var(--ease-out); }
+  .buzz[hidden] { display: none; }
+  .buzz__item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+  .buzz__item:hover { color: var(--ink); }
+  .buzz__item:hover u { text-decoration-thickness: 2px; }
+  .buzz__ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--ink); flex: none; }
+  .buzz__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 400 13px/1.35 var(--font-sans); }
+  .buzz__txt :global(u) { font-weight: 600; text-decoration: none; }
+  .buzz__txt small { font-size: 11.5px; color: var(--ink-muted); }
+  .buzz__x { align-self: flex-start; width: 32px; height: 32px; margin: -4px -4px 0 0; border: 0; border-radius: 50%; background: transparent; color: #7A7580; cursor: pointer; display: grid; place-items: center; flex: none; }
+  .buzz__x:hover { background: var(--surface-3); }
+  .buzz__x .ms { font-size: 18px; }
+  @keyframes buzz-in { from { opacity: 0; transform: translateY(12px); } }
+  @media (prefers-reduced-motion: reduce) { .buzz { animation: none; } }
+  @media (min-width: 768px) { .buzz { left: 20px; right: auto; bottom: calc(20px + var(--dock, 0px)); width: 320px; } }
+</style>

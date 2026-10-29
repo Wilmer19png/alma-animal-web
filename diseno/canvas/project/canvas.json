@@ -1,0 +1,833 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AgendaSpa.dc.html": {
+      "expand": "fill",
+      "h": 2300,
+      "is_interactive": true,
+      "title": "Spa · Agendar baño",
+      "w": 1440,
+      "x": 3040,
+      "y": 4120,
+      "page": "sitio"
+    },
+    "Carrito.dc.html": {
+      "expand": "fill",
+      "h": 2100,
+      "is_interactive": true,
+      "title": "Petshop · Carrito y envío",
+      "w": 1440,
+      "x": 6080,
+      "y": 0,
+      "page": "sitio"
+    },
+    "Consultorio.dc.html": {
+      "expand": "fill",
+      "h": 3600,
+      "is_interactive": true,
+      "title": "Consultorio",
+      "w": 1440,
+      "x": 1520,
+      "y": 0,
+      "page": "sitio"
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 4800,
+      "is_interactive": true,
+      "title": "Inicio",
+      "w": 1440,
+      "x": 0,
+      "y": 0,
+      "page": "sitio"
+    },
+    "Petshop.dc.html": {
+      "expand": "fill",
+      "h": 3400,
+      "is_interactive": true,
+      "title": "Petshop",
+      "w": 1440,
+      "x": 4560,
+      "y": 0,
+      "page": "sitio"
+    },
+    "Producto.dc.html": {
+      "expand": "fill",
+      "h": 1900,
+      "is_interactive": true,
+      "title": "Petshop · Ficha de producto",
+      "w": 1440,
+      "x": 4560,
+      "y": 3520,
+      "page": "sitio"
+    },
+    "Spa.dc.html": {
+      "expand": "fill",
+      "h": 4000,
+      "is_interactive": true,
+      "title": "Spa",
+      "w": 1440,
+      "x": 3040,
+      "y": 0,
+      "page": "sitio"
+    },
+    "GestorHoy.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Gestor · Hoy",
+      "w": 1440,
+      "x": 0,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorPedidos.dc.html": {
+      "expand": "fill",
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Gestor · Pedidos",
+      "w": 1440,
+      "x": 1520,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorPaciente.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "Gestor · Paciente e historia clínica",
+      "w": 1440,
+      "x": 3040,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorPropietarios.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Gestor · Propietarios",
+      "w": 1440,
+      "x": 4560,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorRegistro.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Gestor · Registrar paciente",
+      "w": 1440,
+      "x": 6080,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorAgenda.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Gestor · Agenda",
+      "w": 1440,
+      "x": 7600,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorVacunas.dc.html": {
+      "expand": "fill",
+      "h": 1400,
+      "is_interactive": true,
+      "title": "Gestor · Vacunas y recordatorios",
+      "w": 1440,
+      "x": 9120,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorProductos.dc.html": {
+      "expand": "fill",
+      "h": 2300,
+      "is_interactive": true,
+      "title": "Gestor · Productos e inventario",
+      "w": 1440,
+      "x": 10640,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorSpa.dc.html": {
+      "expand": "fill",
+      "h": 1900,
+      "is_interactive": true,
+      "title": "Gestor · Citas de spa",
+      "w": 1440,
+      "x": 12160,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorTarifas.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "Gestor · Servicios y tarifas",
+      "w": 1440,
+      "x": 13680,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorSitio.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "Gestor · Textos e imágenes",
+      "w": 1440,
+      "x": 15200,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorBlog.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "Gestor · Blog",
+      "w": 1440,
+      "x": 16720,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorEquipo.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Gestor · Equipo",
+      "w": 1440,
+      "x": 18240,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorEnvios.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Gestor · Envíos y obsequio",
+      "w": 1440,
+      "x": 19760,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorHorarios.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Gestor · Horarios",
+      "w": 1440,
+      "x": 21280,
+      "y": 0,
+      "page": "gestor"
+    },
+    "GestorUsuarios.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Gestor · Usuarios y roles",
+      "w": 1440,
+      "x": 22800,
+      "y": 0,
+      "page": "gestor"
+    },
+    "Blog.dc.html": {
+      "expand": "fill",
+      "h": 3000,
+      "is_interactive": true,
+      "title": "Blog",
+      "w": 1440,
+      "x": 7600,
+      "y": 0,
+      "page": "sitio"
+    },
+    "Articulo.dc.html": {
+      "expand": "fill",
+      "h": 3600,
+      "is_interactive": true,
+      "title": "Blog · Artículo",
+      "w": 1440,
+      "x": 7600,
+      "y": 3120,
+      "page": "sitio"
+    },
+    "PortalAcceso.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Portal · Acceso (correo, contraseña, ingreso)",
+      "w": 1440,
+      "x": 0,
+      "y": 0,
+      "page": "portal"
+    },
+    "PortalInicio.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Portal · Inicio",
+      "w": 1440,
+      "x": 1520,
+      "y": 0,
+      "page": "portal"
+    },
+    "PortalMascota.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Portal · Mascota (carnet, consultas, exámenes, spa)",
+      "w": 1440,
+      "x": 3040,
+      "y": 0,
+      "page": "portal"
+    },
+    "PortalAgendar.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Portal · Agendar (solo horas libres)",
+      "w": 1440,
+      "x": 4560,
+      "y": 0,
+      "page": "portal"
+    },
+    "PortalPedidos.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Portal · Mis pedidos",
+      "w": 1440,
+      "x": 6080,
+      "y": 0,
+      "page": "portal"
+    },
+    "Main-movil.dc.html": {
+      "expand": "fill",
+      "h": 7250,
+      "is_interactive": true,
+      "title": "Inicio · celular",
+      "w": 390,
+      "x": 0,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Consultorio-movil.dc.html": {
+      "expand": "fill",
+      "h": 5600,
+      "is_interactive": true,
+      "title": "Consultorio · celular",
+      "w": 390,
+      "x": 470,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Spa-movil.dc.html": {
+      "expand": "fill",
+      "h": 5600,
+      "is_interactive": true,
+      "title": "Spa · celular",
+      "w": 390,
+      "x": 940,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "AgendaSpa-movil.dc.html": {
+      "expand": "fill",
+      "h": 2200,
+      "is_interactive": true,
+      "title": "Spa · Agendar baño · celular",
+      "w": 390,
+      "x": 1410,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Petshop-movil.dc.html": {
+      "expand": "fill",
+      "h": 4050,
+      "is_interactive": true,
+      "title": "Petshop · celular",
+      "w": 390,
+      "x": 1880,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Producto-movil.dc.html": {
+      "expand": "fill",
+      "h": 3400,
+      "is_interactive": true,
+      "title": "Petshop · Ficha de producto · celular",
+      "w": 390,
+      "x": 2350,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Carrito-movil.dc.html": {
+      "expand": "fill",
+      "h": 2200,
+      "is_interactive": true,
+      "title": "Petshop · Carrito · celular",
+      "w": 390,
+      "x": 2820,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Blog-movil.dc.html": {
+      "expand": "fill",
+      "h": 4700,
+      "is_interactive": true,
+      "title": "Blog · celular",
+      "w": 390,
+      "x": 3290,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "Articulo-movil.dc.html": {
+      "expand": "fill",
+      "h": 4500,
+      "is_interactive": true,
+      "title": "Blog · Artículo · celular",
+      "w": 390,
+      "x": 3760,
+      "y": 0,
+      "page": "sitio-movil"
+    },
+    "GestorHoy-movil.dc.html": {
+      "expand": "fill",
+      "h": 3400,
+      "is_interactive": true,
+      "title": "Gestor · Hoy · celular",
+      "w": 390,
+      "x": 0,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorAgenda-movil.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "Gestor · Agenda · celular",
+      "w": 390,
+      "x": 470,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorPaciente-movil.dc.html": {
+      "expand": "fill",
+      "h": 3600,
+      "is_interactive": true,
+      "title": "Gestor · Paciente · celular",
+      "w": 390,
+      "x": 940,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorPropietarios-movil.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "Gestor · Propietarios · celular",
+      "w": 390,
+      "x": 1410,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorRegistro-movil.dc.html": {
+      "expand": "fill",
+      "h": 2900,
+      "is_interactive": true,
+      "title": "Gestor · Registrar paciente · celular",
+      "w": 390,
+      "x": 1880,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorVacunas-movil.dc.html": {
+      "expand": "fill",
+      "h": 3100,
+      "is_interactive": true,
+      "title": "Gestor · Vacunas · celular",
+      "w": 390,
+      "x": 2350,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorPedidos-movil.dc.html": {
+      "expand": "fill",
+      "h": 3200,
+      "is_interactive": true,
+      "title": "Gestor · Pedidos · celular",
+      "w": 390,
+      "x": 2820,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorProductos-movil.dc.html": {
+      "expand": "fill",
+      "h": 4600,
+      "is_interactive": true,
+      "title": "Gestor · Productos · celular",
+      "w": 390,
+      "x": 3290,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorSpa-movil.dc.html": {
+      "expand": "fill",
+      "h": 3300,
+      "is_interactive": true,
+      "title": "Gestor · Citas de spa · celular",
+      "w": 390,
+      "x": 3760,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorTarifas-movil.dc.html": {
+      "expand": "fill",
+      "h": 3400,
+      "is_interactive": true,
+      "title": "Gestor · Servicios y tarifas · celular",
+      "w": 390,
+      "x": 4230,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorSitio-movil.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "Gestor · Textos e imágenes · celular",
+      "w": 390,
+      "x": 4700,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorBlog-movil.dc.html": {
+      "expand": "fill",
+      "h": 3700,
+      "is_interactive": true,
+      "title": "Gestor · Blog · celular",
+      "w": 390,
+      "x": 5170,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorEquipo-movil.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "Gestor · Equipo · celular",
+      "w": 390,
+      "x": 5640,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorEnvios-movil.dc.html": {
+      "expand": "fill",
+      "h": 3200,
+      "is_interactive": true,
+      "title": "Gestor · Envíos y obsequio · celular",
+      "w": 390,
+      "x": 6110,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorHorarios-movil.dc.html": {
+      "expand": "fill",
+      "h": 2600,
+      "is_interactive": true,
+      "title": "Gestor · Horarios · celular",
+      "w": 390,
+      "x": 6580,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "GestorUsuarios-movil.dc.html": {
+      "expand": "fill",
+      "h": 2400,
+      "is_interactive": true,
+      "title": "Gestor · Usuarios y roles · celular",
+      "w": 390,
+      "x": 7050,
+      "y": 0,
+      "page": "gestor-movil"
+    },
+    "PortalAcceso-movil.dc.html": {
+      "expand": "fill",
+      "h": 3300,
+      "is_interactive": true,
+      "title": "Portal · Acceso · celular",
+      "w": 390,
+      "x": 0,
+      "y": 0,
+      "page": "portal-movil"
+    },
+    "PortalInicio-movil.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "Portal · Inicio · celular",
+      "w": 390,
+      "x": 470,
+      "y": 0,
+      "page": "portal-movil"
+    },
+    "PortalMascota-movil.dc.html": {
+      "expand": "fill",
+      "h": 2600,
+      "is_interactive": true,
+      "title": "Portal · Mascota · celular",
+      "w": 390,
+      "x": 940,
+      "y": 0,
+      "page": "portal-movil"
+    },
+    "PortalAgendar-movil.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "Portal · Agendar · celular",
+      "w": 390,
+      "x": 1410,
+      "y": 0,
+      "page": "portal-movil"
+    },
+    "PortalPedidos-movil.dc.html": {
+      "expand": "fill",
+      "h": 2700,
+      "is_interactive": true,
+      "title": "Portal · Mis pedidos · celular",
+      "w": 390,
+      "x": 1880,
+      "y": 0,
+      "page": "portal-movil"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-27T20:30:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas",
+    "page": "portal-movil"
+  },
+  "noteOrder": [
+    "sitio",
+    "gestorPedido",
+    "gestorSpa",
+    "gestorTitulo",
+    "gestorMapa",
+    "portalFlujo",
+    "portalTitulo",
+    "movilTitulo",
+    "movilNota",
+    "gmovilTitulo",
+    "gmovilNota",
+    "pmovilTitulo",
+    "pmovilNota"
+  ],
+  "notes": {
+    "gestorPedido": {
+      "fill": "purple",
+      "size": 24,
+      "text": "LLEGA AL GESTOR (pedido)\n• Cliente: nombre, apellido, celular, correo, departamento, ciudad, dirección, barrio, indicaciones.\n• Pedido: productos, cantidades, subtotal, envío (gratis / $20.000), envío prioritario sí/no (+$5.000), total, obsequio sí/no.\n• Estado: recibido → cliente confirmó (mensaje automático por WhatsApp) → pago recibido o contraentrega → enviado → entregado.\n• Reglas editables en el gestor: envío gratis en Pereira y Dosquebradas, gratis a Colombia desde $70.000, obsequio desde $85.000 (snack dental), envío fuera de Pereira y Dosquebradas por debajo de $70.000: $20.000, prioritario $5.000.\n• Se une al propietario por celular: si coinciden celular y correo se vincula solo; si solo coincide el celular, el gestor pregunta «¿Es de…?» y se confirma por WhatsApp; si no existe, «Crear ficha». Si compra con su cuenta, queda unido de una vez.",
+      "w": 640,
+      "x": 6080,
+      "y": 2220,
+      "page": "sitio"
+    },
+    "gestorSpa": {
+      "fill": "purple",
+      "size": 24,
+      "text": "LLEGA AL GESTOR (cita de spa)\n• Mascota: especie, nombre, raza, peso, edad, notas (piel, nudos, comportamiento).\n• Servicio: baño completo + corte / baño medicado.\n• Día y hora preferida.\n• Propietario: nombre, apellido, celular (WhatsApp), correo, aceptación de datos.\n• Estado: solicitada → confirmada por WhatsApp (hora y precio) → realizada.",
+      "w": 640,
+      "x": 1520,
+      "y": 4120,
+      "page": "sitio"
+    },
+    "sitio": {
+      "kind": "title1",
+      "maxW": 9040,
+      "text": "Sitio público · escritorio 1440",
+      "w": 240,
+      "x": 0,
+      "y": -320,
+      "page": "sitio"
+    },
+    "gestorTitulo": {
+      "kind": "title1",
+      "maxW": 24240,
+      "text": "Gestor interno · escritorio 1440",
+      "x": 0,
+      "y": -320,
+      "page": "gestor"
+    },
+    "gestorMapa": {
+      "fill": "purple",
+      "size": 24,
+      "w": 640,
+      "x": 24320,
+      "y": 0,
+      "page": "gestor",
+      "text": "MÓDULOS DEL GESTOR\n✓ Hoy\n✓ Pedidos (confirmación por WhatsApp, cliente confirmó, contraentrega)\n✓ Pacientes: ficha + historia clínica + carnet con sello\n✓ Propietarios (lista + detalle)\n✓ Registrar paciente (3 pasos + vacunas anteriores + lo que le toca, agendable)\n✓ Agenda (semana + agendar desde el consultorio, sobrecupo)\n✓ Vacunas y recordatorios (en lote, automáticos)\n✓ Citas de spa (solicitud → confirmada por WhatsApp → en el spa → lista → entregada)\n✓ Servicios y tarifas (tallas por peso, precios por talla, qué incluye)\n✓ Productos e inventario (variantes, etiquetas, costos y ganancia, venta en consultorio, avisos de compra)\n✓ Sitio web: textos e imágenes (bloques por página + Google), blog (programar, producto recomendado), equipo\n✓ Ajustes: envíos y obsequio (con simulador), horarios (festivos y duraciones), usuarios y roles (permisos, seguridad, copias)\n\nSIGUIENTE: portal de clientes (página «Portal de clientes»)."
+    },
+    "portalFlujo": {
+      "fill": "purple",
+      "size": 24,
+      "w": 640,
+      "x": 7600,
+      "y": 0,
+      "page": "portal",
+      "text": "PORTAL DE CLIENTES\n1. Al registrar al propietario en el gestor le llega un correo para crear su contraseña (también puede entrar con Google o con un enlace al correo).\n2. Ve sus mascotas: carnet de vacunas con sello y PDF, resumen de consultas e indicaciones (sin notas internas), exámenes e imágenes, historial de spa con fotos.\n3. Agenda por pasos y solo en horas libres: misma regla que la agenda del gestor (duración del servicio, carril de la doctora o del spa, almuerzo 12:30–2:00, cierre 5:00, sábados hasta 12:30, festivos). El spa se confirma por WhatsApp con precio.\n4. Ve sus pedidos y en qué van. Pago en línea con Wompi: más adelante.\n5. Recordatorios de vacunas y citas: por correo (gratis)."
+    },
+    "portalTitulo": {
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "Portal de clientes · escritorio 1440",
+      "x": 0,
+      "y": -320,
+      "page": "portal"
+    },
+    "movilTitulo": {
+      "kind": "title1",
+      "maxW": 4200,
+      "text": "Sitio público · celular 390",
+      "x": 0,
+      "y": -320,
+      "page": "sitio-movil"
+    },
+    "movilNota": {
+      "fill": "purple",
+      "size": 24,
+      "w": 640,
+      "x": 4230,
+      "y": 0,
+      "page": "sitio-movil",
+      "text": "CELULAR (390 px)\n• Mismo diseño del escritorio: las reglas de celular viven en cada página.\n• Barra superior fija con logo, carrito y menú ☰ (secciones + «Ingresar a mi portal»).\n• Títulos con escala propia de celular: nunca se salen del ancho.\n• Agendar baño: un paso a la vez (mascota → servicio → fecha → datos → revisar), con botones Atrás/Siguiente fijos abajo. También en escritorio.\n• Carrito en 2 pasos (carrito → envío) con barra fija de total y botón; productos compactos y sugerencias deslizables.\n• Ficha de producto: «Agregar al carrito» fijo abajo.\n• Se quitan en celular: etiquetas flotantes del héroe, dirección y redes del héroe del Inicio (están en el pie), filtros y mini carrito del Petshop (el carrito está arriba), ilustración de productos de la tienda e índice del artículo.\n• WhatsApp: verde del logo #00BC39 en botones, bordes, íconos y botón flotante; los textos verdes usan #00852A (mismo tono, más oscuro para que se lean)."
+    },
+    "gmovilTitulo": {
+      "kind": "title1",
+      "maxW": 7400,
+      "text": "Gestor interno · celular 390",
+      "x": 0,
+      "y": -320,
+      "page": "gestor-movil"
+    },
+    "gmovilNota": {
+      "fill": "purple",
+      "size": 24,
+      "w": 640,
+      "x": 7560,
+      "y": 0,
+      "page": "gestor-movil",
+      "text": "GESTOR EN CELULAR\n• Barra superior con el logo y «Registrar paciente».\n• Navegación abajo, al alcance del pulgar: Hoy · Agenda · Pacientes · Pedidos · Más (Más abre todos los módulos).\n• Todo en una columna; los indicadores en dos.\n• Las agendas (Hoy, semana y spa) y las tablas anchas se deslizan de lado dentro de su tarjeta: no se corta nada ni se aprietan las citas.\n• Mismo diseño del escritorio: las reglas de celular viven en cada módulo."
+    },
+    "pmovilTitulo": {
+      "kind": "title1",
+      "maxW": 2300,
+      "text": "Portal de clientes · celular 390",
+      "x": 0,
+      "y": -320,
+      "page": "portal-movil"
+    },
+    "pmovilNota": {
+      "fill": "purple",
+      "size": 24,
+      "w": 640,
+      "x": 2440,
+      "y": 0,
+      "page": "portal-movil",
+      "text": "PORTAL EN CELULAR\n• Menú abajo, al alcance del pulgar: Inicio · Mis mascotas · Agendar · Mis pedidos.\n• Arriba: logo, avisos y la cuenta.\n• Agendar va por pasos (mascota → servicio → día y hora → revisar), también en escritorio. En celular el resumen aparece en el último paso.\n• Carnet: cada vacuna en dos líneas (nombre y próxima fecha; aplicada y laboratorio debajo).\n• Pedidos: los 5 estados en una sola fila.\n• Pestañas de la mascota deslizables; exámenes en dos columnas."
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Consultorio.dc.html",
+    "Spa.dc.html",
+    "AgendaSpa.dc.html",
+    "Petshop.dc.html",
+    "Producto.dc.html",
+    "Carrito.dc.html",
+    "GestorHoy.dc.html",
+    "GestorPedidos.dc.html",
+    "GestorPaciente.dc.html",
+    "GestorPropietarios.dc.html",
+    "GestorRegistro.dc.html",
+    "GestorAgenda.dc.html",
+    "GestorVacunas.dc.html",
+    "GestorProductos.dc.html",
+    "GestorSpa.dc.html",
+    "GestorTarifas.dc.html",
+    "GestorSitio.dc.html",
+    "GestorBlog.dc.html",
+    "GestorEquipo.dc.html",
+    "GestorEnvios.dc.html",
+    "GestorHorarios.dc.html",
+    "GestorUsuarios.dc.html",
+    "Blog.dc.html",
+    "Articulo.dc.html",
+    "PortalAcceso.dc.html",
+    "PortalInicio.dc.html",
+    "PortalMascota.dc.html",
+    "PortalAgendar.dc.html",
+    "PortalPedidos.dc.html",
+    "Main-movil.dc.html",
+    "Consultorio-movil.dc.html",
+    "Spa-movil.dc.html",
+    "AgendaSpa-movil.dc.html",
+    "Petshop-movil.dc.html",
+    "Producto-movil.dc.html",
+    "Carrito-movil.dc.html",
+    "Blog-movil.dc.html",
+    "Articulo-movil.dc.html",
+    "GestorHoy-movil.dc.html",
+    "GestorAgenda-movil.dc.html",
+    "GestorPaciente-movil.dc.html",
+    "GestorPropietarios-movil.dc.html",
+    "GestorRegistro-movil.dc.html",
+    "GestorVacunas-movil.dc.html",
+    "GestorPedidos-movil.dc.html",
+    "GestorProductos-movil.dc.html",
+    "GestorSpa-movil.dc.html",
+    "GestorTarifas-movil.dc.html",
+    "GestorSitio-movil.dc.html",
+    "GestorBlog-movil.dc.html",
+    "GestorEquipo-movil.dc.html",
+    "GestorEnvios-movil.dc.html",
+    "GestorHorarios-movil.dc.html",
+    "GestorUsuarios-movil.dc.html",
+    "PortalAcceso-movil.dc.html",
+    "PortalInicio-movil.dc.html",
+    "PortalMascota-movil.dc.html",
+    "PortalAgendar-movil.dc.html",
+    "PortalPedidos-movil.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "sitio",
+      "name": "Sitio público"
+    },
+    {
+      "id": "sitio-movil",
+      "name": "Sitio público · celular"
+    },
+    {
+      "id": "gestor",
+      "name": "Gestor interno"
+    },
+    {
+      "id": "gestor-movil",
+      "name": "Gestor interno · celular"
+    },
+    {
+      "id": "portal",
+      "name": "Portal de clientes"
+    },
+    {
+      "id": "portal-movil",
+      "name": "Portal de clientes · celular"
+    }
+  ],
+  "title": "Alma Animal · Sitio web"
+}

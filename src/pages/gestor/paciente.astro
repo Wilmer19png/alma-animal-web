@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Ficha del paciente">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Paciente from '../../gestor/Paciente';
+    montar(Paciente);
+  </script>
+</GestorLayout>

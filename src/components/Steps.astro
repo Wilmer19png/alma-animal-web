@@ -1,0 +1,55 @@
+---
+// Pasos con una línea que se llena uno a uno cuando entran en pantalla ("Así funciona", "Así compras").
+// En celular van en lista vertical; desde 900px en fila.
+interface Props { steps: { title: string; text: string }[] }
+const { steps } = Astro.props;
+---
+<div class="steps" data-steps style={`--n:${steps.length}`}>
+  <div class="steps__line" aria-hidden="true"><span class="steps__fill"></span></div>
+  <ol>
+    {steps.map((s) => (
+      <li data-step>
+        <span class="steps__dot" aria-hidden="true"></span>
+        <b>{s.title}</b>
+        <p>{s.text}</p>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-steps]').forEach((track) => {
+    const steps = [...track.querySelectorAll<HTMLElement>('[data-step]')];
+    const set = (n: number) => {
+      steps.forEach((s, k) => { s.classList.toggle('is-done', k <= n); s.classList.toggle('is-now', k === n); });
+      track.style.setProperty('--fill', String(n / (steps.length - 1)));
+    };
+    if (reduce) { set(steps.length - 1); return; }
+    let n = 0, timer: number | undefined;
+    const run = () => { set(n); timer = window.setInterval(() => { n = n >= steps.length + 1 ? 0 : n + 1; set(Math.min(n, steps.length - 1)); }, 1400); };
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { run(); o.disconnect(); } }, { threshold: .4 }).observe(track);
+    window.addEventListener('pagehide', () => window.clearInterval(timer));
+  });
+</script>
+
+<style>
+  .steps { position: relative; --fill: 0; }
+  .steps__line { display: none; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+  li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 14px; align-items: start; }
+  .steps__dot { grid-row: span 2; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px var(--primary); transition: background .4s, box-shadow .4s; }
+  li.is-done .steps__dot { background: var(--primary); }
+  li.is-now .steps__dot { box-shadow: inset 0 0 0 2px var(--primary), 0 0 0 6px rgb(101 87 133 / .16); }
+  li b { font: 600 17px/1.3 var(--font-sans); margin-top: 1px; }
+  li p { font-size: 16px; line-height: 1.5; color: var(--ink-muted); }
+  @media (min-width: 900px) {
+    /* la línea va del centro del primer punto al centro del último */
+    .steps__line { display: block; position: absolute; left: calc(50% / var(--n)); right: calc(50% / var(--n)); top: 11px; height: 2px; border-radius: 2px; background: var(--line-soft); }
+    .steps__fill { display: block; height: 100%; width: calc(var(--fill) * 100%); border-radius: 2px; background: var(--grad-primary); transition: width .9s var(--ease); }
+    ol { position: relative; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 16px; }
+    li { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+    li b { margin-top: 6px; }
+    li p { max-width: 26ch; }
+  }
+</style>

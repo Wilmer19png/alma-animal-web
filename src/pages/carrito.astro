@@ -1,0 +1,631 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { whatsapp, PHONES, LEGAL } from '../data/site';
+import { DEMO, SHIPPING, GIFT, money } from '../data/shop';
+
+const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
+const DEPTS = ['Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bogotá D.C.', 'Bolívar', 'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta', 'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada'];
+const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virginia', 'Marsella', 'Apía', 'Balboa', 'Belén de Umbría', 'Guática', 'La Celia', 'Mistrató', 'Pueblo Rico', 'Quinchía', 'Santuario'];
+---
+<Base
+  title="Tu carrito · Petshop Alma Animal"
+  description="Revisa tu pedido y llena los datos de envío. Envío gratis en Pereira y Dosquebradas, y a toda Colombia desde $70.000."
+  waMessage="Hola, Alma Animal. Tengo una pregunta sobre mi pedido."
+  waArea="shop"
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== TÍTULO ======== -->
+  <div class="wrap intro">
+    <a class="back" href="/petshop"><span class="ms" aria-hidden="true">arrow_back</span>Seguir comprando</a>
+    <div class="intro__row">
+      <h1 class="h-section">Tu <b class="gt">carrito</b></h1>
+      <ul class="perks">
+        <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+        <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia desde {money(SHIPPING.freeFrom)}</li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="wrap checkout" aria-label="Carrito y datos de envío" data-checkout data-shop={PHONES.shop.e164}
+    data-free={SHIPPING.freeFrom} data-flat={SHIPPING.flat} data-prio-cost={SHIPPING.priority} data-gift={GIFT.from} data-local={SHIPPING.localCities.join('|')} data-legal={LEGAL.updated}>
+
+    <!-- carrito vacío -->
+    <div class="panel empty" data-empty hidden>
+      <span class="empty__ic" aria-hidden="true"><span class="ms">shopping_bag</span></span>
+      <h2>Tu carrito está vacío</h2>
+      <p>Mira el alimento, la higiene y los accesorios que recomienda la doctora.</p>
+      <a class="btn btn--alma" href="/petshop">Ver productos<span class="ms" aria-hidden="true">arrow_forward</span></a>
+    </div>
+
+    <!-- pedido recibido -->
+    <div class="panel sent" role="status" data-done hidden>
+      <span class="sent__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
+      <h2>¡Listo, <span data-done-name></span>!</h2>
+      <p>Recibimos tu pedido <b class="sent__code" data-done-code></b>. En breve te escribimos por WhatsApp al <b data-done-cel></b> para confirmar tus datos, el pago y la entrega.</p>
+      <div class="sent__wa">
+        <span>¿Prefieres escribirnos primero?</span>
+        <a class="wa-o" href="#" data-done-wa target="_blank" rel="noopener"><WaIcon size={22} />Quiero confirmar mi pedido</a>
+      </div>
+      <a class="link-btn" href="/petshop"><span class="ms" aria-hidden="true">arrow_back</span>Seguir comprando</a>
+    </div>
+
+    <!-- no se pudo registrar: el pedido sale completo por WhatsApp -->
+    <div class="panel sent sent--warn" role="alert" data-fail hidden>
+      <span class="sent__ic" aria-hidden="true"><span class="ms">wifi_off</span></span>
+      <h2>No pudimos registrar tu pedido</h2>
+      <p>Revisa tu conexión e inténtalo de nuevo, o envíanos el pedido por WhatsApp: ya va escrito con todos tus datos.</p>
+      <div class="sent__wa">
+        <button class="btn btn--outlined" type="button" data-retry>Intentar de nuevo</button>
+        <a class="wa-o" href="#" data-fail-wa target="_blank" rel="noopener"><WaIcon size={22} />Enviar por WhatsApp</a>
+      </div>
+    </div>
+
+
+    <div class="checkout__main" data-main hidden>
+      <ol class="wiz" aria-label="Pasos de la compra">
+        <li class="now" data-wiz="0"><button type="button" data-go="0"><i>Paso 1</i><span>Tu carrito</span></button></li>
+        <li class="todo" data-wiz="1"><button type="button" data-go="1" disabled><i>Paso 2</i><span>Envío</span></button></li>
+      </ol>
+
+      <!-- PASO 1 · PRODUCTOS -->
+      <div class="step1" data-step="0">
+        <div class="panel">
+          <h2 class="panel__t" tabindex="-1">Productos</h2>
+          <ul class="rows" data-rows></ul>
+        </div>
+        <div class="extras" data-extras>
+          <h2 class="panel__t">Súmale a tu pedido</h2>
+          <!-- sugerencias del catálogo (se llenan en el navegador) -->
+          <div class="extras__grid" data-extras-grid></div>
+        </div>
+      </div>
+
+      <!-- PASO 2 · ENVÍO -->
+      <form class="panel ship" data-step="1" data-ship-form hidden novalidate>
+        <div class="ship__head">
+          <h2 class="panel__t" tabindex="-1">Datos de envío</h2>
+          <p class="hint">No necesitas crear cuenta. Los campos con <span class="req">*</span> son obligatorios.</p>
+        </div>
+        <p class="client"><span class="ms" aria-hidden="true">pets</span><span><b>¿Ya eres cliente de Alma Animal?</b> Usa el mismo celular que nos diste en el consultorio y unimos este pedido a tu ficha.</span></p>
+        <div class="grid2">
+          <div class="fld"><label for="c-nombre">Nombre <span class="req">*</span></label><input id="c-nombre" name="nombre" placeholder="Ej: Laura" autocomplete="given-name" required /><span class="err" data-err-for="c-nombre">Escribe tu nombre.</span></div>
+          <div class="fld"><label for="c-apellido">Apellido <span class="req">*</span></label><input id="c-apellido" name="apellido" placeholder="Ej: Gómez Restrepo" autocomplete="family-name" required /><span class="err" data-err-for="c-apellido">Escribe tu apellido.</span></div>
+          <div class="fld"><label for="c-cel">Celular <span class="req">*</span></label><input id="c-cel" name="celular" type="tel" inputmode="tel" placeholder="Ej: 300 123 4567" autocomplete="tel" required /><span class="hint">Te escribimos a este número por WhatsApp.</span><span class="err" data-err-for="c-cel">Escribe un celular de 10 dígitos. Ej: 300 123 4567</span></div>
+          <div class="fld"><label for="c-correo">Correo (opcional)</label><input id="c-correo" name="correo" type="email" placeholder="Ej: laura@correo.com" autocomplete="email" /><span class="err" data-err-for="c-correo">Revisa el correo. Ej: laura@correo.com</span></div>
+          <div class="fld"><label for="c-depto">Departamento <span class="req">*</span></label>
+            <select id="c-depto" name="depto" autocomplete="address-level1">
+              {DEPTS.map((d) => <option selected={d === 'Risaralda'}>{d}</option>)}
+            </select>
+          </div>
+          <div class="fld"><label for="c-ciudad">Ciudad o municipio <span class="req">*</span></label>
+            <select id="c-ciudad" name="ciudad" data-city-select>
+              {RISARALDA.map((c) => <option>{c}</option>)}
+            </select>
+            <input id="c-ciudad-txt" name="ciudadTxt" placeholder="Ej: Manizales" autocomplete="address-level2" data-city-input hidden aria-label="Ciudad o municipio" />
+            <span class="err" data-err-for="c-ciudad-txt">Escribe la ciudad o el municipio.</span>
+          </div>
+          <div class="fld"><label for="c-dir">Dirección <span class="req">*</span></label><input id="c-dir" name="direccion" placeholder="Ej: Calle 19 # 8-34, apto 302" autocomplete="street-address" required /><span class="err" data-err-for="c-dir">Escribe la dirección de entrega.</span></div>
+          <div class="fld"><label for="c-barrio">Barrio <span class="req">*</span></label><input id="c-barrio" name="barrio" placeholder="Ej: Álamos" required /><span class="err" data-err-for="c-barrio">Escribe el barrio.</span></div>
+          <div class="fld full"><label for="c-notas">Indicaciones para la entrega (opcional)</label><textarea id="c-notas" name="notas" placeholder="Ej: Dejar en portería, torre 2. Timbre dañado."></textarea></div>
+        </div>
+        <label class="prio">
+          <input type="checkbox" name="prioritario" data-prio />
+          <span class="ms" aria-hidden="true">bolt</span>
+          <span class="prio__txt"><b>Envío prioritario</b><span>Tu pedido sale primero.</span></span>
+          <b class="prio__price">+{money(SHIPPING.priority)}</b>
+        </label>
+        <label class="consent"><input type="checkbox" name="aviso" /><span>Pueden mostrar mi <b>nombre (sin apellido) y mi ciudad</b> en los avisos de compra de la página. Ej: «Laura, de Pereira, compró…». Es opcional.</span></label>
+        <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos" target="_blank">términos y condiciones</a> y la <a href="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012). <span class="req">*</span></span></label>
+        <span class="err" data-err-for="datos">Para enviar tu pedido necesitamos tu autorización.</span>
+      </form>
+    </div>
+
+    <!-- ======== RESUMEN ======== -->
+    <aside class="summary" aria-labelledby="res" data-summary hidden>
+      <div class="panel">
+        <h2 id="res" class="panel__t">Resumen</h2>
+        <div class="meter">
+          <span class="meter__txt" data-free-txt></span>
+          <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" data-free-bar><i data-free-fill></i></div>
+        </div>
+        <div class="meter meter--gift">
+          <span class="meter__txt" data-gift-txt></span>
+          <div class="bar" role="progressbar" aria-label="Avance hacia el obsequio" aria-valuemin="0" aria-valuemax="100" data-gift-bar><i></i></div>
+        </div>
+        <dl class="totals">
+          <div><dt>Subtotal</dt><dd data-sub></dd></div>
+          <div><dt>Envío</dt><dd data-ship></dd></div>
+          <div data-prio-row hidden><dt>Envío prioritario</dt><dd>{money(SHIPPING.priority)}</dd></div>
+          <div class="totals__total"><dt>Total</dt><dd data-total></dd></div>
+        </dl>
+        <p class="hint" data-ship-note>El envío se calcula con tu ciudad en el siguiente paso.</p>
+        <button class="btn btn--alma btn--go" type="button" data-next>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
+        <button class="btn btn--alma btn--go" type="button" data-place hidden><span data-place-txt>Confirmar pedido</span><span class="ms" aria-hidden="true">arrow_forward</span></button>
+        <button class="backlink" type="button" data-back hidden><span class="ms" aria-hidden="true">arrow_back</span>Volver al carrito</button>
+        <p class="hint">Al confirmar te escribimos por WhatsApp para coordinar el pago: contraentrega, transferencia o en el consultorio.</p>
+        <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
+        {DEMO && <p class="hint">Precios de ejemplo.</p>}
+      </div>
+    </aside>
+  </section>
+
+  <!-- barra inferior (celular): total y la acción del paso -->
+  <div class="mbar" data-mbar hidden>
+    <span class="mbar__total"><small>Total</small><b data-total></b></span>
+    <button class="btn btn--alma" type="button" data-mbar-btn><span data-mbar-txt>Continuar</span><span class="ms" aria-hidden="true">arrow_forward</span></button>
+  </div>
+  <p class="sr-only" aria-live="polite" data-announce></p>
+</Base>
+
+<script>
+  import { cart, money, type CartItem } from '../scripts/cart';
+  import { insert, supabaseReady } from '../scripts/supabase';
+  import '../scripts/add-buttons';
+  import { catalogo, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
+
+  const root = document.querySelector<HTMLElement>('[data-checkout]')!;
+  const C = root.dataset;
+  const FREE = Number(C.free), FLAT = Number(C.flat), PRIO = Number(C.prioCost), GIFT = Number(C.gift);
+  const LOCAL = C.local!.split('|');
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+  const $$ = <T extends HTMLElement = HTMLElement>(s: string) => [...document.querySelectorAll<T>(s)];
+  const form = $<HTMLFormElement>("[data-ship-form]");
+  const announce = document.querySelector<HTMLElement>('[data-announce]')!;
+  let step = 0;
+  let done = false;
+
+  /* ---------- ciudad: en Risaralda se elige de la lista; en otro departamento se escribe ---------- */
+  const dept = $<HTMLSelectElement>('#c-depto');
+  const citySel = $<HTMLSelectElement>('[data-city-select]');
+  const cityTxt = $<HTMLInputElement>('[data-city-input]');
+  const syncCity = () => {
+    const ris = dept.value === 'Risaralda';
+    citySel.hidden = !ris; citySel.disabled = !ris;
+    cityTxt.hidden = ris; cityTxt.disabled = ris;
+    // la etiqueta apunta al campo visible
+    root.querySelector('label[for^="c-ciudad"]')!.setAttribute('for', ris ? 'c-ciudad' : 'c-ciudad-txt');
+    if (!ris && dept.value === 'Bogotá D.C.' && !cityTxt.value) cityTxt.value = 'Bogotá';
+  };
+  dept.addEventListener('change', () => { syncCity(); paint(); });
+  const city = () => (dept.value === 'Risaralda' ? citySel.value : cityTxt.value.trim());
+  const isLocal = () => step === 1 && dept.value === 'Risaralda' && LOCAL.includes(citySel.value);
+
+  /* ---------- filas del carrito ---------- */
+  const row = (it: CartItem) => {
+    const li = document.createElement('li');
+    li.className = 'row';
+    const ic = document.createElement('span'); ic.className = 'row__ic'; ic.style.background = it.tone;
+    ic.innerHTML = `<span class="ms" aria-hidden="true">${it.icon}</span>`;
+    const txt = document.createElement('span'); txt.className = 'row__txt';
+    const a = document.createElement('a'); a.href = `/producto/${it.id}`; a.textContent = it.name;
+    const meta = document.createElement('span');
+    const v = it.variant && !/^(único|única)$/i.test(it.variant) ? `${it.variant} · ` : '';
+    meta.textContent = `${v}${money(it.price)} c/u`;
+    txt.append(a, meta);
+    const qty = document.createElement('span'); qty.className = 'qty'; qty.setAttribute('role', 'group'); qty.setAttribute('aria-label', `Cantidad de ${it.name}`);
+    const dec = document.createElement('button'); dec.type = 'button'; dec.textContent = '−'; dec.setAttribute('aria-label', 'Quitar uno');
+    const out = document.createElement('output'); out.textContent = String(it.qty);
+    const inc = document.createElement('button'); inc.type = 'button'; inc.textContent = '+'; inc.setAttribute('aria-label', 'Agregar uno');
+    dec.disabled = it.qty <= 1; inc.disabled = it.qty >= it.max;
+    dec.addEventListener('click', () => cart.setQty(it.key, it.qty - 1));
+    inc.addEventListener('click', () => cart.setQty(it.key, it.qty + 1));
+    qty.append(dec, out, inc);
+    const line = document.createElement('b'); line.className = 'row__line'; line.textContent = money(it.price * it.qty);
+    const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'row__rm'; rm.setAttribute('aria-label', `Eliminar ${it.name} del carrito`);
+    rm.innerHTML = '<span class="ms" aria-hidden="true">close</span>';
+    rm.addEventListener('click', () => { cart.remove(it.key); announce.textContent = `${it.name} salió del carrito.`; });
+    li.append(ic, txt, qty, line, rm);
+    return li;
+  };
+
+  /* ---------- pintar todo ---------- */
+  const totals = () => {
+    const sub = cart.subtotal();
+    const prio = $<HTMLInputElement>('[data-prio]').checked && step === 1;
+    const free = isLocal() || sub >= FREE;
+    // en el paso 1 aún no sabemos la ciudad: el envío se muestra al elegirla
+    const ship = step === 0 ? (sub >= FREE ? 0 : null) : free ? 0 : FLAT;
+    return { sub, prio, ship, total: sub + (ship ?? 0) + (prio ? PRIO : 0) };
+  };
+
+  const paint = () => {
+    if (done) return;
+    const items = cart.items();
+    const has = items.length > 0;
+    $('[data-empty]').hidden = has;
+    $('[data-main]').hidden = !has;
+    $('[data-summary]').hidden = !has;
+    document.querySelector<HTMLElement>('[data-mbar]')!.hidden = !has;
+    document.documentElement.classList.toggle('has-mbar', has);
+    if (!has) return;
+
+    const list = $('[data-rows]'); list.innerHTML = '';
+    items.forEach((it) => list.append(row(it)));
+
+    let shown = 0;
+    root.querySelectorAll<HTMLElement>('[data-extra]').forEach((x) => {
+      x.hidden = items.some((it) => it.id === x.dataset.extra) || shown >= 3;
+      if (!x.hidden) shown++;
+    });
+    $('[data-extras]').hidden = shown === 0;
+
+    const t = totals();
+    const local = isLocal();
+    const freeTxt = $('[data-free-txt]');
+    const freeBar = $('[data-free-bar]');
+    let pct = Math.min(100, Math.round((t.sub / FREE) * 100));
+    if (local) { freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>Envío <b>gratis</b> en ${city()}.</span>`; pct = 100; }
+    else if (t.sub >= FREE) freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>¡Lograste el envío <b>gratis</b>${step === 1 && city() ? ' a ' + city() : ' a toda Colombia'}!</span>`;
+    else freeTxt.innerHTML = `<span class="ms" aria-hidden="true">local_shipping</span><span>Te faltan <b>${money(FREE - t.sub)}</b> para envío <b>gratis</b> a toda Colombia.</span>`;
+    const fill = freeBar.querySelector('i')!;
+    fill.style.width = pct + '%';
+    fill.classList.toggle('is-full', pct >= 100); freeBar.setAttribute('aria-valuenow', String(pct));
+
+    const gp = Math.min(100, Math.round((t.sub / GIFT) * 100));
+    $('[data-gift-txt]').innerHTML = t.sub >= GIFT
+      ? '<span class="ms fill" aria-hidden="true">redeem</span><span><b>¡Te ganaste un snack dental!</b> Va con tu pedido.</span>'
+      : `<span class="ms" aria-hidden="true">redeem</span><span>Agrega <b>${money(GIFT - t.sub)}</b> más y llévate un <b>obsequio</b>.</span>`;
+    const gb = $('[data-gift-bar]'); gb.querySelector('i')!.style.width = gp + '%'; gb.setAttribute('aria-valuenow', String(gp));
+
+    $('[data-sub]').textContent = money(t.sub);
+    $('[data-ship]').textContent = t.ship === null ? 'En el siguiente paso' : t.ship === 0 ? 'Gratis' : money(t.ship);
+    $('[data-prio-row]').hidden = !t.prio;
+    $$('[data-total]').forEach((el) => { el.textContent = money(t.total); });
+    $('[data-ship-note]').hidden = step === 1 || t.ship !== null;
+  };
+
+  /* ---------- pasos ---------- */
+  const go = (n: number) => {
+    step = n;
+    root.querySelectorAll<HTMLElement>('[data-step]').forEach((el) => { el.hidden = Number(el.dataset.step) !== n; });
+    root.querySelectorAll<HTMLElement>('[data-wiz]').forEach((li) => {
+      const i = Number(li.dataset.wiz);
+      li.className = i < n ? 'done' : i === n ? 'now' : 'todo';
+      li.querySelector('button')!.disabled = i >= n;
+      if (i === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    });
+    $('[data-next]').hidden = n !== 0;
+    $('[data-place]').hidden = n !== 1;
+    $('[data-back]').hidden = n !== 1;
+    document.querySelector('[data-mbar-txt]')!.textContent = n === 0 ? 'Continuar' : 'Confirmar pedido';
+    paint();
+    $('[data-main]').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    root.querySelector<HTMLElement>(`[data-step="${n}"] .panel__t`)?.focus({ preventScroll: true });
+  };
+  root.querySelectorAll<HTMLButtonElement>('[data-go]').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.go))));
+  $('[data-next]').addEventListener('click', () => go(1));
+  $('[data-back]').addEventListener('click', () => go(0));
+
+  /* ---------- validación y envío por WhatsApp ---------- */
+  const showErr = (key: string, on: boolean) => {
+    const el = root.querySelector<HTMLElement>(`[data-err-for="${key}"]`);
+    el?.classList.toggle('is-on', on);
+    const input = root.querySelector<HTMLElement>(`#${key}`);
+    if (input && el) { el.id = `${key}-err`; input.setAttribute('aria-invalid', String(on)); if (on) input.setAttribute('aria-describedby', el.id); }
+  };
+  const validate = () => {
+    let first: string | null = null;
+    const need = ['c-nombre', 'c-apellido', 'c-cel', 'c-dir', 'c-barrio'];
+    if (dept.value !== 'Risaralda') need.push('c-ciudad-txt');
+    for (const id of need) {
+      const el = $<HTMLInputElement>(`#${id}`);
+      const bad = !el.value.trim() || (id === 'c-cel' && el.value.replace(/\D/g, '').length < 10);
+      showErr(id, bad); if (bad && !first) first = id;
+    }
+    if (dept.value === 'Risaralda') showErr('c-ciudad-txt', false);
+    const mail = $<HTMLInputElement>('#c-correo');
+    const badMail = !!mail.value && !mail.checkValidity();
+    showErr('c-correo', badMail); if (badMail && !first) first = 'c-correo';
+    const consent = (form.elements.namedItem('datos') as HTMLInputElement);
+    showErr('datos', !consent.checked); if (!consent.checked && !first) first = 'datos';
+    if (first) root.querySelector<HTMLElement>(`#${first}, [name="${first}"]`)?.focus();
+    return !first;
+  };
+
+  // El pedido se guarda en Supabase (tabla pedidos, la lee el gestor). El cliente no tiene que enviar nada:
+  // la tienda le escribe por WhatsApp para confirmar.
+  const wa = (text: string) => `https://wa.me/${C.shop}?text=${encodeURIComponent(text)}`;
+  // en la vista previa sin Supabase configurado se simula que se guardó
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+  let sending = false;
+  let lastOrder: { code: string; fields: Record<string, string>; row: Record<string, unknown>; msg: string } | null = null;
+
+  const buildOrder = () => {
+    const v = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
+    const t = totals();
+    const code = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
+    const lines = cart.items().map((it) => {
+      const vr = it.variant && !/^(único|única)$/i.test(it.variant) ? ` (${it.variant})` : '';
+      return `${it.qty} × ${it.name}${vr} — ${money(it.price * it.qty)}`;
+    });
+    const ship = t.ship === 0 ? 'Gratis' : money(t.ship ?? 0);
+    const fields: Record<string, string> = {
+      codigo: code,
+      nombre: v('nombre'), apellido: v('apellido'), celular: v('celular'), correo: v('correo'),
+      departamento: dept.value, ciudad: city(), direccion: v('direccion'), barrio: v('barrio'), indicaciones: v('notas'),
+      productos: lines.join('\n'), subtotal: money(t.sub), envio: ship, prioritario: t.prio ? 'Sí' : 'No',
+      total: money(t.total), obsequio: t.sub >= GIFT ? 'Snack dental' : 'No',
+      aviso: (form.elements.namedItem('aviso') as HTMLInputElement).checked ? 'Sí' : 'No'
+    };
+    // por si no se puede guardar: el pedido completo listo para WhatsApp
+    const msg = [
+      `Hola, Alma Animal. Quiero hacer este pedido (${code}):`, ...lines.map((l) => '• ' + l),
+      `Subtotal: ${fields.subtotal}`, `Envío: ${ship}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`, `Total: ${fields.total}`,
+      t.sub >= GIFT ? 'Con obsequio: snack dental 🎁' : '', '',
+      `Para: ${fields.nombre} ${fields.apellido} · ${fields.celular}${fields.correo ? ' · ' + fields.correo : ''}`,
+      `Dirección: ${fields.direccion}, barrio ${fields.barrio}, ${fields.ciudad} (${fields.departamento})`,
+      fields.indicaciones ? `Indicaciones: ${fields.indicaciones}` : ''
+    ].filter((x, i, a) => x !== '' || (i > 0 && a[i - 1] !== '')).join('\n');
+    // fila de la tabla pedidos (valores en pesos, sin formato)
+    const row = {
+      codigo: code, nombre: fields.nombre, apellido: fields.apellido, celular: fields.celular, correo: fields.correo || null,
+      departamento: fields.departamento, ciudad: fields.ciudad, direccion: fields.direccion, barrio: fields.barrio,
+      indicaciones: fields.indicaciones || null,
+      items: cart.items().map((it) => ({ id: it.id, nombre: it.name, variante: it.variant, precio: it.price, cantidad: it.qty })),
+      subtotal: t.sub, envio: t.ship ?? 0, prioritario: t.prio, total: t.total,
+      obsequio: t.sub >= GIFT, aviso_compras: fields.aviso === 'Sí',
+      acepto_terminos: true, version_politicas: C.legal
+    };
+    return { code, fields, row, msg };
+  };
+
+  const show = (which: 'done' | 'fail') => {
+    $('[data-done]').hidden = which !== 'done';
+    $('[data-fail]').hidden = which !== 'fail';
+    $('[data-main]').hidden = true;
+    $('[data-summary]').hidden = true;
+    document.querySelector<HTMLElement>('[data-mbar]')!.hidden = true;
+    document.documentElement.classList.remove('has-mbar');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    root.querySelector<HTMLElement>(which === 'done' ? '[data-done] h2' : '[data-fail] h2')?.setAttribute('tabindex', '-1');
+    root.querySelector<HTMLElement>(which === 'done' ? '[data-done] h2' : '[data-fail] h2')?.focus({ preventScroll: true });
+  };
+
+  const setBusy = (on: boolean) => {
+    sending = on;
+    $('[data-place-txt]').textContent = on ? 'Enviando tu pedido…' : 'Confirmar pedido';
+    document.querySelector('[data-mbar-txt]')!.textContent = on ? 'Enviando…' : 'Confirmar pedido';
+    $<HTMLButtonElement>('[data-place]').disabled = on;
+    document.querySelector<HTMLButtonElement>('[data-mbar-btn]')!.disabled = on;
+  };
+
+  const send = async (order: NonNullable<typeof lastOrder>) => {
+    setBusy(true);
+    const ok = PREVIEW || (await insert('pedidos', order.row)) === 'ok';
+    // en la vista previa el pedido queda en este navegador para verlo en el gestor de ejemplo
+    if (PREVIEW) {
+      try {
+        const k = 'alma-pedidos-vista-previa';
+        const prev = JSON.parse(localStorage.getItem(k) || '[]');
+        prev.unshift({ ...order.row, id: 'vp-' + order.code, numero: 1044 + prev.length, creado: new Date().toISOString(), estado: 'nuevo', pago: 'pendiente', nota_interna: null });
+        localStorage.setItem(k, JSON.stringify(prev.slice(0, 20)));
+      } catch { /* sin almacenamiento */ }
+    }
+    setBusy(false);
+    if (ok) {
+      done = true;
+      $('[data-done-name]').textContent = order.fields.nombre;
+      $('[data-done-code]').textContent = order.code;
+      $('[data-done-cel]').textContent = order.fields.celular;
+      $<HTMLAnchorElement>('[data-done-wa]').href = wa(`Hola, Alma Animal. Quiero confirmar mi pedido ${order.code}.`);
+      cart.clear();
+      show('done');
+    } else {
+      $<HTMLAnchorElement>('[data-fail-wa]').href = wa(order.msg);
+      show('fail');
+    }
+  };
+
+  const place = () => {
+    if (sending || !validate()) return;
+    lastOrder = buildOrder();
+    send(lastOrder);
+  };
+  $('[data-retry]').addEventListener('click', () => {
+    $('[data-fail]').hidden = true;
+    $('[data-main]').hidden = false; $('[data-summary]').hidden = false;
+    if (lastOrder) send(lastOrder);
+  });
+  $('[data-place]').addEventListener('click', place);
+  document.querySelector('[data-mbar-btn]')!.addEventListener('click', () => (step === 0 ? go(1) : place()));
+  form.addEventListener('submit', (e) => { e.preventDefault(); place(); });
+  form.addEventListener('change', paint);
+  citySel.addEventListener('change', paint);
+
+  syncCity();
+  paint();
+  catalogo().then((lista) => {
+    const extras = lista.filter((p) => p.variantes.length === 1 && stockDe(p) > 0)
+      .sort((a, b) => a.variantes[0].precio - b.variantes[0].precio).slice(0, 8);
+    $('[data-extras-grid]').innerHTML = extras.map((p) => {
+      const v = p.variantes[0];
+      return `<div class="extra" data-extra="${esc(p.slug)}">
+        <span class="extra__ic" style="background:${TONOS[p.tono] ?? TONOS.lav}" aria-hidden="true">${portada(p)}</span>
+        <span class="extra__txt"><a href="${productoUrl(p.slug)}">${esc(p.nombre)}</a><span>${money(v.precio)}</span></span>
+        <button class="add add--sm" type="button" aria-label="Agregar ${esc(p.nombre)} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add</span></button>
+      </div>`;
+    }).join('');
+    paint();
+  }).catch(() => { /* sin sugerencias si no carga el catálogo */ });
+  cart.onChange(paint);
+</script>
+
+<style>
+  .intro { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; padding-bottom: 24px; }
+  .back { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 500 15px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .back .ms { font-size: 18px; }
+  .intro__row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+  .intro h1 { font-size: clamp(34px, 8vw, 56px); }
+  .perks { display: none; }
+  @media (min-width: 900px) {
+    .intro { padding-bottom: 32px; }
+    .perks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .perks li { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); font: 600 15px/1.2 var(--font-sans); }
+    .perks .ms { color: var(--primary); }
+  }
+
+  .checkout { display: grid; gap: 20px; align-items: start; padding-bottom: var(--section); }
+  .checkout__main { display: flex; flex-direction: column; gap: 20px; min-width: 0; scroll-margin-top: 80px; }
+  .checkout__main[hidden], [data-step][hidden], .summary[hidden], .empty[hidden], .sent[hidden] { display: none; }
+  .panel { min-width: 0; background: #fff; border-radius: 22px; box-shadow: 0 0 0 1px var(--line); padding: 20px 16px; }
+  .panel__t { font: 600 21px/1.3 var(--font-sans); }
+  .panel__t:focus { outline: none; }
+  @media (min-width: 768px) { .panel { padding: 28px; border-radius: var(--r-md); } .panel__t { font-size: 22px; } }
+
+  /* pasos */
+  .wiz { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; max-width: 420px; }
+  .wiz li { flex: 1; min-width: 0; }
+  .wiz button { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0; border: 0; background: transparent; font: inherit; color: var(--ink-muted); text-align: left; cursor: pointer; }
+  .wiz button:disabled { cursor: default; }
+  .wiz button::before { content: ""; display: block; width: 100%; height: 4px; border-radius: 999px; background: var(--line-soft); transition: background .3s var(--ease); }
+  .wiz .done button::before, .wiz .now button::before { background: var(--primary); }
+  .wiz i { font: 700 12px/1 var(--font-sans); font-style: normal; color: var(--primary); }
+  .wiz span { font: 600 14px/1.25 var(--font-sans); }
+  .wiz .now span { color: var(--ink); }
+
+  /* productos */
+  .step1 { display: flex; flex-direction: column; gap: 24px; }
+  .rows { list-style: none; margin: 8px 0 0; padding: 0; }
+  .rows :global(.row) { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-areas: "ic txt rm" "ic qty line"; gap: 8px 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--surface-3); }
+  .rows :global(.row:first-child) { border-top: 0; }
+  .rows :global(.row__ic) { grid-area: ic; align-self: start; width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; color: rgb(54 41 84 / .6); }
+  .rows :global(.row__txt) { grid-area: txt; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .rows :global(.row__txt a) { font: 600 15.5px/1.3 var(--font-sans); color: var(--ink); text-decoration: none; }
+  .rows :global(.row__txt a:hover) { text-decoration: underline; }
+  .rows :global(.row__txt span) { font: 400 14px/1.4 var(--font-sans); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .rows :global(.qty) { grid-area: qty; justify-self: start; display: inline-flex; align-items: center; height: 40px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+  .rows :global(.qty button) { width: 40px; height: 38px; border: 0; border-radius: 999px; background: transparent; color: var(--primary); font: 500 22px/1 var(--font-sans); cursor: pointer; }
+  .rows :global(.qty button:hover:not(:disabled)) { background: var(--surface-3); }
+  .rows :global(.qty button:disabled) { color: #B9B2C0; cursor: default; }
+  .rows :global(.qty output) { min-width: 24px; text-align: center; font: 600 16px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .rows :global(.row__line) { grid-area: line; justify-self: end; font: 700 16px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .rows :global(.row__rm) { grid-area: rm; justify-self: end; align-self: start; width: 36px; height: 36px; margin: -6px -6px 0 0; border: 0; border-radius: 50%; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; }
+  .rows :global(.row__rm:hover) { background: var(--surface-3); color: var(--ink); }
+  .rows :global(.row__rm .ms) { font-size: 20px; }
+  @media (min-width: 768px) {
+    .rows :global(.row) { grid-template-columns: 72px minmax(0, 1fr) auto 96px 36px; grid-template-areas: "ic txt qty line rm"; gap: 16px; padding: 16px 0; }
+    .rows :global(.row__ic) { align-self: center; width: 72px; height: 72px; border-radius: 14px; }
+    .rows :global(.row__txt a) { font-size: 17px; }
+    .rows :global(.row__txt span) { font-size: 15px; }
+    .rows :global(.row__line) { font-size: 18px; }
+    .rows :global(.row__rm) { align-self: center; margin: 0; }
+  }
+
+  .extras { display: flex; flex-direction: column; gap: 14px; }
+  .extras[hidden], .extras :global(.extra[hidden]) { display: none; }
+  .extras__grid { display: grid; gap: 12px; }
+  .extras :global(.extra) { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+  .extras :global(.extra__ic) { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; flex: none; color: rgb(54 41 84 / .6); }
+  .extras :global(.extra__txt) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 600 15px/1.3 var(--font-sans); }
+  .extras :global(.extra__txt a) { color: var(--ink); text-decoration: none; }
+  .extras :global(.extra__txt a:hover) { text-decoration: underline; }
+  .extras :global(.extra__txt span) { font-weight: 400; color: var(--ink-muted); }
+  @media (min-width: 700px) { .extras__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .extras :global(.extra) { flex-direction: column; align-items: flex-start; } .extras :global(.extra .add) { align-self: flex-end; margin-top: -40px; } }
+  .extras :global(.extra__ic img) { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+  /* envío */
+  .ship { display: flex; flex-direction: column; gap: 20px; }
+  .ship__head { display: flex; flex-direction: column; gap: 4px; }
+  .client { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: var(--surface-2); font: 400 15px/1.5 var(--font-sans); }
+  .client .ms { font-size: 24px; color: var(--primary); }
+  .grid2 { display: grid; gap: 18px; }
+  .fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .fld label { font: 600 15px/1.3 var(--font-sans); }
+  .fld input, .fld select, .fld textarea { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 16px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; transition: border-color .15s, box-shadow .15s; }
+  .fld select { padding-right: 12px; }
+  .fld textarea { min-height: 96px; padding: 14px 16px; resize: vertical; }
+  .fld input::placeholder, .fld textarea::placeholder { color: #6E6585; }
+  .fld input:focus, .fld select:focus, .fld textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  .fld input[aria-invalid="true"] { border-color: #B4271F; }
+  .fld [hidden] { display: none; }
+  .hint { font: 400 14px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .hint[hidden] { display: none; }
+  .req { color: #B4271F; }
+  .err { display: none; font: 600 14px/1.4 var(--font-sans); color: #B4271F; }
+  .err.is-on { display: block; }
+  @media (min-width: 768px) {
+    .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+    .full { grid-column: 1 / -1; }
+  }
+  .prio { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); cursor: pointer; transition: border-color .2s, background .2s; }
+  .prio:has(input:checked) { border-color: var(--primary); background: var(--surface-2); }
+  .prio input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+  .prio > .ms { font-size: 26px; color: var(--primary); }
+  .prio__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .prio__txt b { font: 600 17px/1.3 var(--font-sans); }
+  .prio__txt span { font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .prio__price { font: 700 17px/1 var(--font-sans); white-space: nowrap; }
+  .consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
+  .consent b { color: var(--ink); }
+  .consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
+
+  /* resumen */
+  .summary .panel { display: flex; flex-direction: column; gap: 16px; }
+  .meter { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 16px; background: var(--surface-2); }
+  .meter--gift { background: var(--grad-alma); color: #362954; }
+  .meter__txt { display: flex; gap: 8px; align-items: flex-start; font: 500 15.5px/1.4 var(--font-sans); }
+  .meter__txt :global(.ms) { flex: none; color: var(--primary); }
+  .meter--gift .meter__txt :global(.ms) { color: #362954; }
+  .meter__txt :global(.ms.ok) { color: #1D7A33; }
+  .meter__txt :global(.fill) { font-variation-settings: "FILL" 1; }
+  .bar { height: 8px; border-radius: 999px; background: #ECE6ED; overflow: hidden; }
+  .meter--gift .bar { background: rgb(255 255 255 / .6); }
+  .bar i { display: block; width: 0; height: 100%; border-radius: 999px; background: var(--grad-primary); transition: width .6s var(--ease); }
+  .totals { margin: 0; display: flex; flex-direction: column; gap: 10px; font: 400 16.5px/1.3 var(--font-sans); }
+  .totals div { display: flex; justify-content: space-between; gap: 12px; }
+  .totals div[hidden] { display: none; }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+  .totals__total { padding-top: 12px; border-top: 1px solid var(--line); font: 700 19px/1.2 var(--font-sans); }
+  .btn--go { width: 100%; height: 56px; font-size: 17px; }
+  .btn--go[hidden], .backlink[hidden] { display: none; }
+  .backlink { align-self: center; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 8px; color: var(--primary); font: 600 15px/1 var(--font-sans); cursor: pointer; }
+  .backlink .ms { font-size: 18px; }
+  .summary .wa-o { width: 100%; }
+  /* en celular las acciones van en la barra inferior */
+  @media (max-width: 999px) { .btn--go, .backlink { display: none !important; } }
+  @media (min-width: 1000px) {
+    .checkout { grid-template-columns: minmax(0, 1fr) 380px; gap: 32px; }
+    .summary { position: sticky; top: 24px; }
+  }
+
+  /* vacío y enviado */
+  .empty, .sent { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 20px; text-align: center; }
+  .empty h2, .sent h2 { font: 600 24px/1.25 var(--font-sans); }
+  .empty p, .sent p { max-width: 44ch; color: var(--ink-muted); line-height: 1.5; }
+  .sent p b { color: var(--ink); }
+  .empty__ic, .sent__ic { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; }
+  .empty__ic { background: var(--grad-alma); color: #362954; }
+  .sent__ic { background: #B8F1B9; color: #1D5128; }
+  .empty__ic .ms, .sent__ic .ms { font-size: 34px; }
+  .sent__ic .ms { font-variation-settings: "FILL" 1; }
+  .sent h2:focus { outline: none; }
+  .sent__code { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .sent__wa { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; padding: 16px 14px; border-radius: 20px; background: var(--surface-2); width: 100%; max-width: 440px; }
+  .sent__wa > span { font: 500 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .sent__wa .wa-o { width: 100%; }
+  .sent--warn .sent__ic { background: #FFDDB2; color: #624000; }
+  .sent--warn .sent__wa { flex-direction: row; flex-wrap: wrap; justify-content: center; background: none; padding: 0; }
+  .sent--warn .sent__wa > * { flex: 1 1 180px; }
+  .link-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 8px; font: 600 15px/1 var(--font-sans); color: var(--primary); text-decoration: none; }
+  .link-btn:hover { text-decoration: underline; }
+  .link-btn .ms { font-size: 18px; }
+  .empty .btn, .sent .btn { margin-top: 8px; }
+
+  /* barra inferior (celular) */
+  .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 38; display: flex; align-items: center; gap: 14px; padding: 12px var(--gutter) max(12px, env(safe-area-inset-bottom)); background: #fff; box-shadow: 0 -1px 0 var(--line-soft), 0 -8px 20px rgb(54 41 84 / .08); }
+  .mbar[hidden] { display: none; }
+  .mbar__total { display: flex; flex-direction: column; gap: 3px; }
+  .mbar__total small { font: 500 13px/1 var(--font-sans); color: var(--ink-muted); }
+  .mbar__total b { font: 700 20px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .mbar .btn { flex: 1; height: 52px; font-size: 16px; }
+  :global(html.has-mbar .fab-wa) { display: none !important; }
+  :global(html.has-mbar main) { padding-bottom: 80px; }
+  @media (min-width: 1000px) {
+    .mbar { display: none !important; }
+    :global(html.has-mbar .fab-wa) { display: grid !important; }
+    :global(html.has-mbar main) { padding-bottom: 0; }
+  }
+</style>

@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Gestor · Paciente · Alma Animal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&amp;family=Gowun+Batang:wght@400;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&amp;display=block">
+<style>
+body{margin:0;background:#F8F2F8}
+a{color:#655785}a:hover{color:#4D3F6C}
+.g{--grad-primary:linear-gradient(100deg,#7A6A9C 0%,#655785 45%,#4D3F6C 100%);font-family:"Alan Sans","Segoe UI",system-ui,sans-serif;color:#2B1E48;background:#F8F2F8;-webkit-font-smoothing:antialiased;min-height:100%;display:flex;flex-wrap:wrap}
+.g *{box-sizing:border-box}
+.g h1,.g h2,.g h3,.g p{margin:0}
+.g ::selection{background:#FBCFAF;color:#623F21}
+.g :focus-visible{outline:3px solid #655785;outline-offset:2px}
+.ms{font-family:"Material Symbols Rounded";font-weight:400;font-style:normal;font-size:20px;line-height:1;display:inline-block;white-space:nowrap;letter-spacing:normal;text-transform:none;direction:ltr;width:1em;height:1em;overflow:hidden;flex:none;font-variation-settings:"FILL" 0,"wght" 400,"opsz" 24}
+.ms.fill{font-variation-settings:"FILL" 1,"wght" 400,"opsz" 24}
+.side{flex:0 0 256px;background:#2B1E48;color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:18px;min-height:1700px}
+.side .grp{font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:0 12px;margin-top:6px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.85);text-decoration:none;font:500 15px/1 "Alan Sans",sans-serif;transition:background .15s}
+.side nav a:hover{background:rgb(255 255 255/.08);color:#fff}
+.side nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+.side nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+.main{flex:999 1 900px;min-width:0;padding:24px 32px 48px;display:flex;flex-direction:column;gap:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;border:1px solid transparent;background:var(--grad-primary);color:#fff;font:600 15px/1 "Alan Sans",sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn:hover{color:#fff;box-shadow:0 2px 6px rgb(54 41 84/.2)}
+.btn.out{background:#fff;color:#655785;border-color:#CBC4D1}
+.btn.out:hover{background:#F2ECF2;color:#4D3F6C;box-shadow:none}
+.btn.wa-o{background:#fff;color:#00852A;border:2px solid #00BC39}
+.btn.wa-o:hover{background:#00BC39;color:#06290F}
+.btn.sm{height:34px;padding:0 12px;font-size:14px}
+.card{background:#fff;border-radius:20px;box-shadow:0 0 0 1px #E6E1E7;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card h2{font:600 17px/1.3 "Alan Sans",sans-serif;display:flex;align-items:center;gap:8px}
+.card h2 .ms{color:#655785}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;font:600 13px/1 "Alan Sans",sans-serif;white-space:nowrap}
+.kv{display:flex;flex-direction:column;margin:0}
+.kv div{display:grid;grid-template-columns:132px minmax(0,1fr);gap:10px;padding:9px 0;border-bottom:1px solid #F2ECF2}
+.kv dt{font:500 14px/1.35 "Alan Sans",sans-serif;color:#584E6E}
+.kv dd{margin:0;font:600 15px/1.35 "Alan Sans",sans-serif}
+.tab{height:40px;padding:0 14px;border-radius:999px;border:0;font:600 14px/1 "Alan Sans",sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ex{font:500 12px/1 "Alan Sans",sans-serif;color:#584E6E;background:#F2ECF2;border-radius:999px;padding:5px 10px}
+/*GMOVIL-INI*/
+.gbar,.gnav,.mdays{display:none}
+.lanebtn{border:0;cursor:pointer;font-family:inherit}
+@media (max-width:760px){
+  .g{display:block !important}
+  .side{display:none !important}
+  .main{padding:0 14px 104px !important;gap:14px !important}
+  /* barra superior */
+  .gbar{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:30;margin:0 -14px;padding:10px 14px;background:#2B1E48;color:#fff}
+  .gbar-logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font:600 17px/1 "Alan Sans",sans-serif}
+  .gbar-logo:hover{color:#fff}
+  .gbar-logo > span{width:34px;height:34px;border-radius:10px;background:var(--grad-primary);display:grid;place-items:center}
+  .gbar-logo img{width:26px}
+  .gbar-ic{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgb(255 255 255/.12);color:#fff;display:grid;place-items:center;text-decoration:none}
+  .gbar-ic:hover{color:#fff;background:rgb(255 255 255/.2)}
+  /* navegación inferior */
+  .gnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;gap:4px;background:#2B1E48;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgb(43 30 72/.25)}
+  .gnav > a,.gmore > summary{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:14px;color:rgb(255 255 255/.78);font:600 11.5px/1 "Alan Sans",sans-serif;text-decoration:none;list-style:none;cursor:pointer}
+  .gnav > a:hover{color:#fff}
+  .gnav .ms{font-size:22px}
+  .gnav .on,.gmore.on > summary{color:#2B1E48;background:#FBCFAF}
+  .gmore{flex:1;display:flex}
+  .gmore > summary::-webkit-details-marker{display:none}
+  .gmore[open] > summary{color:#fff;background:rgb(255 255 255/.14)}
+  .gsheet{position:fixed;left:8px;right:8px;bottom:78px;max-height:70vh;overflow:auto;background:#2B1E48;border-radius:22px;padding:8px 10px 12px;box-shadow:0 -10px 30px rgb(43 30 72/.35)}
+  .gsheet .grp{display:block;font:600 12px/1 "Alan Sans",sans-serif;letter-spacing:.06em;color:rgb(255 255 255/.55);padding:14px 12px 6px}
+  .gsheet nav{display:flex;flex-direction:column;gap:2px}
+  .gsheet nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 12px;border-radius:12px;color:rgb(255 255 255/.88);text-decoration:none;font:500 15.5px/1.2 "Alan Sans",sans-serif}
+  .gsheet nav a.on{background:#FBCFAF;color:#2B1E48;font-weight:600}
+  .gsheet nav a .n{margin-left:auto;min-width:22px;height:22px;border-radius:999px;background:#FBCFAF;color:#623F21;font:700 12px/22px "Alan Sans",sans-serif;text-align:center;padding:0 6px}
+
+  /* encabezado de cada módulo */
+  .main h1{font-size:24px !important;line-height:1.15 !important}
+  .main > div:first-of-type{gap:10px !important;padding-top:14px}
+  .main > div:first-of-type > div:first-child{flex:1 1 100% !important}
+  .main > div:first-of-type p{font-size:14.5px !important}
+  .main > div:first-of-type > .btn,.main > div:first-of-type > a.btn{flex:1 1 auto}
+  .ex{order:-1}
+
+  /* rejillas: una columna; las de 4-5 columnas (indicadores) en dos; fotos en tres */
+  :where(.g) [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  :where(.g) [style*="grid-template-columns: repeat(4"],:where(.g) [style*="grid-template-columns: repeat(5"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  :where(.g) [style*="grid-template-columns: repeat(6"]{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  .main [style*="grid-column: 1 / -1"],.main [style*="grid-column: span"]{grid-column:auto !important}
+  .card{padding:14px !important;border-radius:18px !important}
+  .main div[style*="display: flex"]:not([role="tablist"]){flex-wrap:wrap}
+  .main [style*="white-space: nowrap"]{white-space:normal}
+  .main label[style*="width: 2"],.main label[style*="width: 3"]{width:100% !important;margin-left:0 !important}
+  .main [style*="margin-left: auto"]{margin-left:0}
+  .btn{min-height:44px}
+
+  /* tablas y filas anchas: se deslizan de lado dentro de su tarjeta */
+  .main div:has(> table),.card:has(> table){overflow-x:auto}
+  .main table{min-width:640px}
+  .main div:has(> .vrow),.main div:has(> .trow),.main section:has(> .trow),.main div:has(> .urow),.main section:has(> .urow){overflow-x:auto}
+  .vrow{min-width:560px}
+  .trow{min-width:760px}
+  .urow{min-width:700px}
+  .drow{grid-template-columns:46px minmax(0,1fr) !important;gap:8px 12px !important}
+  .drow > :nth-child(n+3){grid-column:2}
+  .main{overflow-wrap:break-word}
+  .main .card,.main .blk,.main .sec,.main section{min-width:0 !important;max-width:100%;overflow-wrap:anywhere}
+  .main .card *{max-width:100%}
+  .main .card table,.main .card .vrow,.main .card .trow,.main .card .urow,.main .card .prow,.main .card .lanes,.main .card [style*="46px repeat(6"]{max-width:none}
+  .main h3{flex-wrap:wrap}
+  .sec h3 small{flex-basis:100%}
+  /* agenda del día (Hoy): los 3 carriles se mantienen lado a lado */
+  .lanebtn[aria-pressed="true"]{box-shadow:0 0 0 2px #2B1E48}
+  :where(.g) .lanes{grid-template-columns:44px minmax(0,1fr) !important;gap:0 8px !important}
+  .lanes:not([data-lane="s"]) .ln-s,.lanes:not([data-lane="d"]) .ln-d,.lanes[data-lane="s"] .ln-c,.lanes[data-lane="d"] .ln-c{display:none !important}
+  .lanes-body > div[aria-hidden]{left:52px !important}
+  /* agenda de la semana: se desliza de lado, un día de ~110 px por columna */
+  .mdays{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:6px}
+  .mdays button{border:0;border-radius:14px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:inset 0 0 0 1px #E6E1E7;font-family:inherit}
+  .mdays span{font:600 11px/1 "Alan Sans",sans-serif;letter-spacing:.04em}
+  .mdays b{font:700 18px/1 "Alan Sans",sans-serif}
+  .wkday.m-off{display:none !important}
+  :where(.g) [style*="grid-template-columns: 46px repeat(6"]{grid-template-columns:40px minmax(0,1fr) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 4px"]{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
+  :where(.g) [style*="repeat(6"][style*="gap: 8px"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  /* spa: franja de hoy deslizable */
+  /* spa: la franja de hoy pasa a lista */
+  section[aria-labelledby="hoy"] div[style*="height: 92px"]{height:auto !important;display:flex;flex-direction:column;gap:8px}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] > div,section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="top: 0"],section[aria-labelledby="hoy"] div[style*="height: 92px"] span[style*="dashed"]{display:none !important}
+  section[aria-labelledby="hoy"] div[style*="height: 92px"] button{position:static !important;width:auto !important;height:auto !important;min-height:56px;padding:10px 14px !important}
+  /* pasos en una sola fila */
+  :where(.g) ol[style*="repeat(5"]{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+  .main ol[style*="repeat(5"] li > span:last-child{font-size:11px !important;line-height:1.2 !important;overflow-wrap:normal !important;hyphens:auto}
+  ol[aria-label="Pasos"]{gap:6px !important}
+  ol[aria-label="Pasos"] button{padding:10px 6px !important;flex-direction:column;gap:6px !important;text-align:center !important;justify-content:center}
+  ol[aria-label="Pasos"] button > span:last-child > span{display:none !important}
+  ol[aria-label="Pasos"] button b{font-size:13px !important;line-height:1.2 !important}
+  /* horarios */
+  h2 + .drow{display:none !important}
+  .rng{flex-wrap:nowrap !important}
+  .rng .cell{width:96px !important}
+  /* envíos: el valor va debajo del texto */
+  .rule{flex-wrap:wrap}
+  .rule > .cell,.rule > select{flex:1 1 calc(100% - 46px);margin-left:46px;width:auto !important}
+
+}
+/*GMOVIL-FIN*/
+</style>
+</helmet>
+<!-- anillo de texto compartido por los sellos -->
+<svg width="0" height="0" style="position: absolute;" aria-hidden="true"><defs><path id="sring" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"></path></defs></svg>
+<div class="g">
+
+<aside class="side" aria-label="Menú del gestor">
+  <a href="GestorHoy-movil.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 8px; text-decoration: none;">
+    <span style="width: 44px; height: 44px; border-radius: 12px; background: var(--grad-primary); display: grid; place-items: center;"><img src="/_blob/409735a76ce80c9f522581004be4da71" alt="" style="width: 34px;"></span>
+    <span><span style="display: block; font: 600 19px/1 'Alan Sans', sans-serif; color: #fff;">Alma Animal</span><span style="display: block; font: 400 13px/1.2 'Gowun Batang', serif; color: #D1C1DD; margin-top: 4px;">Gestor interno</span></span>
+  </a>
+  <nav aria-label="General"><a href="GestorHoy-movil.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+  <span class="grp">CLÍNICA</span>
+  <nav aria-label="Clínica">
+    <a href="GestorAgenda-movil.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a class="on" href="GestorPaciente-movil.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios-movil.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas-movil.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SPA</span>
+  <nav aria-label="Spa">
+    <a href="GestorSpa-movil.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas-movil.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+  <span class="grp">TIENDA</span>
+  <nav aria-label="Tienda">
+    <a href="GestorPedidos-movil.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos-movil.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+  <span class="grp">SITIO WEB</span>
+  <nav aria-label="Sitio web">
+    <a href="GestorSitio-movil.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog-movil.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo-movil.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+  <span class="grp">AJUSTES</span>
+  <nav aria-label="Ajustes">
+    <a href="GestorEnvios-movil.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios-movil.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios-movil.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+  <div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; background: rgb(255 255 255/.08);">
+    <span style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #FBCFAF; position: relative; flex: none;"><img src="/_blob/d875dfef8882af6ef784befbef237e94" alt="" style="position: absolute; left: 50%; top: 1px; width: 92px; max-width: none; transform: translateX(-46%);"></span>
+    <span style="min-width: 0;"><span style="display: block; font: 600 14px/1.2 'Alan Sans', sans-serif;">Dra. Mariana Hoyos</span><span style="display: block; font: 400 13px/1.3 'Alan Sans', sans-serif; color: rgb(255 255 255/.7);">Administradora</span></span>
+    <span class="ms" style="margin-left: auto; color: rgb(255 255 255/.7);">unfold_more</span>
+  </div>
+</aside>
+
+<main class="main">
+<!--GNAV-->
+<div class="gbar"><a class="gbar-logo" href="GestorHoy-movil.dc.html"><span><img src="/_blob/409735a76ce80c9f522581004be4da71" alt=""></span>Alma Animal</a><a class="gbar-ic" href="GestorRegistro-movil.dc.html" aria-label="Registrar paciente"><span class="ms">person_add</span></a></div>
+<nav class="gnav" aria-label="Menú del gestor"><a href="GestorHoy-movil.dc.html"><span class="ms">space_dashboard</span>Hoy</a><a href="GestorAgenda-movil.dc.html"><span class="ms">calendar_month</span>Agenda</a><a class="on" aria-current="page" href="GestorPaciente-movil.dc.html"><span class="ms">pets</span>Pacientes</a><a href="GestorPedidos-movil.dc.html"><span class="ms">receipt_long</span>Pedidos</a><details class="gmore"><summary><span class="ms">menu</span>Más</summary><div class="gsheet">
+<span class="grp">GENERAL</span>
+<nav aria-label="General"><a href="GestorHoy-movil.dc.html"><span class="ms">space_dashboard</span>Hoy</a></nav>
+<span class="grp">CLÍNICA</span>
+<nav aria-label="Clínica">
+    <a href="GestorAgenda-movil.dc.html"><span class="ms">calendar_month</span>Agenda</a>
+    <a class="on" href="GestorPaciente-movil.dc.html"><span class="ms">pets</span>Pacientes</a>
+    <a href="GestorPropietarios-movil.dc.html"><span class="ms">group</span>Propietarios</a>
+    <a href="GestorVacunas-movil.dc.html"><span class="ms">vaccines</span>Vacunas y recordatorios<span class="n">3</span></a>
+  </nav>
+<span class="grp">SPA</span>
+<nav aria-label="Spa">
+    <a href="GestorSpa-movil.dc.html"><span class="ms">shower</span>Citas de spa<span class="n">2</span></a>
+    <a href="GestorTarifas-movil.dc.html"><span class="ms">sell</span>Servicios y tarifas</a>
+  </nav>
+<span class="grp">TIENDA</span>
+<nav aria-label="Tienda">
+    <a href="GestorPedidos-movil.dc.html"><span class="ms">receipt_long</span>Pedidos<span class="n">2</span></a>
+    <a href="GestorProductos-movil.dc.html"><span class="ms">inventory_2</span>Productos e inventario<span class="n">3</span></a>
+  </nav>
+<span class="grp">SITIO WEB</span>
+<nav aria-label="Sitio web">
+    <a href="GestorSitio-movil.dc.html"><span class="ms">web</span>Textos e imágenes</a>
+    <a href="GestorBlog-movil.dc.html"><span class="ms">article</span>Blog</a>
+    <a href="GestorEquipo-movil.dc.html"><span class="ms">badge</span>Equipo</a>
+  </nav>
+<span class="grp">AJUSTES</span>
+<nav aria-label="Ajustes">
+    <a href="GestorEnvios-movil.dc.html"><span class="ms">local_shipping</span>Envíos y obsequio</a>
+    <a href="GestorHorarios-movil.dc.html"><span class="ms">schedule</span>Horarios</a>
+    <a href="GestorUsuarios-movil.dc.html"><span class="ms">admin_panel_settings</span>Usuarios y roles</a>
+  </nav>
+</div></details></nav>
+<!--/GNAV-->
+  <nav aria-label="Ruta" style="display: flex; gap: 6px; align-items: center; font: 400 15px/1 'Alan Sans', sans-serif; color: #584E6E;"><a href="#" style="color: #584E6E;">Pacientes</a><span class="ms" style="font-size: 16px;">chevron_right</span><span aria-current="page" style="color: #2B1E48;">Luna</span><span class="ex" style="margin-left: 10px;">Datos de ejemplo</span></nav>
+
+  <!-- ======== CABECERA DEL PACIENTE ======== -->
+  <section class="card" aria-labelledby="pn" style="flex-direction: row; align-items: center; gap: 20px; flex-wrap: wrap; padding: 22px 24px;">
+    <span style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); display: grid; place-items: center; font: 700 34px/1 'Alan Sans', sans-serif; color: #4D3F6C; flex: none; position: relative;">L<span title="Agregar foto" style="position: absolute; right: -2px; bottom: -2px; width: 30px; height: 30px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px #CBC4D1; display: grid; place-items: center; color: #655785;"><span class="ms" style="font-size: 17px;">photo_camera</span></span></span>
+    <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0; margin-right: auto;">
+      <h1 id="pn" style="font: 600 32px/1.1 'Alan Sans', sans-serif;">Luna</h1>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="chip" style="background: #F2ECF2;">Canino · Shih Tzu</span>
+        <span class="chip" style="background: #F2ECF2;">Hembra esterilizada</span>
+        <span class="chip" style="background: #F2ECF2;">4 años</span>
+        <span class="chip" style="background: #F2ECF2;">8,4 kg</span>
+        <span class="chip" style="background: #FFDAD5; color: #910809;"><span class="ms" style="font-size: 16px;">warning</span>Alérgica a la amoxicilina</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; position: relative;">
+      <a class="btn out" href="GestorAgenda-movil.dc.html"><span class="ms" style="font-size: 18px;">event</span>Agendar cita</a>
+      <a class="btn out" href="#"><span class="ms" style="font-size: 18px;">badge</span>Carnet</a>
+      <button class="btn" type="button" onClick="{{toggleNew}}" aria-expanded="{{newOpen}}"><span class="ms" style="font-size: 18px;">add</span>Nuevo registro</button>
+      <sc-if value="{{newOpen}}" hint-placeholder-val="{{false}}">
+        <div role="menu" style="position: absolute; right: 0; top: 52px; z-index: 10; width: 300px; background: #fff; border-radius: 18px; box-shadow: 0 8px 12px 6px rgb(54 41 84/.12), 0 4px 4px rgb(54 41 84/.16); padding: 8px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px;">
+          <sc-for list="{{newTypes}}" as="t" hint-placeholder-count="10"><a role="menuitem" href="#" style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 12px; text-decoration: none; color: #2B1E48; font: 500 14px/1.2 'Alan Sans', sans-serif;"><span style="width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: {{t.bg}}; color: {{t.fg}}; flex: none;"><span class="ms" style="font-size: 17px;">{{t.icon}}</span></span>{{t.label}}</a></sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 20px; align-items: start;">
+
+    <!-- ======== COLUMNA IZQUIERDA ======== -->
+    <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+      <section class="card" aria-labelledby="dp">
+        <h2 id="dp"><span class="ms">pets</span>Datos del paciente<a href="#" style="margin-left: auto; font: 600 14px/1 'Alan Sans', sans-serif;">Editar</a></h2>
+        <dl class="kv">
+          <div><dt>Especie</dt><dd>Canino</dd></div>
+          <div><dt>Raza</dt><dd>Shih Tzu</dd></div>
+          <div><dt>Color</dt><dd>Blanco y dorado</dd></div>
+          <div><dt>Sexo</dt><dd>Hembra</dd></div>
+          <div><dt>Estado reproductivo</dt><dd>Esterilizada (mar 2025)</dd></div>
+          <div><dt>Nacimiento</dt><dd>12 mar 2022 · 4 años</dd></div>
+          <div><dt>Microchip</dt><dd style="font-variant-numeric: tabular-nums;">900 108 000 123 456</dd></div>
+          <div><dt>Alimento</dt><dd>Concentrado raza pequeña adulto</dd></div>
+          <div><dt>Cantidad</dt><dd>110 g al día, en 2 tomas</dd></div>
+          <div><dt>Alergias</dt><dd style="color: #910809;">Amoxicilina</dd></div>
+          <div><dt>Condiciones crónicas</dt><dd>Piel sensible (dermatitis)</dd></div>
+          <div><dt>Le teme a…</dt><dd style="font-weight: 400;">El secador. Mejor secado con toalla.<span style="display: block; font: 500 12px/1.3 'Alan Sans', sans-serif; color: #584E6E; margin-top: 2px;">Campo personalizado</span></dd></div>
+        </dl>
+      </section>
+
+      <!-- peso con histórico -->
+      <section class="card" aria-labelledby="pw">
+        <h2 id="pw"><span class="ms">monitor_weight</span>Peso<span style="margin-left: auto; font: 700 20px/1 'Alan Sans', sans-serif; font-variant-numeric: tabular-nums;">8,4 kg</span></h2>
+        <svg viewBox="0 0 320 140" role="img" aria-label="Peso de Luna: 7,2 kg en marzo de 2024, 8,6 kg en septiembre de 2025 y 8,4 kg hoy" style="width: 100%; height: auto; display: block;">
+          <g stroke="#ECE6ED" stroke-width="1"><path d="M30 20H310"></path><path d="M30 65H310"></path><path d="M30 110H310"></path></g>
+          <g font-family="Alan Sans, sans-serif" font-size="11" fill="#584E6E"><text x="0" y="24">9 kg</text><text x="0" y="69">8 kg</text><text x="0" y="114">7 kg</text><text x="30" y="132">mar 2024</text><text x="258" y="132">oct 2026</text></g>
+          <path d="M40 101L94 74L148 60.5L202 38L256 51.5L300 47L300 110L40 110Z" fill="#EADDFF" opacity=".6"></path>
+          <path d="M40 101L94 74L148 60.5L202 38L256 51.5L300 47" fill="none" stroke="#655785" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+          <g fill="#fff" stroke="#655785" stroke-width="2"><circle cx="40" cy="101" r="3.5"></circle><circle cx="94" cy="74" r="3.5"></circle><circle cx="148" cy="60.5" r="3.5"></circle><circle cx="202" cy="38" r="3.5"></circle><circle cx="256" cy="51.5" r="3.5"></circle></g>
+          <circle cx="300" cy="47" r="5.5" fill="#655785"></circle>
+        </svg>
+        <span style="font: 400 14px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Se registra en cada consulta y en cada baño.</span>
+      </section>
+
+      <!-- propietario -->
+      <section class="card" aria-labelledby="pr">
+        <h2 id="pr"><span class="ms">person</span>Propietaria</h2>
+        <div style="display: flex; flex-direction: column; gap: 4px;"><b style="font: 600 17px/1.3 'Alan Sans', sans-serif;">Laura Gómez Restrepo</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E; font-variant-numeric: tabular-nums;">300 123 4567 · laura@correo.com</span><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Calle 19 # 8-34, apto 302 · Álamos, Pereira</span></div>
+        <div style="display: flex; gap: 8px; align-items: center;"><span style="font: 500 14px/1 'Alan Sans', sans-serif; color: #584E6E;">Otras mascotas:</span><a href="#" class="chip" style="background: #FFDCC3; color: #623F21; text-decoration: none;">Toby · Schnauzer</a></div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;"><a class="btn wa-o sm" href="#"><span class="ms" style="font-size: 17px;">chat</span>WhatsApp</a><a class="btn out sm" href="GestorPropietarios-movil.dc.html">Ver propietaria</a></div>
+      </section>
+    </div>
+
+    <!-- ======== HISTORIA CLÍNICA ======== -->
+    <section class="card" aria-labelledby="hc" style="gap: 18px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <h2 id="hc" style="font-size: 20px;"><span class="ms">history_edu</span>Historia clínica</h2>
+        <label style="margin-left: auto; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px; background: #F2ECF2; color: #584E6E; width: 280px;"><span class="ms">search</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Buscar en la historia</span><input placeholder="Buscar. Ej: otitis, hemograma" style="border: 0; background: transparent; font: 400 15px/1 'Alan Sans', sans-serif; color: #2B1E48; outline: 0; flex: 1; min-width: 0;"></label>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;" role="tablist" aria-label="Tipo de registro">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="11"><button class="tab" type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="background: {{t.bg}}; color: {{t.fg}};"><span class="ms" style="font-size: 17px;">{{t.icon}}</span>{{t.label}}<span style="opacity: .75; font-variant-numeric: tabular-nums;">{{t.count}}</span></button></sc-for>
+      </div>
+
+      <!-- línea de tiempo -->
+      <sc-if value="{{showTimeline}}" hint-placeholder-val="{{true}}">
+        <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column;">
+          <sc-for list="{{entries}}" as="e" hint-placeholder-count="5">
+            <li style="display: grid; grid-template-columns: 92px 36px minmax(0, 1fr); gap: 12px; padding-bottom: 18px; position: relative;">
+              <span style="font: 600 13px/1.3 'Alan Sans', sans-serif; color: #584E6E; text-align: right; padding-top: 8px; font-variant-numeric: tabular-nums;">{{e.date}}</span>
+              <span style="position: relative; display: flex; justify-content: center;"><span aria-hidden="true" style="position: absolute; top: 36px; bottom: -18px; width: 2px; background: #ECE6ED;"></span><span style="position: relative; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: {{e.bg}}; color: {{e.fg}};"><span class="ms" style="font-size: 19px;">{{e.icon}}</span></span></span>
+              <article style="border-radius: 16px; box-shadow: 0 0 0 1px #E6E1E7; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                  <span style="font: 600 12px/1 'Alan Sans', sans-serif; color: {{e.fg}}; background: {{e.bg}}; padding: 5px 9px; border-radius: 999px;">{{e.kind}}</span>
+                  <b style="font: 600 17px/1.3 'Alan Sans', sans-serif;">{{e.title}}</b>
+                  <span style="margin-left: auto; font: 400 13px/1 'Alan Sans', sans-serif; color: #584E6E;">{{e.by}}</span>
+                </div>
+                <p style="font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E;">{{e.summary}}</p>
+                <sc-if value="{{e.hasRows}}" hint-placeholder-val="{{false}}">
+                  <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #ECE6ED; border-radius: 12px; overflow: hidden;">
+                    <sc-for list="{{e.rows}}" as="r" hint-placeholder-count="4"><div style="background: #FBF8FB; padding: 10px 12px;"><dt style="font: 600 12px/1.2 'Alan Sans', sans-serif; color: #655785;">{{r.k}}</dt><dd style="margin: 4px 0 0; font: 400 15px/1.45 'Alan Sans', sans-serif;">{{r.v}}</dd></div></sc-for>
+                  </dl>
+                </sc-if>
+                <sc-if value="{{e.hasFiles}}" hint-placeholder-val="{{false}}">
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;"><sc-for list="{{e.files}}" as="f" hint-placeholder-count="1"><a href="#" class="chip" style="background: #F2ECF2; color: #2B1E48; text-decoration: none;"><span class="ms" style="font-size: 16px; color: #655785;">{{f.icon}}</span>{{f.name}}</a></sc-for></div>
+                </sc-if>
+              </article>
+            </li>
+          </sc-for>
+        </ol>
+      </sc-if>
+
+      <sc-if value="{{emptyTab}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; border-radius: 16px; background: #F8F2F8; text-align: center;"><span class="ms" style="font-size: 36px; color: #8F7FB0;">inventory</span><b style="font: 600 17px/1.3 'Alan Sans', sans-serif;">Luna aún no tiene registros de este tipo</b><span style="font: 400 15px/1.4 'Alan Sans', sans-serif; color: #584E6E;">Agrégalo con "Nuevo registro" y quedará en su historia.</span></div>
+      </sc-if>
+
+      <!-- carnet de vacunas -->
+      <sc-if value="{{showCarnet}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;"><p style="font: 400 15px/1.5 'Alan Sans', sans-serif; color: #584E6E; margin-right: auto;">Esto es lo que ve la propietaria en su portal. Cada vacuna lleva el sello de su laboratorio.</p><a class="btn out sm" href="#"><span class="ms" style="font-size: 17px;">download</span>Descargar PDF</a><a class="btn wa-o sm" href="#"><span class="ms" style="font-size: 17px;">chat</span>Enviar a Laura</a></div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+            <sc-for list="{{vax}}" as="v" hint-placeholder-count="4">
+              <article style="position: relative; border-radius: 18px; box-shadow: 0 0 0 1px #E6E1E7; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+                <span aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%);"></span>
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;"><b style="font: 600 17px/1.3 'Alan Sans', sans-serif;">{{v.name}}</b><span class="chip" style="background: {{v.stBg}}; color: {{v.stFg}}; align-self: flex-start;">{{v.st}}</span></div>
+                  <div role="img" aria-label="Sello de {{v.lab}}" style="width: 76px; height: 76px; color: {{v.ink}}; transform: rotate(-8deg); position: relative; flex: none;">
+                    <svg viewBox="0 0 132 132" aria-hidden="true" style="width: 100%; height: 100%;"><circle cx="66" cy="66" r="63" fill="none" stroke="currentColor" stroke-width="3"></circle><circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1.5"></circle><text font-family="Alan Sans, sans-serif" font-size="11.5" font-weight="700" letter-spacing="2" fill="currentColor"><textPath href="#sring">{{v.ring}}</textPath></text></svg>
+                    <span style="position: absolute; inset: 0; display: grid; place-items: center; font: 700 10px/1.1 'Alan Sans', sans-serif; text-align: center; white-space: pre-line;">{{v.lot}}</span>
+                  </div>
+                </div>
+                <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font: 400 14px/1.3 'Alan Sans', sans-serif;">
+                  <div><dt style="color: #584E6E;">Aplicada</dt><dd style="margin: 2px 0 0; font-weight: 600;">{{v.date}}</dd></div>
+                  <div><dt style="color: #584E6E;">Próxima dosis</dt><dd style="margin: 2px 0 0; font-weight: 600;">{{v.next}}</dd></div>
+                  <div><dt style="color: #584E6E;">Laboratorio</dt><dd style="margin: 2px 0 0; font-weight: 600;">{{v.lab}}</dd></div>
+                  <div><dt style="color: #584E6E;">Aplicó</dt><dd style="margin: 2px 0 0; font-weight: 600;">Dra. Mariana Hoyos</dd></div>
+                </dl>
+              </article>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.state || {};
+    const tab = s.tab || 'todo';
+    // colores por tipo de registro (fondo / texto)
+    const T = {
+      consulta: ['Consulta', 'stethoscope', '#EADDFF', '#4D3F6C'],
+      vacuna: ['Vacuna', 'vaccines', '#B8F1B9', '#1D5128'],
+      formula: ['Fórmula médica', 'prescriptions', '#D1C1DD', '#372C42'],
+      desparasitacion: ['Desparasitación', 'pill', '#FFDDB2', '#624000'],
+      cirugia: ['Cirugía', 'medical_services', '#FFDAD5', '#910809'],
+      hospitalizacion: ['Hospitalización', 'bed', '#FFDAD5', '#910809'],
+      examen: ['Examen de laboratorio', 'biotech', '#EADDFF', '#4D3F6C'],
+      imagen: ['Imagen diagnóstica', 'radiology', '#F2ECF2', '#2B1E48'],
+      spa: ['Spa', 'shower', '#FFDCC3', '#623F21'],
+      nota: ['Nota', 'sticky_note_2', '#F2ECF2', '#2B1E48']
+    };
+    const entries = [
+      { type: 'vacuna', date: '14 oct 2026', title: 'Antirrábica', by: 'Dra. Mariana', summary: 'Aplicada sin reacciones. Próxima dosis el 14 oct 2027.', rows: [{ k: 'Laboratorio', v: '[Laboratorio]' }, { k: 'Lote', v: 'AR-2026-0411' }] },
+      { type: 'spa', date: '2 oct 2026', title: 'Baño medicado', by: 'Albert (peluquería)', summary: 'Piel enrojecida en el abdomen; se avisó a la doctora. Peso 8,4 kg. Secado con toalla.' },
+      { type: 'consulta', date: '12 sep 2026', title: 'Otitis leve, oído izquierdo', by: 'Dra. Mariana', summary: 'Consulta por rascado del oído y sacudidas de cabeza desde hace 4 días.', rows: [
+        { k: 'Anamnesis', v: 'Rascado del oído izquierdo y sacudidas de cabeza. Come y bebe normal.' },
+        { k: 'Examen físico', v: 'T° 38,6 °C · FC 110 lpm · FR 24 rpm · 8,4 kg · mucosas rosadas.' },
+        { k: 'Diagnóstico', v: 'Otitis externa leve, oído izquierdo.' },
+        { k: 'Plan', v: 'Limpieza ótica, gotas cada 12 h por 7 días. Control en 15 días.' }
+      ], files: [{ icon: 'prescriptions', name: 'Fórmula médica (PDF)' }] },
+      { type: 'formula', date: '12 sep 2026', title: 'Gotas óticas', by: 'Dra. Mariana', summary: '[Medicamento] 3 gotas en el oído izquierdo cada 12 h por 7 días.', files: [{ icon: 'picture_as_pdf', name: 'Descargar fórmula' }] },
+      { type: 'desparasitacion', date: '12 sep 2026', title: 'Desparasitación interna', by: 'Dra. Mariana', summary: '[Producto] según peso (8,4 kg). Próxima el 12 dic 2026.' },
+      { type: 'examen', date: '20 jun 2026', title: 'Hemograma', by: 'Dra. Mariana', summary: 'Valores dentro de rangos normales.', files: [{ icon: 'attach_file', name: 'hemograma-luna.pdf' }] },
+      { type: 'cirugia', date: '3 mar 2025', title: 'Esterilización (OVH)', by: 'Dra. Mariana', summary: 'Sin complicaciones. Retiro de puntos a los 10 días.' }
+    ];
+    const vax = [
+      { name: 'Antirrábica', date: '14 oct 2026', next: '14 oct 2027', lab: '[Laboratorio A]', ring: 'LAB A · LOTE AR-2026-0411 ·', lot: 'AR-2026\n0411', st: 'Al día', stBg: '#B8F1B9', stFg: '#1D5128', ink: '#655785' },
+      { name: 'Polivalente (refuerzo)', date: '2 sep 2026', next: '2 nov 2026', lab: '[Laboratorio B]', ring: 'LAB B · LOTE PV-2026-0098 ·', lot: 'PV-2026\n0098', st: 'Vence en 6 días', stBg: '#FFDDB2', stFg: '#624000', ink: '#7D5636' },
+      { name: 'Polivalente', date: '2 sep 2025', next: '2 sep 2026', lab: '[Laboratorio B]', ring: 'LAB B · LOTE PV-2025-0311 ·', lot: 'PV-2025\n0311', st: 'Reemplazada', stBg: '#F2ECF2', stFg: '#584E6E', ink: '#7D5636' },
+      { name: 'Tos de las perreras', date: '10 abr 2026', next: '10 abr 2027', lab: '[Laboratorio C]', ring: 'LAB C · LOTE TP-2026-0021 ·', lot: 'TP-2026\n0021', st: 'Al día', stBg: '#B8F1B9', stFg: '#1D5128', ink: '#4D3F6C' }
+    ];
+    const TABS = [['todo', 'Todo', 'timeline'], ['consulta'], ['vacuna'], ['formula'], ['desparasitacion'], ['cirugia'], ['hospitalizacion'], ['examen'], ['imagen'], ['spa'], ['nota']];
+    const visible = entries.filter((e) => tab === 'todo' || e.type === tab);
+    return {
+      newOpen: !!s.newOpen,
+      toggleNew: () => this.setState({ newOpen: !s.newOpen }),
+      newTypes: Object.keys(T).map((k) => ({ label: T[k][0], icon: T[k][1], bg: T[k][2], fg: T[k][3] })),
+      tabs: TABS.map((t) => {
+        const k = t[0];
+        const label = k === 'todo' ? 'Todo' : (k === 'vacuna' ? 'Vacunas y carnet' : T[k][0]);
+        const count = k === 'todo' ? entries.length : (k === 'vacuna' ? vax.length : entries.filter((e) => e.type === k).length);
+        return {
+          label, icon: k === 'todo' ? 'timeline' : T[k][1], count,
+          on: tab === k,
+          bg: tab === k ? '#2B1E48' : '#F2ECF2',
+          fg: tab === k ? '#FFFFFF' : '#2B1E48',
+          pick: () => this.setState({ tab: k })
+        };
+      }),
+      showCarnet: tab === 'vacuna',
+      showTimeline: tab !== 'vacuna' && visible.length > 0,
+      emptyTab: tab !== 'vacuna' && visible.length === 0,
+      entries: visible.map((e) => ({
+        ...e,
+        kind: T[e.type][0], icon: T[e.type][1], bg: T[e.type][2], fg: T[e.type][3],
+        hasRows: !!(e.rows && e.rows.length), rows: e.rows || [],
+        hasFiles: !!(e.files && e.files.length), files: e.files || []
+      })),
+      vax
+    };
+  }
+}
+</script>
+</body>
+</html>
