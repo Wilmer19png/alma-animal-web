@@ -2,7 +2,7 @@
 // y control de acceso. Si no hay sesión, manda a /gestor/ingresar.
 import { useEffect, type ReactNode } from 'react';
 import heart from '../assets/corazon.png';
-import { useSesion, salir, ROL_TXT, type Miembro } from './session';
+import { useSesion, salir, inactividadActiva, ROL_TXT, type Miembro } from './session';
 import { link, go, asset, DEMO } from './lib';
 
 interface Item { id: string; txt: string; icon: string; href: string; listo: boolean }
@@ -30,7 +30,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   { grp: 'Ajustes', items: [
     { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: true },
     { id: 'horarios', txt: 'Horarios', icon: 'schedule', href: '/gestor/horarios', listo: true },
-    { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: false }
+    { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: true }
   ] }
 ];
 const TODOS = GRUPOS.flatMap((g) => g.items);
@@ -83,6 +83,16 @@ function Yo({ yo }: { yo: Miembro }) {
 export default function Shell({ activo, insignias = {}, children }: { activo: string; insignias?: Record<string, number>; children: (yo: Miembro) => ReactNode }) {
   const s = useSesion();
   useEffect(() => { if (s.estado === 'fuera') go('/gestor/ingresar'); }, [s.estado]);
+  // en computadores compartidos: cerrar sesión tras 30 minutos sin usar el gestor (se activa en Usuarios y roles)
+  useEffect(() => {
+    if (s.estado !== 'dentro' || !inactividadActiva()) return;
+    let t = 0;
+    const reiniciar = () => { window.clearTimeout(t); t = window.setTimeout(() => salir().then(() => go('/gestor/ingresar')), 30 * 60000); };
+    const ev = ['pointerdown', 'keydown', 'scroll'];
+    ev.forEach((x) => window.addEventListener(x, reiniciar, { passive: true }));
+    reiniciar();
+    return () => { window.clearTimeout(t); ev.forEach((x) => window.removeEventListener(x, reiniciar)); };
+  }, [s.estado]);
 
   if (s.estado === 'cargando' || s.estado === 'fuera') {
     return <div className="g-splash" role="status"><img src={asset(heart.src)} alt="" width={64} /><span>Cargando el gestor…</span></div>;

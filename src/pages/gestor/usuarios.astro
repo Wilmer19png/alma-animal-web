@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Usuarios y roles">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Usuarios from '../../gestor/Usuarios';
+    montar(Usuarios);
+  </script>
+</GestorLayout>

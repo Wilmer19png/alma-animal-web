@@ -66,3 +66,8 @@ export async function nuevaClave(clave: string): Promise<string | null> {
   const { error } = await sb!.auth.updateUser({ password: clave });
   return error ? 'No pudimos guardar la contraseña. El enlace pudo vencer: pide uno nuevo.' : null;
 }
+
+// cierre de sesión por inactividad: se guarda en cada computador (no en la cuenta)
+const INACT = 'alma-gestor-inactividad';
+export const inactividadActiva = () => { try { return localStorage.getItem(INACT) === '1'; } catch { return false; } };
+export const activarInactividad = (si: boolean) => { try { if (si) localStorage.setItem(INACT, '1'); else localStorage.removeItem(INACT); } catch { /* bloqueado */ } };

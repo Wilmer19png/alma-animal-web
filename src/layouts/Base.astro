@@ -19,6 +19,8 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  <!-- enlaces de invitación o de contraseña nueva de Supabase: llegan al inicio y van a crear la contraseña -->
+  <script is:inline>if (/[#&]type=(invite|recovery)/.test(location.hash)) location.replace('/gestor/clave' + location.hash);</script>
   <meta name="theme-color" content="#FEF7FE" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta property="og:type" content="website" />
