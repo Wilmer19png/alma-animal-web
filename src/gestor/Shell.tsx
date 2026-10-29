@@ -15,7 +15,7 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
     { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: true }
   ] },
   { grp: 'Spa', items: [
-    { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: false },
+    { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: true },
     { id: 'tarifas', txt: 'Servicios y tarifas', icon: 'sell', href: '/gestor/tarifas', listo: false }
   ] },
   { grp: 'Tienda', items: [
