@@ -4,8 +4,8 @@ import Footer from '../components/Footer.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp } from '../data/site';
 
-interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop' }
-const { title, description, waMessage, waArea = 'vet' } = Astro.props;
+interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop'; image?: string }
+const { title, description, waMessage, waArea = 'vet', image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const waHref = whatsapp[waArea](waMessage);
 // subconjunto de íconos (deben ir en orden alfabético)
@@ -19,6 +19,8 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  <!-- enlaces de invitación o de contraseña nueva de Supabase: llegan al inicio y van a crear la contraseña -->
+  <script is:inline>if (/[#&]type=(invite|recovery)/.test(location.hash)) location.replace('/gestor/clave' + location.hash);</script>
   <meta name="theme-color" content="#FEF7FE" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta property="og:type" content="website" />
@@ -26,6 +28,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
+  {image && <meta property="og:image" content={image} />}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
@@ -33,6 +36,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
+  <div class="anuncio" data-anuncio hidden><a></a></div>
   <slot name="top" />
   <main id="contenido">
     <slot />
@@ -40,7 +44,14 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <Footer />
   <a class="fab-wa" href={waHref} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><WaIcon size={30} class="" /></a>
 
+  <script>
+    import '../scripts/contenido';
+  </script>
+
   <style>
+    .anuncio { padding: 9px 16px; background: var(--ink); color: #fff; text-align: center; font-size: 14.5px; font-weight: 500; line-height: 1.35; }
+    .anuncio a { color: inherit; text-decoration: none; }
+    .anuncio a[href] { text-decoration: underline; text-underline-offset: 3px; }
     .fab-wa { position: fixed; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--wa); color: #fff; box-shadow: 0 4px 8px 3px rgb(54 41 84 / .12), 0 1px 3px rgb(54 41 84 / .2); transition: transform .25s var(--ease-out); }
     .fab-wa:hover { color: #fff; transform: translateY(-2px) scale(1.04); }
     @media (min-width: 768px) { .fab-wa { right: 24px; bottom: 24px; width: 60px; height: 60px; } }

@@ -7,12 +7,12 @@ import WaIcon from '../components/WaIcon.astro';
 import SalesBuzz from '../components/SalesBuzz.astro';
 import '../styles/tienda.css';
 import { whatsapp } from '../data/site';
-import { SHIPPING, GIFT, money } from '../data/shop';
+import { SHIPPING, GIFT, money, CIUDADES } from '../data/shop';
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un producto.');
 ---
 <Base
   title="Producto · Petshop Alma Animal"
-  description={`Alimento, higiene y accesorios recomendados por la doctora. Envío gratis en Pereira y Dosquebradas, y a toda Colombia desde ${money(SHIPPING.freeFrom)}.`}
+  description={`Alimento, higiene y accesorios recomendados por la doctora. Envío gratis en ${CIUDADES}, y a toda Colombia desde ${money(SHIPPING.freeFrom)}.`}
   waMessage="Hola, Alma Animal. Tengo una pregunta sobre un producto."
   waArea="shop"
 >
@@ -24,7 +24,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
         <span class="ms" aria-hidden="true">local_shipping</span>
         <span class="shipline__txt" data-ship-msg>Envío gratis a toda Colombia desde <b>{money(SHIPPING.freeFrom)}</b></span>
         <span class="shipline__bar" aria-hidden="true"><i data-ship-bar data-free-fill></i></span>
-        <span class="shipline__note">En Pereira y Dosquebradas siempre es gratis</span>
+        <span class="shipline__note">En {CIUDADES} siempre es gratis</span>
       </div>
     </div>
 
@@ -50,11 +50,11 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     <!-- partes fijas de la ficha (se insertan dentro de la información) -->
     <template data-fixed>
       <a class="wa-o" data-ask href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Es el indicado? Pregúntale a la doctora</a>
-      <p class="gift" data-gift><span class="ms" aria-hidden="true">redeem</span><span data-gift-txt>En compras desde <b>{money(GIFT.from)}</b> te llevas un <b>obsequio</b>.</span></p>
+      <p class="gift" data-gift hidden={!GIFT.active}><span class="ms" aria-hidden="true">redeem</span><span data-gift-txt>En compras desde <b>{money(GIFT.from)}</b> te llevas un <b>obsequio</b>.</span></p>
       <ul class="perks">
-        <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+        <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en {CIUDADES}</li>
         <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia en compras desde {money(SHIPPING.freeFrom)}</li>
-        <li><span class="ms" aria-hidden="true">bolt</span>Envío prioritario por {money(SHIPPING.priority)}</li>
+        {SHIPPING.priority > 0 && <li><span class="ms" aria-hidden="true">bolt</span>Envío prioritario por {money(SHIPPING.priority)}</li>}
       </ul>
     </template>
 

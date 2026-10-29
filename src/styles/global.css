@@ -45,6 +45,9 @@
 @media (min-width: 1100px) { :root { --gutter: 32px; --section: 112px; } }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+.foto-cover { position: absolute; inset: 0; width: 100% !important; height: 100% !important; max-width: none !important; object-fit: cover; opacity: 1 !important; }
+:has(> .foto-cover) { position: relative; overflow: hidden; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body {

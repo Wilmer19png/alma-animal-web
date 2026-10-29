@@ -3,7 +3,7 @@
 // y Decreto 587 de 2016 sobre reversión del pago). Borrador para revisión antes de publicar.
 import LegalDoc from '../components/LegalDoc.astro';
 import { LEGAL, ADDRESS, PHONES, whatsapp } from '../data/site';
-import { SHIPPING, GIFT, money } from '../data/shop';
+import { SHIPPING, GIFT, money, CIUDADES } from '../data/shop';
 
 const SECTIONS = [
   { id: 'quienes', title: 'Quiénes somos' },
@@ -67,10 +67,10 @@ const email = LEGAL.email;
   <section id="envios">
     <h2>5. Envíos y entregas</h2>
     <ul>
-      <li><b>Pereira y Dosquebradas:</b> envío gratis.</li>
+      <li><b>{CIUDADES}:</b> envío gratis.</li>
       <li><b>Resto de Colombia:</b> gratis en compras desde {money(SHIPPING.freeFrom)}. Si la compra es menor, el envío cuesta {money(SHIPPING.flat)}.</li>
-      <li><b>Envío prioritario:</b> {money(SHIPPING.priority)} adicionales; tu pedido se despacha primero.</li>
-      <li><b>Obsequio:</b> en compras desde {money(GIFT.from)} tu pedido incluye un {GIFT.name}.</li>
+      {SHIPPING.priority > 0 && <li><b>Envío prioritario:</b> {money(SHIPPING.priority)} adicionales; tu pedido se despacha primero.</li>}
+      {GIFT.active && <li><b>Obsequio:</b> en compras desde {money(GIFT.from)} tu pedido incluye un {GIFT.name}, mientras haya existencias.</li>}
     </ul>
     <p>Al confirmar tu pedido te decimos el tiempo estimado de entrega según tu ciudad. En ningún caso será mayor a <b>30 días calendario</b>; si no podemos cumplir, te avisamos y puedes cancelar el pedido y recibir la devolución completa de lo que pagaste.</p>
     <p>Revisa tu pedido al recibirlo. Si llega incompleto o dañado, escríbenos en los días siguientes con fotos y lo solucionamos.</p>

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp, PHONES, LEGAL } from '../data/site';
-import { DEMO, SHIPPING, GIFT, money } from '../data/shop';
+import { DEMO, SHIPPING, GIFT, PAGOS, money, CIUDADES } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
 const DEPTS = ['Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bogotá D.C.', 'Bolívar', 'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta', 'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada'];
@@ -11,7 +11,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 ---
 <Base
   title="Tu carrito · Petshop Alma Animal"
-  description="Revisa tu pedido y llena los datos de envío. Envío gratis en Pereira y Dosquebradas, y a toda Colombia desde $70.000."
+  description={`Revisa tu pedido y llena los datos de envío. Envío gratis en ${CIUDADES}, y a toda Colombia desde ${money(SHIPPING.freeFrom)}.`}
   waMessage="Hola, Alma Animal. Tengo una pregunta sobre mi pedido."
   waArea="shop"
 >
@@ -23,14 +23,14 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     <div class="intro__row">
       <h1 class="h-section">Tu <b class="gt">carrito</b></h1>
       <ul class="perks">
-        <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en Pereira y Dosquebradas</li>
+        <li><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis en {CIUDADES}</li>
         <li><span class="ms" aria-hidden="true">public</span>Gratis a toda Colombia desde {money(SHIPPING.freeFrom)}</li>
       </ul>
     </div>
   </div>
 
   <section class="wrap checkout" aria-label="Carrito y datos de envío" data-checkout data-shop={PHONES.shop.e164}
-    data-free={SHIPPING.freeFrom} data-flat={SHIPPING.flat} data-prio-cost={SHIPPING.priority} data-gift={GIFT.from} data-local={SHIPPING.localCities.join('|')} data-legal={LEGAL.updated}>
+    data-free={SHIPPING.freeFrom} data-flat={SHIPPING.flat} data-prio-cost={SHIPPING.priority} data-gift={GIFT.from} data-gift-name={GIFT.name} data-local={SHIPPING.localCities.join('|')} data-legal={LEGAL.updated}>
 
     <!-- carrito vacío -->
     <div class="panel empty" data-empty hidden>
@@ -111,7 +111,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <div class="fld"><label for="c-barrio">Barrio <span class="req">*</span></label><input id="c-barrio" name="barrio" placeholder="Ej: Álamos" required /><span class="err" data-err-for="c-barrio">Escribe el barrio.</span></div>
           <div class="fld full"><label for="c-notas">Indicaciones para la entrega (opcional)</label><textarea id="c-notas" name="notas" placeholder="Ej: Dejar en portería, torre 2. Timbre dañado."></textarea></div>
         </div>
-        <label class="prio">
+        <label class="prio" hidden={!SHIPPING.priority}>
           <input type="checkbox" name="prioritario" data-prio />
           <span class="ms" aria-hidden="true">bolt</span>
           <span class="prio__txt"><b>Envío prioritario</b><span>Tu pedido sale primero.</span></span>
@@ -131,7 +131,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <span class="meter__txt" data-free-txt></span>
           <div class="bar" role="progressbar" aria-label="Avance hacia envío gratis" aria-valuemin="0" aria-valuemax="100" data-free-bar><i data-free-fill></i></div>
         </div>
-        <div class="meter meter--gift">
+        <div class="meter meter--gift" hidden={!GIFT.active}>
           <span class="meter__txt" data-gift-txt></span>
           <div class="bar" role="progressbar" aria-label="Avance hacia el obsequio" aria-valuemin="0" aria-valuemax="100" data-gift-bar><i></i></div>
         </div>
@@ -145,7 +145,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
         <button class="btn btn--alma btn--go" type="button" data-next>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
         <button class="btn btn--alma btn--go" type="button" data-place hidden><span data-place-txt>Confirmar pedido</span><span class="ms" aria-hidden="true">arrow_forward</span></button>
         <button class="backlink" type="button" data-back hidden><span class="ms" aria-hidden="true">arrow_back</span>Volver al carrito</button>
-        <p class="hint">Al confirmar te escribimos por WhatsApp para coordinar el pago: contraentrega, transferencia o en el consultorio.</p>
+        <p class="hint">Al confirmar te escribimos por WhatsApp para coordinar el pago: {PAGOS}.</p>
         <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
         {DEMO && <p class="hint">Precios de ejemplo.</p>}
       </div>
@@ -168,7 +168,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   const root = document.querySelector<HTMLElement>('[data-checkout]')!;
   const C = root.dataset;
-  const FREE = Number(C.free), FLAT = Number(C.flat), PRIO = Number(C.prioCost), GIFT = Number(C.gift);
+  const FREE = Number(C.free), FLAT = Number(C.flat), PRIO = Number(C.prioCost), GIFT = Number(C.gift), GIFT_NAME = C.giftName ?? 'obsequio';
   const LOCAL = C.local!.split('|');
   const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
   const $$ = <T extends HTMLElement = HTMLElement>(s: string) => [...document.querySelectorAll<T>(s)];
@@ -347,14 +347,14 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       nombre: v('nombre'), apellido: v('apellido'), celular: v('celular'), correo: v('correo'),
       departamento: dept.value, ciudad: city(), direccion: v('direccion'), barrio: v('barrio'), indicaciones: v('notas'),
       productos: lines.join('\n'), subtotal: money(t.sub), envio: ship, prioritario: t.prio ? 'Sí' : 'No',
-      total: money(t.total), obsequio: t.sub >= GIFT ? 'Snack dental' : 'No',
+      total: money(t.total), obsequio: t.sub >= GIFT ? GIFT_NAME : 'No',
       aviso: (form.elements.namedItem('aviso') as HTMLInputElement).checked ? 'Sí' : 'No'
     };
     // por si no se puede guardar: el pedido completo listo para WhatsApp
     const msg = [
       `Hola, Alma Animal. Quiero hacer este pedido (${code}):`, ...lines.map((l) => '• ' + l),
       `Subtotal: ${fields.subtotal}`, `Envío: ${ship}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`, `Total: ${fields.total}`,
-      t.sub >= GIFT ? 'Con obsequio: snack dental 🎁' : '', '',
+      t.sub >= GIFT ? `Con obsequio: ${GIFT_NAME} 🎁` : '', '',
       `Para: ${fields.nombre} ${fields.apellido} · ${fields.celular}${fields.correo ? ' · ' + fields.correo : ''}`,
       `Dirección: ${fields.direccion}, barrio ${fields.barrio}, ${fields.ciudad} (${fields.departamento})`,
       fields.indicaciones ? `Indicaciones: ${fields.indicaciones}` : ''

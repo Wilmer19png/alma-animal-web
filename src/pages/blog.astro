@@ -47,7 +47,7 @@ const waAsk = whatsapp.vet('Hola, doctora. Tengo una pregunta sobre mi mascota.'
     {POSTS.map((p, i) => (
       <a class="feat" href={postUrl(p)} data-feat={p.cat} hidden={i > 0}>
         <span class="feat__cover" style={`background:${p.cover.bg}`}>
-          <Image src={p.cover.img} alt="" width={600} style={`width:${Math.round(p.cover.w * 100)}%`} />
+          {p.cover.foto ? <img class="foto-cover" src={p.cover.foto} alt="" loading="lazy" decoding="async" /> : <Image src={p.cover.img} alt="" width={600} style={`width:${Math.round(p.cover.w * 100)}%`} />}
           <span class="feat__new">Lo más reciente</span>
         </span>
         <span class="feat__body">
@@ -66,7 +66,7 @@ const waAsk = whatsapp.vet('Hola, doctora. Tengo una pregunta sobre mi mascota.'
     <div class="posts">
       {POSTS.map((p, i) => (
         <a class="post" href={postUrl(p)} data-post={p.cat} hidden={i === 0}>
-          <span class="post__cover" style={`background:${p.cover.bg}`}><Image src={p.cover.img} alt="" width={400} style={`width:${Math.round(p.cover.w * 100)}%`} /></span>
+          <span class="post__cover" style={`background:${p.cover.bg}`}>{p.cover.foto ? <img class="foto-cover" src={p.cover.foto} alt="" loading="lazy" decoding="async" /> : <Image src={p.cover.img} alt="" width={400} style={`width:${Math.round(p.cover.w * 100)}%`} />}</span>
           <span class="post__body">
             <span class="meta">{p.cat} · {p.min} min</span>
             <span class="serif post__title">{p.title}</span>

@@ -123,9 +123,9 @@ export async function mover(v: Var, cantidad: number, motivo: Motivo): Promise<v
 
 /* ---------- fotos ---------- */
 // se reduce a 1200 px y se guarda como WebP (pesa poco y se ve bien)
-async function comprimir(file: File): Promise<Blob> {
+export async function comprimir(file: File, max = 1200): Promise<Blob> {
   const img = await createImageBitmap(file);
-  const k = Math.min(1, 1200 / Math.max(img.width, img.height));
+  const k = Math.min(1, max / Math.max(img.width, img.height));
   const c = document.createElement('canvas');
   c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
   c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);

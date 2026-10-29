@@ -1,0 +1,11 @@
+---
+import GestorLayout from '../../layouts/GestorLayout.astro';
+---
+<GestorLayout title="Servicios y tarifas">
+  <div id="app"></div>
+  <script>
+    import { montar } from '../../gestor/montar';
+    import Tarifas from '../../gestor/Tarifas';
+    montar(Tarifas);
+  </script>
+</GestorLayout>

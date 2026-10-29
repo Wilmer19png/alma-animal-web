@@ -10,6 +10,7 @@ import {
 } from './clinica-datos';
 import { PacienteForm, Avatar, erroresPaciente } from './clinica-ui';
 import type { Rol } from './session';
+import { leerEsquemas, ESQUEMAS_BASE, type Esquemas } from './vacunas-datos';
 
 const fechaC = fechaCorta;
 const hoyISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
@@ -39,6 +40,8 @@ export default function Paciente() {
   const [menu, setMenu] = useState(false);
   const [editando, setEditando] = useState(false);
   const histRef = useRef<HTMLElement>(null);
+  const [esq, setEsq] = useState<Esquemas>(ESQUEMAS_BASE);
+  useEffect(() => { leerEsquemas().then(setEsq).catch(() => {}); }, []);
 
   useEffect(() => {
     (async () => {
@@ -159,7 +162,7 @@ export default function Paciente() {
                   ))}
                 </div>
 
-                {nuevo && <NuevoRegistro tipo={nuevo} m={m} autor={yo.nombre} cerrar={() => setNuevo(null)}
+                {nuevo && <NuevoRegistro tipo={nuevo} m={m} esq={esq} autor={yo.nombre} cerrar={() => setNuevo(null)}
                   guardado={(rs) => { setRegs((l) => [...rs, ...(l ?? [])].sort((a, b) => b.fecha.localeCompare(a.fecha))); const p = rs.find((r) => r.datos.peso); if (p) setM((x) => x && ({ ...x, peso: Number(p.datos.peso.replace(',', '.')) })); setNuevo(null); setAviso('Registro guardado en la historia'); }} />}
 
                 {tab === 'carnet'
@@ -337,12 +340,12 @@ const CAMPOS = (t: TipoRegistro, m: TPaciente): Campo[] => {
 };
 const CON_ARCHIVOS: TipoRegistro[] = ['examen', 'imagen', 'cirugia', 'procedimiento', 'formula', 'hospitalizacion', 'consulta'];
 
-function NuevoRegistro({ tipo, m, autor, cerrar, guardado }: { tipo: TipoRegistro; m: TPaciente; autor: string; cerrar: () => void; guardado: (r: Registro[]) => void }) {
+function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRegistro; m: TPaciente; esq: Esquemas; autor: string; cerrar: () => void; guardado: (r: Registro[]) => void }) {
   const campos = CAMPOS(tipo, m);
   const [v, setV] = useState<Record<string, string>>(() => ({
     fecha: hoyISO(),
-    ...(tipo === 'vacuna' ? { titulo: VACUNAS[m.especie][0], proxima: enDias(365) } : {}),
-    ...(tipo === 'desparasitacion' ? { titulo: DESPARASITACIONES[0], proxima: enDias(90) } : {}),
+    ...(tipo === 'vacuna' ? { titulo: VACUNAS[m.especie][0], proxima: enDias(esq[VACUNAS[m.especie][0]] ?? 365) } : {}),
+    ...(tipo === 'desparasitacion' ? { titulo: DESPARASITACIONES[0], proxima: enDias(esq[DESPARASITACIONES[0]] ?? 90) } : {}),
     ...(tipo === 'spa' ? { titulo: 'Baño completo' } : {})
   }));
   const [otra, setOtra] = useState('');
@@ -380,7 +383,7 @@ function NuevoRegistro({ tipo, m, autor, cerrar, guardado }: { tipo: TipoRegistr
           <div key={c.k} className={'fld' + (c.tipo === 'area' ? ' full' : '')}>
             <label htmlFor={`nr-${c.k}`}>{c.label}{c.req && <span className="req"> *</span>}</label>
             {c.tipo === 'area' ? <textarea id={`nr-${c.k}`} value={v[c.k] ?? ''} placeholder={c.ph} onChange={(e) => setV((x) => ({ ...x, [c.k]: e.target.value }))} />
-              : c.tipo === 'select' ? <select id={`nr-${c.k}`} value={v[c.k] ?? ''} onChange={(e) => setV((x) => ({ ...x, [c.k]: e.target.value }))}>{c.opts!.map((o) => <option key={o}>{o}</option>)}</select>
+              : c.tipo === 'select' ? <select id={`nr-${c.k}`} value={v[c.k] ?? ''} onChange={(e) => { const t = e.target.value; setV((x) => ({ ...x, [c.k]: t, ...(c.k === 'titulo' && esq[t] ? { proxima: new Date(new Date(x.fecha).getTime() + esq[t] * 86400000).toISOString().slice(0, 10) } : {}) })); }}>{c.opts!.map((o) => <option key={o}>{o}</option>)}</select>
                 : <input id={`nr-${c.k}`} type={c.tipo === 'date' ? 'date' : 'text'} inputMode={c.tipo === 'num' ? 'decimal' : undefined} value={v[c.k] ?? ''} placeholder={c.ph} onChange={(e) => setV((x) => ({ ...x, [c.k]: e.target.value }))} />}
             {c.k === 'titulo' && v.titulo === 'Otra' && <input aria-label="¿Cuál?" value={otra} placeholder="¿Cuál?" onChange={(e) => setOtra(e.target.value)} />}
           </div>

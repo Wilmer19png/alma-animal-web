@@ -1,4 +1,5 @@
 ---
+import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Lockup from '../components/Lockup.astro';
@@ -34,7 +35,7 @@ const waVet = whatsapp.vet();
 ---
 <Base
   title="Alma Animal · Veterinaria, spa y petshop en Pereira"
-  description="Consulta veterinaria, vacunas, cirugía y atención a domicilio en Pereira y Dosquebradas con la Dra. Mariana Hoyos. Spa con baño antipulgas e hidromasaje, y tienda con envío gratis en Pereira."
+  description="Veterinaria en Pereira: consulta, vacunas, cirugía y atención a domicilio con la Dra. Mariana Hoyos. Spa con baño antipulgas y petshop con envío gratis."
 >
   <!-- ======== HÉROE ======== -->
   <div class="wrap hero-wrap">
@@ -66,7 +67,7 @@ const waVet = whatsapp.vet();
 
       <div class="hero__copy">
         <h1>Cuidado<br /><span class="hero__h1-line">con <span class="gt">alma</span><span class="hero__seal"><Image src={heartPaper} alt="" width={96} loading="eager" /></span></span></h1>
-        <p><b>Consultorio, spa y petshop</b> en un mismo lugar. Te atiende la Dra. Mariana Hoyos, médica veterinaria y zootecnista.</p>
+        <p data-c="inicio.heroe.texto" set:html={TX('inicio.heroe.texto')} />
         <div class="hero__actions">
           <a class="btn btn--alma btn--lg" href="/consultorio#agendar">Agenda tu cita<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
           <a class="wa-o" href={waVet} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos</a>
@@ -93,8 +94,8 @@ const waVet = whatsapp.vet();
       <div class="tagpill tagpill--b" aria-hidden="true"><span class="tagpill__t" data-pill-b>{TEAM[0].b}</span><span class="tagpill__d"></span></div>
 
       <div class="hero__side on-dark">
-        <h2>Consultorio, spa y petshop <b class="gt">en un mismo lugar</b></h2>
-        <p>Consulta, vacunas, radiografía y cirugía. Y cuando toca baño, <b>la misma doctora</b> revisa piel, oídos y dientes.</p>
+        <h2 data-ct="inicio.lado.titulo" set:html={TT('inicio.lado.titulo')} />
+        <p data-c="inicio.lado.texto" set:html={TX('inicio.lado.texto')} />
       </div>
 
       <div class="hero__social">
@@ -121,43 +122,43 @@ const waVet = whatsapp.vet();
       <span class="pill-img pill-img--claw" aria-hidden="true"><Image src={claw} alt="" width={224} /></span>
       <b class="gt">sano</b>
     </h2>
-    <p class="lead">Alma Animal reúne en un solo lugar la consulta veterinaria, el spa y la tienda. Así, la persona que baña a tu mascota trabaja al lado de la médica que la conoce.</p>
+    <p class="lead" data-c="inicio.decl.texto" set:html={TX('inicio.decl.texto')} />
   </section>
 
   <!-- ======== TRES ESPACIOS ======== -->
   <section class="wrap spaces" aria-labelledby="esp">
     <div class="section-head">
-      <h2 id="esp" class="h-section">Elige a qué<br /><b class="gt">vienes hoy</b></h2>
-      <p class="lead">Cada espacio tiene su página con todos los detalles. Agenda o escríbenos desde cualquiera.</p>
+      <h2 id="esp" class="h-section" data-ct="inicio.espacios.titulo" set:html={TT('inicio.espacios.titulo')} />
+      <p class="lead" data-c="inicio.espacios.texto" set:html={TX('inicio.espacios.texto')} />
     </div>
     <div class="spaces__grid">
       <a class="card door door--clinic" href="/consultorio">
         <span class="ms glyph" aria-hidden="true">stethoscope</span>
         <h3>Consultorio</h3>
-        <p>Consulta general, vacunación, desparasitación, radiografía y cirugía. También atendemos a domicilio.</p>
+        <p data-c="inicio.espacios.consultorio" set:html={TX('inicio.espacios.consultorio')} />
         <span class="link">Ver el consultorio<span class="ms" aria-hidden="true">arrow_forward</span></span>
       </a>
       <a class="door door--spa" href="/spa">
         <Image src={tigerDog} alt="" width={360} class="door__art" />
         <h3>Spa Alma</h3>
-        <p>Baño antipulgas, hidromasaje y aromaterapia, con shampoo hipoalergénico libre de parabenos. Sale con perfume, accesorio y snack.</p>
+        <p data-c="inicio.espacios.spa" set:html={TX('inicio.espacios.spa')} />
         <span class="link">Ver el spa<span class="ms" aria-hidden="true">arrow_forward</span></span>
       </a>
       <a class="door door--shop" href="/petshop">
         <span class="ms glyph" aria-hidden="true">storefront</span>
         <h3>Petshop</h3>
-        <p>Alimento, higiene y accesorios. Arma tu pedido en la web y te lo llevamos: envío gratis en Pereira y Dosquebradas.</p>
+        <p data-c="inicio.espacios.petshop" set:html={TX('inicio.espacios.petshop')} />
         <span class="link">Ir a la tienda<span class="ms" aria-hidden="true">arrow_forward</span></span>
       </a>
     </div>
   </section>
 
   <!-- ======== A DOMICILIO ======== -->
-  <HomeVisit titleId="dom">
+  <HomeVisit titleId="dom" cb="inicio.domicilio">
     <span class="chip-dark"><span class="ms" aria-hidden="true">home_health</span>Servicio a domicilio</span>
-    <h2 id="dom" class="h-section">La doctora va <b class="gt">a tu casa</b></h2>
-    <p>Consulta veterinaria en tu hogar, en Pereira. Para mascotas que se estresan al salir, o cuando a ti se te complica llegar.</p>
-    <span class="chip-light"><span class="ms" aria-hidden="true">location_on</span>Cobertura: toda Pereira y Dosquebradas</span>
+    <h2 id="dom" class="h-section" data-ct="inicio.domicilio.titulo" set:html={TT('inicio.domicilio.titulo')} />
+    <p data-c="inicio.domicilio.texto" set:html={TX('inicio.domicilio.texto')} />
+    <span class="chip-light"><span class="ms" aria-hidden="true">location_on</span><span data-c="inicio.domicilio.cobertura" set:html={TX('inicio.domicilio.cobertura')} /></span>
     <div class="actions">
       <a class="btn btn--alma btn--lg" href="/consultorio#domicilio">Agendar visita<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
       <a class="wa-o" href={whatsapp.vet('Hola, Alma Animal. ¿Atienden a domicilio en mi barrio?')} target="_blank" rel="noopener"><WaIcon size={24} />Preguntar cobertura</a>
@@ -178,7 +179,7 @@ const waVet = whatsapp.vet();
       <div class="about__copy">
         <h2 id="nos" class="h-section about__name">Dra. Mariana<br /><b class="gt">Hoyos Giraldo</b></h2>
         <p class="serif about__title">{DOCTOR.title} · {DOCTOR.tp}</p>
-        <p class="lead">[Historia breve de la doctora: dónde estudió, desde cuándo ejerce y por qué creó Alma Animal. Dos o tres frases en su propia voz.]</p>
+        <p class="lead" data-c="inicio.nosotros.historia" hidden={!CAMPOS['inicio.nosotros.historia'].def} set:html={TX('inicio.nosotros.historia')} />
         <ul class="about__tags"><li>Medicina preventiva</li><li>Cirugía</li><li>Spa y peluquería</li></ul>
         <div class="about__actions">
           <a class="btn" href="/nosotros">Conoce al equipo</a>
@@ -189,8 +190,8 @@ const waVet = whatsapp.vet();
   </section>
 
   <!-- ======== POR QUÉ ======== -->
-  <section class="wrap reasons" aria-labelledby="pq">
-    <h2 id="pq" class="h-section">¿Por qué <b class="gt">Alma Animal?</b></h2>
+  <section class="wrap reasons" aria-labelledby="pq" data-cb="inicio.porque">
+    <h2 id="pq" class="h-section" data-ct="inicio.porque.titulo" set:html={TT('inicio.porque.titulo')} />
     <ul class="reasons__grid">
       {REASONS.map((r) => (
         <li>
@@ -203,15 +204,15 @@ const waVet = whatsapp.vet();
   </section>
 
   <!-- ======== BLOG ======== -->
-  <section id="blog" class="wrap blog" aria-labelledby="bl">
+  <section id="blog" class="wrap blog" aria-labelledby="bl" data-cb="inicio.blog">
     <div class="section-head section-head--row">
-      <h2 id="bl" class="h-section">Blog <b class="gt">veterinario</b></h2>
+      <h2 id="bl" class="h-section" data-ct="inicio.blog.titulo" set:html={TT('inicio.blog.titulo')} />
       <a class="link" href="/blog">Leer el blog<span class="ms" aria-hidden="true">arrow_forward</span></a>
     </div>
     <div class="blog__grid">
       {POSTS.map((p) => (
         <a class="card post" href={postUrl(p)}>
-          <span class="post__cover" style={`background: ${p.cover.bg};`}><Image src={p.cover.img} alt="" width={300} style={`width: ${Math.round(p.cover.w * 100)}%; max-width: 150px;`} /></span>
+          <span class="post__cover" style={`background: ${p.cover.bg};`}>{p.cover.foto ? <img class="foto-cover" src={p.cover.foto} alt="" loading="lazy" decoding="async" /> : <Image src={p.cover.img} alt="" width={300} style={`width: ${Math.round(p.cover.w * 100)}%; max-width: 150px;`} />}</span>
           <span class="post__body">
             <span class="post__meta">{p.cat} · {p.min} min{BLOG_DEMO && ' · Artículo de ejemplo'}</span>
             <span class="serif post__title">{p.title}</span>
@@ -275,7 +276,7 @@ const waVet = whatsapp.vet();
   .hero__seal { width: .7em; height: .7em; border-radius: 50%; background: var(--grad-primary); display: inline-grid; place-items: center; margin-top: .1em; box-shadow: var(--shadow-1); }
   .hero__seal img { width: 62%; height: auto; }
   .hero__copy p { font-size: 17px; line-height: 1.55; color: var(--ink-muted); max-width: 34ch; }
-  .hero__copy p b { color: var(--ink); font-weight: 600; }
+  .hero__copy p :global(b) { color: var(--ink); font-weight: 600; }
   .hero__actions { display: flex; flex-direction: column; gap: 12px; }
   .hero__actions > * { width: 100%; }
 
@@ -295,9 +296,9 @@ const waVet = whatsapp.vet();
   .tagpill { display: none; }
   .hero__side { order: 4; margin-top: -18px; padding: 6px 20px 24px; border-radius: 0 0 22px 22px; background: var(--grad-primary); color: #fff; display: flex; flex-direction: column; gap: 10px; }
   .hero__side h2 { font-size: 24px; font-weight: 400; line-height: 1.15; letter-spacing: -.02em; }
-  .hero__side h2 b { font-weight: 700; }
+  .hero__side h2 :global(b) { font-weight: 700; }
   .hero__side p { font-size: 16px; line-height: 1.5; color: rgb(255 255 255 / .88); }
-  .hero__side p b { color: #fff; font-weight: 600; }
+  .hero__side p :global(b) { color: #fff; font-weight: 600; }
   .hero__social { display: none; }
 
   .hero__spaces { order: 5; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }

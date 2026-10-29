@@ -1,0 +1,29 @@
+---
+// Molde de las páginas del portal de clientes (/portal). No aparece en Google. Cada página monta su
+// pantalla de React con src/gestor/montar.ts (igual que el gestor).
+import '../styles/global.css';
+import '../gestor/gestor.css';
+import '../portal/portal.css';
+import { iconosUrl } from '../gestor/iconos';
+
+interface Props { title: string }
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{title} · Mi portal Alma Animal</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#FEF7FE" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
+  <link rel="stylesheet" href={iconosUrl()} />
+</head>
+<body class="portal">
+  <slot />
+</body>
+</html>

@@ -2,7 +2,7 @@
 // y control de acceso. Si no hay sesión, manda a /gestor/ingresar.
 import { useEffect, type ReactNode } from 'react';
 import heart from '../assets/corazon.png';
-import { useSesion, salir, ROL_TXT, type Miembro } from './session';
+import { useSesion, salir, inactividadActiva, ROL_TXT, type Miembro } from './session';
 import { link, go, asset, DEMO } from './lib';
 
 interface Item { id: string; txt: string; icon: string; href: string; listo: boolean }
@@ -12,25 +12,25 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
     { id: 'agenda', txt: 'Agenda', icon: 'calendar_month', href: '/gestor/agenda', listo: true },
     { id: 'pacientes', txt: 'Pacientes', icon: 'pets', href: '/gestor/pacientes', listo: true },
     { id: 'propietarios', txt: 'Propietarios', icon: 'group', href: '/gestor/propietarios', listo: true },
-    { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: false }
+    { id: 'vacunas', txt: 'Vacunas y recordatorios', icon: 'vaccines', href: '/gestor/vacunas', listo: true }
   ] },
   { grp: 'Spa', items: [
-    { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: false },
-    { id: 'tarifas', txt: 'Servicios y tarifas', icon: 'sell', href: '/gestor/tarifas', listo: false }
+    { id: 'spa', txt: 'Citas de spa', icon: 'shower', href: '/gestor/spa', listo: true },
+    { id: 'tarifas', txt: 'Servicios y tarifas', icon: 'sell', href: '/gestor/tarifas', listo: true }
   ] },
   { grp: 'Tienda', items: [
     { id: 'pedidos', txt: 'Pedidos', icon: 'receipt_long', href: '/gestor/pedidos', listo: true },
     { id: 'productos', txt: 'Productos e inventario', icon: 'inventory_2', href: '/gestor/productos', listo: true }
   ] },
   { grp: 'Sitio web', items: [
-    { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: false },
-    { id: 'blog', txt: 'Blog', icon: 'article', href: '/gestor/blog', listo: false },
-    { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: false }
+    { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: true },
+    { id: 'blog', txt: 'Blog', icon: 'article', href: '/gestor/blog', listo: true },
+    { id: 'equipo', txt: 'Equipo', icon: 'badge', href: '/gestor/equipo', listo: true }
   ] },
   { grp: 'Ajustes', items: [
-    { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: false },
+    { id: 'envios', txt: 'Envíos y obsequio', icon: 'local_shipping', href: '/gestor/envios', listo: true },
     { id: 'horarios', txt: 'Horarios', icon: 'schedule', href: '/gestor/horarios', listo: true },
-    { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: false }
+    { id: 'usuarios', txt: 'Usuarios y roles', icon: 'admin_panel_settings', href: '/gestor/usuarios', listo: true }
   ] }
 ];
 const TODOS = GRUPOS.flatMap((g) => g.items);
@@ -83,6 +83,16 @@ function Yo({ yo }: { yo: Miembro }) {
 export default function Shell({ activo, insignias = {}, children }: { activo: string; insignias?: Record<string, number>; children: (yo: Miembro) => ReactNode }) {
   const s = useSesion();
   useEffect(() => { if (s.estado === 'fuera') go('/gestor/ingresar'); }, [s.estado]);
+  // en computadores compartidos: cerrar sesión tras 30 minutos sin usar el gestor (se activa en Usuarios y roles)
+  useEffect(() => {
+    if (s.estado !== 'dentro' || !inactividadActiva()) return;
+    let t = 0;
+    const reiniciar = () => { window.clearTimeout(t); t = window.setTimeout(() => salir().then(() => go('/gestor/ingresar')), 30 * 60000); };
+    const ev = ['pointerdown', 'keydown', 'scroll'];
+    ev.forEach((x) => window.addEventListener(x, reiniciar, { passive: true }));
+    reiniciar();
+    return () => { window.clearTimeout(t); ev.forEach((x) => window.removeEventListener(x, reiniciar)); };
+  }, [s.estado]);
 
   if (s.estado === 'cargando' || s.estado === 'fuera') {
     return <div className="g-splash" role="status"><img src={asset(heart.src)} alt="" width={64} /><span>Cargando el gestor…</span></div>;

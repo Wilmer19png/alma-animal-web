@@ -25,7 +25,7 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
   .sort((a, b) => Number(b.cat === p.cat) - Number(a.cat === p.cat) || b.date.localeCompare(a.date))
   .slice(0, 3);
 ---
-<Base title={`${p.title} · Blog Alma Animal`} description={p.excerpt}>
+<Base title={`${p.title} · Blog Alma Animal`} description={p.excerpt} image={p.cover.foto}>
   <SiteHeader slot="top" />
 
   <nav class="wrap crumbs" aria-label="Estás en">
@@ -48,8 +48,8 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
 
   <div class="wrap cover-wrap">
     <div class="cover" style={`background:${p.cover.bg}`}>
-      <span class="cover__ring" aria-hidden="true"></span>
-      <Image src={p.cover.img} alt="" width={880} style={`width:${Math.round(p.cover.w * 100)}%`} />
+      {!p.cover.foto && <span class="cover__ring" aria-hidden="true"></span>}
+      {p.cover.foto ? <img class="foto-cover" src={p.cover.foto} alt="" fetchpriority="high" decoding="async" /> : <Image src={p.cover.img} alt="" width={880} style={`width:${Math.round(p.cover.w * 100)}%`} />}
     </div>
   </div>
 
@@ -135,7 +135,7 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
     <div class="related__grid">
       {related.map((r) => (
         <a class="post" href={postUrl(r)}>
-          <span class="post__cover" style={`background:${r.cover.bg}`}><Image src={r.cover.img} alt="" width={400} style={`width:${Math.round(r.cover.w * 100)}%`} /></span>
+          <span class="post__cover" style={`background:${r.cover.bg}`}>{r.cover.foto ? <img class="foto-cover" src={r.cover.foto} alt="" loading="lazy" decoding="async" /> : <Image src={r.cover.img} alt="" width={400} style={`width:${Math.round(r.cover.w * 100)}%`} />}</span>
           <span class="post__body">
             <span class="post__meta">{r.cat} · {r.min} min · <time datetime={r.date}>{shortDate(r.date)}</time></span>
             <span class="serif post__title">{r.title}</span>

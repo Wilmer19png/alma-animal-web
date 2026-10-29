@@ -1,4 +1,5 @@
 ---
+import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
@@ -36,7 +37,7 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
       <div class="c-hero__copy">
         <a class="back" href="/"><span class="ms" aria-hidden="true">arrow_back</span>Inicio</a>
         <h1>Consul&shy;torio <span>veterinario</span></h1>
-        <p>Prevención, diagnóstico y tratamiento con la Dra. Mariana Hoyos. Cada visita queda en la historia clínica de tu mascota.</p>
+        <p data-c="consultorio.heroe.texto" set:html={TX('consultorio.heroe.texto')} />
         <div class="c-hero__actions">
           <a id="agendar" class="btn btn--alma btn--lg" href={waClinic} target="_blank" rel="noopener">Agenda una consulta<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
           <a class="wa-o" href={waClinic} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos</a>
@@ -54,8 +55,8 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
   <!-- ======== SERVICIOS ======== -->
   <section class="wrap services" aria-labelledby="sv">
     <div class="section-head">
-      <h2 id="sv" class="h-section">Servicios del<br /><b class="gt">consultorio</b></h2>
-      <p class="lead">Escríbenos por WhatsApp para agendar cualquiera de ellos. Te confirmamos el día y la hora.</p>
+      <h2 id="sv" class="h-section" data-ct="consultorio.servicios.titulo" set:html={TT('consultorio.servicios.titulo')} />
+      <p class="lead" data-c="consultorio.servicios.texto" set:html={TX('consultorio.servicios.texto')} />
     </div>
     <div class="services__grid">
       <a href="#domicilio" class="svc svc--home">
@@ -88,10 +89,10 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
   </section>
 
   <!-- ======== A DOMICILIO ======== -->
-  <HomeVisit titleId="dom">
+  <HomeVisit titleId="dom" cb="consultorio.domicilio">
     <span class="chip-dark"><span class="ms" aria-hidden="true">home_health</span>Servicio a domicilio</span>
-    <h2 id="dom" class="h-section">Consulta veterinaria <b class="gt">en tu casa</b></h2>
-    <p>La Dra. Mariana va hasta tu hogar en Pereira y Dosquebradas. La visita queda en la misma historia clínica y el mismo carnet que en el consultorio.</p>
+    <h2 id="dom" class="h-section" data-ct="consultorio.domicilio.titulo" set:html={TT('consultorio.domicilio.titulo')} />
+    <p data-c="consultorio.domicilio.texto" set:html={TX('consultorio.domicilio.texto')} />
     <ul class="checks">
       {HOME_VISIT.reasons.map((r) => <li><span class="ms" aria-hidden="true">check_circle</span>{r}</li>)}
     </ul>
@@ -106,16 +107,16 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
   </HomeVisit>
 
   <!-- ======== ASÍ FUNCIONA (la línea se llena paso a paso) ======== -->
-  <section class="wrap how" aria-labelledby="cf">
+  <section class="wrap how" aria-labelledby="cf" data-cb="consultorio.como">
     <div class="section-head">
-      <h2 id="cf" class="h-section">Así funciona <b class="gt">tu cita</b></h2>
-      <p class="lead">Después de la consulta, todo queda en tu portal: tus mascotas, citas y carnet.</p>
+      <h2 id="cf" class="h-section" data-ct="consultorio.como.titulo" set:html={TT('consultorio.como.titulo')} />
+      <p class="lead" data-c="consultorio.como.texto" set:html={TX('consultorio.como.texto')} />
     </div>
     <Steps steps={VISIT_STEPS} />
   </section>
 
   <!-- ======== WHATSAPP ======== -->
-  <WaStrip href={waClinic} text="Cuéntanos qué tiene tu mascota y te decimos si necesita consulta o puede esperar." />
+  <WaStrip href={waClinic} text={CAMPOS['consultorio.wa.texto'].def} k="consultorio.wa.texto" />
 </Base>
 
 <style>

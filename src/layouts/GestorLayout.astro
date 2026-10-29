@@ -7,7 +7,7 @@ import '../gestor/gestor.css';
 interface Props { title: string }
 const { title } = Astro.props;
 // íconos del gestor (deben ir en orden alfabético)
-const ICONS = ['account_balance', 'add', 'add_photo_alternate', 'admin_panel_settings', 'arrow_back', 'arrow_forward', 'article', 'attach_file', 'badge', 'bed', 'biotech', 'bolt', 'brush', 'calendar_month', 'campaign', 'cancel', 'chat', 'check', 'check_circle', 'checkroom', 'chevron_left', 'chevron_right', 'clean_hands', 'close', 'content_copy', 'cookie', 'date_range', 'delete', 'done_all', 'edit', 'event', 'event_available', 'event_busy', 'flag', 'group', 'healing', 'help', 'history_edu', 'home_health', 'hourglass_top', 'image', 'inbox', 'info', 'inventory', 'inventory_2', 'language', 'list_alt', 'local_atm', 'local_shipping', 'lock', 'logout', 'loyalty', 'mail', 'medical_services', 'medication', 'menu', 'monitor_weight', 'notifications', 'payments', 'person', 'person_add', 'pest_control', 'pets', 'picture_as_pdf', 'point_of_sale', 'prescriptions', 'preview', 'print', 'radio_button_unchecked', 'radiology', 'receipt_long', 'redeem', 'refresh', 'schedule', 'search', 'sell', 'send', 'set_meal', 'shopping_bag', 'shower', 'soap', 'space_dashboard', 'sports_baseball', 'stethoscope', 'sticky_note_2', 'storefront', 'timer', 'touch_app', 'tune', 'undo', 'vaccines', 'verified_user', 'visibility', 'visibility_off', 'warning', 'web'];
+import { iconosUrl } from '../gestor/iconos';
 ---
 <!doctype html>
 <html lang="es-CO">
@@ -21,7 +21,7 @@ const ICONS = ['account_balance', 'add', 'add_photo_alternate', 'admin_panel_set
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
-  <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&icon_names=${ICONS.join(',')}&display=block`} />
+  <link rel="stylesheet" href={iconosUrl()} />
 </head>
 <body class="gestor">
   <slot />

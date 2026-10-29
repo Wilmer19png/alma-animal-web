@@ -42,8 +42,8 @@ export const DOCTOR = {
 export const LEGAL = {
   holder: 'Mariana Hoyos Giraldo', // responsable del tratamiento y vendedora (persona natural o empresa)
   idLabel: 'NIT', // 'NIT' o 'C.C.'
-  id: null as string | null,
-  email: null as string | null, // correo para consultas, reclamos y retracto
+  id: '1088357232-6' as string | null,
+  email: 'mariana1hoyo2@gmail.com' as string | null, // correo para consultas, reclamos y retracto
   updated: '2026-10-28' // fecha de la última versión de las políticas
 };
 
