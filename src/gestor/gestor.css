@@ -1149,3 +1149,22 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 .promo-sw { display: flex; align-items: center; gap: 12px; margin: 4px 0; padding: 10px 14px; border-radius: 14px; background: var(--surface-2); }
 .promo-sw > span { display: flex; flex-direction: column; gap: 2px; font: 400 13px/1.35 var(--font-sans); color: var(--ink-muted); }
 .promo-sw b { font: 600 15px/1.3 var(--font-sans); color: var(--ink); }
+
+/* ---------- adjuntos de la historia (fotos y PDF de exámenes) ---------- */
+.adj { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 14px; border-radius: 16px; border: 2px dashed var(--line); background: #fff; text-align: center; transition: border-color .15s, background .15s; }
+.adj.is-over { border-color: var(--primary); background: var(--surface-2); }
+.adj__ic { font-size: 30px; color: var(--primary); }
+.adj__t { font: 500 14px/1.35 var(--font-sans); color: var(--ink-muted); }
+.adj__b { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.adj__b label { cursor: pointer; }
+.adj__b label:focus-within { outline: 3px solid var(--primary); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .adj__cam { display: none; } }
+.adj__l { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.adj__l li { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+.adj__l img { width: 100%; height: 96px; object-fit: cover; border-radius: 10px; background: var(--surface-2); }
+.adj__l li > .ms { height: 96px; display: grid; place-items: center; border-radius: 10px; background: #FFDAD5; color: #910809; font-size: 40px; width: 100%; }
+.adj__l li > span:not(.ms) { font: 500 12.5px/1.3 var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adj__l .vrow__x { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .2); }
+.tl__vis { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 4px 10px; border: 0; border-radius: 999px; background: #F1FBF2; color: #1D5128; font: 500 12.5px/1.2 var(--font-sans); cursor: pointer; }
+.tl__vis .ms { font-size: 16px; }
+.tl__vis[data-priv] { background: var(--surface-3); color: var(--ink-muted); }

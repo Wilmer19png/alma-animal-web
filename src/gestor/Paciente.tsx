@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, link, waLink, prettyCel, fechaCorta, mesCorto } from './lib';
 import {
-  listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarRegistro, subirArchivo, abrirArchivo,
+  listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarRegistro, cambiarPrivado, subirArchivo, abrirArchivo,
   nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES,
   type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo
 } from './clinica-datos';
@@ -90,7 +90,8 @@ export default function Paciente() {
                 </div>
               </div>
               <div className="fhead__acts">
-                <span className="gbtn out off" title="Se activa con el módulo Agenda" aria-disabled="true"><span className="ms" aria-hidden="true">event</span>Agendar cita</span>
+                <a className="gbtn out" href={link('/gestor/agenda') + `?paciente=${m.id}`}><span className="ms" aria-hidden="true">event</span>Agendar cita</a>
+                <button className="gbtn out" type="button" onClick={() => { setNuevo('examen'); setMenu(false); setTab('todo'); setTimeout(() => histRef.current?.scrollIntoView({ behavior: 'smooth' }), 50); }}><span className="ms" aria-hidden="true">upload_file</span>Subir examen</button>
                 <button className="gbtn out" type="button" onClick={() => { setTab('carnet'); histRef.current?.scrollIntoView({ behavior: 'smooth' }); }}><span className="ms" aria-hidden="true">badge</span>Carnet</button>
                 <div className="menu-w">
                   <button className="gbtn" type="button" aria-expanded={menu} onClick={() => setMenu((v) => !v)}><span className="ms" aria-hidden="true">add</span>Nuevo registro</button>
@@ -238,6 +239,8 @@ function Peso({ regs, actual }: { regs: Registro[]; actual: number | null }) {
 
 /* ---------- una entrada de la historia ---------- */
 function Entrada({ r, puedeBorrar, borrar }: { r: Registro; puedeBorrar: boolean; borrar: () => void }) {
+  const [privado, setPrivado] = useState(!!r.privado);
+  const alternar = async () => { const n = !privado; setPrivado(n); try { await cambiarPrivado(r.id, n); } catch { setPrivado(!n); } };
   const filas = Object.entries(r.datos).filter(([k, v]) => v && ETIQ[k]);
   const abrir = async (a: Archivo) => { const u = await abrirArchivo(a); if (u) window.open(u, '_blank', 'noopener'); };
   return (
@@ -256,6 +259,8 @@ function Entrada({ r, puedeBorrar, borrar }: { r: Registro; puedeBorrar: boolean
         {r.archivos.length > 0 && <div className="tl__files">{r.archivos.map((a, i) => (
           <button key={i} type="button" className="chip lav" onClick={() => abrir(a)} disabled={!a.ruta}><span className="ms" aria-hidden="true">{a.tipo.includes('pdf') ? 'picture_as_pdf' : 'image'}</span>{a.nombre}</button>
         ))}</div>}
+        {r.tipo !== 'nota' && <button type="button" className="tl__vis" data-priv={privado || undefined} onClick={alternar} title="Toca para cambiar">
+          <span className="ms" aria-hidden="true">{privado ? 'visibility_off' : 'visibility'}</span>{privado ? 'Solo el equipo · no sale en el portal' : 'El dueño lo ve en su portal'}</button>}
       </article>
     </li>
   );
@@ -351,6 +356,7 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
   const [otra, setOtra] = useState('');
   const [externo, setExterno] = useState(false);
   const [archivos, setArchivos] = useState<File[]>([]);
+  const [privado, setPrivado] = useState(false);
   const [err, setErr] = useState('');
   const [ocupado, setOcupado] = useState(false);
 
@@ -366,7 +372,7 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
       const titulo = (v.titulo === 'Otra' ? otra : v.titulo) || (tipo === 'consulta' ? (v.diagnostico || v.motivo) : TIPOS[tipo].txt);
       const rs = await crearRegistros([{
         paciente_id: m.id, tipo, fecha: new Date(v.fecha).toISOString(), titulo: titulo.trim().slice(0, 120), resumen: v.resumen?.trim() || null,
-        datos, archivos: subidos, externo, por_nombre: externo ? null : autor
+        datos, archivos: subidos, externo, por_nombre: externo ? null : autor, ...(privado ? { privado: true } : {})
       }]);
       guardado(rs);
     } catch (e) { setErr((e as Error).message); }
@@ -390,14 +396,60 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
         ))}
       </div>
       {(tipo === 'vacuna' || tipo === 'desparasitacion') && <label className="chk-l"><input type="checkbox" checked={externo} onChange={(e) => setExterno(e.target.checked)} />Se la aplicaron en otra veterinaria</label>}
-      {CON_ARCHIVOS.includes(tipo) && (
-        <div className="fld"><span className="fld__lb">Archivos <small>(PDF o fotos, hasta 10 MB cada uno; quedan privados)</small></span>
-          <label className="upl"><span className="ms" aria-hidden="true">attach_file</span>{archivos.length ? `${archivos.length} ${archivos.length === 1 ? 'archivo' : 'archivos'}: ${archivos.map((f) => f.name).join(', ')}` : 'Adjuntar resultado, imagen o fórmula'}
-            <input type="file" multiple accept="image/*,application/pdf" onChange={(e) => setArchivos([...(e.target.files ?? [])])} /></label>
-        </div>
+      {CON_ARCHIVOS.includes(tipo) && <Adjuntos archivos={archivos} setArchivos={setArchivos} />}
+      {tipo !== 'nota' && (
+        <label className="chk-l"><input type="checkbox" checked={!privado} onChange={(e) => setPrivado(!e.target.checked)} />El dueño lo puede ver en su portal{privado && <span className="hint"> · quedará solo para el equipo</span>}</label>
       )}
       {err && <p className="gerr" role="alert">{err}</p>}
       <div className="dacts"><button className="gbtn" type="button" onClick={guardar} disabled={ocupado}><span className="ms" aria-hidden="true">check</span>{ocupado ? 'Guardando…' : 'Guardar en la historia'}</button><button className="gbtn out" type="button" onClick={cerrar}>Cancelar</button></div>
+    </div>
+  );
+}
+
+/* ---------- adjuntos: elegir, tomar foto, arrastrar y vista previa ---------- */
+function Adjuntos({ archivos, setArchivos }: { archivos: File[]; setArchivos: (f: File[]) => void }) {
+  const [encima, setEncima] = useState(false);
+  const [error, setError] = useState('');
+  const [vistas, setVistas] = useState<string[]>([]);
+  useEffect(() => {
+    const urls = archivos.map((f) => (f.type.startsWith('image/') ? URL.createObjectURL(f) : ''));
+    setVistas(urls);
+    return () => urls.forEach((u) => u && URL.revokeObjectURL(u));
+  }, [archivos]);
+  const sumar = (lista: FileList | File[] | null) => {
+    const nuevos = [...(lista ?? [])];
+    const malos = nuevos.filter((f) => !(f.type.startsWith('image/') || f.type === 'application/pdf'));
+    const grandes = nuevos.filter((f) => f.type === 'application/pdf' && f.size > 10 * 1024 * 1024);
+    setError(malos.length ? 'Solo se pueden subir fotos o PDF.' : grandes.length ? `«${grandes[0].name}» pesa más de 10 MB.` : '');
+    setArchivos([...archivos, ...nuevos.filter((f) => !malos.includes(f) && !grandes.includes(f))].slice(0, 12));
+  };
+  return (
+    <div className="fld">
+      <span className="fld__lb">Archivos <small>(fotos o PDF del resultado; quedan privados y las fotos se achican solas)</small></span>
+      <div className={'adj' + (encima ? ' is-over' : '')}
+        onDragOver={(e) => { e.preventDefault(); setEncima(true); }} onDragLeave={() => setEncima(false)}
+        onDrop={(e) => { e.preventDefault(); setEncima(false); sumar(e.dataTransfer.files); }}>
+        <span className="ms adj__ic" aria-hidden="true">cloud_upload</span>
+        <span className="adj__t">Arrastra aquí los archivos o elige cómo subirlos</span>
+        <span className="adj__b">
+          <label className="gbtn out sm"><span className="ms" aria-hidden="true">attach_file</span>Elegir archivos
+            <input type="file" multiple accept="image/*,application/pdf" className="sr-only" onChange={(e) => { sumar(e.target.files); e.target.value = ''; }} /></label>
+          <label className="gbtn out sm adj__cam"><span className="ms" aria-hidden="true">photo_camera</span>Tomar foto
+            <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => { sumar(e.target.files); e.target.value = ''; }} /></label>
+        </span>
+      </div>
+      {error && <p className="gerr" role="alert">{error}</p>}
+      {archivos.length > 0 && (
+        <ul className="adj__l">
+          {archivos.map((f, i) => (
+            <li key={i}>
+              {vistas[i] ? <img src={vistas[i]} alt="" /> : <span className="ms" aria-hidden="true">picture_as_pdf</span>}
+              <span title={f.name}>{f.name}</span>
+              <button type="button" className="vrow__x" aria-label={`Quitar ${f.name}`} onClick={() => setArchivos(archivos.filter((_, k) => k !== i))}><span className="ms">close</span></button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
