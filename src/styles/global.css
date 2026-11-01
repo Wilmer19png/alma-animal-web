@@ -165,3 +165,32 @@ a.card:hover { box-shadow: var(--shadow-2); transform: translateY(-3px); }
 .is-full[data-free-fill] { background: linear-gradient(90deg, #FBCFAF, #E8A6B4, #B4A3D6, #655785, #B4A3D6, #FBCFAF) 0 0 / 200% 100% !important; animation: fill-shine 3s linear infinite; }
 @keyframes fill-shine { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .is-full[data-free-fill] { animation: none; } }
+
+/* ---------- aviso «¡Agregado al carrito!» (src/scripts/add-buttons.ts) ---------- */
+.toast-cart { position: fixed; z-index: 60; left: 12px; right: 12px; bottom: max(84px, calc(env(safe-area-inset-bottom) + 76px)); display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft), 0 12px 32px rgb(54 41 84 / .22); color: var(--ink); opacity: 0; transform: translateY(16px) scale(.98); pointer-events: none; transition: opacity .25s var(--ease-out), transform .3s var(--ease-out); }
+.toast-cart.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.toast-cart__ic { position: relative; flex: none; width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: #362954; }
+.toast-cart__ic > .ms { font-size: 26px; }
+.toast-cart__ic i { position: absolute; right: -6px; bottom: -6px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #1D7A37; color: #fff; font-size: 16px; font-style: normal; box-shadow: 0 0 0 3px #fff; }
+.toast-cart__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.toast-cart__txt b { font: 700 16px/1.25 var(--font-sans); }
+.toast-cart__txt > span { font: 500 14px/1.3 var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.toast-cart__txt small { font: 400 12.5px/1.35 var(--font-sans); color: var(--ink-muted); }
+.toast-cart__txt small b { font-size: 12.5px; color: var(--ink); }
+.toast-cart__acts { display: flex; align-items: center; gap: 2px; flex: none; }
+.toast-cart__go { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--grad-primary, var(--primary)); color: #fff; font: 600 14px/1 var(--font-sans); text-decoration: none; white-space: nowrap; }
+.toast-cart__go:hover { color: #fff; }
+.toast-cart__x { width: 36px; height: 36px; border: 0; border-radius: 50%; background: none; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; }
+.toast-cart__x:hover { background: var(--surface-2); }
+@media (min-width: 768px) { .toast-cart { left: auto; right: 24px; bottom: auto; top: 96px; width: 420px; transform: translateY(-12px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .toast-cart { transition: opacity .2s; transform: none; } }
+.cart-hop { animation: cart-hop .5s var(--ease-out); }
+@keyframes cart-hop { 30% { transform: translateY(-5px) scale(1.12); } 60% { transform: translateY(1px) scale(.97); } }
+@media (prefers-reduced-motion: reduce) { .cart-hop { animation: none; } }
+@media (max-width: 520px) {
+  .toast-cart { flex-wrap: wrap; padding: 14px; }
+  .toast-cart__txt { padding-right: 28px; }
+  .toast-cart__acts { width: 100%; }
+  .toast-cart__go { flex: 1; justify-content: center; }
+  .toast-cart__x { position: absolute; top: 6px; right: 6px; }
+}

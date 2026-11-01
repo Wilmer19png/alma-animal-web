@@ -73,7 +73,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
   import { catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
   import { TAGS } from '../data/shop';
-  import '../scripts/add-buttons';
+  import { avisarAgregado } from '../scripts/add-buttons';
 
   const SHOP = '573017925910';
   const slug = new URLSearchParams(location.search).get('p') ?? '';
@@ -165,7 +165,9 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     info.querySelector('[data-dec]')!.addEventListener('click', () => { qty--; paint(); });
     info.querySelector('[data-inc]')!.addEventListener('click', () => { qty++; paint(); });
     cta.addEventListener('click', () => {
-      cart.add(itemCarrito(p, actual()), qty);
+      const it = itemCarrito(p, actual());
+      cart.add(it, qty);
+      avisarAgregado(it, qty);
       info.querySelector('[data-added-txt]')!.textContent = `${qty > 1 ? qty + ' agregados' : 'Agregado'} al carrito`;
       added.hidden = false;
       cta.classList.remove('hop'); void cta.offsetWidth; cta.classList.add('hop');
