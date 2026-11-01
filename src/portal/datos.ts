@@ -85,7 +85,7 @@ export async function misMascotas(yo: Ficha): Promise<Paciente[]> {
 }
 export async function historia(ids: string[]): Promise<Registro[]> {
   if (!ids.length) return [];
-  if (DEMO) return (await ej.registrosDe(ids)).filter((r) => r.tipo !== 'nota');
+  if (DEMO) return (await ej.registrosDe(ids)).filter((r) => r.tipo !== 'nota' && !r.privado);
   const { data } = await pc!.from('registros').select('*').in('paciente_id', ids).order('fecha', { ascending: false });
   return (data ?? []) as Registro[];
 }

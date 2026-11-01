@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Confirma tu correo nuevo</title>
+</head>
+<body style="margin:0;padding:0;background:#F6EFF6;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Confirma el cambio de correo de tu cuenta.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F6EFF6;">
+  <tr><td align="center" style="padding:32px 16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+      <!-- logo -->
+      <tr><td align="center" style="padding:0 0 20px;">
+        <img src="https://almaanimalvet.netlify.app/correo/logo.png" width="64" height="56" alt="" style="display:block;border:0;width:64px;height:auto;">
+        <div style="margin-top:10px;font:700 22px/1.1 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#2B1E48;">Alma Animal</div>
+        <div style="margin-top:4px;font:400 13px/1.2 Georgia, 'Times New Roman', serif;color:#584E6E;">Consultorio · Spa · Petshop</div>
+      </td></tr>
+      <!-- tarjeta -->
+      <tr><td style="background:#FFFFFF;border-radius:24px;border:1px solid #E6E1E7;padding:36px 32px;">
+        <div style="height:6px;width:56px;border-radius:3px;background:#FBCFAF;background-image:linear-gradient(90deg,#FBCFAF,#EADDFF);margin:0 0 24px;"></div>
+        <h1 style="margin:0 0 16px;font:700 26px/1.25 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#2B1E48;">Confirma tu correo nuevo</h1>
+        
+        <p style="margin:0 0 16px;font:400 16px/1.6 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#584E6E;">Pediste cambiar el correo de tu cuenta de Alma Animal de <b style="color:#2B1E48;">{{ .Email }}</b> a <b style="color:#2B1E48;">{{ .NewEmail }}</b>.</p>
+        <p style="margin:0 0 16px;font:400 16px/1.6 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#584E6E;">Toca el botón para confirmar el cambio.</p>
+        <!-- botón -->
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;">
+          <tr><td align="center" bgcolor="#655785" style="border-radius:999px;background:#655785;background-image:linear-gradient(135deg,#655785,#4D3F6C);">
+            <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:15px 30px;font:700 16px/1 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#FFFFFF;text-decoration:none;border-radius:999px;">Confirmar el cambio</a>
+          </td></tr>
+        </table>
+        
+        <p style="margin:0 0 6px;font:400 13px/1.5 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#584E6E;">Si no pediste este cambio, ignora este correo y escríbenos por WhatsApp.</p>
+        <p style="margin:0;font:400 12px/1.5 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#8A8296;word-break:break-all;">Si el botón no abre, copia este enlace en tu navegador:<br><a href="{{ .ConfirmationURL }}" style="color:#655785;">{{ .ConfirmationURL }}</a></p>
+      </td></tr>
+      <!-- firma -->
+      <tr><td align="center" style="padding:24px 16px 8px;">
+        <div style="font:700 14px/1.4 Georgia, 'Times New Roman', serif;color:#2B1E48;">Dra. Mariana Hoyos Giraldo</div>
+        <div style="font:400 12px/1.5 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#584E6E;">Médica Veterinaria y Zootecnista · TP 51206</div>
+        <div style="margin-top:10px;font:400 12px/1.6 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;color:#584E6E;">Calle 1 # 9-02, Alfonso López, Pereira · WhatsApp 324 679 6695<br>
+          <a href="https://almaanimalvet.netlify.app" style="color:#655785;text-decoration:underline;">almaanimalvet.netlify.app</a> · <a href="https://almaanimalvet.netlify.app/privacidad" style="color:#655785;text-decoration:underline;">Tratamiento de datos</a></div>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

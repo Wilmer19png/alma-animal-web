@@ -19,6 +19,7 @@ export type TipoRegistro = 'consulta' | 'vacuna' | 'desparasitacion' | 'examen' 
 export interface Registro {
   id: string; paciente_id: string; tipo: TipoRegistro; fecha: string; titulo: string; resumen: string | null;
   datos: Record<string, string>; archivos: Archivo[]; externo: boolean; por_nombre: string | null; creado: string;
+  privado?: boolean; // solo lo ve el equipo (no sale en el portal del dueño)
 }
 export interface Compra { id: string; numero: number; codigo: string; creado: string; estado: string; total: number; items: { nombre: string; cantidad: number }[] }
 
@@ -210,6 +211,11 @@ export async function crearRegistros(rs: NuevoRegistro[]): Promise<Registro[]> {
   if (error) throw /row-level security/i.test(error.message) ? new Error('Tu rol no puede escribir este tipo de registro.') : fallaG;
   return data as Registro[];
 }
+export async function cambiarPrivado(id: string, privado: boolean): Promise<void> {
+  if (DEMO) { store.set(K.reg, ej.regs().map((r) => (r.id === id ? { ...r, privado } : r))); return; }
+  const { error } = await sb!.from('registros').update({ privado }).eq('id', id);
+  if (error) throw new Error('No se guardó el cambio.');
+}
 export async function borrarRegistro(id: string): Promise<void> {
   if (DEMO) { store.set(K.reg, ej.regs().filter((r) => r.id !== id)); return; }
   const { error } = await sb!.from('registros').delete().eq('id', id);
@@ -217,7 +223,15 @@ export async function borrarRegistro(id: string): Promise<void> {
 }
 
 /* ---------- archivos (privados) ---------- */
-export async function subirArchivo(file: File, carpeta: string): Promise<Archivo> {
+export async function subirArchivo(original: File, carpeta: string): Promise<Archivo> {
+  let file = original;
+  if (/^image\/(jpeg|png|webp|heic|heif)$/i.test(original.type) && original.size > 400 * 1024) {
+    try {
+      const { comprimir } = await import('./productos-datos');
+      const b = await comprimir(original, 2000); // 2000 px: el texto de un resultado se sigue leyendo
+      if (b.size < original.size) file = new File([b], original.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+    } catch { /* si el navegador no puede, se sube como está */ }
+  }
   if (file.size > 10 * 1024 * 1024) throw new Error(`«${file.name}» pesa más de 10 MB.`);
   if (DEMO) return { nombre: file.name, ruta: URL.createObjectURL(file), tipo: file.type };
   const limpio = file.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.-]+/g, '-').slice(-80);
