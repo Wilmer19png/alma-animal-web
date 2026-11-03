@@ -102,7 +102,7 @@ export function tarjeta(p: Producto, i = 0): string {
     ? `<a class="add" href="${url}" aria-label="Agregar ${esc(p.nombre)}: elige ${esc((p.tipo ?? 'la opción').toLowerCase())}"><span class="ms" aria-hidden="true">add_shopping_cart</span></a>`
     : `<button class="add" type="button" aria-label="Agregar ${esc(p.nombre)} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add_shopping_cart</span></button>`;
   const q = `${p.nombre} ${categoria(p.categoria)} ${p.marca ?? ''} ${p.variantes.map((x) => x.nombre).join(' ')}`.toLowerCase();
-  return `<article class="prod" data-prod data-i="${i}" data-cat="${p.categoria}" data-para="${p.para.join(' ')}" data-talla="${p.tamanos.join(' ')}" data-price="${precioMin(p)}" data-stock="${stock}" data-top="${p.etiquetas.includes('top') ? 1 : 0}" data-added="${esc(p.creado ?? '')}" data-q="${esc(q)}">
+  return `<article class="prod" data-prod data-i="${i}" data-cat="${p.categoria}" data-para="${p.para.join(' ')}" data-talla="${p.tamanos.join(' ')}" data-price="${precioMin(p)}" data-stock="${stock}" data-top="${p.etiquetas.includes('top') ? 1 : 0}" data-added="${esc(p.creado ?? '')}" data-q="${esc(q)}" data-tags="${etiquetas(p).join(' ')}">
   <a class="prod__img${p.fotos[0] ? ' has-foto' : ''}" href="${url}" tabindex="-1" aria-hidden="true" style="background:${TONOS[p.tono] ?? TONOS.lav}">${portada(p)}${pill}${tag}${descTxt}</a>
   <div class="prod__body">
     <span class="prod__cat">${categoria(p.categoria)}${det ? `<span> · ${esc(det)}</span>` : ''}</span>
