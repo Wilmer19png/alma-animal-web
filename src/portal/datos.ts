@@ -59,9 +59,10 @@ export async function entrar(correo: string, clave: string): Promise<string | nu
   return 'No pudimos entrar. Revisa tu conexión e inténtalo de nuevo.';
 }
 // enlace para entrar sin contraseña (también sirve la primera vez)
-export async function enlace(correo: string): Promise<string | null> {
+// a: adónde lleva el enlace (al portal, o a crear la contraseña la primera vez)
+export async function enlace(correo: string, a = '/portal'): Promise<string | null> {
   if (DEMO) return 'Esto funciona cuando esté conectada la base de datos.';
-  const { error } = await pc!.auth.signInWithOtp({ email: correo.trim(), options: { emailRedirectTo: destino('/portal'), shouldCreateUser: true } });
+  const { error } = await pc!.auth.signInWithOtp({ email: correo.trim(), options: { emailRedirectTo: destino(a), shouldCreateUser: true } });
   if (!error) return null;
   if (/rate|seconds/i.test(error.message)) return 'Ya te enviamos un enlace hace poco. Espera un minuto y vuelve a intentarlo.';
   return 'No pudimos enviar el enlace. Revisa el correo e inténtalo de nuevo.';

@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import heart from '../assets/corazon.png';
 import { go, asset, link } from '../gestor/lib';
-import { useCuenta, entrar, enlace, recuperar, nuevaClave, entrarEjemplo, DEMO } from './datos';
+import { useCuenta, entrar, enlace, nuevaClave, entrarEjemplo, DEMO } from './datos';
 import { Pie } from './Marco';
 
 function Tarjeta({ titulo, sub, children }: { titulo: string; sub: string; children: React.ReactNode }) {
@@ -37,7 +37,7 @@ function Clave({ value, onChange, id, auto }: { value: string; onChange: (v: str
 
 export function Ingresar() {
   const c = useCuenta();
-  const [modo, setModo] = useState<'enlace' | 'clave' | 'olvido'>('enlace');
+  const [modo, setModo] = useState<'enlace' | 'clave' | 'olvido'>('clave');
   const [listo, setListo] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
@@ -49,7 +49,7 @@ export function Ingresar() {
     e.preventDefault();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo.trim())) { setError('Escribe tu correo completo. Ej: laura@gmail.com'); return; }
     setError(''); setOcupado(true);
-    const err = modo === 'clave' ? await entrar(correo, clave) : modo === 'olvido' ? await recuperar(correo) : await enlace(correo);
+    const err = modo === 'clave' ? await entrar(correo, clave) : modo === 'olvido' ? await enlace(correo, '/portal/clave') : await enlace(correo);
     setOcupado(false);
     if (err) setError(err);
     else if (modo !== 'clave') setListo(modo === 'enlace' ? 'enlace' : 'olvido');
@@ -57,14 +57,14 @@ export function Ingresar() {
 
   if (listo) {
     return (
-      <Tarjeta titulo="Revisa tu correo" sub={listo === 'enlace' ? `Te enviamos a ${correo} un enlace para entrar. Ábrelo desde este mismo celular o computador.` : `Te enviamos a ${correo} un enlace para crear una contraseña nueva.`}>
+      <Tarjeta titulo="Revisa tu correo" sub={listo === 'enlace' ? `Te enviamos a ${correo} un enlace para entrar. Ábrelo desde este mismo celular o computador.` : `Te enviamos a ${correo} un enlace. Ábrelo y crea tu contraseña: desde ahí entras con tu correo y esa contraseña.`}>
         <p className="hint">¿No llega? Revisa la carpeta de spam o promociones. El enlace sirve por una hora.</p>
-        <button className="gbtn out ing__btn" type="button" onClick={() => { setListo(''); setModo('enlace'); }}>Volver</button>
+        <button className="gbtn out ing__btn" type="button" onClick={() => { setListo(''); setModo('clave'); }}>Volver</button>
       </Tarjeta>
     );
   }
   return (
-    <Tarjeta titulo={modo === 'olvido' ? 'Crear una contraseña nueva' : 'Ingresa a tu portal'} sub={modo === 'olvido' ? 'Escribe tu correo y te enviamos un enlace.' : 'Mira el carnet de vacunas, los exámenes y agenda citas.'}>
+    <Tarjeta titulo={modo === 'olvido' ? 'Crea tu contraseña' : 'Ingresa a tu portal'} sub={modo === 'olvido' ? '¿Primera vez o la olvidaste? Escribe el correo que diste en el consultorio y te enviamos un enlace para crearla.' : 'Mira el carnet de vacunas, los exámenes y agenda citas.'}>
       <form className="ing__form" onSubmit={enviar} noValidate>
         <label htmlFor="pc">Correo</label>
         <input id="pc" type="email" inputMode="email" value={correo} onChange={(e) => setCorreo(e.target.value)} autoComplete="username" placeholder="El que diste en el consultorio" />
@@ -75,9 +75,9 @@ export function Ingresar() {
         </button>
       </form>
       <div className="pacc__links">
-        {modo !== 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('clave'); setError(''); }}>Entrar con contraseña</button>}
-        {modo === 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('enlace'); setError(''); }}>Entrar con un enlace al correo</button>}
-        {modo === 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('olvido'); setError(''); }}>Olvidé mi contraseña</button>}
+        {modo === 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('olvido'); setError(''); }}>¿Primera vez o la olvidaste? Crea tu contraseña</button>}
+        {modo === 'clave' && <button className="ing__link ing__link--sec" type="button" onClick={() => { setModo('enlace'); setError(''); }}>Entrar con un enlace al correo</button>}
+        {modo !== 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('clave'); setError(''); }}>Volver a entrar con contraseña</button>}
       </div>
       <p className="hint">¿Tu mascota aún no es paciente? <a href="/consultorio">Agenda su primera cita</a>; al registrarla te damos el acceso.</p>
       <p className="hint">¿Eres del equipo? <a href={link('/gestor/ingresar')}>Entra al gestor</a>.</p>

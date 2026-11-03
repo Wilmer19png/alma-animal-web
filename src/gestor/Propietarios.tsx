@@ -117,7 +117,7 @@ function Ficha({ p, mascotas, volver, cambiado, avisar }: { p: Propietario; masc
   const invitar = async () => {
     if (!p.correo) { avisar('Primero agrega su correo.'); return; }
     const msg = `Hola, ${p.nombre} 🐾 Te escribimos de Alma Animal. Ya puedes ver el carnet, la historia y las citas de tus mascotas en tu portal: ${location.origin}/portal/ingresar
-Entra con tu correo ${p.correo} y toca «Enviarme un enlace para entrar». Desde ahí también puedes agendar.`;
+La primera vez toca «¿Primera vez o la olvidaste? Crea tu contraseña» y escribe tu correo ${p.correo}. Desde ahí también puedes agendar.`;
     window.open(waLink(p.celular, msg), '_blank', 'noopener');
     try { cambiado(await actualizarPropietario(p.id, { portal: p.portal === 'activo' ? 'activo' : 'invitado' }), 'Invitación abierta en WhatsApp'); }
     catch (e) { avisar((e as Error).message); }
