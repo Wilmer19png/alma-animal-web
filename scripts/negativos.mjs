@@ -7,13 +7,13 @@ import sharp from 'sharp';
 import { unlinkSync, existsSync } from 'node:fs';
 
 const DIR = 'src/assets/identidad/';
-// umbral: qué tan oscuro es un detalle (0–1). maxArea: en el lobo solo se tratan los detalles pequeños
-// (ojo, nariz, huellas); sus sombras grandes en degradado quedan rellenas. linea: grosor del reborde (px).
+// umbral: qué tan oscuro es un detalle (0–1). maxPx: en el lobo solo se tratan los detalles pequeños
+// (ojo, nariz, huellas; menos de maxPx píxeles); sus sombras grandes en degradado quedan rellenas. linea: grosor del reborde (px).
 const PIEZAS = [
   { de: 'gato', umbral: 0.70, linea: 5 },
-  { de: 'lobo', umbral: 0.72, maxArea: 0.0018, linea: 4 }
+  { de: 'lobo', umbral: 0.72, maxPx: 2100, linea: 4 }
 ];
-const COLORES = { blanco: [255, 255, 255], tinta: [43, 30, 72] }; // tinta = #2B1E48
+const COLORES = { blanco: [255, 255, 255], tinta: [43, 30, 72], morado: [101, 87, 133] }; // tinta = #2B1E48 · morado = #655785 (--primary)
 
 for (const p of PIEZAS) {
   const { data, info } = await sharp(DIR + p.de + '.webp').ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -39,7 +39,7 @@ for (const p of PIEZAS) {
         const q = pila[--top]; comp.push(q);
         for (const v of vec(q)) { if (v < 0 || data[v * 4 + 3] <= 40) tocaFondo = true; else if (detalle[v] && !visto[v]) { visto[v] = 1; pila[top++] = v; } }
       }
-      if (p.maxArea && comp.length >= p.maxArea * N) continue; // sombra grande del lobo: queda rellena
+      if (p.maxPx && comp.length >= p.maxPx) continue; // sombra grande del lobo: queda rellena
       if (!tocaFondo) { for (const q of comp) hueco[q] = 1; continue; }
       // reborde: se come el detalle desde su borde; lo que queda adentro se recorta
       let dentro = new Set(comp);
