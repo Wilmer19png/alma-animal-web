@@ -33,7 +33,7 @@ function Encabezado({ titulo }: { titulo: string }) {
     <header className="doc-head">
       <img src={asset(logo.src)} alt="Alma Animal" />
       <div><span className="doc-head__kick">Alma Animal · Consultorio · Spa · Petshop</span><h2>{titulo}</h2></div>
-      <div className="doc-head__dra"><b>Hoyos Giraldo</b><span>Médica Veterinaria &amp; Zootecnista · TP 51206</span></div>
+      <div className="doc-head__dra"><b>Mariana Hoyos Giraldo</b><span>Médica Veterinaria &amp; Zootecnista · TP 51206</span></div>
     </header>
   );
 }
