@@ -1,11 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import paper from '../assets/papel-tigre-perro-v3.png';
+import lobo from '../assets/identidad/lobo-negativo-blanco.webp';
+import logo from '../assets/identidad/logo.webp';
 import { PHONES, ADDRESS, HOURS, SOCIAL, DOCTOR } from '../data/site';
 ---
 <div class="wrap foot-wrap">
   <footer id="contacto" class="foot on-dark">
-    <Image src={paper} alt="" width={520} class="foot__art" />
+    <Image src={lobo} alt="" width={460} class="foot__art" />
+    <span class="foot__sello"><Image src={logo} alt="" width={128} /></span>
     <h2 class="foot__title">Te esperamos en <b class="gt">Pereira</b></h2>
     <div class="foot__grid">
       <div class="foot__col">
@@ -63,7 +65,9 @@ import { PHONES, ADDRESS, HOURS, SOCIAL, DOCTOR } from '../data/site';
   .foot a:hover { color: #fff; text-decoration: underline; }
   .foot .btn--alma, .foot .btn--alma:hover { color: #362954; text-decoration: none; }
   .foot .btn--ghost:hover { text-decoration: none; }
-  .foot__art { position: absolute; right: -70px; top: -30px; width: 260px; height: auto; opacity: .12; z-index: -1; }
+  .foot__art { position: absolute; right: -60px; top: -20px; width: 200px; height: auto; opacity: .13; z-index: -1; transform: rotate(-8deg); }
+  .foot__sello { display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 20px; border-radius: 50%; background: #fff; box-shadow: 0 8px 24px rgb(0 0 0 / .18); }
+  .foot__sello img { width: 52px; height: auto; }
   .foot__title { font-size: clamp(34px, 7vw, 56px); font-weight: 400; line-height: 1; letter-spacing: -.03em; max-width: 12ch; }
   .foot__title b { font-weight: 700; }
   .foot__grid { display: grid; gap: 22px; margin-top: 28px; }
@@ -78,7 +82,9 @@ import { PHONES, ADDRESS, HOURS, SOCIAL, DOCTOR } from '../data/site';
   .foot__legal a { text-decoration: underline; text-underline-offset: 3px; }
   @media (min-width: 768px) {
     .foot { border-radius: var(--r-xl); padding: 64px 48px 32px; }
-    .foot__art { width: 520px; right: -40px; }
+    .foot__art { width: 380px; right: 4%; top: -40px; }
+    .foot__sello { width: 104px; height: 104px; margin-bottom: 28px; }
+    .foot__sello img { width: 72px; }
     .foot__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 48px; }
     .foot__cta { margin-top: 40px; }
   }

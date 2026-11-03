@@ -9,7 +9,8 @@ import WaStrip from '../components/WaStrip.astro';
 import { whatsapp, DOCTOR } from '../data/site';
 import mariana from '../assets/mariana-gato.png';
 import moto from '../assets/mariana-moto.png';
-import tigerDog from '../assets/papel-tigre-perro-v3.png';
+import gatoBlanco from '../assets/identidad/gato-negativo-blanco.webp';
+import loboTinta from '../assets/identidad/lobo-negativo-tinta.webp';
 
 const waCita = whatsapp.vet('Hola, doctora. Quiero agendar una consulta para mi mascota.');
 const fotoGato = await getImage({ src: mariana, width: 640, format: 'webp' });
@@ -34,7 +35,7 @@ const COMO = [
   <!-- ======== PORTADA ======== -->
   <div class="wrap">
     <header class="kd-hero on-dark">
-      <Image src={tigerDog} alt="" width={520} class="kd-hero__deco" />
+      <Image src={gatoBlanco} alt="" width={420} class="kd-hero__deco" />
       <div class="kd-hero__copy">
         <a class="back" href="/consultorio"><span class="ms" aria-hidden="true">arrow_back</span>Consultorio</a>
         <span class="kd-kick"><span class="ms" aria-hidden="true">stethoscope</span>La veterinaria de Alma Animal</span>
@@ -105,6 +106,7 @@ const COMO = [
   <!-- ======== AGENDA ======== -->
   <section class="wrap kd-sec">
     <div class="kd-cta">
+      <Image src={loboTinta} alt="" width={300} class="kd-cta__lobo" />
       <div><h2>¿Agendamos con <span data-kd-nombre2>Mariana</span>?</h2><p>En el consultorio o en tu casa. Te confirmamos por WhatsApp.</p></div>
       <div class="kd-cta__acts">
         <a class="btn btn--lg" href={waCita} target="_blank" rel="noopener">Agenda una consulta<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
@@ -152,7 +154,7 @@ const COMO = [
 
 <style>
   .kd-hero { position: relative; display: grid; gap: 24px; padding: 28px 20px 0; border-radius: var(--r-lg); background: #2B1E48; color: #fff; overflow: hidden; isolation: isolate; }
-  .kd-hero :global(.kd-hero__deco) { position: absolute; left: -60px; bottom: -60px; width: 420px; height: auto; opacity: .08; z-index: -1; }
+  .kd-hero :global(.kd-hero__deco) { position: absolute; left: -40px; bottom: -90px; width: 260px; height: auto; opacity: .1; z-index: -1; transform: rotate(-12deg); }
   .kd-hero__copy { display: flex; flex-direction: column; gap: 16px; }
   .kd-hero .back { color: rgb(255 255 255 / .78); }
   .kd-kick { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--font-sans); color: #FBCFAF; letter-spacing: .02em; }
@@ -203,7 +205,9 @@ const COMO = [
   .kd-como__c b { font: 700 19px/1.25 var(--font-sans); }
   .kd-como__c p { font: 400 16px/1.6 var(--font-sans); color: var(--ink-muted); }
 
-  .kd-cta { display: flex; flex-direction: column; gap: 20px; padding: 28px 22px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; margin-bottom: var(--section); }
+  .kd-cta :global(.kd-cta__lobo) { display: none; }
+  @media (min-width: 900px) { .kd-cta :global(.kd-cta__lobo) { display: block; position: absolute; z-index: -1; right: 18px; bottom: -58px; width: 104px; height: auto; opacity: .9; transform: rotate(-10deg); } .kd-cta__acts { padding-right: 112px; } }
+  .kd-cta { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; gap: 20px; padding: 28px 22px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; margin-bottom: var(--section); }
   .kd-cta h2 { font: 700 clamp(28px, 4.5vw, 44px)/1.1 var(--font-sans); letter-spacing: -.03em; }
   .kd-cta p { margin-top: 8px; font: 400 17px/1.5 var(--font-sans); }
   .kd-cta__acts { display: flex; flex-direction: column; gap: 10px; }

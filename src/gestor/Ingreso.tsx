@@ -1,7 +1,7 @@
 // Ingreso al gestor (correo y contraseña del equipo), recuperación de contraseña
 // y, mientras no esté conectada la base de datos, entrada con datos de ejemplo.
 import { useEffect, useState, type FormEvent } from 'react';
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 import { useSesion, entrar, entrarEjemplo, recuperar, nuevaClave } from './session';
 import { DEMO, go, asset } from './lib';
 

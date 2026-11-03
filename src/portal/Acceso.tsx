@@ -1,7 +1,7 @@
 // Ingreso al portal: con un enlace al correo (sin contraseña, sirve también la primera vez) o con contraseña.
 // Y la pantalla para crear o cambiar la contraseña.
 import { useEffect, useState, type FormEvent } from 'react';
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 import { go, asset, link } from '../gestor/lib';
 import { useCuenta, entrar, enlace, nuevaClave, entrarEjemplo, DEMO } from './datos';
 import { Pie } from './Marco';

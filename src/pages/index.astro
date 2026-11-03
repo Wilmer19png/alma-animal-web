@@ -13,13 +13,14 @@ import WaStrip from '../components/WaStrip.astro';
 import HomeVisit from '../components/HomeVisit.astro';
 import { NAV, ADDRESS, PHONES, SOCIAL, DOCTOR, whatsapp } from '../data/site';
 import { POSTS as BLOG_POSTS, BLOG_DEMO, postUrl } from '../data/blog';
-import heartPaper from '../assets/papel-corazon-v2.png';
-import tigerDog from '../assets/papel-tigre-perro-v3.png';
+import gato from '../assets/identidad/gato.webp';
+import loboBlanco from '../assets/identidad/lobo-negativo-blanco.webp';
+import loboTinta from '../assets/identidad/lobo-negativo-tinta.webp';
 import paw from '../assets/pata-perro-h.png';
 import claw from '../assets/garra-tigre.png';
 import mariana from '../assets/mariana-gato.png';
 import groomer from '../assets/peluquera.png';
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 
 // equipo del carrusel del héroe
 const TEAM = [
@@ -73,7 +74,7 @@ const waVet = whatsapp.vet();
       </div>
 
       <div class="hero__copy">
-        <h1>Cuidado<br /><span class="hero__h1-line">con <span class="gt">alma</span><span class="hero__seal"><Image src={heartPaper} alt="" width={96} loading="eager" /></span></span></h1>
+        <h1>Cuidado<br /><span class="hero__h1-line">con <span class="gt">alma</span><span class="hero__seal"><Image src={heart} alt="" width={96} loading="eager" /></span></span></h1>
         <p data-c="inicio.heroe.texto" set:html={TX('inicio.heroe.texto')} />
         <div class="hero__actions">
           <a class="btn btn--alma btn--lg" href="/consultorio#agendar">Agenda tu cita<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
@@ -141,18 +142,20 @@ const waVet = whatsapp.vet();
     <div class="spaces__grid">
       <a class="card door door--clinic" href="/consultorio">
         <span class="ms glyph" aria-hidden="true">stethoscope</span>
+        <Image src={gato} alt="" width={300} class="door__art door__art--gato" />
         <h3>Consultorio</h3>
         <p data-c="inicio.espacios.consultorio" set:html={TX('inicio.espacios.consultorio')} />
         <span class="link">Ver el consultorio<span class="ms" aria-hidden="true">arrow_forward</span></span>
       </a>
       <a class="door door--spa" href="/spa">
-        <Image src={tigerDog} alt="" width={360} class="door__art" />
+        <Image src={loboBlanco} alt="" width={300} class="door__art door__art--lobo" />
         <h3>Spa Alma</h3>
         <p data-c="inicio.espacios.spa" set:html={TX('inicio.espacios.spa')} />
         <span class="link">Ver el spa<span class="ms" aria-hidden="true">arrow_forward</span></span>
       </a>
       <a class="door door--shop" href="/petshop">
         <span class="ms glyph" aria-hidden="true">storefront</span>
+        <Image src={loboTinta} alt="" width={300} class="door__art door__art--tinta" />
         <h3>Petshop</h3>
         <p data-c="inicio.espacios.petshop" set:html={TX('inicio.espacios.petshop')} />
         <span class="link">Ir a la tienda<span class="ms" aria-hidden="true">arrow_forward</span></span>
@@ -283,8 +286,8 @@ const waVet = whatsapp.vet();
   .hero__copy { order: 2; display: flex; flex-direction: column; gap: 16px; padding: 4px 4px 0; }
   .hero h1 { font-size: clamp(42px, 12vw, 100px); font-weight: 700; line-height: .95; letter-spacing: -.045em; }
   .hero__h1-line { display: inline-flex; align-items: center; gap: .14em; }
-  .hero__seal { width: .7em; height: .7em; border-radius: 50%; background: var(--grad-primary); display: inline-grid; place-items: center; margin-top: .1em; box-shadow: var(--shadow-1); }
-  .hero__seal img { width: 62%; height: auto; }
+  .hero__seal { width: .7em; height: .7em; border-radius: 50%; background: #fff; display: inline-grid; place-items: center; margin-top: .1em; box-shadow: var(--shadow-1); }
+  .hero__seal img { width: 70%; height: auto; }
   .hero__copy p { font-size: 17px; line-height: 1.55; color: var(--ink-muted); max-width: 34ch; }
   .hero__copy p :global(b) { color: var(--ink); font-weight: 600; }
   .hero__actions { display: flex; flex-direction: column; gap: 12px; }
@@ -427,7 +430,10 @@ const waVet = whatsapp.vet();
     .spaces { gap: 40px; }
     .spaces__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
     .door { min-height: 480px; padding: 32px; }
-    .door__art { display: block; position: absolute; right: -48px; top: -36px; width: 270px; height: auto; z-index: -1; opacity: .9; }
+    .door__art { display: block; position: absolute; right: 22px; top: 26px; width: 136px; height: auto; z-index: -1; }
+    .door__art--gato { transform: rotate(6deg); }
+    .door__art--lobo { opacity: .92; transform: rotate(-8deg); }
+    .door__art--tinta { opacity: .88; transform: rotate(-8deg) scaleX(-1); }
     a.door:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
     .door { transition: transform .25s var(--ease-out), box-shadow .25s var(--ease); }
   }

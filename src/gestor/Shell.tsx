@@ -1,7 +1,7 @@
 // Marco de todas las pantallas del gestor: menú lateral (escritorio), barra inferior (celular)
 // y control de acceso. Si no hay sesión, manda a /gestor/ingresar.
 import { useEffect, type ReactNode } from 'react';
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 import { useSesion, salir, inactividadActiva, ROL_TXT, type Miembro } from './session';
 import { link, go, asset, DEMO } from './lib';
 
