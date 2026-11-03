@@ -9,6 +9,8 @@ import {
   type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo
 } from './clinica-datos';
 import { PacienteForm, Avatar, erroresPaciente } from './clinica-ui';
+import { CarnetDoc, AtencionDoc, tutorDe } from './documentos';
+import { descargarPdf, nombreArchivo } from './pdf';
 import type { Rol } from './session';
 import { leerEsquemas, ESQUEMAS_BASE, type Esquemas } from './vacunas-datos';
 
@@ -18,8 +20,10 @@ const enDias = (n: number) => new Date(Date.now() + n * 86400000).toISOString().
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const ETIQ: Record<string, string> = {
   motivo: 'Motivo', diagnostico: 'Diagnóstico', tratamiento: 'Tratamiento', temperatura: 'Temperatura (°C)', fc: 'Frecuencia cardiaca',
-  fr: 'Frecuencia respiratoria', peso: 'Peso (kg)', laboratorio: 'Laboratorio', lote: 'Lote', proxima: 'Próxima dosis', producto: 'Producto'
+  fr: 'Frecuencia respiratoria', peso: 'Peso (kg)', laboratorio: 'Laboratorio', lote: 'Lote', proxima: 'Próxima dosis', producto: 'Producto',
+  vence: 'Vencimiento del lote', proxima_que: 'Qué le toca', obs: 'Observaciones'
 };
+
 // lo que cada rol puede escribir en la historia
 const PUEDE: Record<Rol, TipoRegistro[]> = {
   admin: Object.keys(TIPOS) as TipoRegistro[], veterinario: Object.keys(TIPOS) as TipoRegistro[],
@@ -41,6 +45,12 @@ export default function Paciente() {
   const [editando, setEditando] = useState(false);
   const histRef = useRef<HTMLElement>(null);
   const [esq, setEsq] = useState<Esquemas>(ESQUEMAS_BASE);
+  const [pdfOcupado, setPdfOcupado] = useState(false);
+  const bajar = async (doc: React.ReactElement, nombre: string) => {
+    setPdfOcupado(true); setAviso('Preparando el PDF…');
+    try { await descargarPdf(doc, nombre); setAviso('PDF descargado. Ya lo puedes mandar por WhatsApp.'); } catch { setAviso('No se pudo crear el PDF. Inténtalo de nuevo.'); }
+    setPdfOcupado(false);
+  };
   useEffect(() => { leerEsquemas().then(setEsq).catch(() => {}); }, []);
 
   useEffect(() => {
@@ -93,6 +103,16 @@ export default function Paciente() {
                 <a className="gbtn out" href={link('/gestor/agenda') + `?paciente=${m.id}`}><span className="ms" aria-hidden="true">event</span>Agendar cita</a>
                 <button className="gbtn out" type="button" onClick={() => { setNuevo('examen'); setMenu(false); setTab('todo'); setTimeout(() => histRef.current?.scrollIntoView({ behavior: 'smooth' }), 50); }}><span className="ms" aria-hidden="true">upload_file</span>Subir examen</button>
                 <button className="gbtn out" type="button" onClick={() => { setTab('carnet'); histRef.current?.scrollIntoView({ behavior: 'smooth' }); }}><span className="ms" aria-hidden="true">badge</span>Carnet</button>
+                {(() => {
+                  // la visita más reciente: todo lo registrado ese día (sin notas internas ni lo marcado «solo equipo»)
+                  const para = (regs ?? []).filter((r) => r.tipo !== 'nota' && !r.privado);
+                  const dia = para.map((r) => r.fecha.slice(0, 10)).sort().pop();
+                  if (!dia) return null;
+                  const deEseDia = para.filter((r) => r.fecha.slice(0, 10) === dia);
+                  const etiqueta = dia === new Date().toISOString().slice(0, 10) ? 'de hoy' : 'del ' + fechaC(dia + 'T12:00:00');
+                  return <button className="gbtn out" type="button" disabled={pdfOcupado} onClick={() => bajar(<AtencionDoc p={m} tutor={tutorDe(dueño)} regs={deEseDia} />, nombreArchivo('visita', m.nombre, dia))}>
+                    <span className="ms" aria-hidden="true">picture_as_pdf</span>PDF de la visita {etiqueta}</button>;
+                })()}
                 <div className="menu-w">
                   <button className="gbtn" type="button" aria-expanded={menu} onClick={() => setMenu((v) => !v)}><span className="ms" aria-hidden="true">add</span>Nuevo registro</button>
                   {menu && (
@@ -167,12 +187,12 @@ export default function Paciente() {
                   guardado={(rs) => { setRegs((l) => [...rs, ...(l ?? [])].sort((a, b) => b.fecha.localeCompare(a.fecha))); const p = rs.find((r) => r.datos.peso); if (p) setM((x) => x && ({ ...x, peso: Number(p.datos.peso.replace(',', '.')) })); setNuevo(null); setAviso('Registro guardado en la historia'); }} />}
 
                 {tab === 'carnet'
-                  ? <Carnet m={m} regs={regs ?? []} dueño={dueño} />
+                  ? <Carnet m={m} regs={regs ?? []} dueño={dueño} ocupado={pdfOcupado} bajar={bajar} />
                   : (
                     <ol className="tl">
                       {regs === null && <li className="vacio">Cargando la historia…</li>}
                       {regs && !visibles.length && <li className="tl__vacio"><span className="ms" aria-hidden="true">inventory</span><b>{q ? 'Nada coincide con la búsqueda' : `${m.nombre} aún no tiene registros${tab !== 'todo' ? ' de este tipo' : ''}`}</b><span>Agrégalo con «Nuevo registro» y quedará en su historia.</span></li>}
-                      {visibles.map((r) => <Entrada key={r.id} r={r} puedeBorrar={yo.rol === 'admin'} borrar={async () => {
+                      {visibles.map((r) => <Entrada key={r.id} r={r} puedeBorrar={yo.rol === 'admin'} pdf={r.tipo === 'nota' ? undefined : () => bajar(<AtencionDoc p={m} tutor={tutorDe(dueño)} regs={[r]} />, nombreArchivo(TIPOS[r.tipo].txt, m.nombre, r.fecha.slice(0, 10)))} borrar={async () => {
                         if (!confirm(`¿Borrar «${r.titulo}» de la historia de ${m.nombre}? No se puede deshacer.`)) return;
                         try { await borrarRegistro(r.id); setRegs((l) => l!.filter((x) => x.id !== r.id)); setAviso('Registro borrado'); } catch (e) { setAviso((e as Error).message); }
                       }} />)}
@@ -238,7 +258,7 @@ function Peso({ regs, actual }: { regs: Registro[]; actual: number | null }) {
 }
 
 /* ---------- una entrada de la historia ---------- */
-function Entrada({ r, puedeBorrar, borrar }: { r: Registro; puedeBorrar: boolean; borrar: () => void }) {
+function Entrada({ r, puedeBorrar, borrar, pdf }: { r: Registro; puedeBorrar: boolean; borrar: () => void; pdf?: () => void }) {
   const [privado, setPrivado] = useState(!!r.privado);
   const alternar = async () => { const n = !privado; setPrivado(n); try { await cambiarPrivado(r.id, n); } catch { setPrivado(!n); } };
   const filas = Object.entries(r.datos).filter(([k, v]) => v && ETIQ[k]);
@@ -252,6 +272,7 @@ function Entrada({ r, puedeBorrar, borrar }: { r: Registro; puedeBorrar: boolean
           <span className="tl__kind">{TIPOS[r.tipo].txt}{r.externo ? ' · aplicada en otra veterinaria' : ''}</span>
           <b>{r.titulo}</b>
           {r.por_nombre && <span className="hint">{r.por_nombre}</span>}
+          {pdf && <button type="button" className="tl__pdf" onClick={pdf} title="Descargar en PDF para mandárselo al cliente"><span className="ms" aria-hidden="true">picture_as_pdf</span>PDF</button>}
           {puedeBorrar && <button type="button" className="vrow__x tl__x" aria-label={`Borrar ${r.titulo}`} onClick={borrar}><span className="ms">delete</span></button>}
         </div>
         {r.resumen && <p>{r.resumen}</p>}
@@ -266,49 +287,17 @@ function Entrada({ r, puedeBorrar, borrar }: { r: Registro; puedeBorrar: boolean
   );
 }
 
-/* ---------- carnet ---------- */
-function Carnet({ m, regs, dueño }: { m: TPaciente; regs: Registro[]; dueño: Propietario | null }) {
-  const vax = regs.filter((r) => r.tipo === 'vacuna' || r.tipo === 'desparasitacion');
-  const estado = (r: Registro): [string, string] => {
-    if (!r.datos.proxima) return ['Aplicada', 'ok'];
-    const d = (new Date(r.datos.proxima + 'T12:00:00').getTime() - Date.now()) / 86400000;
-    return d < 0 ? ['Vencida', 'mal'] : d <= 30 ? ['Vence pronto', 'warn'] : ['Al día', 'ok'];
-  };
-  // solo la aplicación más reciente de cada vacuna cuenta para el estado
-  const vistos = new Set<string>();
+/* ---------- carnet (el mismo que ve el cliente en su portal) ---------- */
+function Carnet({ m, regs, dueño, ocupado, bajar }: { m: TPaciente; regs: Registro[]; dueño: Propietario | null; ocupado: boolean; bajar: (d: React.ReactElement, n: string) => void }) {
+  const doc = <CarnetDoc p={m} tutor={tutorDe(dueño)} regs={regs} />;
   return (
-    <div className="carnet">
-      <div className="carnet__top">
-        <p>Esto es lo que verá {dueño ? dueño.nombre : 'el propietario'} en su portal. Cada vacuna lleva el sello de su laboratorio.</p>
-        {dueño && <a className="gbtn wa sm" href={waLink(dueño.celular, `Hola, ${dueño.nombre}. Este es el carnet de vacunas de ${m.nombre}:\n` + vax.map((r) => `• ${r.titulo}: ${fechaC(r.fecha)}${r.datos.proxima ? ` · próxima ${fechaC(r.datos.proxima + 'T12:00:00')}` : ''}`).join('\n'))} target="_blank" rel="noopener"><span className="ms" aria-hidden="true">chat</span>Enviar a {dueño.nombre}</a>}
+    <div className="carnet-g">
+      <div className="doc-acts">
+        <button className="gbtn sm" type="button" disabled={ocupado} onClick={() => bajar(doc, nombreArchivo('carnet', m.nombre))}><span className="ms" aria-hidden="true">picture_as_pdf</span>Descargar PDF</button>
+        {dueño && <a className="gbtn wa sm" href={waLink(dueño.celular, `Hola, ${dueño.nombre} 🐾 Te comparto el carnet de vacunación de ${m.nombre}. También lo ves siempre actualizado en tu portal de Alma Animal.`)} target="_blank" rel="noopener"><span className="ms" aria-hidden="true">chat</span>Abrir WhatsApp de {dueño.nombre}</a>}
       </div>
-      {!vax.length && <p className="hint">Todavía no tiene vacunas ni desparasitaciones registradas.</p>}
-      <div className="vax">
-        {vax.map((r) => {
-          const repetida = vistos.has(r.titulo); vistos.add(r.titulo);
-          const [st, cls] = repetida ? ['Anterior', 'old'] : estado(r);
-          const lab = r.datos.laboratorio || (r.externo ? 'Otra veterinaria' : 'Alma Animal');
-          return (
-            <article className="vcard" key={r.id}>
-              <div className="vcard__top">
-                <div><b>{r.titulo}</b><span className={`chip st-${cls}`}>{st}</span></div>
-                <svg className="sello" viewBox="0 0 84 84" role="img" aria-label={`Sello de ${lab}${r.datos.lote ? `, lote ${r.datos.lote}` : ''}`}>
-                  <circle cx="42" cy="42" r="38" fill="none" stroke="currentColor" strokeWidth="2.5" />
-                  <circle cx="42" cy="42" r="31" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-                  <text x="42" y="40" textAnchor="middle" className="sello__lab">{lab.slice(0, 14)}</text>
-                  <text x="42" y="53" textAnchor="middle" className="sello__lote">{r.datos.lote ? `Lote ${r.datos.lote}` : fechaC(r.fecha)}</text>
-                </svg>
-              </div>
-              <dl>
-                <div><dt>Aplicada</dt><dd>{fechaC(r.fecha)}</dd></div>
-                <div><dt>Próxima dosis</dt><dd>{r.datos.proxima ? fechaC(r.datos.proxima + 'T12:00:00') : '—'}</dd></div>
-                <div><dt>{r.tipo === 'vacuna' ? 'Laboratorio' : 'Producto'}</dt><dd>{r.datos.laboratorio || r.datos.producto || '—'}</dd></div>
-                <div><dt>Aplicó</dt><dd>{r.externo ? 'Otra veterinaria' : r.por_nombre ?? '—'}</dd></div>
-              </dl>
-            </article>
-          );
-        })}
-      </div>
+      <p className="hint">Así lo ve {dueño ? dueño.nombre : 'el propietario'} en su portal. Descarga el PDF y adjúntalo en el chat.</p>
+      {doc}
     </div>
   );
 }
@@ -326,12 +315,16 @@ const CAMPOS = (t: TipoRegistro, m: TPaciente): Campo[] => {
     ];
     case 'vacuna': return [
       { k: 'titulo', label: 'Vacuna', tipo: 'select', opts: [...VACUNAS[m.especie], 'Otra'], req: true },
-      { k: 'laboratorio', label: 'Laboratorio', ph: 'Ej: Zoetis', dato: true }, { k: 'lote', label: 'Lote', ph: 'Ej: A1234', dato: true },
-      { k: 'proxima', label: 'Próxima dosis', tipo: 'date', dato: true }
+      { k: 'laboratorio', label: 'Laboratorio', ph: 'Ej: Virbac', dato: true }, { k: 'lote', label: 'Lote', ph: 'Ej: 9W6P', dato: true },
+      { k: 'vence', label: 'Vencimiento del lote', ph: 'Mes/año. Ej: 05/2027', dato: true }, { k: 'peso', label: 'Peso hoy (kg)', tipo: 'num', ph: 'Ej: 0,5', dato: true },
+      { k: 'proxima_que', label: 'Próxima: qué le toca', ph: 'Ej: Refuerzo de triple felina', dato: true }, { k: 'proxima', label: 'Próxima: fecha', tipo: 'date', dato: true },
+      { k: 'obs', label: 'Observaciones para el carnet', tipo: 'area', ph: 'Ej: Considerar test de sida y leucemia felina.', dato: true }
     ];
     case 'desparasitacion': return [
       { k: 'titulo', label: 'Tipo', tipo: 'select', opts: DESPARASITACIONES, req: true },
-      { k: 'producto', label: 'Producto', ph: 'Ej: Antiparasitario de amplio espectro', dato: true }, { k: 'proxima', label: 'Próxima dosis', tipo: 'date', dato: true }
+      { k: 'producto', label: 'Producto', ph: 'Ej: Antiparasitario de amplio espectro', dato: true }, { k: 'lote', label: 'Lote', ph: 'Opcional', dato: true },
+      { k: 'vence', label: 'Vencimiento del lote', ph: 'Mes/año. Ej: 11/2027', dato: true }, { k: 'proxima', label: 'Próxima dosis', tipo: 'date', dato: true },
+      { k: 'obs', label: 'Observaciones para el carnet', tipo: 'area', ph: 'Opcional', dato: true }
     ];
     case 'peso': return [{ k: 'peso', label: 'Peso (kg)', tipo: 'num', req: true, ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Nota', tipo: 'area', ph: 'Opcional' }];
     case 'spa': return [{ k: 'titulo', label: 'Servicio', req: true, ph: 'Ej: Baño completo y corte' }, { k: 'peso', label: 'Peso (kg)', tipo: 'num', ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Observaciones', tipo: 'area', ph: 'Ej: Piel un poco seca detrás de las orejas.' }];

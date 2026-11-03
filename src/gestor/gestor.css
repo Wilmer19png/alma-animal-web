@@ -385,8 +385,8 @@ ul.gerr { margin: 0; padding: 12px 16px 12px 34px; display: flex; flex-direction
 .chk-l { display: flex; gap: 10px; align-items: flex-start; font: 400 14.5px/1.45 var(--font-sans); cursor: pointer; }
 .chk-l input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
 .chk-l .hint { display: block; }
-.doc { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px; }
-.g .doc select, .g .doc input { min-height: 46px; border-radius: 12px; border: 1px solid #7A7580; padding: 0 10px; background: #fff; font: 400 15.5px/1.3 var(--font-sans); color: var(--ink); min-width: 0; }
+.doc-in { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px; }
+.g .doc-in select, .g .doc-in input { min-height: 46px; border-radius: 12px; border: 1px solid #7A7580; padding: 0 10px; background: #fff; font: 400 15.5px/1.3 var(--font-sans); color: var(--ink); min-width: 0; }
 .pform { display: flex; flex-direction: column; gap: 16px; }
 .extras-c { display: flex; flex-direction: column; gap: 8px; }
 .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; flex: none; overflow: hidden; background: var(--grad-alma); color: #362954; font: 700 16px/1 var(--font-sans); }
@@ -1189,3 +1189,100 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 .eqf__gi .vrow__x { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .2); }
 .eqf__gadd { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 150px; border-radius: 12px; border: 2px dashed var(--line); color: var(--primary); font: 600 13.5px/1.2 var(--font-sans); cursor: pointer; }
 .eqf__gadd:focus-within { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* ---------- documentos para el cliente: carnet y resumen de atención (src/gestor/documentos.tsx) ---------- */
+.doc { position: relative; isolation: isolate; overflow: hidden; background: #fff; border-radius: 26px; box-shadow: 0 0 0 1px var(--line-soft), 0 14px 40px rgb(54 41 84 / .08); color: var(--ink); text-align: left; }
+.doc__marca { position: absolute; z-index: -1; right: -50px; bottom: 140px; width: 260px; opacity: .28; pointer-events: none; }
+.doc-head { display: flex; align-items: center; gap: 16px; padding: 22px 28px; background: linear-gradient(100deg, #FEF1E8, #F6EFF6 55%, #EFE8F6); border-bottom: 1px solid #EFE8F2; }
+.doc-head > img { width: 68px; height: 68px; object-fit: contain; flex: none; }
+.doc-head__kick { display: block; font: 400 12.5px/1.2 var(--font-serif); color: var(--ink-muted); }
+.doc-head h2 { font: 700 26px/1.1 var(--font-sans); letter-spacing: -.02em; margin-top: 4px; }
+.doc-head__dra { margin-left: auto; text-align: right; }
+.doc-head__dra b { display: block; font: 600 20px/1.1 var(--font-serif); color: #8F7FB0; }
+.doc-head__dra span { display: block; font: 400 12.5px/1.3 var(--font-serif); color: var(--ink-muted); }
+.doc-body { padding: 20px 28px 24px; display: flex; flex-direction: column; gap: 20px; }
+.doc-fechas { display: flex; flex-wrap: wrap; gap: 6px 22px; font: 400 13.5px/1.3 var(--font-sans); color: var(--ink-muted); }
+.doc-fechas b { color: var(--ink); font-weight: 600; }
+.doc-sec h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font: 700 12.5px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+.doc-sec h3 img { width: 22px; height: 22px; object-fit: contain; }
+.doc-sec h3 .ms { font-size: 19px; }
+.doc-grid { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 18px; }
+.doc-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.doc-grid dt { font: 500 11.5px/1.2 var(--font-sans); color: var(--ink-soft); }
+.doc-grid dd { margin: 3px 0 0; font: 600 15px/1.35 var(--font-sans); overflow-wrap: anywhere; }
+.doc-opts { display: flex; flex-wrap: wrap; gap: 5px; }
+.doc-opts span { display: inline-block; padding: 6px 11px; line-height: 14px !important; border-radius: 999px; font: 600 12.5px/1 var(--font-sans); color: #9A93A6; box-shadow: inset 0 0 0 1px var(--line-soft); }
+.doc-opts span[data-on] { background: var(--ink); color: #fff; box-shadow: none; }
+.doc-opts span[data-on]::before { content: "✓"; margin-right: 5px; }
+.doc-tabla { border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px var(--line-soft); }
+.doc-tr { display: grid; grid-template-columns: 92px minmax(0, 1.5fr) minmax(0, 1fr) 70px 78px minmax(0, 1.3fr) 84px; gap: 8px; align-items: center; padding: 10px 14px; font: 400 13.5px/1.35 var(--font-sans); }
+.doc-tr:nth-child(even) { background: #FBF8FB; }
+.doc-th { background: var(--surface-3) !important; font: 600 10.5px/1.2 var(--font-sans); color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.doc-tr b { font-weight: 600; }
+.doc-tr small { display: block; font-size: 11.5px; color: var(--ink-soft); }
+.doc-chip { display: inline-block; margin-top: 4px; padding: 4px 8px; line-height: 12px !important; border-radius: 999px; font: 700 10.5px/1 var(--font-sans); font-style: normal; }
+.doc-chip--ok { background: #B8F1B9; color: #1D5128; } .doc-chip--warn { background: #FFDDB2; color: #624000; } .doc-chip--mal { background: #FFDAD5; color: #910809; } .doc-chip--old { background: var(--surface-3); color: var(--ink-muted); }
+.doc-sello { position: relative; display: block; width: 78px; height: 36px; overflow: hidden; }
+.doc-sello img { position: absolute; width: 186px; left: -56px; top: -60px; max-width: none; }
+.doc-vacio { font: 400 14.5px/1.5 var(--font-sans); color: var(--ink-muted); }
+.doc-prox { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 20px; border-radius: 18px; background: var(--grad-alma); color: #362954; }
+.doc-prox__d { width: 68px; padding: 7px 0; border-radius: 14px; background: #fff; text-align: center; }
+.doc-prox__d small { display: block; font: 700 10.5px/1.2 var(--font-sans); letter-spacing: .06em; }
+.doc-prox__d b { display: block; font: 700 27px/1.1 var(--font-sans); }
+.doc-prox > span:nth-child(2) { display: flex; flex-direction: column; gap: 3px; }
+.doc-prox > span:nth-child(2) small { font: 700 11.5px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; }
+.doc-prox > span:nth-child(2) b { font: 700 20px/1.25 var(--font-sans); }
+.doc-prox > span:nth-child(2) span { font: 400 14.5px/1.4 var(--font-sans); }
+.doc-obs { margin: 0; padding: 14px 18px; border-radius: 16px; background: #FFF8F2; box-shadow: inset 0 0 0 1px #F6DCC6; font: 400 14.5px/1.55 var(--font-sans); white-space: pre-line; }
+.doc-reg { padding-top: 16px; border-top: 1px solid var(--surface-3); display: flex; flex-direction: column; gap: 8px; }
+.doc-reg__t { font: 700 19px/1.3 var(--font-sans); }
+.doc-reg__p { margin: 0; font: 400 15px/1.6 var(--font-sans); white-space: pre-line; }
+.doc-adj { display: flex; align-items: center; gap: 6px; margin: 0; font: 400 13px/1.4 var(--font-sans); color: var(--ink-muted); }
+.doc-adj .ms { font-size: 17px; }
+.doc-pie { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-top: 6px; }
+.doc-pie > p { margin: 0; max-width: 46ch; font: 400 12px/1.5 var(--font-sans); color: var(--ink-soft); }
+.doc-pie > p b { color: var(--ink); }
+.doc-firma { display: flex; flex-direction: column; align-items: center; min-width: 230px; }
+.doc-firma__img { position: relative; display: block; width: 210px; height: 92px; overflow: hidden; }
+.doc-firma__img img { position: absolute; width: 500px; left: -150px; top: -168px; max-width: none; }
+.doc-firma > span:last-child { width: 100%; padding-top: 6px; border-top: 1px solid var(--ink); text-align: center; }
+.doc-firma > span:last-child b { display: block; font: 700 13.5px/1.3 var(--font-serif); }
+.doc-firma > span:last-child span { display: block; font: 400 11.5px/1.3 var(--font-sans); color: var(--ink-muted); }
+/* en el PDF: sin sombra ni redondeo de tarjeta */
+.pdf-hoja .doc { border-radius: 0; box-shadow: none; }
+.doc-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+/* según el ancho del documento (no de la pantalla): así el PDF sale igual desde el celular */
+.doc { container-type: inline-size; }
+@container (max-width: 640px) {
+  .doc-head { flex-wrap: wrap; padding: 16px; gap: 10px; }
+  .doc-head > img { width: 50px; height: 50px; }
+  .doc-head h2 { font-size: 21px; }
+  .doc-head__dra { margin-left: 0; text-align: left; width: 100%; }
+  .doc-body { padding: 16px; }
+  .doc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .doc-th { display: none !important; }
+  .doc-tr { grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  .doc-tr > span:first-child { grid-column: 1 / -1; }
+  .doc-tr [data-l]::before { content: attr(data-l); display: block; font: 500 10.5px/1.2 var(--font-sans); color: var(--ink-soft); }
+  .doc-prox { grid-template-columns: auto minmax(0, 1fr); padding: 14px; }
+  .doc-prox > :nth-child(3) { grid-column: 1 / -1; }
+  .doc-pie { flex-direction: column; align-items: stretch; }
+  .doc-firma { align-self: center; }
+}
+
+.tl__pdf { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; height: 30px; padding: 0 10px; border: 0; border-radius: 999px; background: var(--surface-3); color: var(--primary); font: 600 12.5px/1 var(--font-sans); cursor: pointer; }
+.tl__pdf .ms { font-size: 16px; }
+.tl__pdf:hover { background: #EADDFF; }
+.tl__pdf + .tl__x { margin-left: 4px; }
+.carnet-g { display: flex; flex-direction: column; gap: 10px; }
+.carnet-g > .hint { margin: 0 0 4px; }
+.pcons__pdf { margin: 8px 0 0; }
+.tl__pdf:disabled { opacity: .55; cursor: progress; }
+/* html2canvas dibuja el texto unos px más abajo que el navegador: en el PDF se compensa para que quede centrado en la píldora */
+.pdf-hoja .doc-opts span { padding: 0 11px 12px; }
+.pdf-hoja .doc-chip { padding: 0 8px 8px; }
+.pdf-hoja .doc-opts span:not([data-on]) { box-shadow: none; border: 1px solid #DDD6E3; padding: 0 10px 11px; }
+.doc-grid dd.doc-opts { margin-top: 6px; }
+.tl__top:has(.tl__pdf) { padding-right: 112px; }
+.tl__top .tl__pdf { position: absolute; top: -6px; right: 30px; margin: 0; }
+.tl__top .tl__pdf:last-child { right: -6px; }

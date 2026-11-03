@@ -48,7 +48,7 @@ export function PropietarioForm({ v, set, errores = {}, idp = 'o' }: { v: NuevoP
       {F({ k: 'apellidos', label: 'Apellidos', req: true, ph: 'Ej: Gómez Restrepo' })}
       <div className="fld">
         <span className="fld__lb" id={`${idp}-doc`}>Documento</span>
-        <div className="doc" role="group" aria-labelledby={`${idp}-doc`}>
+        <div className="doc-in" role="group" aria-labelledby={`${idp}-doc`}>
           <select aria-label="Tipo de documento" value={v.doc_tipo ?? 'CC'} onChange={(e) => set({ doc_tipo: e.target.value })}>{DOCS.map(([id, txt]) => <option key={id} value={id}>{txt}</option>)}</select>
           <input aria-label="Número de documento" value={t('doc_numero')} placeholder="Ej: 1.088.234.567" onChange={(e) => set({ doc_numero: e.target.value || null })} />
         </div>

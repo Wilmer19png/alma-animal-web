@@ -14,7 +14,7 @@ export const pc: SupabaseClient | null = URL && KEY ? createClient(URL, KEY, { a
 export const DEMO = !pc;
 const DEMO_KEY = 'alma-portal-ejemplo';
 
-export interface Ficha { id: string; nombre: string; apellidos: string; celular: string; correo: string | null; direccion: string | null; barrio: string | null; ciudad: string | null }
+export interface Ficha { id: string; nombre: string; apellidos: string; celular: string; correo: string | null; direccion: string | null; barrio: string | null; ciudad: string | null; doc_tipo?: string | null; doc_numero?: string | null }
 export type Cuenta =
   | { estado: 'cargando' }
   | { estado: 'fuera' }

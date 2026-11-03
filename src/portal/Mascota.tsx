@@ -6,7 +6,8 @@ import { link } from '../gestor/lib';
 import { misMascotas, historia, abrirArchivo, type Ficha } from './datos';
 import { fechaCorta, especieTxt, peso, diasA, estadoDosis } from './comun';
 import { edad, sexoTxt, type Paciente, type Registro, type Archivo } from '../gestor/clinica-datos';
-import { DOCTOR } from '../data/site';
+import { CarnetDoc, AtencionDoc, tutorDe } from '../gestor/documentos';
+import { descargarPdf, nombreArchivo } from '../gestor/pdf';
 
 type Tab = 'carnet' | 'consultas' | 'examenes' | 'spa';
 const TABS: [Tab, string, string][] = [['carnet', 'Carnet', 'vaccines'], ['consultas', 'Consultas', 'stethoscope'], ['examenes', 'Exámenes', 'biotech'], ['spa', 'Spa', 'shower']];
@@ -20,6 +21,12 @@ function Contenido({ yo }: { yo: Ficha }) {
   const [regs, setRegs] = useState<Registro[]>([]);
   const [id, setId] = useState(() => new URLSearchParams(location.search).get('id'));
   const [tab, setTab] = useState<Tab>('carnet');
+  const [bajando, setBajando] = useState<string | null>(null);
+  const bajar = async (clave: string, doc: React.ReactElement, nombre: string) => {
+    setBajando(clave);
+    try { await descargarPdf(doc, nombre); } catch { alert('No se pudo crear el PDF. Inténtalo de nuevo.'); }
+    setBajando(null);
+  };
   useEffect(() => {
     misMascotas(yo).then(async (p) => { setPacs(p); setRegs(await historia(p.map((x) => x.id))); }).catch(() => setPacs([]));
   }, [yo]);
@@ -66,7 +73,18 @@ function Contenido({ yo }: { yo: Ficha }) {
         {TABS.map(([t, txt, icon]) => <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)}><span className="ms" aria-hidden="true">{icon}</span>{txt}</button>)}
       </div>
 
-      {tab === 'carnet' && <Carnet m={m} regs={de(['vacuna', 'desparasitacion'])} />}
+      {tab === 'carnet' && (() => {
+        const doc = <CarnetDoc p={m} tutor={tutorDe(yo)} regs={de(['vacuna', 'desparasitacion'])} />;
+        return (
+          <section className="pcarnet-doc" role="tabpanel" aria-label={`Carnet de vacunación de ${m.nombre}`}>
+            <div className="doc-acts">
+              <button type="button" className="gbtn sm" disabled={!!bajando} onClick={() => bajar('carnet', doc, nombreArchivo('carnet', m.nombre))}>
+                <span className="ms" aria-hidden="true">picture_as_pdf</span>{bajando === 'carnet' ? 'Preparando…' : 'Descargar PDF'}</button>
+            </div>
+            {doc}
+          </section>
+        );
+      })()}
       {tab === 'consultas' && (
         <section className="gcard plista" role="tabpanel">
           <p className="hint">Aquí ves el resumen de cada consulta y las indicaciones de la doctora. Las notas clínicas internas no se muestran.</p>
@@ -79,6 +97,8 @@ function Contenido({ yo }: { yo: Ficha }) {
                 {r.resumen && <p>{r.resumen}</p>}
                 {r.datos.plan && <p className="pcons__plan"><span className="ms" aria-hidden="true">assignment</span><span><b>Indicaciones:</b> {r.datos.plan}</span></p>}
                 {r.archivos.length > 0 && <Archivos a={r.archivos} />}
+                <button type="button" className="tl__pdf pcons__pdf" disabled={!!bajando} onClick={() => bajar(r.id, <AtencionDoc p={m} tutor={tutorDe(yo)} regs={[r]} />, nombreArchivo(r.tipo, m.nombre, r.fecha.slice(0, 10)))}>
+                  <span className="ms" aria-hidden="true">picture_as_pdf</span>{bajando === r.id ? 'Preparando…' : 'Descargar PDF'}</button>
               </div>
             </article>
           ))}
@@ -125,33 +145,3 @@ function Archivos({ a }: { a: Archivo[] }) {
   );
 }
 
-function Carnet({ m, regs }: { m: Paciente; regs: Registro[] }) {
-  return (
-    <section className="gcard pcarnet" role="tabpanel" aria-labelledby="pcn">
-      <div className="pcarnet__h">
-        <div><h2 id="pcn">Carnet de vacunación</h2><span>{m.nombre} · {[especieTxt(m), m.raza, edad(m)].filter(Boolean).join(' · ')}</span></div>
-        <button type="button" className="gbtn out sm noprint" onClick={() => window.print()}><span className="ms" aria-hidden="true">download</span>Descargar PDF</button>
-      </div>
-      {!regs.length ? <p className="vacio">Todavía no hay vacunas registradas.</p> : (
-        <div className="pvtab" role="table" aria-label="Vacunas y desparasitaciones">
-          <div className="pvtab__r pvtab__h" role="row"><span role="columnheader">Vacuna o desparasitación</span><span role="columnheader">Aplicada</span><span role="columnheader">Laboratorio · lote</span><span role="columnheader">Próxima</span></div>
-          {regs.map((r) => {
-            const d = r.datos.proxima ? diasA(r.datos.proxima) : null;
-            return (
-              <div key={r.id} className="pvtab__r" role="row">
-                <span role="cell"><span className="ms" aria-hidden="true">{r.tipo === 'vacuna' ? 'vaccines' : 'medication'}</span><b>{r.titulo}</b></span>
-                <span role="cell" data-l="Aplicada">{fechaCorta(r.fecha)}</span>
-                <span role="cell" data-l="Laboratorio">{[r.datos.laboratorio ?? r.datos.producto, r.datos.lote && `lote ${r.datos.lote}`].filter(Boolean).join(' · ') || '—'}</span>
-                <span role="cell" data-l="Próxima">{r.datos.proxima ? <>{fechaCorta(r.datos.proxima + 'T12:00:00')} {d! <= 15 && <span className={`chip ${estadoDosis(d!)[1]}`}>{estadoDosis(d!)[0]}</span>}</> : '—'}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      <div className="pcarnet__pie">
-        <p className="hint">Este carnet es válido para viajes, guarderías y peluquerías. Cada vacuna aplicada en Alma Animal lleva la firma de la doctora.</p>
-        <span className="pfirma"><b>{DOCTOR.name}</b><small>MVZ · {DOCTOR.tp}</small></span>
-      </div>
-    </section>
-  );
-}
