@@ -7,8 +7,8 @@ import Newsletter from '../../components/Newsletter.astro';
 import { whatsapp, DOCTOR } from '../../data/site';
 import { BLOG_DEMO, POSTS, shortDate, longDate, postUrl, rich, anchor, type Post } from '../../data/blog';
 import mariana from '../../assets/mariana-gato.png';
-import heart from '../../assets/corazon.png';
-import tigerDog from '../../assets/papel-tigre-perro-v3.png';
+import heart from '../../assets/identidad/logo.webp';
+import loboBlanco from '../../assets/identidad/lobo-negativo-blanco.webp';
 
 export function getStaticPaths() {
   return POSTS.map((p) => ({ params: { slug: p.slug }, props: { p } }));
@@ -116,7 +116,7 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
 
     <aside class="aside" aria-label="Spa y boletín">
       <div class="spa-card">
-        <Image src={tigerDog} alt="" width={380} class="spa-card__art" />
+        <Image src={loboBlanco} alt="" width={300} class="spa-card__art" />
         <span class="spa-card__kicker">Spa Alma Animal</span>
         <b>¿Le toca baño este mes?</b>
         <span>Elige el día y te confirmamos la hora por WhatsApp.</span>
@@ -278,7 +278,7 @@ const related = POSTS.filter((x) => x.slug !== p.slug)
 
   .aside { display: flex; flex-direction: column; gap: 14px; }
   .spa-card { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: var(--r-lg); background: var(--ink); color: #fff; overflow: hidden; isolation: isolate; }
-  .spa-card :global(.spa-card__art) { position: absolute; right: -40px; bottom: -10px; width: 190px; height: auto; opacity: .18; z-index: -1; }
+  .spa-card :global(.spa-card__art) { position: absolute; right: -14px; bottom: -40px; width: 120px; height: auto; opacity: .2; z-index: -1; transform: rotate(-10deg); }
   .spa-card__kicker { font: 600 13px/1 var(--font-sans); color: var(--peach); }
   .spa-card b { font: 600 22px/1.25 var(--font-sans); }
   .spa-card > span:not(.spa-card__kicker) { font: 400 15px/1.5 var(--font-sans); color: rgb(255 255 255 / .82); }

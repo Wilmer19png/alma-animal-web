@@ -1,6 +1,7 @@
 ---
 import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
+import lobo from '../assets/identidad/lobo.webp';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
@@ -33,6 +34,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
         </div>
       </div>
 
+      <Image src={lobo} alt="" width={300} class="s-hero__lobo" loading="eager" />
       <!-- carrusel de fotos reales en forma de arco -->
       <div class="arch" data-hero-carousel aria-roledescription="carrusel" aria-label="Mascotas después del spa">
         <div class="arch__ring" aria-hidden="true"></div>
@@ -238,6 +240,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
   .arch__slide.is-on { opacity: 1; }
   .arch__slide :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .arch__pill { display: none; }
+  .s-hero :global(.s-hero__lobo) { display: none; }
   .arch__dots { position: absolute; left: 50%; bottom: -40px; transform: translateX(-50%); display: flex; gap: 2px; }
   .arch__dots button { width: 34px; height: 28px; border: 0; padding: 0 5px; background: transparent; cursor: pointer; display: grid; place-items: center; }
   .arch__dots span { display: block; width: 14px; height: 7px; border-radius: 999px; background: rgb(255 255 255 / .45); transition: width .3s var(--ease-out), background .3s; }
@@ -255,6 +258,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
     .arch { position: absolute; right: 64px; top: 40px; width: 440px; height: 520px; max-width: none; margin: 0; }
     .arch__ring { inset: -14px; }
     .arch__pill { display: flex; position: absolute; left: -60px; bottom: 56px; align-items: center; gap: 10px; z-index: 3; }
+    .s-hero :global(.s-hero__lobo) { display: block; position: absolute; z-index: 2; right: 500px; top: 52px; width: 128px; height: auto; transform: rotate(-10deg); filter: drop-shadow(0 12px 22px rgb(20 10 40 / .35)); }
     .arch__pill span { font: 600 16px/1 var(--font-sans); padding: 10px 16px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: var(--shadow-1); white-space: nowrap; }
     .arch__pill i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgb(255 255 255 / .8); }
     .arch__dots { bottom: -42px; }

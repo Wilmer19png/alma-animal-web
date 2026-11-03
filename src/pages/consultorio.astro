@@ -11,8 +11,8 @@ import { whatsapp } from '../data/site';
 import { CLINIC_SERVICES, HOME_VISIT, VISIT_STEPS } from '../data/services';
 import mariana from '../assets/mariana-gato.png';
 import { getImage } from 'astro:assets';
-import tigerHead from '../assets/cabeza-tigre.png';
-import dogHead from '../assets/cabeza-perro.png';
+import gato from '../assets/identidad/gato.webp';
+import gatoBlanco from '../assets/identidad/gato-negativo-blanco.webp';
 
 const waClinic = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta para mi mascota.');
 const waService = (name: string) => whatsapp.vet(`Hola, Alma Animal. Quiero agendar: ${name}.`);
@@ -51,6 +51,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
       <div class="c-hero__video" data-hero-video hidden>
         <span class="c-hero__vchip"><span class="ms" aria-hidden="true">movie</span>Conoce a la doctora</span>
       </div>
+      <Image src={gato} alt="" width={300} class="c-hero__gato" loading="eager" />
       <div class="c-hero__photo" data-hero-foto>
         <div class="c-hero__disc" aria-hidden="true"></div>
         <Image src={mariana} alt="La Dra. Mariana Hoyos con un gato atigrado en brazos" widths={[340, 480, 640]} sizes="(min-width: 1100px) 440px, 320px" loading="eager" fetchpriority="high" />
@@ -96,8 +97,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
         <p>Escríbenos y la doctora te dice si lo atendemos aquí.</p>
         <a class="wa-o" href={whatsapp.vet('Hola, doctora. ¿Atienden este caso en el consultorio?')} target="_blank" rel="noopener"><WaIcon size={22} />Escribir por WhatsApp</a>
         <div class="heads" aria-hidden="true">
-          <Image src={tigerHead} alt="" width={236} />
-          <Image src={dogHead} alt="" width={236} />
+          <Image src={gatoBlanco} alt="" width={300} />
         </div>
       </article>
     </div>
@@ -183,6 +183,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
   .c-hero__copy > p { font-size: 17px; line-height: 1.6; color: var(--ink-muted); max-width: 38ch; }
   .c-hero__actions { display: flex; flex-direction: column; gap: 12px; }
   .c-hero__actions > * { width: 100%; }
+  .c-hero :global(.c-hero__gato) { display: none; }
   .c-hero__photo { position: relative; height: 340px; border-radius: 24px; background: var(--grad-primary); overflow: hidden; }
   .c-hero__disc { position: absolute; left: 50%; top: 30px; width: 260px; height: 260px; margin-left: -130px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); box-shadow: 0 0 0 14px rgb(255 255 255 / .18); }
   .c-hero__photo :global(img) { position: absolute; left: 50%; bottom: 0; height: 320px; width: auto; max-width: none; transform: translateX(-50%); }
@@ -202,6 +203,8 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
     .c-hero__photo { position: absolute; right: 40px; bottom: 0; width: 520px; height: 540px; border-radius: 0; background: none; overflow: visible; }
     .c-hero__disc { top: 40px; width: 380px; height: 380px; margin-left: -190px; }
     .c-hero__photo :global(img) { height: 520px; }
+    /* el gato trepa por el borde morado, junto a la doctora */
+    .c-hero :global(.c-hero__gato) { display: block; position: absolute; z-index: 2; right: 468px; bottom: 26px; width: 132px; height: auto; transform: rotate(6deg); filter: drop-shadow(0 10px 18px rgb(54 41 84 / .22)); }
   }
 
   /* ---------- SERVICIOS ---------- */
@@ -220,9 +223,9 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
   .svc--other p { color: rgb(255 255 255 / .88); }
   .svc--other .wa-o { align-self: flex-start; min-height: 48px; }
   .heads { position: relative; height: 112px; margin: 16px -22px 0; }
-  .heads :global(img) { position: absolute; bottom: 0; width: 112px; height: auto; }
-  .heads :global(img:first-child) { left: 0; }
-  .heads :global(img:last-child) { right: 0; }
+  /* el gato en blanco se asoma desde abajo */
+  .heads :global(img) { position: absolute; right: 18px; top: 10px; width: 120px; height: auto; transform: rotate(-8deg); }
+
   @media (min-width: 640px) {
     .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
@@ -235,7 +238,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
     .svc--other h3 { margin-top: 0; }
     .svc--other { grid-column: span 2; }
     .heads { margin: auto -28px 0; height: 120px; }
-    .heads :global(img) { width: 118px; }
+    .heads :global(img) { width: 130px; }
   }
 
   /* ---------- A DOMICILIO (contenido) ---------- */

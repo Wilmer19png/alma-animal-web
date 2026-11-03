@@ -109,7 +109,7 @@ const PLANTILLAS = [
 
 mkdirSync('supabase/correos', { recursive: true });
 mkdirSync('public/correo', { recursive: true });
-copyFileSync('src/assets/corazon.png', 'public/correo/logo.png');
+// el logo de los correos (public/correo/logo.png) lo genera scripts/identidad.mjs
 for (const t of PLANTILLAS) writeFileSync(`supabase/correos/${t.archivo}.html`, t.html);
 writeFileSync('supabase/correos/LEEME.md', `# Correos de Alma Animal (plantillas de Supabase)
 

@@ -1,8 +1,8 @@
 // Blog: tipos, ilustraciones de portada, artículos de EJEMPLO y ayudas de texto.
 // Lo usan la página (src/data/blog.ts) y el gestor (módulo Blog).
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 import heartPaper from '../assets/papel-corazon-v2.png';
-import tigerDog from '../assets/papel-tigre-perro-v3.png';
+import lobo from '../assets/identidad/lobo.webp';
 import paw from '../assets/pata-perro-h.png';
 
 
@@ -12,7 +12,7 @@ export type BlogCat = (typeof BLOG_CATS)[number];
 export const COVERS = [
   { bg: 'linear-gradient(160deg,#FBCFAF,#E8C6CF)', img: heart, w: 0.34 },
   { bg: 'linear-gradient(160deg,#EADDFF,#D1C1DD)', img: heartPaper, w: 0.34 },
-  { bg: 'linear-gradient(160deg,#D1C1DD,#B4A3D6)', img: tigerDog, w: 0.5 },
+  { bg: 'linear-gradient(160deg,#FFDCC3,#D1C1DD)', img: lobo, w: 0.3 },
   { bg: 'linear-gradient(160deg,#FFDCC3,#FBCFAF)', img: paw, w: 0.4 }
 ];
 

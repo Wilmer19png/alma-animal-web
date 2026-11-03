@@ -1,6 +1,6 @@
 // Marco del portal: barra con el menú, cuenta del cliente y pie. Si no ha entrado, lo lleva a Ingresar.
 import { useEffect, useState, type ReactNode } from 'react';
-import heart from '../assets/corazon.png';
+import heart from '../assets/identidad/logo.webp';
 import { link, go, asset } from '../gestor/lib';
 import { useCuenta, salir, DEMO, type Ficha } from './datos';
 import { whatsapp, ADDRESS, PHONES, DOCTOR } from '../data/site';
