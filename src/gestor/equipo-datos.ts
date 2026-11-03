@@ -35,7 +35,7 @@ export async function guardarPersona(p: Persona): Promise<Persona> {
   }
   const q = id ? sb!.from('personas').update(campos).eq('id', id) : sb!.from('personas').insert(campos);
   const { data, error } = await q.select('*').single();
-  if (error) throw new Error('No se guardó. Solo la administradora puede cambiar el equipo.');
+  if (error) throw new Error(/does not exist|42703|column/i.test(error.message) ? 'Falta un paso en la base de datos: corre supabase/19-equipo-perfil.sql en Supabase y vuelve a intentarlo.' : 'No se guardó. Solo la administradora puede cambiar el equipo.');
   return data as Persona;
 }
 export async function ordenar(ps: Persona[]): Promise<void> {
