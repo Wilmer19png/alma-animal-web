@@ -43,7 +43,7 @@ export function Ingresar() {
   const [clave, setClave] = useState('');
   const [error, setError] = useState('');
   const [ocupado, setOcupado] = useState(false);
-  useEffect(() => { if (c.estado === 'dentro' || c.estado === 'sin-ficha') go('/portal'); }, [c.estado]);
+  useEffect(() => { if (c.estado === 'dentro' || c.estado === 'sin-ficha' || c.estado === 'equipo') go('/portal'); }, [c.estado]);
 
   const enviar = async (e: FormEvent) => {
     e.preventDefault();
@@ -80,6 +80,7 @@ export function Ingresar() {
         {modo === 'clave' && <button className="ing__link" type="button" onClick={() => { setModo('olvido'); setError(''); }}>Olvidé mi contraseña</button>}
       </div>
       <p className="hint">¿Tu mascota aún no es paciente? <a href="/consultorio">Agenda su primera cita</a>; al registrarla te damos el acceso.</p>
+      <p className="hint">¿Eres del equipo? <a href={link('/gestor/ingresar')}>Entra al gestor</a>.</p>
       {DEMO && (
         <div className="ing__demo">
           <span>La base de datos todavía no está conectada.</span>
