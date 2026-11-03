@@ -1,0 +1,227 @@
+---
+// «Conoce a la doctora»: quién es, su video, cómo trabaja (fotos en acción), su historia y cómo atiende.
+// Todo sale de gestor → Equipo (la primera persona del consultorio). Lo que no esté lleno, no se muestra.
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import WaStrip from '../components/WaStrip.astro';
+import { whatsapp, DOCTOR } from '../data/site';
+import mariana from '../assets/mariana-gato.png';
+import moto from '../assets/mariana-moto.png';
+import tigerDog from '../assets/papel-tigre-perro-v3.png';
+
+const waCita = whatsapp.vet('Hola, doctora. Quiero agendar una consulta para mi mascota.');
+const fotoGato = await getImage({ src: mariana, width: 640, format: 'webp' });
+const fotoMoto = await getImage({ src: moto, width: 640, format: 'webp' });
+const ACCIONES = [
+  { src: fotoGato.src, txt: 'Con sus pacientes', sub: 'Cargando a un gato atigrado en el consultorio.', recorte: true },
+  { src: fotoMoto.src, txt: 'Rumbo a un domicilio', sub: 'Con casco y maletín, llegando en su scooter.', recorte: true }
+];
+const COMO = [
+  ['hearing', 'Te escucha sin afán', 'Primero le cuentas qué has notado en tu mascota; después la revisa de pies a cabeza.'],
+  ['description', 'Te explica todo', 'Sales sabiendo qué tiene, qué hacer en casa y cuándo volver. Todo queda en su historia clínica.'],
+  ['chat', 'Te acompaña después', 'Ves el carnet y los exámenes en tu portal, y le escribes por WhatsApp si algo cambia.']
+];
+---
+<Base
+  title="Conoce a la Dra. Mariana Hoyos · Alma Animal, Pereira"
+  description="Conoce a la Dra. Mariana Hoyos Giraldo, médica veterinaria y zootecnista de Alma Animal en Pereira: su historia, cómo trabaja y cómo atiende a tu mascota."
+  waMessage="Hola, doctora. Quiero agendar una consulta para mi mascota."
+>
+  <SiteHeader slot="top" />
+
+  <!-- ======== PORTADA ======== -->
+  <div class="wrap">
+    <header class="kd-hero on-dark">
+      <Image src={tigerDog} alt="" width={520} class="kd-hero__deco" />
+      <div class="kd-hero__copy">
+        <a class="back" href="/consultorio"><span class="ms" aria-hidden="true">arrow_back</span>Consultorio</a>
+        <span class="kd-kick"><span class="ms" aria-hidden="true">stethoscope</span>La veterinaria de Alma Animal</span>
+        <h1>Hola, soy <b class="gt" data-kd-nombre>Mariana</b></h1>
+        <p class="kd-hero__lead" data-kd-bio>{DOCTOR.title}. Atiendo a tu mascota en el consultorio, en tu casa y al lado del spa, para que nada se nos pase.</p>
+        <ul class="kd-chips">
+          <li><span class="ms" aria-hidden="true">verified</span><span data-kd-tp>MVZ · {DOCTOR.tp}</span></li>
+          <li data-kd-uni hidden><span class="ms" aria-hidden="true">school</span><span></span></li>
+          <li data-kd-desde hidden><span class="ms" aria-hidden="true">calendar_month</span><span></span></li>
+        </ul>
+        <div class="kd-hero__acts">
+          <a class="btn btn--alma btn--lg" href={waCita} target="_blank" rel="noopener">Agenda con ella<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+          <a class="wa-o kd-wa" href={waCita} target="_blank" rel="noopener"><WaIcon size={24} />Escríbele</a>
+          <a class="kd-ver" href="#video" data-kd-ver hidden><span class="ms" aria-hidden="true">play_circle</span>Ver su video</a>
+        </div>
+      </div>
+      <div class="kd-hero__foto">
+        <div class="kd-hero__disc" aria-hidden="true"></div>
+        <img src={fotoGato.src} alt="La Dra. Mariana Hoyos Giraldo" data-kd-cuerpo fetchpriority="high" />
+      </div>
+    </header>
+  </div>
+
+  <!-- ======== VIDEO (si lo subió en el gestor) ======== -->
+  <section id="video" class="wrap kd-video" aria-labelledby="kv" data-kd-video hidden>
+    <div class="kd-video__player" data-kd-player></div>
+    <div class="kd-video__txt">
+      <span class="kd-kick kd-kick--dark"><span class="ms" aria-hidden="true">movie</span>En un minuto</span>
+      <h2 id="kv" class="h-section">Conócela <b class="gt">antes de venir</b></h2>
+      <p class="lead">Te cuenta quién es, cómo es una consulta y qué revisa en cada visita. Así llegas sabiendo con quién vas a hablar.</p>
+    </div>
+  </section>
+
+  <!-- ======== ASÍ TRABAJA ======== -->
+  <section class="wrap kd-sec" aria-labelledby="kt">
+    <div class="kd-sec__head">
+      <span class="kd-kick kd-kick--dark"><span class="ms" aria-hidden="true">photo_library</span>Un día con la doctora</span>
+      <h2 id="kt" class="h-section">Así <b class="gt">trabaja</b></h2>
+    </div>
+    <div class="kd-gal" data-kd-gal>
+      {ACCIONES.map((a, i) => (
+        <figure class:list={['kd-foto', { 'kd-foto--recorte': a.recorte }]} style={`--kd-bg:${i % 2 ? 'linear-gradient(160deg,#EADDFF,#D1C1DD)' : 'linear-gradient(160deg,#FBCFAF,#E8C6CF)'}`}>
+          <span class="kd-foto__img"><img src={a.src} alt={a.txt} loading="lazy" /></span>
+          <figcaption><b>{a.txt}</b><span>{a.sub}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- ======== SU HISTORIA (si la escribió) ======== -->
+  <section class="wrap kd-sec" aria-labelledby="kh" data-kd-historia hidden>
+    <div class="kd-hist">
+      <span class="kd-kick kd-kick--dark"><span class="ms" aria-hidden="true">auto_stories</span>Su historia</span>
+      <h2 id="kh" class="sr-only">Su historia</h2>
+      <blockquote class="kd-frase" data-kd-frase hidden></blockquote>
+      <div class="kd-hist__txt" data-kd-hist></div>
+    </div>
+  </section>
+
+  <!-- ======== CÓMO ATIENDE ======== -->
+  <section class="wrap kd-sec" aria-labelledby="kc">
+    <h2 id="kc" class="h-section">Cómo te <b class="gt">atiende</b></h2>
+    <div class="kd-como">
+      {COMO.map(([ic, t, d]) => <div class="kd-como__c"><span class="ms" aria-hidden="true">{ic}</span><b>{t}</b><p>{d}</p></div>)}
+    </div>
+  </section>
+
+  <!-- ======== AGENDA ======== -->
+  <section class="wrap kd-sec">
+    <div class="kd-cta">
+      <div><h2>¿Agendamos con <span data-kd-nombre2>Mariana</span>?</h2><p>En el consultorio o en tu casa. Te confirmamos por WhatsApp.</p></div>
+      <div class="kd-cta__acts">
+        <a class="btn btn--lg" href={waCita} target="_blank" rel="noopener">Agenda una consulta<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
+        <a class="btn btn--outlined" href="/consultorio">Ver los servicios</a>
+      </div>
+    </div>
+  </section>
+
+  <WaStrip href={waCita} text="Cuéntale qué tiene tu mascota y te dice si necesita consulta o puede esperar." />
+</Base>
+
+<script>
+  import { cargarEquipo, laDoctora, esc } from '../data/equipo';
+  const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  cargarEquipo().then((l) => {
+    const d = l && laDoctora(l);
+    if (!d) return;
+    const nombre = d.nombre.replace(/^Dra?\.?\s+/i, '').split(/\s+/)[0];
+    $('[data-kd-nombre]').textContent = nombre;
+    $('[data-kd-nombre2]').textContent = nombre;
+    if (d.bio) $('[data-kd-bio]').textContent = d.bio;
+    $('[data-kd-tp]').textContent = ['MVZ', d.tarjeta].filter(Boolean).join(' · ');
+    const chip = (sel: string, txt: string | null) => { const li = $(sel); li.hidden = !txt; if (txt) li.querySelector('span:last-child')!.textContent = txt; };
+    chip('[data-kd-uni]', d.universidad);
+    chip('[data-kd-desde]', d.desde ? `Atendiendo desde ${d.desde}` : null);
+    if (d.foto_cuerpo) { const img = $<HTMLImageElement>('[data-kd-cuerpo]'); img.src = d.foto_cuerpo; img.classList.add('es-cuerpo'); }
+    if (d.video) {
+      const v = document.createElement('video');
+      Object.assign(v, { src: d.video, controls: true, playsInline: true, preload: 'metadata' });
+      v.setAttribute('aria-label', `Video de presentación de ${d.nombre}`);
+      $('[data-kd-player]').append(v);
+      $('[data-kd-video]').hidden = false;
+      $('[data-kd-ver]').hidden = false;
+    }
+    if (d.galeria.length) {
+      $('[data-kd-gal]').innerHTML = d.galeria.map((g, i) => `<figure class="kd-foto" style="--kd-bg:${i % 2 ? '#EADDFF' : '#FFDCC3'}"><span class="kd-foto__img"><img src="${esc(g.url)}" alt="${esc(g.texto || 'La doctora trabajando')}" loading="lazy" /></span>${g.texto ? `<figcaption><b>${esc(g.texto)}</b></figcaption>` : ''}</figure>`).join('');
+    }
+    if (d.historia || d.frase) {
+      $('[data-kd-historia]').hidden = false;
+      const f = $('[data-kd-frase]'); f.hidden = !d.frase; if (d.frase) f.textContent = `«${d.frase.replace(/^«|»$/g, '')}»`;
+      $('[data-kd-hist]').innerHTML = (d.historia ?? '').split(/\n\s*\n/).filter(Boolean).map((p) => `<p>${esc(p.trim())}</p>`).join('');
+    }
+  });
+</script>
+
+<style>
+  .kd-hero { position: relative; display: grid; gap: 24px; padding: 28px 20px 0; border-radius: var(--r-lg); background: #2B1E48; color: #fff; overflow: hidden; isolation: isolate; }
+  .kd-hero :global(.kd-hero__deco) { position: absolute; left: -60px; bottom: -60px; width: 420px; height: auto; opacity: .08; z-index: -1; }
+  .kd-hero__copy { display: flex; flex-direction: column; gap: 16px; }
+  .kd-hero .back { color: rgb(255 255 255 / .78); }
+  .kd-kick { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--font-sans); color: #FBCFAF; letter-spacing: .02em; }
+  .kd-kick .ms { font-size: 18px; }
+  .kd-kick--dark { color: var(--primary); }
+  .kd-hero h1 { font: 700 clamp(44px, 9vw, 84px)/.98 var(--font-sans); letter-spacing: -.045em; }
+  .kd-hero__lead { font: 400 17px/1.6 var(--font-sans); color: rgb(255 255 255 / .84); max-width: 46ch; }
+  .kd-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .kd-chips li { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 14px; border-radius: 999px; background: rgb(255 255 255 / .12); font: 600 13.5px/1.2 var(--font-sans); }
+  .kd-chips li[hidden] { display: none; }
+  .kd-chips .ms { font-size: 17px; color: #FBCFAF; }
+  .kd-hero__acts { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+  .kd-hero__acts > * { width: 100%; }
+  .kd-wa { background: #fff; }
+  .kd-ver { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; color: #fff; font: 600 16px/1 var(--font-sans); text-underline-offset: 4px; }
+  .kd-ver[hidden] { display: none; }
+  .kd-ver:hover { color: #FBCFAF; }
+  .kd-hero__foto { position: relative; height: 380px; }
+  .kd-hero__disc { position: absolute; left: 50%; top: 30px; width: 300px; height: 300px; margin-left: -150px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); box-shadow: 0 0 0 14px rgb(255 255 255 / .06); }
+  .kd-hero__foto img { position: absolute; left: 50%; bottom: 0; height: 360px; width: auto; max-width: none; transform: translateX(-50%); }
+
+  .kd-video { display: grid; gap: 24px; align-items: center; padding-top: var(--section); }
+  .kd-video[hidden] { display: none; }
+  .kd-video__player :global(video) { width: 100%; max-height: 560px; border-radius: var(--r-lg); background: #2B1E48; display: block; }
+  .kd-video__txt { display: flex; flex-direction: column; gap: 14px; }
+
+  .kd-sec { padding-top: var(--section); }
+  .kd-sec[hidden] { display: none; }
+  .kd-sec__head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .kd-gal { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+  .kd-gal :global(.kd-foto) { margin: 0; display: flex; flex-direction: column; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .kd-gal :global(.kd-foto__img) { position: relative; height: 340px; background: var(--kd-bg); overflow: hidden; }
+  .kd-gal :global(.kd-foto__img img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .kd-gal :global(.kd-foto--recorte .kd-foto__img img) { inset: auto 0 0 50%; width: auto; height: 96%; object-fit: contain; transform: translateX(-50%); }
+  .kd-gal :global(figcaption) { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px 18px; }
+  .kd-gal :global(figcaption b) { font: 700 17px/1.3 var(--font-sans); }
+  .kd-gal :global(figcaption span) { font: 400 15px/1.45 var(--font-sans); color: var(--ink-muted); }
+
+  .kd-hist { display: flex; flex-direction: column; gap: 18px; padding: 28px 22px; border-radius: var(--r-lg); background: var(--wash), #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .kd-frase { margin: 0; font: 400 clamp(24px, 4vw, 34px)/1.35 var(--font-serif); color: var(--ink); }
+  .kd-frase[hidden] { display: none; }
+  .kd-hist__txt { display: flex; flex-direction: column; gap: 14px; max-width: 70ch; }
+  .kd-hist__txt :global(p) { font: 400 17px/1.7 var(--font-sans); color: var(--ink-muted); }
+
+  .kd-como { display: grid; gap: 16px; margin-top: 24px; }
+  .kd-como__c { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: var(--r-lg); background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .kd-como__c .ms { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: #FFDCC3; color: #623F21; }
+  .kd-como__c b { font: 700 19px/1.25 var(--font-sans); }
+  .kd-como__c p { font: 400 16px/1.6 var(--font-sans); color: var(--ink-muted); }
+
+  .kd-cta { display: flex; flex-direction: column; gap: 20px; padding: 28px 22px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; margin-bottom: var(--section); }
+  .kd-cta h2 { font: 700 clamp(28px, 4.5vw, 44px)/1.1 var(--font-sans); letter-spacing: -.03em; }
+  .kd-cta p { margin-top: 8px; font: 400 17px/1.5 var(--font-sans); }
+  .kd-cta__acts { display: flex; flex-direction: column; gap: 10px; }
+
+  @media (min-width: 768px) {
+    .kd-hero__acts { flex-direction: row; flex-wrap: wrap; align-items: center; }
+    .kd-hero__acts > * { width: auto; }
+    .kd-como { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .kd-hist { padding: 48px; }
+    .kd-cta { flex-direction: row; align-items: center; justify-content: space-between; padding: 40px 48px; }
+    .kd-cta__acts { flex-direction: row; flex: none; }
+  }
+  @media (min-width: 1100px) {
+    .kd-hero { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: center; gap: 40px; padding: 56px 56px 0; border-radius: var(--r-xl); min-height: 640px; }
+    .kd-hero__copy { padding-bottom: 56px; }
+    .kd-hero__foto { height: 600px; align-self: end; }
+    .kd-hero__disc { width: 440px; height: 440px; margin-left: -220px; top: 60px; }
+    .kd-hero__foto img { height: 580px; }
+    .kd-video { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; }
+  }
+</style>

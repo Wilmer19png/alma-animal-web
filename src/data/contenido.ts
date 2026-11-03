@@ -39,8 +39,9 @@ export const PAGINAS: Pagina[] = [
         tit('inicio.domicilio.titulo', 'La doctora va a tu casa', 'a tu casa'),
         txt('inicio.domicilio.texto', 'Consulta veterinaria en tu hogar, en Pereira. Para mascotas que se estresan al salir, o cuando a ti se te complica llegar.'),
         lin('inicio.domicilio.cobertura', 'Cobertura: toda Pereira y Dosquebradas', 'Cobertura')] },
-      { id: 'nosotros', nombre: 'Nosotros', campos: [
-        txt('inicio.nosotros.historia', '', 'Historia de la doctora', 'Dos o tres frases en su propia voz: dónde estudió, desde cuándo ejerce y por qué creó Alma Animal. Si queda vacío, no se muestra.')] },
+      { id: 'nosotros', nombre: 'Nosotros', ocultable: true, auto: { txt: 'Las personas, sus fotos y presentaciones salen de Equipo.', btn: 'Ir a Equipo', href: '/gestor/equipo' }, campos: [
+        tit('inicio.nosotros.titulo', 'Quiénes cuidan\na tu mascota', 'a tu mascota'),
+        txt('inicio.nosotros.texto', 'Trabajamos en el mismo lugar: la persona que baña a tu mascota está al lado de la médica que la conoce.')] },
       { id: 'porque', nombre: '¿Por qué Alma Animal?', ocultable: true, campos: [tit('inicio.porque.titulo', '¿Por qué Alma Animal?', 'Alma Animal?')] },
       { id: 'blog', nombre: 'Blog veterinario', ocultable: true, auto: { txt: 'Se llena sola con los artículos publicados más recientes.', btn: 'Ir al blog', href: '/gestor/blog' }, campos: [tit('inicio.blog.titulo', 'Blog veterinario', 'veterinario')] }
     ]

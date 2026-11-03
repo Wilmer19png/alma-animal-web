@@ -10,6 +10,19 @@ import { whatsapp } from '../data/site';
 import '../styles/tienda.css';
 import { CATEGORIES, BUY_STEPS, SHIPPING, money, CIUDADES } from '../data/shop';
 
+// al entrar: las categorías en grande (con color e ícono). Las tres últimas agrupan por etiqueta.
+const TILES = [
+  { id: 'alimento', label: 'Alimento', icon: 'set_meal', bg: '#FFDCC3', ic: '#B9764A' },
+  { id: 'higiene', label: 'Higiene', icon: 'soap', bg: '#EADDFF', ic: '#655785' },
+  { id: 'snacks', label: 'Snacks', icon: 'cookie', bg: '#FBCFAF', ic: '#9C5A2E' },
+  { id: 'accesorios', label: 'Accesorios', icon: 'pets', bg: '#D1C1DD', ic: '#4D3F6C' },
+  { id: 'juguetes', label: 'Juguetes', icon: 'sports_baseball', bg: '#E8C6CF', ic: '#8C4B5E' },
+  { id: 'dra', label: 'Lo recomienda la Dra.', icon: 'stethoscope', bg: '#B8F1B9', ic: '#1D7A37' },
+  { id: 'oferta', label: 'Ofertas', icon: 'sell', bg: '#FFDAD5', ic: '#BA1A1A' },
+  { id: 'nuevo', label: 'Lo nuevo', icon: 'new_releases', bg: '#F2ECF2', ic: '#655785' }
+];
+const ESPECIAL = TILES.slice(5);
+
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tienda.');
 ---
 <Base
@@ -44,11 +57,50 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
     </header>
   </div>
 
+  <!-- ======== ¿QUÉ BUSCAS? (al entrar a la tienda) ======== -->
+  <section class="wrap cathome" aria-labelledby="qb" data-home>
+    <div class="cathome__head">
+      <div class="cathome__txt">
+        <h2 id="qb" class="h-section">¿Qué estás <b class="gt">buscando?</b></h2>
+        <p class="lead">Elige una categoría. Si no sabes cuál, escríbenos y la doctora te recomienda.</p>
+      </div>
+      <div class="species" role="group" aria-label="Para quién">
+        <button type="button" data-esp="" aria-pressed="true"><span class="ms" aria-hidden="true">pets</span>Todos</button>
+        <button type="button" data-esp="perro" aria-pressed="false"><span class="ms" aria-hidden="true">sound_detection_dog_barking</span>Perros</button>
+        <button type="button" data-esp="gato" aria-pressed="false"><span class="ms" aria-hidden="true">cruelty_free</span>Gatos</button>
+      </div>
+    </div>
+    <div class="tiles">
+      {TILES.map((t) => (
+        <a class="tile" href={`#${t.id}`} data-tile={t.id} style={`--tile-bg:${t.bg};--tile-ic:${t.ic}`}>
+          <span class="ms tile__ic" aria-hidden="true">{t.icon}</span>
+          {t.id === 'oferta' && <span class="tile__off" data-off-max hidden></span>}
+          <b>{t.label}</b>
+          <span class="tile__n"><span data-tile-n>&nbsp;</span><span class="ms" aria-hidden="true">arrow_forward</span></span>
+        </a>
+      ))}
+    </div>
+    <div class="tops" data-tops-wrap hidden>
+      <div class="tops__head">
+        <h3><span class="ms" aria-hidden="true">local_fire_department</span>Lo más vendido</h3>
+        <a class="btn btn--outlined" href="#todo">Ver todos los productos</a>
+      </div>
+      <div class="grid tops__grid" data-tops></div>
+    </div>
+  </section>
+
+  <!-- ======== DENTRO DE UNA CATEGORÍA ======== -->
+  <nav class="wrap crumbs-cat" aria-label="Estás en" data-browse hidden>
+    <a href="#" data-home-link><span class="ms" aria-hidden="true">arrow_back</span>Todas las categorías</a>
+    <span class="ms" aria-hidden="true">chevron_right</span><b data-crumb>Todos los productos</b>
+  </nav>
+
   <!-- ======== CATEGORÍAS + BÚSQUEDA ======== -->
-  <div class="wrap toolbar">
+  <div class="wrap toolbar" data-browse hidden>
     <div class="cats" role="group" aria-label="Categorías">
       <button class="chip is-on" type="button" data-cat="" aria-pressed="true">Todo</button>
       {CATEGORIES.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.label}</button>)}
+      {ESPECIAL.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.label}</button>)}
     </div>
     <label class="search">
       <span class="ms" aria-hidden="true">search</span>
@@ -58,7 +110,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   </div>
 
   <!-- ======== FILTROS | PRODUCTOS | CARRITO ======== -->
-  <section class="wrap catalog" aria-label="Catálogo">
+  <section class="wrap catalog" aria-label="Catálogo" data-browse hidden>
     <aside class="filters" id="filtros" aria-label="Filtros" data-filters>
       <div class="filters__head"><b>Filtros</b><button class="link" type="button" data-clear>Quitar filtros</button></div>
       <fieldset class="fgroup"><legend>Para</legend>
@@ -161,7 +213,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
 <script>
   import { cart, progress, money } from '../scripts/cart';
   import { GIFT } from '../data/shop';
-  import { catalogo, tarjeta, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
+  import { catalogo, tarjeta, stockDe, itemCarrito, productoUrl, portada, esc, TONOS, etiquetas, maxDescuento } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
   import '../scripts/add-buttons';
 
@@ -177,6 +229,26 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-cat]')].filter((b) => b.tagName === 'BUTTON');
   const toggle = document.querySelector<HTMLButtonElement>('[data-filter-toggle]')!;
   let cat = '';
+  const ESPECIALES = ['dra', 'oferta', 'nuevo'];
+
+  /* ---------- al entrar: categorías; con #categoría en la dirección: sus productos ---------- */
+  const home = document.querySelector<HTMLElement>('[data-home]')!;
+  const browse = [...document.querySelectorAll<HTMLElement>('[data-browse]')];
+  const nombreDe = (id: string) => (id ? chips.find((b) => b.dataset.cat === id)?.textContent ?? 'Todos los productos' : 'Todos los productos');
+  const modo = (desplazar = true) => {
+    const h = decodeURIComponent(location.hash.slice(1));
+    const enCat = !!h && (h === 'todo' || chips.some((b) => b.dataset.cat === h));
+    home.hidden = enCat;
+    browse.forEach((el) => { el.hidden = !enCat; });
+    if (!enCat) return;
+    cat = h === 'todo' ? '' : h;
+    chips.forEach((x) => { const on = (x.dataset.cat ?? '') === cat; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+    document.querySelector('[data-crumb]')!.textContent = nombreDe(cat);
+    apply();
+    if (desplazar) document.querySelector('[data-browse]')!.scrollIntoView({ block: 'start' });
+  };
+  window.addEventListener('hashchange', () => modo());
+  document.querySelector('[data-home-link]')!.addEventListener('click', (e) => { e.preventDefault(); history.pushState(null, '', location.pathname); modo(); home.scrollIntoView({ block: 'start' }); });
 
   const num = (s: string) => Number(s.replace(/\D/g, '')) || 0;
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -189,7 +261,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
     let shown = 0;
     for (const c of cards) {
       const d = c.dataset;
-      const ok = (!cat || d.cat === cat)
+      const ok = (!cat || (ESPECIALES.includes(cat) ? (d.tags ?? '').split(' ').includes(cat) : d.cat === cat))
         && (!q || norm(d.q!).includes(q))
         && (!para.length || para.some((x) => d.para!.split(' ').includes(x)))
         && (!talla.length || talla.some((x) => d.talla!.split(' ').includes(x)))
@@ -215,6 +287,8 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   chips.forEach((b) => b.addEventListener('click', () => {
     cat = b.dataset.cat ?? '';
     chips.forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+    history.replaceState(null, '', '#' + (cat || 'todo'));
+    document.querySelector('[data-crumb]')!.textContent = nombreDe(cat);
     apply();
   }));
   search.addEventListener('input', apply);
@@ -313,9 +387,32 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
       </div>`;
     }).join('');
     paint();
-    // /petshop#higiene abre la categoría (lo usan las migas de la ficha)
-    const fromHash = chips.find((b) => b.dataset.cat && b.dataset.cat === location.hash.slice(1));
-    if (fromHash) fromHash.click(); else apply();
+    // categorías al entrar: cuántos productos tiene cada una (según Perros / Gatos)
+    let esp = '';
+    const pinta = () => {
+      document.querySelectorAll<HTMLElement>('[data-tile]').forEach((t) => {
+        const id = t.dataset.tile!;
+        const n = lista.filter((p) => (!esp || p.para.includes(esp)) && (ESPECIALES.includes(id) ? etiquetas(p).includes(id as never) : p.categoria === id)).length;
+        t.querySelector('[data-tile-n]')!.textContent = n ? `${n} ${n === 1 ? 'producto' : 'productos'}` : 'Muy pronto';
+        t.hidden = !n && ESPECIALES.includes(id);
+      });
+      const off = Math.max(0, ...lista.map(maxDescuento));
+      const b = document.querySelector<HTMLElement>('[data-off-max]');
+      if (b) { b.hidden = !off; b.textContent = `Hasta -${off}%`; }
+      const top = lista.filter((p) => (!esp || p.para.includes(esp)) && stockDe(p) > 0);
+      const tops = [...top.filter((p) => p.etiquetas.includes('top')), ...top.filter((p) => !p.etiquetas.includes('top'))].slice(0, 4);
+      document.querySelector('[data-tops]')!.innerHTML = tops.map(tarjeta).join('');
+      document.querySelector<HTMLElement>('[data-tops-wrap]')!.hidden = !tops.length;
+    };
+    document.querySelectorAll<HTMLButtonElement>('[data-esp]').forEach((b) => b.addEventListener('click', () => {
+      esp = b.dataset.esp ?? '';
+      document.querySelectorAll<HTMLButtonElement>('[data-esp]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      filters.querySelectorAll<HTMLInputElement>('input[name="para"]').forEach((i) => { i.checked = !!esp && i.value === esp; });
+      pinta(); apply();
+    }));
+    pinta();
+    // /petshop#higiene abre la categoría (lo usan las migas de la ficha y las categorías)
+    modo(false);
   }).catch(() => {
     grid.hidden = true;
     document.querySelector<HTMLElement>('[data-fail]')!.hidden = false;
@@ -351,6 +448,43 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   }
 
   /* ---------- CATEGORÍAS + BÚSQUEDA ---------- */
+  /* ---------- AL ENTRAR: CATEGORÍAS ---------- */
+  .cathome { padding-top: 32px; padding-bottom: 16px; }
+  .cathome__head { display: flex; flex-direction: column; gap: 16px; margin-bottom: 22px; }
+  .cathome__txt { display: flex; flex-direction: column; gap: 8px; }
+  .species { display: inline-flex; align-self: flex-start; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .species button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-muted); font: 600 15px/1 var(--font-sans); cursor: pointer; }
+  .species button .ms { font-size: 18px; }
+  .species button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-height: 150px; padding: 18px; border-radius: 24px; background: var(--tile-bg); color: var(--ink); text-decoration: none; overflow: hidden; box-shadow: 0 0 0 1px rgb(54 41 84 / .06); transition: transform .2s var(--ease-out), box-shadow .2s; }
+  .tile:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 0 8px 20px rgb(54 41 84 / .14); }
+  .tile[hidden] { display: none; }
+  .tile__ic { position: absolute; right: 14px; top: 12px; width: auto; height: auto; font-size: 54px; color: var(--tile-ic); }
+  .tile__off { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 999px; background: #BA1A1A; color: #fff; font: 700 12px/1 var(--font-sans); }
+  .tile__off[hidden] { display: none; }
+  .tile b { font: 700 18px/1.15 var(--font-sans); padding-right: 8px; }
+  .tile__n { display: flex; align-items: center; gap: 4px; font: 500 13px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .tile__n .ms { font-size: 16px; }
+  .tops { margin-top: 40px; }
+  .tops__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .tops__head h3 { display: flex; align-items: center; gap: 8px; font: 700 24px/1.2 var(--font-sans); }
+  .tops__head h3 .ms { color: #BA1A1A; }
+  .crumbs-cat { display: flex; align-items: center; gap: 6px; padding-top: 24px; font: 500 15px/1 var(--font-sans); color: var(--ink-muted); }
+  .crumbs-cat a { display: inline-flex; align-items: center; gap: 4px; color: var(--primary); }
+  .crumbs-cat .ms { font-size: 18px; }
+  .crumbs-cat b { color: var(--ink); }
+  .crumbs-cat[hidden], .toolbar[hidden], .catalog[hidden], .cathome[hidden] { display: none; }
+  @media (min-width: 768px) {
+    .cathome { padding-top: 48px; }
+    .cathome__head { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+    .species { align-self: auto; }
+    .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .tile { min-height: 200px; padding: 22px; border-radius: 28px; }
+    .tile__ic { font-size: 72px; right: 18px; top: 16px; }
+    .tile b { font-size: 22px; }
+    .tile__n { font-size: 14px; }
+  }
   .toolbar { display: flex; flex-direction: column; gap: 14px; padding-top: 24px; padding-bottom: 18px; }
   .cats { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink-muted); font: 600 14px/1 var(--font-sans); cursor: pointer; transition: background .15s, color .15s; }
@@ -404,6 +538,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre la tie
   @media (prefers-reduced-motion: reduce) { .prod--cargando { animation: none; } }
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } }
+  @media (min-width: 1100px) { .tops__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 
   .empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 20px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); text-align: center; }

@@ -1,11 +1,15 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
+import { EQUIPO_BASE, tarjetaPersona } from '../data/equipo';
+import groomer from '../assets/peluquera.png';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaStrip from '../components/WaStrip.astro';
 import { whatsapp, DOCTOR } from '../data/site';
 import mariana from '../assets/mariana-gato.png';
 
+const fotoDra = await getImage({ src: mariana, width: 560, format: 'webp' });
+const fotoSpa = await getImage({ src: groomer, width: 720, format: 'webp' });
 const waHola = whatsapp.vet('Hola, Alma Animal. Quiero hacer una pregunta.');
 ---
 <Base
@@ -20,59 +24,30 @@ const waHola = whatsapp.vet('Hola, Alma Animal. Quiero hacer una pregunta.');
     <p class="lead">Las personas que cuidan a tu mascota en el consultorio, el spa y la tienda. Trabajamos en el mismo lugar, así que nos contamos todo.</p>
   </section>
 
-  <!-- las personas salen del gestor (Equipo); mientras carga, o si no hay conexión, se ve la doctora -->
-  <section class="wrap" aria-label="Personas del equipo">
-    <ul class="nos-grid" data-equipo>
-      <li class="nos-card">
-        <span class="nos-card__foto"><Image src={mariana} alt="" width={320} /></span>
-        <b>{DOCTOR.name}</b>
-        <span class="nos-card__cargo">{DOCTOR.title} · {DOCTOR.tp}</span>
-        <a class="nos-card__ig" href="https://instagram.com/vet_marianahoyos" target="_blank" rel="noopener">@vet_marianahoyos</a>
-      </li>
-    </ul>
+  <!-- las personas salen del gestor (Equipo); mientras carga, o sin conexión, se ve el equipo de siempre -->
+  <section class="wrap nos-team" aria-label="Personas del equipo">
+    <div class="team" data-team data-foto-consultorio={fotoDra.src} data-foto-spa={fotoSpa.src}
+      set:html={EQUIPO_BASE.map((p, i) => tarjetaPersona(p, { consultorio: fotoDra.src, spa: fotoSpa.src }, i === 0)).join('')} />
   </section>
 
   <WaStrip href={waHola} text="Escríbenos y te contestamos nosotros mismos, sin bots." />
 </Base>
 
 <script>
-  interface Persona { nombre: string; cargo: string; tarjeta: string | null; instagram: string | null; desde: number | null; bio: string; foto: string | null }
-  const SB = import.meta.env.PUBLIC_SUPABASE_URL, KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  const grid = document.querySelector<HTMLUListElement>('[data-equipo]');
-  const esc = (x: string) => x.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-  if (SB && KEY && grid) {
-    fetch(`${SB}/rest/v1/personas?select=nombre,cargo,tarjeta,instagram,desde,bio,foto&order=orden`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((ps: Persona[]) => {
-        if (!ps.length) return;
-        const fotoDoc = grid.querySelector('.nos-card__foto')?.innerHTML ?? '';
-        grid.innerHTML = ps.map((p, i) => {
-          const ig = p.instagram?.replace(/^@/, '');
-          const foto = p.foto ? `<img src="${esc(p.foto)}" alt="" loading="lazy" />` : i === 0 && /mariana/i.test(p.nombre) ? fotoDoc : `<span class="ms" aria-hidden="true">pets</span>`;
-          return `<li class="nos-card"><span class="nos-card__foto">${foto}</span><b>${esc(p.nombre)}</b>
-            <span class="nos-card__cargo">${esc([p.cargo, p.tarjeta].filter(Boolean).join(' · '))}</span>
-            ${p.desde ? `<span class="nos-card__desde">En Alma Animal desde ${p.desde}</span>` : ''}
-            ${p.bio ? `<p>${esc(p.bio)}</p>` : ''}
-            ${ig ? `<a class="nos-card__ig" href="https://instagram.com/${esc(ig)}" target="_blank" rel="noopener">@${esc(ig)}</a>` : ''}</li>`;
-        }).join('');
-      })
-      .catch(() => {});
-  }
+  import { cargarEquipo, laDoctora, tarjetaPersona } from '../data/equipo';
+  const team = document.querySelector<HTMLElement>('[data-team]');
+  if (team) cargarEquipo().then((l) => {
+    if (!l) return;
+    const fotos = { consultorio: team.dataset.fotoConsultorio!, spa: team.dataset.fotoSpa! };
+    const dra = laDoctora(l);
+    team.innerHTML = l.map((p) => tarjetaPersona(p, fotos, p === dra)).join('');
+  });
 </script>
 
 <style>
   .nos-head { display: flex; flex-direction: column; gap: 14px; padding-top: 24px; padding-bottom: 32px; }
   .nos-head h1 { font-size: clamp(40px, 8vw, 72px); line-height: 1.02; font-weight: 600; }
   .nos-head .lead { max-width: 56ch; }
-  .nos-grid { list-style: none; margin: 0 0 var(--section); padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-  .nos-grid :global(.nos-card) { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 28px 22px; border-radius: var(--r-lg); background: #fff; box-shadow: 0 0 0 1px var(--line-soft); text-align: center; }
-  .nos-grid :global(.nos-card__foto) { width: 168px; height: 168px; margin-bottom: 10px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: var(--grad-alma); color: #362954; }
-  .nos-grid :global(.nos-card__foto img) { width: 100%; height: 100%; object-fit: cover; }
-  .nos-grid :global(.nos-card__foto .ms) { font-size: 64px; }
-  .nos-grid :global(.nos-card b) { font-size: 20px; font-weight: 600; line-height: 1.25; }
-  .nos-grid :global(.nos-card__cargo) { font-family: var(--font-serif); font-size: 16px; color: var(--ink-muted); }
-  .nos-grid :global(.nos-card__desde) { font-size: 13.5px; color: var(--primary); font-weight: 600; }
-  .nos-grid :global(.nos-card p) { margin-top: 6px; font-size: 15.5px; line-height: 1.55; color: var(--ink-muted); }
-  .nos-grid :global(.nos-card__ig) { margin-top: 8px; font-weight: 600; font-size: 15px; }
   @media (min-width: 900px) { .nos-head { padding-top: 40px; padding-bottom: 48px; } }
+  .nos-team { padding-bottom: var(--section); }
 </style>

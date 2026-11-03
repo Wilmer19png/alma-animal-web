@@ -1,0 +1,160 @@
+---
+// Carrito desplegable: se abre al tocar el ícono del carrito (a la derecha en computador, desde abajo en el
+// celular). Ahí se cambian cantidades y se quitan productos; «Hacer mi pedido» lleva a /carrito.
+---
+<div class="cdw" data-cdw hidden>
+  <div class="cdw__fondo" data-cdw-close></div>
+  <aside class="cdw__panel" role="dialog" aria-modal="true" aria-labelledby="cdw-t" tabindex="-1">
+    <div class="cdw__head">
+      <span class="ms" aria-hidden="true">shopping_bag</span>
+      <h2 id="cdw-t">Tu carrito <span data-cdw-n></span></h2>
+      <button type="button" class="icon-btn" aria-label="Cerrar el carrito" data-cdw-close><span class="ms" aria-hidden="true">close</span></button>
+    </div>
+    <div class="cdw__envio" data-cdw-lleno>
+      <span><span class="ms" aria-hidden="true">local_shipping</span><span data-cdw-envio></span></span>
+      <div class="cdw__bar" role="progressbar" aria-label="Avance hacia el envío gratis" aria-valuemin="0" aria-valuemax="100"><i data-free-fill></i></div>
+    </div>
+    <ul class="cdw__list" data-cdw-list></ul>
+    <div class="cdw__vacio" data-cdw-vacio hidden>
+      <span class="ms" aria-hidden="true">shopping_bag</span>
+      <b>Tu carrito está vacío</b>
+      <span>Agrega productos desde la tienda.</span>
+      <a class="btn btn--alma" href="/petshop">Ir al Petshop</a>
+    </div>
+    <div class="cdw__pie" data-cdw-lleno>
+      <p class="cdw__regalo" data-cdw-regalo><span class="ms" aria-hidden="true">redeem</span><span data-cdw-regalo-txt></span></p>
+      <div class="cdw__sub"><span>Subtotal</span><b data-cdw-sub></b></div>
+      <small>El envío se calcula con tu dirección en el siguiente paso.</small>
+      <a class="btn cdw__go" href="/carrito">Hacer mi pedido<span class="ms" aria-hidden="true">arrow_forward</span></a>
+      <button type="button" class="btn btn--outlined cdw__seguir" data-cdw-close>Seguir comprando</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+  import { cart, progress, money } from '../scripts/cart';
+  import { GIFT } from '../data/shop';
+
+  const caja = document.querySelector<HTMLElement>('[data-cdw]');
+  // en la página del carrito no hace falta: ya se ve todo
+  if (caja && !/^\/carrito/.test(location.pathname)) {
+    const panel = caja.querySelector<HTMLElement>('.cdw__panel')!;
+    const lista = caja.querySelector<HTMLUListElement>('[data-cdw-list]')!;
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+    let antes: HTMLElement | null = null;
+
+    const pinta = () => {
+      const items = cart.items(), sub = cart.subtotal(), p = progress(sub), n = cart.count();
+      caja.querySelector('[data-cdw-n]')!.textContent = n ? `(${n})` : '';
+      caja.querySelectorAll<HTMLElement>('[data-cdw-lleno]').forEach((el) => { el.hidden = !items.length; });
+      caja.querySelector<HTMLElement>('[data-cdw-vacio]')!.hidden = items.length > 0;
+      caja.querySelector('[data-cdw-envio]')!.innerHTML = p.toFree > 0 ? `Te faltan <b>${money(p.toFree)}</b> para el envío gratis a toda Colombia.` : '¡Lograste el <b>envío gratis</b> a toda Colombia!';
+      caja.querySelector<HTMLElement>('[data-free-fill]')!.style.width = p.freePct + '%';
+      caja.querySelector('.cdw__bar')!.setAttribute('aria-valuenow', String(p.freePct));
+      const regalo = caja.querySelector<HTMLElement>('[data-cdw-regalo]')!;
+      regalo.hidden = !GIFT.active;
+      caja.querySelector('[data-cdw-regalo-txt]')!.innerHTML = p.toGift > 0 ? `Agrega <b>${money(p.toGift)}</b> más y llévate un <b>obsequio</b>.` : `Tu pedido lleva de obsequio un <b>${esc(GIFT.name)}</b>.`;
+      caja.querySelector('[data-cdw-sub]')!.textContent = money(sub);
+      lista.innerHTML = items.map((i) => `
+        <li data-key="${esc(i.key)}">
+          <span class="cdw__ic" style="background:${esc(i.tone)}"><span class="ms" aria-hidden="true">${esc(i.icon)}</span></span>
+          <span class="cdw__txt">
+            <b>${esc(i.name)}</b>${i.variant && !/^Únic[ao]$/.test(i.variant) ? `<small>${esc(i.variant)}</small>` : ''}
+            <span class="cdw__step">
+              <button type="button" data-menos aria-label="Quitar uno de ${esc(i.name)}"${i.qty <= 1 ? ' disabled' : ''}>−</button>
+              <b>${i.qty}</b>
+              <button type="button" data-mas aria-label="Agregar uno de ${esc(i.name)}"${i.qty >= i.max ? ' disabled' : ''}>+</button>
+            </span>
+          </span>
+          <span class="cdw__fin"><b>${money(i.price * i.qty)}</b><button type="button" data-quitar aria-label="Quitar ${esc(i.name)} del carrito">Quitar</button></span>
+        </li>`).join('');
+    };
+
+    const abrir = () => {
+      antes = document.activeElement as HTMLElement | null;
+      pinta();
+      caja.hidden = false;
+      document.documentElement.classList.add('cdw-abierto');
+      requestAnimationFrame(() => caja.classList.add('is-on'));
+      panel.focus();
+    };
+    const cerrar = () => {
+      caja.classList.remove('is-on');
+      document.documentElement.classList.remove('cdw-abierto');
+      window.setTimeout(() => { caja.hidden = true; }, 250);
+      antes?.focus();
+    };
+
+    // el ícono del carrito abre el panel en vez de cambiar de página
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest('[data-cart-link], [data-cdw-open]');
+      if (!a || e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      abrir();
+    });
+    document.addEventListener('cart:abrir', abrir);
+    caja.querySelectorAll('[data-cdw-close]').forEach((b) => b.addEventListener('click', cerrar));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !caja.hidden) cerrar(); });
+    lista.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement, li = t.closest<HTMLElement>('[data-key]');
+      if (!li) return;
+      const it = cart.items().find((x) => x.key === li.dataset.key);
+      if (!it) return;
+      if (t.closest('[data-mas]')) cart.setQty(it.key, it.qty + 1);
+      else if (t.closest('[data-menos]')) cart.setQty(it.key, it.qty - 1);
+      else if (t.closest('[data-quitar]')) cart.remove(it.key);
+    });
+    cart.onChange(() => { if (!caja.hidden) pinta(); });
+  }
+</script>
+
+<style>
+  .cdw { position: fixed; inset: 0; z-index: 70; }
+  .cdw[hidden] { display: none; }
+  .cdw__fondo { position: absolute; inset: 0; background: rgb(43 30 72 / .42); opacity: 0; transition: opacity .25s; }
+  .cdw.is-on .cdw__fondo { opacity: 1; }
+  .cdw__panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; display: flex; flex-direction: column; background: #fff; border-radius: 28px 28px 0 0; box-shadow: 0 -12px 40px rgb(54 41 84 / .25); transform: translateY(100%); transition: transform .3s var(--ease-out); outline: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .cdw.is-on .cdw__panel { transform: none; }
+  .cdw__head { display: flex; align-items: center; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid var(--surface-3); }
+  .cdw__head > .ms { color: var(--primary); }
+  .cdw__head h2 { flex: 1; font: 700 21px/1.1 var(--font-sans); }
+  .cdw__head h2 span { font-weight: 400; color: var(--ink-soft); }
+  .cdw__envio { display: flex; flex-direction: column; gap: 8px; padding: 14px 20px; background: var(--surface-1, #FEF7FE); font: 500 14px/1.4 var(--font-sans); }
+  .cdw__envio > span { display: flex; gap: 6px; align-items: flex-start; }
+  .cdw__envio .ms { font-size: 19px; color: var(--primary); }
+  .cdw__bar { height: 8px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+  .cdw__bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #FBCFAF, #D1C1DD); transition: width .4s var(--ease-out); }
+  .cdw__list { list-style: none; margin: 0; padding: 4px 20px; flex: 1; overflow-y: auto; }
+  .cdw__list :global(li) { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--surface-3); }
+  .cdw__list :global(.cdw__ic) { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: #362954; }
+  .cdw__list :global(.cdw__ic .ms) { font-size: 28px; }
+  .cdw__list :global(.cdw__txt) { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .cdw__list :global(.cdw__txt > b) { font: 600 15px/1.3 var(--font-sans); }
+  .cdw__list :global(.cdw__txt small) { font: 400 13px/1.2 var(--font-sans); color: var(--ink-soft); }
+  .cdw__list :global(.cdw__step) { display: inline-flex; align-items: center; align-self: flex-start; margin-top: 2px; border: 1px solid var(--line); border-radius: 999px; }
+  .cdw__list :global(.cdw__step button) { width: 36px; height: 34px; border: 0; background: none; color: var(--primary); font: 600 18px/1 var(--font-sans); cursor: pointer; border-radius: 999px; }
+  .cdw__list :global(.cdw__step button:disabled) { opacity: .35; cursor: not-allowed; }
+  .cdw__list :global(.cdw__step b) { min-width: 24px; text-align: center; font: 700 15px/1 var(--font-sans); }
+  .cdw__list :global(.cdw__fin) { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .cdw__list :global(.cdw__fin b) { font: 700 16px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .cdw__list :global(.cdw__fin button) { border: 0; background: none; padding: 4px 0; color: #910809; font: 500 13px/1 var(--font-sans); cursor: pointer; }
+  .cdw__vacio { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 40px 20px; text-align: center; color: var(--ink-muted); }
+  .cdw__vacio[hidden], .cdw [data-cdw-lleno][hidden], .cdw__regalo[hidden] { display: none; }
+  .cdw__vacio > .ms { font-size: 44px; color: var(--primary-soft); }
+  .cdw__vacio b { font: 700 18px/1.2 var(--font-sans); color: var(--ink); }
+  .cdw__vacio .btn { margin-top: 8px; }
+  .cdw__pie { display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 20px; border-top: 1px solid var(--surface-3); }
+  .cdw__regalo { display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 14px; border-radius: 14px; background: var(--grad-alma); color: #362954; font: 500 14px/1.35 var(--font-sans); }
+  .cdw__sub { display: flex; justify-content: space-between; align-items: baseline; font: 500 16px/1 var(--font-sans); }
+  .cdw__sub b { font: 700 24px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .cdw__pie small { font: 400 13px/1.4 var(--font-sans); color: var(--ink-soft); }
+  .cdw__go { width: 100%; height: 52px; justify-content: space-between; padding: 0 22px; font-size: 16px; }
+  .cdw__seguir { width: 100%; }
+  :global(html.cdw-abierto) { overflow: hidden; }
+  @media (min-width: 768px) {
+    .cdw__panel { left: auto; top: 0; width: 440px; max-height: none; border-radius: 28px 0 0 28px; transform: translateX(100%); box-shadow: -12px 0 40px rgb(54 41 84 / .25); }
+    .cdw__head { padding: 22px 24px 16px; }
+    .cdw__envio, .cdw__list, .cdw__pie { padding-left: 24px; padding-right: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cdw__panel, .cdw__fondo { transition: none; } }
+</style>
