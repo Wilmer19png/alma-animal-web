@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, link } from './lib';
-import { listarPersonas, guardarPersona, borrarPersona, ordenar, subirFotoPersona, nuevaPersona, type Persona } from './equipo-datos';
+import { listarPersonas, guardarPersona, borrarPersona, ordenar, subirFotoPersona, subirVideo, nuevaPersona, AREAS, type Persona, type Area } from './equipo-datos';
+import { Seg } from './clinica-ui';
 import { iniciales } from './clinica-datos';
 
 export default function Equipo() {
@@ -77,6 +78,23 @@ function Ficha({ p: inicial, puede, volver, guardado, borrado, error }: { p: Per
     try { set({ foto: await subirFotoPersona(f) }); } catch (e) { error((e as Error).message); }
     setOcupado(false);
   };
+  const subir = async (f: File | undefined, que: 'foto_cuerpo' | 'video') => {
+    if (!f) return;
+    setOcupado(true);
+    try { set({ [que]: que === 'video' ? await subirVideo(f) : await subirFotoPersona(f, 1400) }); } catch (e) { error((e as Error).message); }
+    setOcupado(false);
+  };
+  const sumarFotos = async (lista: FileList | null) => {
+    if (!lista?.length) return;
+    setOcupado(true);
+    try {
+      const nuevas: { url: string; texto: string }[] = [];
+      for (const f of [...lista].slice(0, 8 - p.galeria.length)) nuevas.push({ url: await subirFotoPersona(f, 1400), texto: '' });
+      set({ galeria: [...p.galeria, ...nuevas] });
+    } catch (e) { error((e as Error).message); }
+    setOcupado(false);
+  };
+  const [temasTxt, setTemasTxt] = useState(p.temas.join(', '));
   const guardar = async () => {
     if (!p.nombre.trim()) { error('Escribe el nombre.'); return; }
     if (p.instagram && !/^@?[A-Za-z0-9._]{1,30}$/.test(p.instagram)) { error('El Instagram va así: @usuario'); return; }
@@ -108,9 +126,61 @@ function Ficha({ p: inicial, puede, volver, guardado, borrado, error }: { p: Per
       </div>
       <div className="sfld"><label htmlFor="eq-b">Presentación <small className="cnt" data-mal={p.bio.length > 280 || undefined}>{p.bio.length} de 280 letras</small></label>
         <textarea id="eq-b" className="cell" rows={4} maxLength={280} disabled={!puede} value={p.bio} placeholder="Dos o tres frases en su propia voz: su formación, desde cuándo trabaja con mascotas y qué la mueve." onChange={(e) => set({ bio: e.target.value })} /></div>
+      <div className="eqf__grid">
+        <div className="sfld"><span className="sfld__lbl">Dónde atiende</span>
+          <Seg label="Dónde atiende" value={p.area} opts={AREAS} onChange={(v: Area) => { if (puede) set({ area: v }); }} />
+          <small className="sfld__help">Define el botón de su tarjeta: consultorio → «Conoce a la doctora», spa → «Agenda un baño».</small></div>
+        <div className="sfld"><label htmlFor="eq-te">Temas <span className="sfld__sub"><span>· separados por coma, máximo 4</span></span></label>
+          <input id="eq-te" className="cell" disabled={!puede} value={temasTxt} placeholder="Ej: Corte según la raza, Mascotas nerviosas"
+            onChange={(e) => { setTemasTxt(e.target.value); set({ temas: e.target.value.split(',').map((t) => t.trim()).filter(Boolean).slice(0, 4) }); }} /></div>
+        <div className="sfld"><label htmlFor="eq-u">Universidad <span className="sfld__sub"><span>· opcional</span></span></label>
+          <input id="eq-u" className="cell" disabled={!puede} value={p.universidad ?? ''} placeholder="Ej: Universidad de Caldas" onChange={(e) => set({ universidad: e.target.value || null })} /></div>
+      </div>
+
+      <details className="eqf__mas" open={p.area === 'consultorio' || undefined}>
+        <summary><span className="ms" aria-hidden="true">auto_stories</span>Su página «Conoce a…» <small>· video, foto de cuerpo entero, historia y fotos en acción</small></summary>
+        <div className="eqf__mas-in">
+          <div className="sfld"><label htmlFor="eq-fr">Una frase suya <small className="cnt">{(p.frase ?? '').length} de 220</small></label>
+            <input id="eq-fr" className="cell" maxLength={220} disabled={!puede} value={p.frase ?? ''} placeholder="Ej: Cuido a cada mascota como si fuera mía." onChange={(e) => set({ frase: e.target.value || null })} /></div>
+          <div className="sfld"><label htmlFor="eq-h">Su historia <small className="cnt">{(p.historia ?? '').length} de 2000</small></label>
+            <textarea id="eq-h" className="cell" rows={6} maxLength={2000} disabled={!puede} value={p.historia ?? ''} placeholder="Dónde estudió, cómo empezó y por qué creó Alma Animal. Separa los párrafos con un renglón en blanco." onChange={(e) => set({ historia: e.target.value || null })} /></div>
+          <div className="eqf__medios">
+            <div className="eqf__medio"><b>Foto de cuerpo entero</b><span className="hint">De pie, con la bata, ojalá sin fondo (PNG).</span>
+              {p.foto_cuerpo && <img src={p.foto_cuerpo} alt="" className="eqf__cuerpo" />}
+              {puede && <span className="dacts">
+                <label className="gbtn out sm"><span className="ms" aria-hidden="true">add_a_photo</span>{p.foto_cuerpo ? 'Cambiar' : 'Subir foto'}
+                  <input type="file" accept="image/*" className="sr-only" onChange={(e) => subir(e.target.files?.[0], 'foto_cuerpo')} /></label>
+                {p.foto_cuerpo && <button type="button" className="gbtn ghost sm" onClick={() => set({ foto_cuerpo: null })}>Quitar</button>}
+              </span>}</div>
+            <div className="eqf__medio"><b>Video de presentación</b><span className="hint">De 45 a 90 segundos, grabado con el celular. Máximo 50 MB.</span>
+              {p.video && <video src={p.video} controls playsInline preload="metadata" className="eqf__video" />}
+              {puede && <span className="dacts">
+                <label className="gbtn out sm"><span className="ms" aria-hidden="true">movie</span>{p.video ? 'Cambiar video' : 'Subir video'}
+                  <input type="file" accept="video/mp4,video/quicktime,video/webm" className="sr-only" onChange={(e) => subir(e.target.files?.[0], 'video')} /></label>
+                {p.video && <button type="button" className="gbtn ghost sm" onClick={() => set({ video: null })}>Quitar</button>}
+              </span>}</div>
+          </div>
+          <div className="sfld"><span className="sfld__lbl">Fotos en acción <small className="cnt">{p.galeria.length} de 8</small></span>
+            <span className="hint">Atendiendo, vacunando, en cirugía, en moto rumbo a un domicilio… De cuerpo entero se ven mejor. Escribe qué está haciendo en cada una.</span>
+            <div className="eqf__gal">
+              {p.galeria.map((g, i) => (
+                <div key={g.url} className="eqf__gi"><img src={g.url} alt="" />
+                  <input className="cell" aria-label="Qué está haciendo" disabled={!puede} value={g.texto} placeholder="Ej: Vacunando a un cachorro"
+                    onChange={(e) => set({ galeria: p.galeria.map((x, k) => (k === i ? { ...x, texto: e.target.value } : x)) })} />
+                  {puede && <button type="button" className="vrow__x" aria-label="Quitar esta foto" onClick={() => set({ galeria: p.galeria.filter((_, k) => k !== i) })}><span className="ms">close</span></button>}
+                </div>
+              ))}
+              {puede && p.galeria.length < 8 && <label className="eqf__gadd"><span className="ms" aria-hidden="true">add_photo_alternate</span>Agregar fotos
+                <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => sumarFotos(e.target.files)} /></label>}
+            </div>
+          </div>
+        </div>
+      </details>
+      {ocupado && <p className="hint-g">Subiendo… no cierres esta pantalla.</p>}
+
       <div className="eqf__sw">
         <span className="ms" aria-hidden="true">visibility</span>
-        <span><b>Mostrar en la página</b><span>Aparece en Nosotros, en el orden de la lista.</span></span>
+        <span><b>Mostrar en la página</b><span>Aparece en el Inicio y en Nosotros, en el orden de la lista.</span></span>
         <button type="button" className="sw" role="switch" aria-checked={p.web} aria-label="Mostrar en la página" disabled={!puede} onClick={() => set({ web: !p.web })}><i /></button>
       </div>
 

@@ -10,12 +10,14 @@ import Steps from '../components/Steps.astro';
 import { whatsapp } from '../data/site';
 import { CLINIC_SERVICES, HOME_VISIT, VISIT_STEPS } from '../data/services';
 import mariana from '../assets/mariana-gato.png';
+import { getImage } from 'astro:assets';
 import tigerHead from '../assets/cabeza-tigre.png';
 import dogHead from '../assets/cabeza-perro.png';
 
 const waClinic = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta para mi mascota.');
 const waService = (name: string) => whatsapp.vet(`Hola, Alma Animal. Quiero agendar: ${name}.`);
 const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a domicilio.');
+const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
 ---
 <Base
   title="Consultorio veterinario en Pereira · Alma Animal"
@@ -42,14 +44,27 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
           <a id="agendar" class="btn btn--alma btn--lg" href={waClinic} target="_blank" rel="noopener">Agenda una consulta<span class="btn__end"><span class="ms" aria-hidden="true">arrow_forward</span></span></a>
           <a class="wa-o" href={waClinic} target="_blank" rel="noopener"><WaIcon size={24} />Escríbenos</a>
         </div>
+        <a class="c-hero__conoce" href="/conoce-a-la-doctora"><span class="ms" aria-hidden="true">play_circle</span>Conoce a la doctora</a>
       </div>
 
       <!-- foto de la doctora (cuando haya más fotos trabajando, esto pasa a carrusel) -->
-      <div class="c-hero__photo">
+      <div class="c-hero__video" data-hero-video hidden>
+        <span class="c-hero__vchip"><span class="ms" aria-hidden="true">movie</span>Conoce a la doctora</span>
+      </div>
+      <div class="c-hero__photo" data-hero-foto>
         <div class="c-hero__disc" aria-hidden="true"></div>
         <Image src={mariana} alt="La Dra. Mariana Hoyos con un gato atigrado en brazos" widths={[340, 480, 640]} sizes="(min-width: 1100px) 440px, 320px" loading="eager" fetchpriority="high" />
       </div>
     </header>
+  </div>
+
+  <!-- ======== QUIÉN TE ATIENDE ======== -->
+  <div class="wrap quien-wrap">
+    <a class="quien" href="/conoce-a-la-doctora">
+      <span class="quien__av"><img src={miniDra.src} alt="" width="80" height="80" /></span>
+      <span class="quien__txt"><b>¿Quién te atiende?</b><span>La Dra. Mariana Hoyos Giraldo, médica veterinaria y zootecnista. Conoce su historia, cómo trabaja y mírala en acción.</span></span>
+      <span class="btn quien__btn">Conoce a la doctora<span class="ms" aria-hidden="true">arrow_forward</span></span>
+    </a>
   </div>
 
   <!-- ======== SERVICIOS ======== -->
@@ -119,7 +134,44 @@ const waHome = whatsapp.vet('Hola, Alma Animal. Quiero agendar una consulta a do
   <WaStrip href={waClinic} text={CAMPOS['consultorio.wa.texto'].def} k="consultorio.wa.texto" />
 </Base>
 
+<script>
+  import { cargarEquipo, laDoctora } from '../data/equipo';
+  const caja = document.querySelector<HTMLElement>('[data-hero-video]');
+  cargarEquipo().then((l) => {
+    const v = l && laDoctora(l)?.video;
+    if (!v || !caja) return;
+    const video = document.createElement('video');
+    Object.assign(video, { src: v, controls: true, playsInline: true, preload: 'metadata' });
+    video.setAttribute('aria-label', 'Video de presentación de la doctora');
+    caja.prepend(video);
+    caja.hidden = false;
+    document.querySelector<HTMLElement>('[data-hero-foto]')!.hidden = true;
+  });
+</script>
+
 <style>
+  /* ---------- CONOCE A LA DOCTORA ---------- */
+  .c-hero__conoce { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: 600 16px/1 var(--font-sans); color: var(--primary); text-underline-offset: 4px; }
+  .c-hero__video { position: relative; height: 320px; border-radius: 24px; overflow: hidden; background: #2B1E48; }
+  .c-hero__video[hidden], .c-hero__photo[hidden] { display: none; }
+  .c-hero__video video { width: 100%; height: 100%; object-fit: cover; background: #2B1E48; }
+  .c-hero__vchip { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; background: rgb(255 255 255 / .94); font: 600 13px/1 var(--font-sans); color: #4D3F6C; pointer-events: none; }
+  .c-hero__vchip .ms { font-size: 16px; }
+  .quien-wrap { padding-top: 20px; }
+  .quien { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; padding: 18px 20px; border-radius: var(--r-lg); background: #fff; box-shadow: 0 0 0 1px var(--line-soft); color: var(--ink); text-decoration: none; transition: box-shadow .2s; }
+  .quien:hover { color: var(--ink); box-shadow: 0 0 0 2px var(--primary-soft); }
+  .quien__av { width: 64px; height: 64px; flex: none; border-radius: 50%; overflow: hidden; background: var(--grad-alma); }
+  .quien__av img { width: 100%; height: auto; margin-top: 4px; }
+  .quien__txt { flex: 1 1 280px; display: flex; flex-direction: column; gap: 4px; }
+  .quien__txt b { font: 700 19px/1.2 var(--font-sans); }
+  .quien__txt span { font: 400 15.5px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .quien__btn { flex: none; }
+  @media (max-width: 599px) { .quien__btn { width: 100%; } }
+  @media (min-width: 1100px) {
+    .c-hero__video { position: absolute; right: 48px; top: 48px; bottom: 48px; width: 560px; height: auto; border-radius: 28px; box-shadow: 0 12px 40px rgb(54 41 84 / .25); }
+    .quien-wrap { padding-top: 24px; }
+    .quien { padding: 20px 28px; }
+  }
   /* ---------- HÉROE ---------- */
   .c-hero { position: relative; display: flex; flex-direction: column; gap: 20px; padding: 22px 18px 18px; border-radius: var(--r-lg); background: var(--wash), #fff; box-shadow: 0 0 0 1px var(--line); isolation: isolate; overflow: hidden; }
   .c-hero__curve { display: none; }

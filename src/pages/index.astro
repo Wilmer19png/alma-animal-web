@@ -1,4 +1,6 @@
 ---
+import { getImage } from 'astro:assets';
+import { EQUIPO_BASE, tarjetaPersona } from '../data/equipo';
 import SiteHeader from '../components/SiteHeader.astro';
 import { TX, TT, CAMPOS } from '../data/contenido';
 import { Image } from 'astro:assets';
@@ -31,6 +33,8 @@ const REASONS = [
   { n: '1', title: 'Carnet digital por mascota', text: 'Vacunas con lote, laboratorio y sello, visibles desde tu cuenta.' }
 ];
 // los 3 artículos más recientes del blog
+const fotoDra = await getImage({ src: mariana, width: 560, format: 'webp' });
+const fotoSpa = await getImage({ src: groomer, width: 720, format: 'webp' });
 const POSTS = BLOG_POSTS.slice(0, 3);
 const waVet = whatsapp.vet();
 ---
@@ -168,28 +172,18 @@ const waVet = whatsapp.vet();
     </div>
   </HomeVisit>
 
-  <!-- ======== NOSOTROS ======== -->
-  <section id="nosotros" class="wrap" aria-labelledby="nos">
-    <div class="about">
-      <div class="about__portrait">
-        <div class="about__ring" aria-hidden="true"></div>
-        <div class="about__photo"><Image src={mariana} alt="Retrato de la Dra. Mariana Hoyos con un gato atigrado" widths={[320, 480]} sizes="(min-width: 768px) 420px, 280px" /></div>
-        <div class="about__seal" role="img" aria-label="Sello de Alma Animal, MVZ TP 51206">
-          <svg viewBox="0 0 132 132" aria-hidden="true"><defs><path id="ring" d="M66 66 m-50 0 a50 50 0 1 1 100 0 a50 50 0 1 1 -100 0"/></defs><circle cx="66" cy="66" r="63" fill="#FEF7FE" stroke="currentColor" stroke-width="2.5"/><circle cx="66" cy="66" r="38" fill="none" stroke="currentColor" stroke-width="1"/><text font-family="Alan Sans, sans-serif" font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor"><textPath href="#ring">ALMA ANIMAL · PEREIRA · MVZ TP 51206 ·</textPath></text></svg>
-          <span><Image src={heartPaper} alt="" width={96} /></span>
-        </div>
+  <!-- ======== NOSOTROS: el equipo (sale de gestor → Equipo) ======== -->
+  <section id="nosotros" class="wrap team-sec" aria-labelledby="nos" data-cb="inicio.nosotros">
+    <div class="team-sec__head">
+      <div class="team-sec__txt">
+        <span class="kicker"><span class="ms" aria-hidden="true">favorite</span>Nosotros</span>
+        <h2 id="nos" class="h-section" data-ct="inicio.nosotros.titulo" set:html={TT('inicio.nosotros.titulo')} />
+        <p class="lead" data-c="inicio.nosotros.texto" set:html={TX('inicio.nosotros.texto')} />
       </div>
-      <div class="about__copy">
-        <h2 id="nos" class="h-section about__name">Dra. Mariana<br /><b class="gt">Hoyos Giraldo</b></h2>
-        <p class="serif about__title">{DOCTOR.title} · {DOCTOR.tp}</p>
-        <p class="lead" data-c="inicio.nosotros.historia" hidden={!CAMPOS['inicio.nosotros.historia'].def} set:html={TX('inicio.nosotros.historia')} />
-        <ul class="about__tags"><li>Medicina preventiva</li><li>Cirugía</li><li>Spa y peluquería</li></ul>
-        <div class="about__actions">
-          <a class="btn" href="/nosotros">Conoce al equipo</a>
-          <a class="btn btn--outlined" href="https://instagram.com/vet_marianahoyos" target="_blank" rel="noopener">@vet_marianahoyos</a>
-        </div>
-      </div>
+      <a class="btn btn--outlined" href="/nosotros">Ver todo el equipo<span class="ms" aria-hidden="true">arrow_forward</span></a>
     </div>
+    <div class="team" data-team data-foto-consultorio={fotoDra.src} data-foto-spa={fotoSpa.src}
+      set:html={EQUIPO_BASE.map((p, i) => tarjetaPersona(p, { consultorio: fotoDra.src, spa: fotoSpa.src }, i === 0)).join('')} />
   </section>
 
   <!-- ======== POR QUÉ ======== -->
@@ -230,6 +224,14 @@ const waVet = whatsapp.vet();
 </Base>
 
 <script>
+  import { cargarEquipo, laDoctora, tarjetaPersona } from '../data/equipo';
+  const team = document.querySelector<HTMLElement>('[data-team]');
+  if (team) cargarEquipo().then((l) => {
+    if (!l) return;
+    const fotos = { consultorio: team.dataset.fotoConsultorio!, spa: team.dataset.fotoSpa! };
+    const dra = laDoctora(l);
+    team.innerHTML = l.map((p) => tarjetaPersona(p, fotos, p === dra)).join('');
+  });
   // Carrusel del equipo: cambia cada 5 s, se pausa al pasar el mouse o con movimiento reducido.
   const root = document.querySelector<HTMLElement>('[data-carousel]');
   if (root) {
@@ -262,6 +264,11 @@ const waVet = whatsapp.vet();
 </script>
 
 <style>
+  .team-sec { padding-top: 8px; }
+  .team-sec__head { display: flex; flex-direction: column; gap: 18px; margin-bottom: 28px; }
+  .team-sec__txt { display: flex; flex-direction: column; gap: 12px; }
+  .team-sec__head > .btn { align-self: flex-start; }
+  @media (min-width: 900px) { .team-sec__head { flex-direction: row; align-items: flex-end; justify-content: space-between; } .team-sec__head > .btn { align-self: auto; flex: none; } }
   /* ---------- HÉROE · celular primero ---------- */
   .hero-wrap { padding-top: 12px; }
   .hero { position: relative; display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: var(--r-lg); background: var(--wash), #fff; box-shadow: 0 0 0 1px var(--line); isolation: isolate; }

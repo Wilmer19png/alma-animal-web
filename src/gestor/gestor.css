@@ -1168,3 +1168,24 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 .tl__vis { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 4px 10px; border: 0; border-radius: 999px; background: #F1FBF2; color: #1D5128; font: 500 12.5px/1.2 var(--font-sans); cursor: pointer; }
 .tl__vis .ms { font-size: 16px; }
 .tl__vis[data-priv] { background: var(--surface-3); color: var(--ink-muted); }
+
+/* ---------- equipo: página «Conoce a…» ---------- */
+.eqf__mas { border-radius: 18px; box-shadow: 0 0 0 1px var(--line-soft); }
+.eqf__mas summary { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 14px 16px; cursor: pointer; font: 600 15px/1.3 var(--font-sans); list-style: none; }
+.eqf__mas summary::-webkit-details-marker { display: none; }
+.eqf__mas summary .ms { color: var(--primary); }
+.eqf__mas summary small { font: 400 13px/1.3 var(--font-sans); color: var(--ink-muted); }
+.eqf__mas-in { display: flex; flex-direction: column; gap: 16px; padding: 0 16px 16px; }
+.eqf__medios { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.eqf__medio { display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--surface-2); }
+.eqf__medio b { font: 600 14.5px/1.3 var(--font-sans); }
+.eqf__medio label { cursor: pointer; }
+.eqf__cuerpo { width: 100%; max-height: 260px; object-fit: contain; border-radius: 12px; background: #fff; }
+.eqf__video { width: 100%; max-height: 260px; border-radius: 12px; background: #000; }
+.eqf__gal { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); margin-top: 6px; }
+.eqf__gi { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.eqf__gi img { width: 100%; height: 150px; object-fit: cover; border-radius: 12px; }
+.eqf__gi .cell { min-height: 36px; font-size: 13px; }
+.eqf__gi .vrow__x { position: absolute; top: 4px; right: 4px; width: 30px; height: 30px; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .2); }
+.eqf__gadd { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 150px; border-radius: 12px; border: 2px dashed var(--line); color: var(--primary); font: 600 13.5px/1.2 var(--font-sans); cursor: pointer; }
+.eqf__gadd:focus-within { outline: 3px solid var(--primary); outline-offset: 2px; }
