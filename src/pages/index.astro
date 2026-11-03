@@ -156,7 +156,7 @@ const waVet = whatsapp.vet();
       </a>
       <a class="door door--shop" href="/petshop">
         <span class="ms glyph" aria-hidden="true">storefront</span>
-        <span class="door__yy" aria-hidden="true"><svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="75" fill="#D1C1DD"/><path d="M75 0A75 75 0 0 1 75 150A37.5 37.5 0 0 1 75 75A37.5 37.5 0 0 0 75 0Z" fill="#FBCFAF"/></svg><Image src={loboMini} alt="" width={160} class="yy-l" /><Image src={gatoMini} alt="" width={160} class="yy-g" /></span>
+        <span class="door__par" aria-hidden="true"><Image src={gatoMini} alt="" width={200} class="par-g" /><Image src={loboMini} alt="" width={200} class="par-l" /></span>
         <h3>Petshop</h3>
         <p data-c="inicio.espacios.petshop" set:html={TX('inicio.espacios.petshop')} />
         <span class="link">Ir a la tienda<span class="ms" aria-hidden="true">arrow_forward</span></span>
@@ -434,12 +434,11 @@ const waVet = whatsapp.vet();
     .door__art { display: block; position: absolute; right: 22px; top: 26px; width: 136px; height: auto; z-index: -1; }
     .door__art--gato { transform: rotate(6deg); }
     .door__art--lobo { opacity: .92; transform: rotate(-8deg); }
-    /* petshop: el gato y el lobo en miniatura, como yin y yang */
-    .door__yy { position: absolute; right: 26px; top: 26px; z-index: -1; width: 150px; height: 150px; border-radius: 50%; box-shadow: 0 0 0 5px #fff, 0 10px 26px rgb(54 41 84 / .16); transform: rotate(-35deg); }
-    .door__yy svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .door__yy img { position: absolute; height: auto; }
-    .door__yy .yy-l { width: 46px; left: 52px; top: 13px; transform: rotate(35deg); }
-    .door__yy .yy-g { width: 38px; left: 56px; top: 86px; transform: rotate(35deg); }
+    /* petshop: el gato y el lobo en miniatura, uno frente al otro */
+    .door__par { position: absolute; right: 20px; top: 24px; z-index: -1; width: 200px; height: 150px; }
+    .door__par img { position: absolute; height: auto; filter: drop-shadow(0 6px 12px rgb(54 41 84 / .14)); }
+    .door__par .par-g { width: 86px; left: 4px; top: 8px; }
+    .door__par .par-l { width: 94px; right: 0; top: 26px; }
     a.door:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
     .door { transition: transform .25s var(--ease-out), box-shadow .25s var(--ease); }
   }
