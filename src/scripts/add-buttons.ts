@@ -20,7 +20,7 @@ export function avisarAgregado(item: Item, qty = 1) {
     caja.className = 'toast-cart';
     caja.setAttribute('role', 'status');
     document.body.append(caja);
-    caja.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-toast-close]')) cerrar(); });
+    caja.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-toast-close], [data-cdw-open]')) cerrar(); });
     caja.addEventListener('mouseenter', () => window.clearTimeout(timer));
     caja.addEventListener('mouseleave', () => { timer = window.setTimeout(cerrar, 2500); });
   }
@@ -32,7 +32,7 @@ export function avisarAgregado(item: Item, qty = 1) {
       <small>${envio}</small>
     </span>
     <span class="toast-cart__acts">
-      <a class="toast-cart__go" href="/carrito">Ver carrito</a>
+      <a class="toast-cart__go" href="/carrito" data-cdw-open>Ver carrito</a>
       <button type="button" class="toast-cart__x" data-toast-close aria-label="Cerrar aviso"><span class="ms" aria-hidden="true">close</span></button>
     </span>`;
   caja.classList.remove('is-on'); void caja.offsetWidth; caja.classList.add('is-on');

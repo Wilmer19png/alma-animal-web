@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp } from '../data/site';
 
@@ -42,6 +43,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
     <slot />
   </main>
   <Footer />
+  <CartDrawer />
   <a class="fab-wa" href={waHref} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><WaIcon size={30} class="" /></a>
 
   <script>
