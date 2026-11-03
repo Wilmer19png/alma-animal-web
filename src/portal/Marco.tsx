@@ -43,6 +43,19 @@ export default function Marco({ activo, children }: { activo: string; children: 
   }, [menu]);
 
   if (c.estado === 'cargando' || c.estado === 'fuera') return <div className="psplash"><img src={asset(heart.src)} alt="" width={64} /><span>Cargando tu portal…</span></div>;
+  if (c.estado === 'equipo') {
+    return (
+      <main className="ing">
+        <div className="ing__card">
+          <img src={asset(heart.src)} alt="" width={72} className="ing__logo" />
+          <h1>Eres del equipo de Alma Animal</h1>
+          <p className="ing__sub">Hola, {c.nombre.split(' ')[0]}. Este es el portal de los clientes; lo tuyo es el gestor. Entra allá con tu correo <b>{c.correo}</b> y tu contraseña.</p>
+          <a className="gbtn ing__btn" href={link('/gestor/ingresar')}><span className="ms" aria-hidden="true">space_dashboard</span>Ir al gestor</a>
+          <button className="ing__link" type="button" onClick={() => salir().then(() => go('/portal/ingresar'))}>Salir del portal</button>
+        </div>
+      </main>
+    );
+  }
   if (c.estado === 'sin-ficha') {
     return (
       <main className="ing">

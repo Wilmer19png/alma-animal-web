@@ -19,6 +19,7 @@ export type Cuenta =
   | { estado: 'cargando' }
   | { estado: 'fuera' }
   | { estado: 'sin-ficha'; correo: string } // entró, pero su correo no está en ninguna ficha
+  | { estado: 'equipo'; correo: string; nombre: string } // es del equipo: lo suyo es el gestor
   | { estado: 'dentro'; yo: Ficha };
 
 async function leer(): Promise<Cuenta> {
@@ -32,7 +33,9 @@ async function leer(): Promise<Cuenta> {
   if (!user) return { estado: 'fuera' };
   let { data: f } = await pc!.rpc('mi_ficha');
   if (!f?.length) { await pc!.rpc('vincular_mi_cuenta'); ({ data: f } = await pc!.rpc('mi_ficha')); }
-  return f?.length ? { estado: 'dentro', yo: f[0] as Ficha } : { estado: 'sin-ficha', correo: user.email ?? '' };
+  if (f?.length) return { estado: 'dentro', yo: f[0] as Ficha };
+  const { data: eq } = await pc!.from('equipo').select('nombre, activo').eq('id', user.id).maybeSingle();
+  return eq?.activo ? { estado: 'equipo', correo: user.email ?? '', nombre: eq.nombre } : { estado: 'sin-ficha', correo: user.email ?? '' };
 }
 export function useCuenta() {
   const [c, setC] = useState<Cuenta>({ estado: 'cargando' });
