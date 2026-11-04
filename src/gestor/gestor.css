@@ -1294,3 +1294,28 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 .vacio::before { content: ""; display: block; width: 54px; height: 54px; margin: 0 auto 10px; background: url("../assets/identidad/gato-miniatura.webp") center / contain no-repeat; }
 .vacio:nth-child(even)::before { background-image: url("../assets/identidad/lobo-miniatura.webp"); }
 @media (prefers-reduced-motion: reduce) { .g-splash img, .psplash img { animation: none; } }
+
+/* ---------- fórmula médica con varios medicamentos ---------- */
+.medf { gap: 8px; }
+.medf__h, .medf__row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, .9fr) 36px; gap: 8px; align-items: center; }
+.medf__h { font: 500 12px/1.2 var(--font-sans); color: var(--ink-muted); }
+.medf .link-add { align-self: flex-start; }
+@media (max-width: 640px) {
+  .medf__h { display: none; }
+  .medf__row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 36px; padding: 10px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .medf__row > input:first-child { grid-column: 1 / -1; }
+}
+.meds { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.meds li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 8px 12px; border-radius: 12px; background: #F6F1FA; font: 400 13.5px/1.35 var(--font-sans); }
+.meds li b { font-weight: 600; margin-right: auto; }
+.meds li span { color: var(--ink-muted); font-size: 12.5px; }
+@container (min-width: 641px) { .doc-meds .doc-tr { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); } }
+.doc-meds { margin: 6px 0 10px; }
+
+/* ---------- pacientes de spa ---------- */
+.spa-p { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #EAF6F8; box-shadow: inset 0 0 0 1.5px #A9D7DF; }
+.spa-p__t { display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1.2 var(--font-sans); color: #1F5560; }
+.spa-p__t .ms { font-size: 19px; }
+.chip.spa { background: #D5EEF2; color: #1F5560; }
+.tspa { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #D5EEF2; color: #1F5560; font: 600 11.5px/1.4 var(--font-sans); vertical-align: 2px; }
+.tspa .ms { font-size: 14px; }

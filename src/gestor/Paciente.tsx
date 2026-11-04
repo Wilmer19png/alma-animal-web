@@ -5,10 +5,10 @@ import Shell from './Shell';
 import { DEMO, link, waLink, prettyCel, fechaCorta, mesCorto } from './lib';
 import {
   listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarRegistro, cambiarPrivado, subirArchivo, abrirArchivo,
-  nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES,
-  type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo
+  nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES, SERVICIOS, PRESENTACIONES, servicioDe, vieneASpa, medicamentosDe,
+  type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo, type Medicamento
 } from './clinica-datos';
-import { PacienteForm, Avatar, erroresPaciente } from './clinica-ui';
+import { PacienteForm, Avatar, erroresPaciente, spaLimpio } from './clinica-ui';
 import { CarnetDoc, AtencionDoc, tutorDe } from './documentos';
 import { descargarPdf, nombreArchivo } from './pdf';
 import type { Rol } from './session';
@@ -21,7 +21,7 @@ const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
 const ETIQ: Record<string, string> = {
   motivo: 'Motivo', diagnostico: 'Diagnóstico', tratamiento: 'Tratamiento', temperatura: 'Temperatura (°C)', fc: 'Frecuencia cardiaca',
   fr: 'Frecuencia respiratoria', peso: 'Peso (kg)', laboratorio: 'Laboratorio', lote: 'Lote', proxima: 'Próxima dosis', producto: 'Producto',
-  vence: 'Vencimiento del lote', proxima_que: 'Qué le toca', obs: 'Observaciones'
+  vence: 'Vencimiento del lote', proxima_que: 'Qué le toca', obs: 'Observaciones', cuchilla: 'Guía de cuchilla'
 };
 
 // lo que cada rol puede escribir en la historia
@@ -92,6 +92,7 @@ export default function Paciente() {
               <div className="fhead__txt">
                 <h1 id="pn">{m.nombre}{!m.activo && <span className="chip">Inactivo</span>}</h1>
                 <div className="fhead__chips">
+                  <span className={'chip ' + (vieneASpa(m) ? 'spa' : 'lav')}><span className="ms" aria-hidden="true">{servicioDe(m) === 'consulta' ? 'stethoscope' : 'shower'}</span>{SERVICIOS.find(([k]) => k === servicioDe(m))![1]}</span>
                   <span className="chip lav">{ESPECIES[m.especie]}{m.raza ? ` · ${m.raza}` : ''}</span>
                   <span className="chip lav">{sexoTxt(m)}</span>
                   {edad(m) && <span className="chip lav">{edad(m)}</span>}
@@ -151,6 +152,8 @@ export default function Paciente() {
                       </dl>
                     )}
                 </section>
+
+                {vieneASpa(m) && <SpaCard m={m} regs={regs ?? []} editar={yo.rol === 'peluqueria' ? undefined : () => setEditando(true)} />}
 
                 <Peso regs={regs ?? []} actual={m.peso} />
 
@@ -218,7 +221,7 @@ function EditarPaciente({ m, listo }: { m: TPaciente; listo: (m: TPaciente | nul
     if (Object.keys(e).length) return;
     try {
       const { propietario_id, nombre, especie, raza, color, sexo, reproductivo, nacimiento, edad_aprox, peso, microchip, alimento, alimento_cant, alergias, cronicas, extras, foto, activo } = v;
-      listo(await actualizarPaciente(m.id, { propietario_id, nombre: nombre.trim(), especie, raza, color, sexo, reproductivo, nacimiento, edad_aprox, peso, microchip, alimento, alimento_cant, alergias, cronicas, extras: extras.filter(([k]) => k.trim()), foto, activo }), 'Datos guardados');
+      listo(await actualizarPaciente(m.id, { propietario_id, nombre: nombre.trim(), especie, raza, color, sexo, reproductivo, nacimiento, edad_aprox, peso, microchip, alimento, alimento_cant, alergias, cronicas, extras: extras.filter(([k]) => k.trim()), foto, activo, servicio: servicioDe(v), spa: spaLimpio(v) }), 'Datos guardados');
     } catch (e) { setFalla((e as Error).message); }
   };
   return (
@@ -228,6 +231,24 @@ function EditarPaciente({ m, listo }: { m: TPaciente; listo: (m: TPaciente | nul
       {falla && <p className="gerr" role="alert">{falla}</p>}
       <div className="dacts"><button className="gbtn" type="button" onClick={guardar}><span className="ms" aria-hidden="true">check</span>Guardar</button><button className="gbtn out" type="button" onClick={() => listo(null)}>Cancelar</button></div>
     </div>
+  );
+}
+
+/* ---------- spa: cómo se le hace y qué cuchilla se usó la última vez ---------- */
+function SpaCard({ m, regs, editar }: { m: TPaciente; regs: Registro[]; editar?: () => void }) {
+  const spa = m.spa ?? {};
+  const ultimo = regs.filter((r) => r.tipo === 'spa').sort((a, b) => b.fecha.localeCompare(a.fecha))[0];
+  return (
+    <section className="gcard" aria-labelledby="sp">
+      <h2 className="ch2" id="sp"><span className="ms" aria-hidden="true">shower</span>Spa
+        {editar && <button className="link-add" type="button" onClick={editar}>Editar</button>}</h2>
+      <dl className="kv">
+        <div className="full"><dt>Guía de cuchilla</dt><dd>{spa.cuchilla || '—'}</dd></div>
+        <div className="full"><dt>Tipo de corte</dt><dd>{spa.corte || '—'}</dd></div>
+        {spa.obs && <div className="full"><dt>Observaciones</dt><dd>{spa.obs}</dd></div>}
+        {ultimo && <div className="full"><dt>Último spa</dt><dd>{fechaC(ultimo.fecha)} · {ultimo.titulo}{ultimo.datos.cuchilla ? ` · cuchilla ${ultimo.datos.cuchilla}` : ''}</dd></div>}
+      </dl>
+    </section>
   );
 }
 
@@ -262,6 +283,7 @@ function Entrada({ r, puedeBorrar, borrar, pdf }: { r: Registro; puedeBorrar: bo
   const [privado, setPrivado] = useState(!!r.privado);
   const alternar = async () => { const n = !privado; setPrivado(n); try { await cambiarPrivado(r.id, n); } catch { setPrivado(!n); } };
   const filas = Object.entries(r.datos).filter(([k, v]) => v && ETIQ[k]);
+  const meds = r.tipo === 'formula' ? medicamentosDe(r) : [];
   const abrir = async (a: Archivo) => { const u = await abrirArchivo(a); if (u) window.open(u, '_blank', 'noopener'); };
   return (
     <li className="tl__item">
@@ -275,7 +297,12 @@ function Entrada({ r, puedeBorrar, borrar, pdf }: { r: Registro; puedeBorrar: bo
           {pdf && <button type="button" className="tl__pdf" onClick={pdf} title="Descargar en PDF para mandárselo al cliente"><span className="ms" aria-hidden="true">picture_as_pdf</span>PDF</button>}
           {puedeBorrar && <button type="button" className="vrow__x tl__x" aria-label={`Borrar ${r.titulo}`} onClick={borrar}><span className="ms">delete</span></button>}
         </div>
-        {r.resumen && <p>{r.resumen}</p>}
+        {meds.length > 0 && (
+          <ul className="meds">
+            {meds.map((x, i) => <li key={i}><b>{x.nombre}</b><span>{x.presentacion}</span><span>{x.lote ? `Lote ${x.lote}` : 'Sin lote'}</span></li>)}
+          </ul>
+        )}
+        {r.resumen && <p>{meds.length > 0 && <b>Indicaciones: </b>}{r.resumen}</p>}
         {filas.length > 0 && <dl className="tl__dl">{filas.map(([k, v]) => <div key={k}><dt>{ETIQ[k]}</dt><dd>{k === 'proxima' ? fechaC(v + 'T12:00:00') : v}</dd></div>)}</dl>}
         {r.archivos.length > 0 && <div className="tl__files">{r.archivos.map((a, i) => (
           <button key={i} type="button" className="chip lav" onClick={() => abrir(a)} disabled={!a.ruta}><span className="ms" aria-hidden="true">{a.tipo.includes('pdf') ? 'picture_as_pdf' : 'image'}</span>{a.nombre}</button>
@@ -327,8 +354,12 @@ const CAMPOS = (t: TipoRegistro, m: TPaciente): Campo[] => {
       { k: 'obs', label: 'Observaciones para el carnet', tipo: 'area', ph: 'Opcional', dato: true }
     ];
     case 'peso': return [{ k: 'peso', label: 'Peso (kg)', tipo: 'num', req: true, ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Nota', tipo: 'area', ph: 'Opcional' }];
-    case 'spa': return [{ k: 'titulo', label: 'Servicio', req: true, ph: 'Ej: Baño completo y corte' }, { k: 'peso', label: 'Peso (kg)', tipo: 'num', ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Observaciones', tipo: 'area', ph: 'Ej: Piel un poco seca detrás de las orejas.' }];
-    case 'formula': return [{ k: 'titulo', label: 'Medicamento', req: true, ph: 'Ej: Gotas óticas' }, { k: 'resumen', label: 'Indicaciones', tipo: 'area', req: true, ph: 'Ej: 4 gotas en el oído derecho cada 12 horas por 7 días.' }];
+    case 'spa': return [
+      { k: 'titulo', label: 'Servicio', req: true, ph: 'Ej: Baño completo y corte' }, { k: 'cuchilla', label: 'Guía de cuchilla', ph: 'Ej: N.º 7F', dato: true },
+      { k: 'peso', label: 'Peso (kg)', tipo: 'num', ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Observaciones', tipo: 'area', ph: 'Ej: Piel un poco seca detrás de las orejas.' }
+    ];
+    // los medicamentos van en su propia lista (ver Medicamentos)
+    case 'formula': return [{ k: 'resumen', label: 'Indicaciones', tipo: 'area', req: true, ph: 'Ej: Otomax: 4 gotas en el oído derecho cada 12 horas por 7 días. Meloxicam: media pasta cada 24 horas por 3 días.' }];
     case 'examen': return [{ k: 'titulo', label: 'Examen', req: true, ph: 'Ej: Hemograma, química sanguínea' }, { k: 'resumen', label: 'Resultados', tipo: 'area', ph: 'Lo más importante del resultado.' }];
     case 'imagen': return [{ k: 'titulo', label: 'Estudio', req: true, ph: 'Ej: Radiografía de cadera' }, { k: 'resumen', label: 'Hallazgos', tipo: 'area' }];
     case 'hospitalizacion': return [{ k: 'titulo', label: 'Motivo', req: true, ph: 'Ej: Gastroenteritis' }, { k: 'resumen', label: 'Evolución', tipo: 'area' }];
@@ -344,8 +375,9 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
     fecha: hoyISO(),
     ...(tipo === 'vacuna' ? { titulo: VACUNAS[m.especie][0], proxima: enDias(esq[VACUNAS[m.especie][0]] ?? 365) } : {}),
     ...(tipo === 'desparasitacion' ? { titulo: DESPARASITACIONES[0], proxima: enDias(esq[DESPARASITACIONES[0]] ?? 90) } : {}),
-    ...(tipo === 'spa' ? { titulo: 'Baño completo' } : {})
+    ...(tipo === 'spa' ? { titulo: 'Baño completo', cuchilla: m.spa?.cuchilla ?? '' } : {})
   }));
+  const [meds, setMeds] = useState<Medicamento[]>([{ nombre: '', presentacion: PRESENTACIONES[0], lote: '' }]);
   const [otra, setOtra] = useState('');
   const [externo, setExterno] = useState(false);
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -355,14 +387,22 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
 
   const guardar = async () => {
     const falta = campos.find((c) => c.req && !(c.k === 'titulo' && v.titulo === 'Otra' ? otra.trim() : (v[c.k] ?? '').trim()));
+    const lista = meds.map((x) => ({ nombre: x.nombre.trim(), presentacion: x.presentacion, lote: x.lote.trim() }));
+    if (tipo === 'formula') {
+      if (!lista.some((x) => x.nombre)) { setErr('Falta: el nombre de al menos un medicamento.'); return; }
+      if (lista.some((x) => !x.nombre && x.lote)) { setErr('Hay un medicamento con lote pero sin nombre. Escríbelo o quita esa fila.'); return; }
+    }
     if (falta) { setErr(`Falta: ${falta.label.toLowerCase()}.`); return; }
     if (v.peso && !/^\d+([.,]\d+)?$/.test(v.peso.trim())) { setErr('Escribe el peso solo con números. Ej: 8,4'); return; }
     setErr(''); setOcupado(true);
     try {
       const subidos = [];
       for (const f of archivos) subidos.push(await subirArchivo(f, `pacientes/${m.id}`));
-      const datos = Object.fromEntries(campos.filter((c) => c.dato && v[c.k]?.trim()).map((c) => [c.k, v[c.k].trim()]));
-      const titulo = (v.titulo === 'Otra' ? otra : v.titulo) || (tipo === 'consulta' ? (v.diagnostico || v.motivo) : TIPOS[tipo].txt);
+      const datos: Record<string, string> = Object.fromEntries(campos.filter((c) => c.dato && v[c.k]?.trim()).map((c) => [c.k, v[c.k].trim()]));
+      const recetados = lista.filter((x) => x.nombre);
+      if (tipo === 'formula') datos.medicamentos = JSON.stringify(recetados);
+      const titulo = tipo === 'formula' ? recetados.map((x) => x.nombre).join(', ')
+        : (v.titulo === 'Otra' ? otra : v.titulo) || (tipo === 'consulta' ? (v.diagnostico || v.motivo) : TIPOS[tipo].txt);
       const rs = await crearRegistros([{
         paciente_id: m.id, tipo, fecha: new Date(v.fecha).toISOString(), titulo: titulo.trim().slice(0, 120), resumen: v.resumen?.trim() || null,
         datos, archivos: subidos, externo, por_nombre: externo ? null : autor, ...(privado ? { privado: true } : {})
@@ -378,6 +418,7 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
         <button type="button" className="vrow__x" aria-label="Cerrar" onClick={cerrar}><span className="ms">close</span></button></div>
       <div className="grid2g">
         <div className="fld"><label htmlFor="nr-fecha">Fecha y hora</label><input id="nr-fecha" type="datetime-local" value={v.fecha} max={hoyISO()} onChange={(e) => setV((x) => ({ ...x, fecha: e.target.value }))} /></div>
+        {tipo === 'formula' && <Medicamentos meds={meds} setMeds={setMeds} />}
         {campos.map((c) => (
           <div key={c.k} className={'fld' + (c.tipo === 'area' ? ' full' : '')}>
             <label htmlFor={`nr-${c.k}`}>{c.label}{c.req && <span className="req"> *</span>}</label>
@@ -395,6 +436,28 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
       )}
       {err && <p className="gerr" role="alert">{err}</p>}
       <div className="dacts"><button className="gbtn" type="button" onClick={guardar} disabled={ocupado}><span className="ms" aria-hidden="true">check</span>{ocupado ? 'Guardando…' : 'Guardar en la historia'}</button><button className="gbtn out" type="button" onClick={cerrar}>Cancelar</button></div>
+    </div>
+  );
+}
+
+/* ---------- fórmula médica: una fila por medicamento ---------- */
+function Medicamentos({ meds, setMeds }: { meds: Medicamento[]; setMeds: (f: (l: Medicamento[]) => Medicamento[]) => void }) {
+  const cambiar = (i: number, c: Partial<Medicamento>) => setMeds((l) => l.map((x, j) => (j === i ? { ...x, ...c } : x)));
+  return (
+    <div className="fld full medf" role="group" aria-labelledby="medf-t">
+      <span className="fld__lb" id="medf-t">Medicamentos <span className="req">*</span></span>
+      <div className="medf__h" aria-hidden="true"><span>Nombre del medicamento</span><span>Presentación</span><span>Lote</span><span /></div>
+      {meds.map((x, i) => (
+        <div className="medf__row" key={i}>
+          <input aria-label={`Medicamento ${i + 1}: nombre`} value={x.nombre} placeholder="Ej: Meloxicam 1 mg" onChange={(e) => cambiar(i, { nombre: e.target.value })} />
+          <select aria-label={`Medicamento ${i + 1}: presentación`} value={x.presentacion} onChange={(e) => cambiar(i, { presentacion: e.target.value })}>
+            {PRESENTACIONES.map((o) => <option key={o}>{o}</option>)}
+          </select>
+          <input aria-label={`Medicamento ${i + 1}: lote`} value={x.lote} placeholder="Lote. Ej: MX0457" onChange={(e) => cambiar(i, { lote: e.target.value })} />
+          <button type="button" className="vrow__x" aria-label={`Quitar medicamento ${i + 1}`} disabled={meds.length === 1} onClick={() => setMeds((l) => l.filter((_, j) => j !== i))}><span className="ms">close</span></button>
+        </div>
+      ))}
+      <button className="link-add" type="button" onClick={() => setMeds((l) => [...l, { nombre: '', presentacion: PRESENTACIONES[0], lote: '' }])}><span className="ms" aria-hidden="true">add</span>Agregar otro medicamento</button>
     </div>
   );
 }

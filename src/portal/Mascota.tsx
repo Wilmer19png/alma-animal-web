@@ -5,7 +5,7 @@ import Marco from './Marco';
 import { link } from '../gestor/lib';
 import { misMascotas, historia, abrirArchivo, type Ficha } from './datos';
 import { fechaCorta, especieTxt, peso, diasA, estadoDosis } from './comun';
-import { edad, sexoTxt, type Paciente, type Registro, type Archivo } from '../gestor/clinica-datos';
+import { edad, sexoTxt, medicamentosDe, type Paciente, type Registro, type Archivo } from '../gestor/clinica-datos';
 import { CarnetDoc, AtencionDoc, tutorDe } from '../gestor/documentos';
 import { descargarPdf, nombreArchivo } from '../gestor/pdf';
 
@@ -94,6 +94,9 @@ function Contenido({ yo }: { yo: Ficha }) {
               <span className="pcons__f"><b>{new Date(r.fecha).getDate()}</b><small>{fechaCorta(r.fecha).split(' ').slice(1).join(' ')}</small></span>
               <div>
                 <b>{r.titulo}</b><span className="pcons__k">{{ consulta: 'Consulta', cirugia: 'Cirugía', procedimiento: 'Procedimiento', formula: 'Fórmula', hospitalizacion: 'Hospitalización' }[r.tipo as string]}{r.por_nombre ? ` · ${r.por_nombre}` : ''}</span>
+                {r.tipo === 'formula' && medicamentosDe(r).length > 0 && (
+                  <ul className="pmeds">{medicamentosDe(r).map((x, i) => <li key={i}><b>{x.nombre}</b> · {x.presentacion}{x.lote ? ` · lote ${x.lote}` : ''}</li>)}</ul>
+                )}
                 {r.resumen && <p>{r.resumen}</p>}
                 {r.datos.plan && <p className="pcons__plan"><span className="ms" aria-hidden="true">assignment</span><span><b>Indicaciones:</b> {r.datos.plan}</span></p>}
                 {r.archivos.length > 0 && <Archivos a={r.archivos} />}
