@@ -1291,8 +1291,8 @@ a.chip.lav:hover { background: #DCCDF5; color: #4D3F6C; }
 @keyframes late { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.1); } 28% { transform: scale(.98); } 42% { transform: scale(1.06); } 60% { transform: scale(1); } }
 .g-splash img, .psplash img { animation: late 1.6s var(--ease, ease) infinite; transform-origin: 50% 60%; }
 /* miniaturas del gato y el lobo cuando todavía no hay nada */
-.vacio::before { content: ""; display: block; width: 54px; height: 54px; margin: 0 auto 10px; background: url("../assets/identidad/gato-miniatura.webp") center / contain no-repeat; }
-.vacio:nth-child(even)::before { background-image: url("../assets/identidad/lobo-miniatura.webp"); }
+.vacio::before { content: ""; display: block; width: 54px; height: 54px; margin: 0 auto 10px; background: url("/identidad/gato-miniatura.webp") center / contain no-repeat; }
+.vacio:nth-child(even)::before { background-image: url("/identidad/lobo-miniatura.webp"); }
 @media (prefers-reduced-motion: reduce) { .g-splash img, .psplash img { animation: none; } }
 
 /* ---------- fórmula médica con varios medicamentos ---------- */

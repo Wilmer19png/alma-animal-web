@@ -71,7 +71,7 @@ export function tarjetaPersona(p: PersonaWeb, fotos: FotosBase, esLaDoctora: boo
       ? `<a class="btn btn--alma" href="/petshop"><span class="ms" aria-hidden="true">storefront</span>Ir al Petshop</a>`
       : (esLaDoctora ? `<a class="btn" href="/conoce-a-la-doctora"><span class="ms" aria-hidden="true">play_circle</span>Conoce a la doctora</a>` : '');
   return `<article class="tcard">
-    <div class="tcard__foto${recorte ? ' tcard__foto--recorte' : ''}" style="background:${a.fondo}">
+    <div class="tcard__foto tcard__foto--${p.area}${recorte ? ' tcard__foto--recorte' : ''}" style="background:${a.fondo}">
       <img src="${esc(src)}" alt="${esc(p.nombre)}" loading="lazy" decoding="async" />
       <span class="tcard__chip"><span class="ms" aria-hidden="true">${a.icon}</span>${a.txt}</span>
     </div>

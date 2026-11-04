@@ -2,7 +2,7 @@
 // y genera el ícono de la pestaña, el del celular y el logo de los correos.
 // uso: node scripts/identidad.mjs (se puede correr varias veces)
 import sharp from 'sharp';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync } from 'node:fs';
 
 const DIR = 'src/assets/identidad/';
 for (const f of ['logo', 'gato', 'lobo', 'gato-miniatura', 'lobo-miniatura']) {
@@ -23,4 +23,6 @@ await cuadrado(64, 2).toFile('public/favicon.png');
 await cuadrado(180, 22, '#FFFFFF').toFile('public/apple-touch-icon.png');
 // correos: 128 px de ancho (se muestra a 64)
 await sharp(logo).resize({ width: 128 }).png().toFile('public/correo/logo.png');
+// miniaturas que pide el CSS (estados vacíos): van en public para que tengan ruta fija
+for (const f of ['gato-miniatura', 'lobo-miniatura']) copyFileSync(`${DIR}${f}.webp`, `public/identidad/${f}.webp`);
 console.log('identidad lista');
