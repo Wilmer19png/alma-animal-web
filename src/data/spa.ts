@@ -1,8 +1,12 @@
 // Contenido del spa. Más adelante saldrá del gestor (Servicios y tarifas → Cada baño incluye).
-import p1 from '../assets/spa/IMG_1330.jpg';
-import p2 from '../assets/spa/IMG_1337.jpg';
-import p3 from '../assets/spa/IMG_1491.jpg';
-import p4 from '../assets/spa/IMG_0657.jpg';
+import mesa from '../assets/fotos/spa-mesa.webp';
+import maquina from '../assets/fotos/spa-maquina.webp';
+import tijeras from '../assets/fotos/spa-tijeras.webp';
+import tijerasCara from '../assets/fotos/spa-tijeras-cara.webp';
+import patas from '../assets/fotos/spa-patas.webp';
+import panoleta from '../assets/fotos/spa-panoleta.webp';
+import banera from '../assets/fotos/spa-banera.webp';
+import feliz from '../assets/fotos/spa-feliz.webp';
 
 export const SPA_INCLUDES = [
   { icon: 'pest_control', title: 'Baño antipulgas', text: 'Con shampoo hipoalergénico libre de parabenos.', bg: 'linear-gradient(160deg,#FBCFAF,#E8C6CF)' },
@@ -22,10 +26,17 @@ export const SPA_COAT = [
   { title: 'Piel sensible', text: 'Baño medicado: +$5.000 para mascotas de hasta 10 kg.' }
 ];
 
-// fotos reales de cómo salen del spa
+// la portada: Albert trabajando
+export const SPA_HERO = [
+  { src: tijerasCara, alt: 'Albert, el peluquero, recortando con tijeras el pelo de la cara de un perrito blanco', cap: 'Corte según la raza' },
+  { src: maquina, alt: 'Retoque con máquina alrededor de los ojos de un perrito blanco', cap: 'Retoque de la carita' },
+  { src: tijeras, alt: 'Albert recortando con tijeras a un perrito blanco en la mesa de peluquería', cap: 'Con paciencia y cuidado' },
+  { src: patas, alt: 'Corte de pelo en las patitas con máquina', cap: 'Patitas y uñas' }
+];
+// así salen del spa
 export const SPA_PHOTOS = [
-  { src: p1, alt: 'Perrita criolla atigrada con su pañoleta después del baño', cap: 'Recién bañada' },
-  { src: p2, alt: 'Husky blanco con su pañoleta después del baño', cap: 'Con su pañoleta' },
-  { src: p3, alt: 'Shih tzu con su pañoleta y su obsequio en la mesa de peluquería', cap: 'Sale con su obsequio' },
-  { src: p4, alt: 'Shih tzu recién bañado, en brazos', cap: 'Listo para volver a casa' }
+  { src: panoleta, alt: 'Perrito blanco esponjoso con su pañoleta azul después del spa', cap: 'Con su pañoleta' },
+  { src: mesa, alt: 'Perrito blanco feliz en la mesa de peluquería al terminar su corte', cap: 'Recién arreglado' },
+  { src: feliz, alt: 'Primer plano de un perrito feliz después del baño', cap: 'Feliz después del baño' },
+  { src: banera, alt: 'Perrito en la bañera de la peluquería durante su baño', cap: 'En plena bañera' }
 ];

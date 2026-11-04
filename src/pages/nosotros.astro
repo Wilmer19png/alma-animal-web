@@ -1,15 +1,15 @@
 ---
 import { getImage } from 'astro:assets';
 import { EQUIPO_BASE, tarjetaPersona } from '../data/equipo';
-import groomer from '../assets/peluquera.png';
+import albertCuerpo from '../assets/fotos/albert-cuerpo.webp';
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaStrip from '../components/WaStrip.astro';
 import { whatsapp, DOCTOR } from '../data/site';
-import mariana from '../assets/mariana-gato.png';
+import draCuerpo from '../assets/fotos/dra-cuerpo.webp';
 
-const fotoDra = await getImage({ src: mariana, width: 560, format: 'webp' });
-const fotoSpa = await getImage({ src: groomer, width: 720, format: 'webp' });
+const fotoDra = await getImage({ src: draCuerpo, width: 360, format: 'webp' });
+const fotoSpa = await getImage({ src: albertCuerpo, width: 360, format: 'webp' });
 const waHola = whatsapp.vet('Hola, Alma Animal. Quiero hacer una pregunta.');
 ---
 <Base

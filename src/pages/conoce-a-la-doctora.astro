@@ -7,17 +7,24 @@ import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import WaStrip from '../components/WaStrip.astro';
 import { whatsapp, DOCTOR } from '../data/site';
-import mariana from '../assets/mariana-gato.png';
+import draCuerpo from '../assets/fotos/dra-cuerpo.webp';
+import draCachorro from '../assets/fotos/dra-cachorro.webp';
+import draJeringa from '../assets/fotos/dra-jeringa.webp';
+import draPreparando from '../assets/fotos/dra-preparando.webp';
+import draQuirofano from '../assets/fotos/dra-quirofano.webp';
 import moto from '../assets/mariana-moto.png';
 import gatoBlanco from '../assets/identidad/gato-negativo-blanco.webp';
 import loboTinta from '../assets/identidad/lobo-negativo-tinta.webp';
 
 const waCita = whatsapp.vet('Hola, doctora. Quiero agendar una consulta para mi mascota.');
-const fotoGato = await getImage({ src: mariana, width: 640, format: 'webp' });
-const fotoMoto = await getImage({ src: moto, width: 640, format: 'webp' });
+const fotoCuerpo = await getImage({ src: draCuerpo, width: 420, format: 'webp' });
+const foto = async (src: ImageMetadata) => (await getImage({ src, width: 640, format: 'webp' })).src;
 const ACCIONES = [
-  { src: fotoGato.src, txt: 'Con sus pacientes', sub: 'Cargando a un gato atigrado en el consultorio.', recorte: true },
-  { src: fotoMoto.src, txt: 'Rumbo a un domicilio', sub: 'Con casco y maletín, llegando en su scooter.', recorte: true }
+  { src: await foto(draCachorro), txt: 'Con sus pacientes', sub: 'Escuchando el corazón de un cachorro en consulta.', recorte: true },
+  { src: await foto(draJeringa), txt: 'Vacunas y medicamentos', sub: 'Prepara cada dosis a la medida de tu mascota.', recorte: true },
+  { src: await foto(draQuirofano), txt: 'En cirugía', sub: 'Con todo el cuidado y el equipo del quirófano.', recorte: false },
+  { src: await foto(draPreparando), txt: 'Atenta a cada detalle', sub: 'Alista lo necesario antes de atender.', recorte: true },
+  { src: await foto(moto), txt: 'Rumbo a un domicilio', sub: 'Con casco y maletín, llegando en su scooter.', recorte: true }
 ];
 const COMO = [
   ['hearing', 'Te escucha sin afán', 'Primero le cuentas qué has notado en tu mascota; después la revisa de pies a cabeza.'],
@@ -54,7 +61,7 @@ const COMO = [
       </div>
       <div class="kd-hero__foto">
         <div class="kd-hero__disc" aria-hidden="true"></div>
-        <img src={fotoGato.src} alt="La Dra. Mariana Hoyos Giraldo" data-kd-cuerpo fetchpriority="high" />
+        <img src={fotoCuerpo.src} alt="La Dra. Mariana Hoyos Giraldo" class="es-cuerpo" data-kd-cuerpo fetchpriority="high" />
       </div>
     </header>
   </div>
@@ -185,6 +192,7 @@ const COMO = [
   .kd-sec[hidden] { display: none; }
   .kd-sec__head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
   .kd-gal { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+  @media (min-width: 1200px) { .kd-gal { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; } }
   .kd-gal :global(.kd-foto) { margin: 0; display: flex; flex-direction: column; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
   .kd-gal :global(.kd-foto__img) { position: relative; height: 340px; background: var(--kd-bg); overflow: hidden; }
   .kd-gal :global(.kd-foto__img img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -206,7 +214,7 @@ const COMO = [
   .kd-como__c p { font: 400 16px/1.6 var(--font-sans); color: var(--ink-muted); }
 
   .kd-cta :global(.kd-cta__lobo) { display: none; }
-  @media (min-width: 900px) { .kd-cta :global(.kd-cta__lobo) { display: block; position: absolute; z-index: -1; right: 18px; bottom: -58px; width: 104px; height: auto; opacity: .9; transform: rotate(-10deg); } .kd-cta__acts { padding-right: 112px; } }
+  @media (min-width: 900px) { .kd-cta :global(.kd-cta__lobo) { display: block; position: absolute; z-index: -1; right: 14px; bottom: -78px; width: 142px; height: auto; opacity: .9; transform: rotate(-10deg); } .kd-cta__acts { padding-right: 150px; } }
   .kd-cta { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; gap: 20px; padding: 28px 22px; border-radius: var(--r-lg); background: var(--grad-alma); color: #362954; margin-bottom: var(--section); }
   .kd-cta h2 { font: 700 clamp(28px, 4.5vw, 44px)/1.1 var(--font-sans); letter-spacing: -.03em; }
   .kd-cta p { margin-top: 8px; font: 400 17px/1.5 var(--font-sans); }
