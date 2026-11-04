@@ -1,12 +1,14 @@
 // Contenido del spa. Más adelante saldrá del gestor (Servicios y tarifas → Cada baño incluye).
-import mesa from '../assets/fotos/spa-mesa.webp';
 import maquina from '../assets/fotos/spa-maquina.webp';
 import tijeras from '../assets/fotos/spa-tijeras.webp';
 import tijerasCara from '../assets/fotos/spa-tijeras-cara.webp';
 import patas from '../assets/fotos/spa-patas.webp';
-import panoleta from '../assets/fotos/spa-panoleta.webp';
-import banera from '../assets/fotos/spa-banera.webp';
-import feliz from '../assets/fotos/spa-feliz.webp';
+import p1 from '../assets/spa/IMG_1330.jpg';
+import p2 from '../assets/spa/IMG_1337.jpg';
+import p3 from '../assets/spa/IMG_1491.jpg';
+import p4 from '../assets/spa/IMG_0657.jpg';
+import p5 from '../assets/spa/IMG_1923.jpg';
+import p6 from '../assets/spa/IMG_1932.jpg';
 
 export const SPA_INCLUDES = [
   { icon: 'pest_control', title: 'Baño antipulgas', text: 'Con shampoo hipoalergénico libre de parabenos.', bg: 'linear-gradient(160deg,#FBCFAF,#E8C6CF)' },
@@ -33,10 +35,12 @@ export const SPA_HERO = [
   { src: tijeras, alt: 'Albert recortando con tijeras a un perrito blanco en la mesa de peluquería', cap: 'Con paciencia y cuidado' },
   { src: patas, alt: 'Corte de pelo en las patitas con máquina', cap: 'Patitas y uñas' }
 ];
-// así salen del spa
+// así salen del spa (fotos reales de las mascotas al terminar)
 export const SPA_PHOTOS = [
-  { src: panoleta, alt: 'Perrito blanco esponjoso con su pañoleta azul después del spa', cap: 'Con su pañoleta' },
-  { src: mesa, alt: 'Perrito blanco feliz en la mesa de peluquería al terminar su corte', cap: 'Recién arreglado' },
-  { src: feliz, alt: 'Primer plano de un perrito feliz después del baño', cap: 'Feliz después del baño' },
-  { src: banera, alt: 'Perrito en la bañera de la peluquería durante su baño', cap: 'En plena bañera' }
+  { src: p1, alt: 'Perrita criolla atigrada con su pañoleta después del baño', cap: 'Recién bañada' },
+  { src: p2, alt: 'Husky blanco con su pañoleta después del baño', cap: 'Con su pañoleta' },
+  { src: p3, alt: 'Shih tzu con su pañoleta y su obsequio en la mesa de peluquería', cap: 'Sale con su obsequio' },
+  { src: p4, alt: 'Shih tzu recién bañado, en brazos', cap: 'Listo para volver a casa' },
+  { src: p5, alt: 'Perrito de pelo dorado con su pañoleta de colores después del baño', cap: 'Con su pañoleta nueva' },
+  { src: p6, alt: 'Perrito blanco con su pañoleta, sentado en una silla después del spa', cap: 'Listo y perfumado' }
 ];
