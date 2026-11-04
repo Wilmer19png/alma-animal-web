@@ -5,7 +5,7 @@ import Shell from './Shell';
 import { DEMO, link, money, when, waLink, prettyCel, fechaCorta } from './lib';
 import { ESTADOS } from './pedidos-datos';
 import {
-  listarPropietarios, listarPacientes, registrosDe, comprasDe, actualizarPropietario, nombreCompleto, iniciales, edad, ESPECIES, TIPOS,
+  listarPropietarios, listarPacientes, registrosDe, comprasDe, actualizarPropietario, borrarPropietario,nombreCompleto, iniciales, edad, ESPECIES, TIPOS,
   type Propietario, type Paciente, type Registro, type Compra, type NuevoPropietario
 } from './clinica-datos';
 import { PropietarioForm, Avatar, erroresPropietario } from './clinica-ui';
@@ -42,7 +42,7 @@ export default function Propietarios() {
 
   return (
     <Shell activo="propietarios">
-      {() => (
+      {(yo) => (
         <div className="md" data-vista={verDetalle ? 'detalle' : 'lista'}>
           <div className="mhead">
             <div className="mhead__txt">
@@ -84,8 +84,12 @@ export default function Propietarios() {
                 );
               })}
             </section>
-            {actual && <Ficha key={actual.id} p={actual} mascotas={mascotasDe(actual.id)} volver={() => setVerDetalle(false)}
-              cambiado={(n, msg) => { setProps((l) => l!.map((x) => (x.id === n.id ? n : x))); setAviso(msg); }} avisar={setAviso} />}
+            {actual && <Ficha key={actual.id} p={actual} mascotas={mascotasDe(actual.id)} volver={() => setVerDetalle(false)} esAdmin={yo.rol === 'admin'}
+              cambiado={(n, msg) => { setProps((l) => l!.map((x) => (x.id === n.id ? n : x))); setAviso(msg); }} avisar={setAviso}
+              borrado={() => {
+                setProps((l) => l!.filter((x) => x.id !== actual.id)); setPacs((l) => l.filter((m) => m.propietario_id !== actual.id));
+                setSel(null); setVerDetalle(false); history.replaceState(null, '', location.pathname); setAviso('Propietario borrado');
+              }} />}
           </div>
           <p className="gtoast" role="status" aria-live="polite">{aviso}</p>
         </div>
@@ -94,7 +98,7 @@ export default function Propietarios() {
   );
 }
 
-function Ficha({ p, mascotas, volver, cambiado, avisar }: { p: Propietario; mascotas: Paciente[]; volver: () => void; cambiado: (p: Propietario, msg: string) => void; avisar: (m: string) => void }) {
+function Ficha({ p, mascotas, volver, cambiado, avisar, esAdmin, borrado }: { p: Propietario; mascotas: Paciente[]; volver: () => void; cambiado: (p: Propietario, msg: string) => void; avisar: (m: string) => void; esAdmin: boolean; borrado: () => void }) {
   const [editando, setEditando] = useState(false);
   const [v, setV] = useState<NuevoPropietario>(p);
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -122,6 +126,13 @@ La primera vez toca «¿Primera vez o la olvidaste? Crea tu contraseña» y escr
     try { cambiado(await actualizarPropietario(p.id, { portal: p.portal === 'activo' ? 'activo' : 'invitado' }), 'Invitación abierta en WhatsApp'); }
     catch (e) { avisar((e as Error).message); }
   };
+  const [borrando, setBorrando] = useState(false);
+  const borrar = async () => {
+    const nombres = mascotas.map((m) => m.nombre).join(', ');
+    if (!confirm(`¿Borrar a ${nombreCompleto(p)}${mascotas.length ? ` y a sus mascotas (${nombres}) con toda su historia clínica` : ''}? No se puede deshacer.`)) return;
+    setBorrando(true);
+    try { await borrarPropietario(p.id); borrado(); } catch (e) { avisar((e as Error).message); setBorrando(false); }
+  };
   const mascota = (m: Paciente) => [ESPECIES[m.especie], m.raza, edad(m)].filter(Boolean).join(' · ');
   const totalCompras = (compras ?? []).filter((c) => c.estado !== 'cancelado').reduce((s, c) => s + c.total, 0);
 
@@ -143,7 +154,8 @@ La primera vez toca «¿Primera vez o la olvidaste? Crea tu contraseña» y escr
           <h3><span className="ms" aria-hidden="true">edit</span>Editar datos</h3>
           <PropietarioForm v={v} set={(c) => setV((x) => ({ ...x, ...c }))} errores={errores} idp="ed" />
           <div className="fld"><label htmlFor="ed-notas">Notas internas</label><textarea id="ed-notas" value={v.notas ?? ''} onChange={(e) => setV((x) => ({ ...x, notas: e.target.value || null }))} placeholder="Ej: Prefiere que le escriban en la tarde." /></div>
-          <div className="dacts"><button className="gbtn" type="button" onClick={guardar}><span className="ms" aria-hidden="true">check</span>Guardar</button><button className="gbtn out" type="button" onClick={() => { setEditando(false); setErrores({}); }}>Cancelar</button></div>
+          <div className="dacts"><button className="gbtn" type="button" onClick={guardar}><span className="ms" aria-hidden="true">check</span>Guardar</button><button className="gbtn out" type="button" onClick={() => { setEditando(false); setErrores({}); }}>Cancelar</button>
+            {esAdmin && <button className="gbtn ghost" type="button" disabled={borrando} onClick={borrar}><span className="ms" aria-hidden="true">delete</span>{borrando ? 'Borrando…' : 'Borrar propietario'}</button>}</div>
         </div>
       ) : (
         <>

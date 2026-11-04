@@ -18,3 +18,6 @@ end $$;
 
 alter table public.pacientes
   add column if not exists spa jsonb not null default '{}' check (jsonb_typeof(spa) = 'object');
+
+-- el equipo solo puede escribir las columnas que se le dan una por una: se le dan las dos nuevas
+grant insert (servicio, spa), update (servicio, spa) on public.pacientes to authenticated;
