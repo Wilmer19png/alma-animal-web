@@ -145,7 +145,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
 </Base>
 
 <script>
-  // portada: cambia de foto cada 4,5 s (quieta si la persona pidió menos movimiento)
+  // portada: cambia de foto cada 3 s (quieta si la persona pidió menos movimiento)
   const fotos = [...document.querySelectorAll<HTMLElement>('[data-c-slide]')];
   if (fotos.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let i = 0;
@@ -154,7 +154,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
       fotos[i].classList.remove('is-on');
       i = (i + 1) % fotos.length;
       fotos[i].classList.add('is-on');
-    }, 4500);
+    }, 3000);
   }
 </script>
 
@@ -190,7 +190,7 @@ const miniDra = await getImage({ src: mariana, width: 160, format: 'webp' });
   .c-hero__actions { display: flex; flex-direction: column; gap: 12px; }
   .c-hero__actions > * { width: 100%; }
   .c-hero :global(.c-hero__gato) { display: none; }
-  .c-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .9s var(--ease); }
+  .c-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .7s var(--ease); }
   .c-slide.is-on { opacity: 1; }
   /* las fotos anchas (como la del cachorro) no se salen del espacio de la foto */
   .c-slide :global(img) { max-width: 100% !important; object-fit: contain; object-position: 50% 100%; }

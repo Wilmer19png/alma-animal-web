@@ -4,7 +4,7 @@
 // pierden: quedan como una línea. El logo NO se usa en negativo (va siempre con sus colores).
 // Uso: node scripts/negativos.mjs
 import sharp from 'sharp';
-import { unlinkSync, existsSync } from 'node:fs';
+import { unlinkSync, existsSync, copyFileSync } from 'node:fs';
 
 const DIR = 'src/assets/identidad/';
 // umbral: qué tan oscuro es un detalle (0–1). maxPx: en el lobo solo se tratan los detalles pequeños
@@ -69,3 +69,5 @@ for (const p of PIEZAS) {
 // el logo va siempre con sus colores: se quitan los negativos que hubiera
 for (const c of ['blanco', 'tinta']) { const f = `${DIR}logo-negativo-${c}.webp`; if (existsSync(f)) unlinkSync(f); }
 console.log('listo');
+// los negativos en blanco que pide el CSS (tarjetas del equipo) van en public para que tengan ruta fija
+for (const f of ['gato', 'lobo']) copyFileSync(`${DIR}${f}-negativo-blanco.webp`, `public/identidad/${f}-negativo-blanco.webp`);
