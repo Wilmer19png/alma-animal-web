@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, link, waLink, prettyCel, fechaCorta, mesCorto } from './lib';
 import {
-  listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarRegistro, cambiarPrivado, subirArchivo, abrirArchivo,
+  listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarPaciente, borrarRegistro,cambiarPrivado, subirArchivo, abrirArchivo,
   nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES, SERVICIOS, PRESENTACIONES, servicioDe, vieneASpa, medicamentosDe, cantidadEj,
   type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo, type Medicamento
 } from './clinica-datos';
@@ -136,7 +136,7 @@ export default function Paciente() {
                   <h2 className="ch2" id="dp"><span className="ms" aria-hidden="true">pets</span>Datos del paciente
                     {!editando && <button className="link-add" type="button" onClick={() => setEditando(true)}>Editar</button>}</h2>
                   {editando
-                    ? <EditarPaciente m={m} listo={(x, msg) => { if (x) setM(x); setEditando(false); if (msg) setAviso(msg); }} />
+                    ? <EditarPaciente m={m} esAdmin={yo.rol === 'admin'} borrado={() => { location.href = dueño ? link('/gestor/propietarios') + `?id=${dueño.id}` : link('/gestor/pacientes'); }} listo={(x, msg) => { if (x) setM(x); setEditando(false); if (msg) setAviso(msg); }} />
                     : (
                       <dl className="kv">
                         <div><dt>Especie</dt><dd>{ESPECIES[m.especie]}</dd></div>
@@ -212,10 +212,16 @@ export default function Paciente() {
 }
 
 /* ---------- editar datos ---------- */
-function EditarPaciente({ m, listo }: { m: TPaciente; listo: (m: TPaciente | null, msg?: string) => void }) {
+function EditarPaciente({ m, listo, esAdmin, borrado }: { m: TPaciente; listo: (m: TPaciente | null, msg?: string) => void; esAdmin: boolean; borrado: () => void }) {
   const [v, setV] = useState<NuevoPaciente>(m);
   const [err, setErr] = useState<Record<string, string>>({});
   const [falla, setFalla] = useState('');
+  const [borrando, setBorrando] = useState(false);
+  const borrar = async () => {
+    if (!confirm(`¿Borrar a ${m.nombre} con toda su historia clínica y sus archivos? No se puede deshacer.\n\nSi solo falleció o ya no viene, mejor marca «Ya no es paciente».`)) return;
+    setBorrando(true);
+    try { await borrarPaciente(m.id); borrado(); } catch (e) { setFalla((e as Error).message); setBorrando(false); }
+  };
   const guardar = async () => {
     const e = erroresPaciente(v); setErr(e);
     if (Object.keys(e).length) return;
@@ -229,7 +235,8 @@ function EditarPaciente({ m, listo }: { m: TPaciente; listo: (m: TPaciente | nul
       <PacienteForm v={v} set={(c) => setV((x) => ({ ...x, ...c }))} errores={err} idp="ep" />
       <label className="chk-l"><input type="checkbox" checked={!v.activo} onChange={(e) => setV((x) => ({ ...x, activo: !e.target.checked }))} />Ya no es paciente (falleció o se fue)</label>
       {falla && <p className="gerr" role="alert">{falla}</p>}
-      <div className="dacts"><button className="gbtn" type="button" onClick={guardar}><span className="ms" aria-hidden="true">check</span>Guardar</button><button className="gbtn out" type="button" onClick={() => listo(null)}>Cancelar</button></div>
+      <div className="dacts"><button className="gbtn" type="button" onClick={guardar}><span className="ms" aria-hidden="true">check</span>Guardar</button><button className="gbtn out" type="button" onClick={() => listo(null)}>Cancelar</button>
+        {esAdmin && <button className="gbtn ghost" type="button" disabled={borrando} onClick={borrar}><span className="ms" aria-hidden="true">delete</span>{borrando ? 'Borrando…' : 'Borrar mascota'}</button>}</div>
     </div>
   );
 }

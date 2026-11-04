@@ -186,6 +186,9 @@ export async function comprasDe(celular: string): Promise<Compra[]> {
 
 /* ---------- escritura ---------- */
 const fallaG = new Error('No se guardó. Revisa los datos y tu conexión, e inténtalo de nuevo.');
+// la base de datos no tiene las columnas nuevas de la ficha (servicio, spa) o el permiso para escribirlas
+const fallaPac = (m: string) => /servicio|spa|does not exist|42703|permission denied|column/i.test(m)
+  ? new Error('Falta un paso en la base de datos: corre supabase/21-spa-paciente.sql en Supabase y vuelve a intentarlo.') : fallaG;
 
 export async function crearPropietario(p: NuevoPropietario): Promise<Propietario> {
   if (DEMO) { const n = { ...p, id: uid(), creado: new Date().toISOString(), acepto_fecha: new Date().toISOString() }; store.set(K.prop, [...ej.props(), n]); return n; }
@@ -202,14 +205,44 @@ export async function actualizarPropietario(id: string, c: Partial<NuevoPropieta
 export async function crearPaciente(p: NuevoPaciente): Promise<Paciente> {
   if (DEMO) { const n = { ...p, id: uid(), creado: new Date().toISOString() }; store.set(K.pac, [...ej.pacs(), n]); return n; }
   const { data, error } = await sb!.from('pacientes').insert(p).select('*').single();
-  if (error) throw fallaG;
+  if (error) throw fallaPac(error.message);
   return data as Paciente;
 }
 export async function actualizarPaciente(id: string, c: Partial<NuevoPaciente>): Promise<Paciente> {
   if (DEMO) { let out!: Paciente; store.set(K.pac, ej.pacs().map((x) => (x.id === id ? (out = { ...x, ...c }) : x))); return out; }
   const { data, error } = await sb!.from('pacientes').update(c).eq('id', id).select('*').single();
-  if (error) throw fallaG;
+  if (error) throw fallaPac(error.message);
   return data as Paciente;
+}
+// borrar del todo (solo la administradora): la mascota se lleva su historia clínica y sus archivos;
+// sus citas quedan en la agenda sin ficha. Para dejar de verla sin borrar nada está «Ya no es paciente».
+const fallaB = (que: string) => new Error(`No se borró ${que}. Solo la administradora puede borrar; si lo eres, corre supabase/22-borrar-pacientes.sql en Supabase.`);
+async function borrarArchivosDe(pacienteIds: string[]) {
+  const rutas = (await registrosDe(pacienteIds).catch(() => [] as Registro[])).flatMap((r) => r.archivos.map((a) => a.ruta)).filter(Boolean);
+  if (rutas.length) await sb!.storage.from('clinica').remove(rutas).catch(() => {}); // si falla, la ficha se borra igual
+}
+export async function borrarPaciente(id: string): Promise<void> {
+  if (DEMO) { store.set(K.pac, ej.pacs().filter((p) => p.id !== id)); store.set(K.reg, ej.regs().filter((r) => r.paciente_id !== id)); return; }
+  await borrarArchivosDe([id]);
+  const { data, error } = await sb!.from('pacientes').delete().eq('id', id).select('id');
+  if (error || !data?.length) throw fallaB('la mascota');
+}
+export async function borrarPropietario(id: string): Promise<void> {
+  if (DEMO) {
+    const suyas = ej.pacs().filter((p) => p.propietario_id === id).map((p) => p.id);
+    store.set(K.pac, ej.pacs().filter((p) => p.propietario_id !== id));
+    store.set(K.reg, ej.regs().filter((r) => !suyas.includes(r.paciente_id)));
+    store.set(K.prop, ej.props().filter((p) => p.id !== id)); return;
+  }
+  const { data: suyas, error: e1 } = await sb!.from('pacientes').select('id').eq('propietario_id', id);
+  if (e1) throw fallaB('el propietario');
+  if (suyas?.length) {
+    await borrarArchivosDe(suyas.map((p) => p.id));
+    const { error } = await sb!.from('pacientes').delete().eq('propietario_id', id);
+    if (error) throw fallaB('el propietario');
+  }
+  const { data, error } = await sb!.from('propietarios').delete().eq('id', id).select('id');
+  if (error || !data?.length) throw fallaB('el propietario');
 }
 export async function crearRegistros(rs: NuevoRegistro[]): Promise<Registro[]> {
   if (!rs.length) return [];
