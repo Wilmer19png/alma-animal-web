@@ -177,11 +177,11 @@ export function AtencionDoc({ p, tutor, regs }: { p: Paciente; tutor: Tutor; reg
               <h3><span className="ms" aria-hidden="true">{TIPOS[r.tipo].icon}</span>{TIPOS[r.tipo].txt}</h3>
               {meds.length > 0 ? (
                 <div className="doc-tabla doc-meds" role="table" aria-label="Medicamentos formulados">
-                  <div className="doc-tr doc-th" role="row"><span>Medicamento</span><span>Presentación</span><span>Lote</span></div>
-                  {meds.map((x, i) => <div key={i} className="doc-tr" role="row"><span><b>{x.nombre}</b></span><span data-l="Presentación">{x.presentacion}</span><span data-l="Lote">{x.lote || '—'}</span></div>)}
+                  <div className="doc-tr doc-th" role="row"><span>Medicamento</span><span>Cantidad</span><span>Indicación o uso</span></div>
+                  {meds.map((x, i) => <div key={i} className="doc-tr" role="row"><span><b>{x.nombre}</b><small>{x.presentacion}</small></span><span data-l="Cantidad">{x.cantidad || '—'}</span><span data-l="Indicación o uso">{x.indicacion || '—'}</span></div>)}
                 </div>
               ) : <b className="doc-reg__t">{r.titulo}</b>}
-              {r.resumen && <p className="doc-reg__p">{meds.length > 0 && <b>Indicaciones: </b>}{r.resumen}</p>}
+              {r.resumen && <p className="doc-reg__p">{meds.length > 0 && <b>Observaciones: </b>}{r.resumen}</p>}
               {filas.length > 0 && (
                 <dl className="doc-grid doc-grid--2">
                   {filas.map(([k, v]) => <div key={k}><dt>{ETIQUETAS[k]}</dt><dd>{k === 'proxima' ? larga(v + 'T12:00:00') : v}</dd></div>)}

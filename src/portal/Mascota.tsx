@@ -95,7 +95,7 @@ function Contenido({ yo }: { yo: Ficha }) {
               <div>
                 <b>{r.titulo}</b><span className="pcons__k">{{ consulta: 'Consulta', cirugia: 'Cirugía', procedimiento: 'Procedimiento', formula: 'Fórmula', hospitalizacion: 'Hospitalización' }[r.tipo as string]}{r.por_nombre ? ` · ${r.por_nombre}` : ''}</span>
                 {r.tipo === 'formula' && medicamentosDe(r).length > 0 && (
-                  <ul className="pmeds">{medicamentosDe(r).map((x, i) => <li key={i}><b>{x.nombre}</b> · {x.presentacion}{x.lote ? ` · lote ${x.lote}` : ''}</li>)}</ul>
+                  <ul className="pmeds">{medicamentosDe(r).map((x, i) => <li key={i}><b>{x.nombre}</b> · {[x.presentacion, x.cantidad].filter(Boolean).join(' · ')}{x.indicacion && <><br />{x.indicacion}</>}</li>)}</ul>
                 )}
                 {r.resumen && <p>{r.resumen}</p>}
                 {r.datos.plan && <p className="pcons__plan"><span className="ms" aria-hidden="true">assignment</span><span><b>Indicaciones:</b> {r.datos.plan}</span></p>}
