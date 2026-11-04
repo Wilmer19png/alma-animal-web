@@ -59,22 +59,15 @@ const COMO = [
           <a class="kd-ver" href="#video" data-kd-ver hidden><span class="ms" aria-hidden="true">play_circle</span>Ver su video</a>
         </div>
       </div>
-      <div class="kd-hero__foto">
-        <div class="kd-hero__disc" aria-hidden="true"></div>
-        <img src={fotoCuerpo.src} alt="La Dra. Mariana Hoyos Giraldo" class="es-cuerpo" data-kd-cuerpo fetchpriority="high" />
+      <div class="kd-hero__media" data-kd-media>
+        <div id="video" class="kd-hero__video" data-kd-video hidden></div>
+        <div class="kd-hero__foto">
+          <div class="kd-hero__disc" aria-hidden="true"></div>
+          <img src={fotoCuerpo.src} alt="La Dra. Mariana Hoyos Giraldo" class="es-cuerpo" data-kd-cuerpo fetchpriority="high" />
+        </div>
       </div>
     </header>
   </div>
-
-  <!-- ======== VIDEO (si lo subió en el gestor) ======== -->
-  <section id="video" class="wrap kd-video" aria-labelledby="kv" data-kd-video hidden>
-    <div class="kd-video__player" data-kd-player></div>
-    <div class="kd-video__txt">
-      <span class="kd-kick kd-kick--dark"><span class="ms" aria-hidden="true">movie</span>En un minuto</span>
-      <h2 id="kv" class="h-section">Conócela <b class="gt">antes de venir</b></h2>
-      <p class="lead">Te cuenta quién es, cómo es una consulta y qué revisa en cada visita. Así llegas sabiendo con quién vas a hablar.</p>
-    </div>
-  </section>
 
   <!-- ======== ASÍ TRABAJA ======== -->
   <section class="wrap kd-sec" aria-labelledby="kt">
@@ -90,6 +83,18 @@ const COMO = [
         </figure>
       ))}
     </div>
+  </section>
+
+  <!-- ======== VIDEOS DE INSTAGRAM (gestor → Equipo) ======== -->
+  <section class="wrap kd-sec" aria-labelledby="kig" data-kd-ig hidden>
+    <div class="kd-sec__head kd-sec__head--fila">
+      <div>
+        <span class="kd-kick kd-kick--dark"><span class="ms" aria-hidden="true">smart_display</span>Desde su Instagram</span>
+        <h2 id="kig" class="h-section">Videos de la <b class="gt">doctora</b></h2>
+      </div>
+      <a class="link" href="https://instagram.com/vet_marianahoyos" target="_blank" rel="noopener" data-kd-ig-perfil>Síguela en Instagram<span class="ms" aria-hidden="true">arrow_forward</span></a>
+    </div>
+    <div class="kd-ig" data-kd-ig-lista></div>
   </section>
 
   <!-- ======== SU HISTORIA (si la escribió) ======== -->
@@ -126,7 +131,7 @@ const COMO = [
 </Base>
 
 <script>
-  import { cargarEquipo, laDoctora, esc } from '../data/equipo';
+  import { cargarEquipo, laDoctora, esc, videosDeLaDoctora } from '../data/equipo';
   const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!;
   cargarEquipo().then((l) => {
     const d = l && laDoctora(l);
@@ -141,13 +146,18 @@ const COMO = [
     chip('[data-kd-desde]', d.desde ? `Atendiendo desde ${d.desde}` : null);
     if (d.foto_cuerpo) { const img = $<HTMLImageElement>('[data-kd-cuerpo]'); img.src = d.foto_cuerpo; img.classList.add('es-cuerpo'); }
     if (d.video) {
+      const caja = $('[data-kd-video]');
       const v = document.createElement('video');
       Object.assign(v, { src: d.video, controls: true, playsInline: true, preload: 'metadata' });
       v.setAttribute('aria-label', `Video de presentación de ${d.nombre}`);
-      $('[data-kd-player]').append(v);
-      $('[data-kd-video]').hidden = false;
+      // video acostado (horizontal) o de pie (vertical, como los del celular)
+      v.addEventListener('loadedmetadata', () => caja.classList.toggle('es-horizontal', v.videoWidth > v.videoHeight));
+      caja.append(v);
+      caja.hidden = false;
+      $('[data-kd-media]').classList.add('con-video');
       $('[data-kd-ver]').hidden = false;
     }
+    if (d.instagram) $<HTMLAnchorElement>('[data-kd-ig-perfil]').href = `https://instagram.com/${d.instagram.replace(/^@/, '')}`;
     if (d.galeria.length) {
       $('[data-kd-gal]').innerHTML = d.galeria.map((g, i) => `<figure class="kd-foto" style="--kd-bg:${i % 2 ? '#EADDFF' : '#FFDCC3'}"><span class="kd-foto__img"><img src="${esc(g.url)}" alt="${esc(g.texto || 'La doctora trabajando')}" loading="lazy" /></span>${g.texto ? `<figcaption><b>${esc(g.texto)}</b></figcaption>` : ''}</figure>`).join('');
     }
@@ -156,6 +166,19 @@ const COMO = [
       const f = $('[data-kd-frase]'); f.hidden = !d.frase; if (d.frase) f.textContent = `«${d.frase.replace(/^«|»$/g, '')}»`;
       $('[data-kd-hist]').innerHTML = (d.historia ?? '').split(/\n\s*\n/).filter(Boolean).map((p) => `<p>${esc(p.trim())}</p>`).join('');
     }
+  });
+
+  // videos de Instagram: se incrustan con el código oficial de Instagram (gratis)
+  videosDeLaDoctora().then((l) => {
+    if (!l.length) return;
+    $('[data-kd-ig-lista]').innerHTML = l.slice(0, 9).map((u) =>
+      `<blockquote class="instagram-media" data-instgrm-permalink="${esc(u)}?utm_source=ig_embed" data-instgrm-version="14"><a href="${esc(u)}" target="_blank" rel="noopener">Ver este video en Instagram</a></blockquote>`).join('');
+    $('[data-kd-ig]').hidden = false;
+    const w = window as unknown as { instgrm?: { Embeds: { process(): void } } };
+    if (w.instgrm) { w.instgrm.Embeds.process(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://www.instagram.com/embed.js'; s.async = true;
+    document.body.append(s);
   });
 </script>
 
@@ -179,14 +202,14 @@ const COMO = [
   .kd-ver { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; color: #fff; font: 600 16px/1 var(--font-sans); text-underline-offset: 4px; }
   .kd-ver[hidden] { display: none; }
   .kd-ver:hover { color: #FBCFAF; }
-  .kd-hero__foto { position: relative; height: 380px; }
+  .kd-hero__media { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .kd-hero__video { width: min(100%, 340px); border-radius: 24px; overflow: hidden; background: #000; box-shadow: 0 0 0 6px rgb(255 255 255 / .08), 0 18px 40px rgb(0 0 0 / .35); }
+  .kd-hero__video[hidden] { display: none; }
+  .kd-hero__video.es-horizontal { width: min(100%, 560px); }
+  .kd-hero__video :global(video) { display: block; width: 100%; height: auto; max-height: 72vh; background: #000; }
+  .kd-hero__foto { position: relative; width: 100%; height: 380px; }
   .kd-hero__disc { position: absolute; left: 50%; top: 30px; width: 300px; height: 300px; margin-left: -150px; border-radius: 50%; background: linear-gradient(90deg, #FBCFAF 50%, #D1C1DD 50%); box-shadow: 0 0 0 14px rgb(255 255 255 / .06); }
   .kd-hero__foto img { position: absolute; left: 50%; bottom: 0; height: 360px; width: auto; max-width: none; transform: translateX(-50%); }
-
-  .kd-video { display: grid; gap: 24px; align-items: center; padding-top: var(--section); }
-  .kd-video[hidden] { display: none; }
-  .kd-video__player :global(video) { width: 100%; max-height: 560px; border-radius: var(--r-lg); background: #2B1E48; display: block; }
-  .kd-video__txt { display: flex; flex-direction: column; gap: 14px; }
 
   .kd-sec { padding-top: var(--section); }
   .kd-sec[hidden] { display: none; }
@@ -196,7 +219,12 @@ const COMO = [
   .kd-gal :global(.kd-foto) { margin: 0; display: flex; flex-direction: column; border-radius: var(--r-lg); overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
   .kd-gal :global(.kd-foto__img) { position: relative; height: 340px; background: var(--kd-bg); overflow: hidden; }
   .kd-gal :global(.kd-foto__img img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .kd-gal :global(.kd-foto--recorte .kd-foto__img img) { inset: auto 0 0 50%; width: auto; height: 96%; object-fit: contain; transform: translateX(-50%); }
+  /* fotos sin fondo: completas, apoyadas abajo */
+  .kd-gal :global(.kd-foto--recorte .kd-foto__img img) { inset: 12px 10px 0; width: calc(100% - 20px); height: calc(100% - 12px); object-fit: contain; object-position: 50% 100%; }
+  .kd-sec__head--fila { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; }
+  .kd-ig { display: grid; gap: 20px; align-items: start; grid-template-columns: repeat(auto-fill, minmax(min(100%, 326px), 1fr)); }
+  .kd-ig :global(.instagram-media) { margin: 0 !important; min-width: 0 !important; width: 100% !important; max-width: none !important; border-radius: 18px !important; }
+  .kd-ig :global(blockquote.instagram-media) { padding: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); font: 600 15px/1.4 var(--font-sans); }
   .kd-gal :global(figcaption) { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px 18px; }
   .kd-gal :global(figcaption b) { font: 700 17px/1.3 var(--font-sans); }
   .kd-gal :global(figcaption span) { font: 400 15px/1.45 var(--font-sans); color: var(--ink-muted); }
@@ -231,9 +259,16 @@ const COMO = [
   @media (min-width: 1100px) {
     .kd-hero { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: center; gap: 40px; padding: 56px 56px 0; border-radius: var(--r-xl); min-height: 640px; }
     .kd-hero__copy { padding-bottom: 56px; }
-    .kd-hero__foto { height: 600px; align-self: end; }
+    .kd-hero__media { align-self: end; flex-direction: row; align-items: flex-end; justify-content: center; gap: 24px; }
+    .kd-hero__foto { height: 600px; }
+    /* con video: el video a un lado y la foto de cuerpo entero al otro */
+    .kd-hero:has(.con-video) { grid-template-columns: minmax(0, 1fr) auto; }
+    .con-video .kd-hero__video { flex: none; align-self: center; width: 290px; margin-bottom: 56px; }
+    .con-video .kd-hero__video.es-horizontal { width: 440px; }
+    .con-video .kd-hero__foto { flex: 0 0 270px; height: 580px; }
+    .con-video .kd-hero__disc { width: 300px; height: 300px; margin-left: -150px; top: 70px; }
+    .con-video .kd-hero__foto img { height: 560px; }
     .kd-hero__disc { width: 440px; height: 440px; margin-left: -220px; top: 60px; }
     .kd-hero__foto img { height: 580px; }
-    .kd-video { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; }
   }
 </style>

@@ -7,6 +7,7 @@ export interface Persona {
   bio: string; foto: string | null; web: boolean; orden: number;
   area: Area; temas: string[]; universidad: string | null; frase: string | null; historia: string | null;
   foto_cuerpo: string | null; video: string | null; galeria: { url: string; texto: string }[];
+  videos_ig?: string[]; // enlaces de reels de Instagram (paso 21 en Supabase)
 }
 export type Area = 'consultorio' | 'spa' | 'tienda';
 export const AREAS: [Area, string][] = [['consultorio', 'Consultorio'], ['spa', 'Spa'], ['tienda', 'Tienda']];
@@ -27,7 +28,9 @@ export async function listarPersonas(): Promise<Persona[]> {
   return data as Persona[];
 }
 export async function guardarPersona(p: Persona): Promise<Persona> {
-  const { id, ...campos } = p;
+  const { id, videos_ig, ...resto } = p;
+  // los videos de Instagram solo se mandan si se tocaron (así se puede guardar aunque falte el paso 21)
+  const campos = videos_ig === undefined ? resto : { ...resto, videos_ig: videos_ig.map((x) => x.trim()).filter(Boolean).slice(0, 9) };
   if (DEMO) {
     const n = { ...p, id: id || 'ej-' + Date.now() };
     store.set(K, id ? ej().map((x) => (x.id === id ? n : x)) : [...ej(), n]);
@@ -35,7 +38,7 @@ export async function guardarPersona(p: Persona): Promise<Persona> {
   }
   const q = id ? sb!.from('personas').update(campos).eq('id', id) : sb!.from('personas').insert(campos);
   const { data, error } = await q.select('*').single();
-  if (error) throw new Error(/does not exist|42703|column/i.test(error.message) ? 'Falta un paso en la base de datos: corre supabase/19-equipo-perfil.sql en Supabase y vuelve a intentarlo.' : 'No se guardó. Solo la administradora puede cambiar el equipo.');
+  if (error) throw new Error(/videos_ig/i.test(error.message) ? 'Falta un paso en la base de datos: corre supabase/21-videos-instagram.sql en Supabase y vuelve a intentarlo.' : /does not exist|42703|column/i.test(error.message) ? 'Falta un paso en la base de datos: corre supabase/19-equipo-perfil.sql en Supabase y vuelve a intentarlo.' : 'No se guardó. Solo la administradora puede cambiar el equipo.');
   return data as Persona;
 }
 export async function ordenar(ps: Persona[]): Promise<void> {

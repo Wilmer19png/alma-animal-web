@@ -30,6 +30,23 @@ export async function cargarEquipo(): Promise<PersonaWeb[] | null> {
 // la doctora: la primera persona del consultorio
 export const laDoctora = (l: PersonaWeb[]) => l.find((p) => p.area === 'consultorio') ?? l[0];
 
+// enlace de un reel o publicación de Instagram → enlace limpio para incrustarlo (null si no es de Instagram)
+export function enlaceIg(u: string): string | null {
+  const m = u.trim().match(/^https?:\/\/(?:www\.)?instagram\.com\/(?:[\w.]+\/)?(reels?|p|tv)\/([\w-]+)/i);
+  return m ? `https://www.instagram.com/${m[1].toLowerCase().startsWith('reel') ? 'reel' : m[1].toLowerCase()}/${m[2]}/` : null;
+}
+// videos de Instagram de la doctora (columna aparte: si falta el paso 21 en Supabase, el resto de la página no se cae)
+export async function videosDeLaDoctora(): Promise<string[]> {
+  const SB = import.meta.env.PUBLIC_SUPABASE_URL, KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  if (!SB || !KEY) return [];
+  try {
+    const r = await fetch(`${SB}/rest/v1/personas?select=videos_ig&area=eq.consultorio&order=orden&limit=1`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+    if (!r.ok) return [];
+    const [f] = (await r.json()) as { videos_ig: string[] | null }[];
+    return (f?.videos_ig ?? []).map(enlaceIg).filter((x): x is string => !!x);
+  } catch { return []; }
+}
+
 export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 // «Dra. Mariana Hoyos Giraldo» → «Dra. Mariana» + apellidos con el degradado de la marca
 export function nombreHtml(n: string) {
