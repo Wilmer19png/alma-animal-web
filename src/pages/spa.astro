@@ -7,11 +7,11 @@ import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import WaStrip from '../components/WaStrip.astro';
 import { whatsapp } from '../data/site';
-import { SPA_INCLUDES, SPA_COAT, SPA_PHOTOS } from '../data/spa';
+import { SPA_INCLUDES, SPA_COAT, SPA_PHOTOS, SPA_HERO } from '../data/spa';
 
 const waSpa = whatsapp.vet('Hola, Alma Animal. Quiero agendar un baño en el spa.');
 const waPrice = whatsapp.vet('Hola, Alma Animal. ¿Cuánto cuesta el baño para mi mascota? Te mando una foto.');
-const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
+const HERO_PHOTOS = SPA_HERO;
 ---
 <Base
   title="Spa para perros y gatos en Pereira · Alma Animal"
@@ -258,7 +258,7 @@ const HERO_PHOTOS = SPA_PHOTOS.slice(0, 3);
     .arch { position: absolute; right: 64px; top: 40px; width: 440px; height: 520px; max-width: none; margin: 0; }
     .arch__ring { inset: -14px; }
     .arch__pill { display: flex; position: absolute; left: -60px; bottom: 56px; align-items: center; gap: 10px; z-index: 3; }
-    .s-hero :global(.s-hero__lobo) { display: block; position: absolute; z-index: 2; right: 500px; top: 52px; width: 128px; height: auto; transform: rotate(-10deg); filter: drop-shadow(0 12px 22px rgb(20 10 40 / .35)); }
+    .s-hero :global(.s-hero__lobo) { display: block; position: absolute; z-index: 2; right: 486px; top: 30px; width: 172px; height: auto; transform: rotate(-10deg); filter: drop-shadow(0 12px 22px rgb(20 10 40 / .35)); }
     .arch__pill span { font: 600 16px/1 var(--font-sans); padding: 10px 16px; border-radius: 999px; background: rgb(255 255 255 / .94); color: var(--ink); box-shadow: var(--shadow-1); white-space: nowrap; }
     .arch__pill i { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px rgb(255 255 255 / .8); }
     .arch__dots { bottom: -42px; }

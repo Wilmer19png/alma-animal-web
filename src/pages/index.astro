@@ -19,14 +19,16 @@ import gatoMini from '../assets/identidad/gato-miniatura.webp';
 import loboMini from '../assets/identidad/lobo-miniatura.webp';
 import paw from '../assets/pata-perro-h.png';
 import claw from '../assets/garra-tigre.png';
-import mariana from '../assets/mariana-gato.png';
-import groomer from '../assets/peluquera.png';
+import draGato from '../assets/fotos/dra-gato.webp';
+import albertSchnauzer from '../assets/fotos/albert-schnauzer.webp';
+import draCuerpo from '../assets/fotos/dra-cuerpo.webp';
+import albertCuerpo from '../assets/fotos/albert-cuerpo.webp';
 import heart from '../assets/identidad/logo.webp';
 
 // equipo del carrusel del héroe
 const TEAM = [
-  { img: mariana, alt: 'Dra. Mariana Hoyos Giraldo con un gato atigrado en brazos', who: 'Dra. Mariana Hoyos · MVZ', a: 'MVZ · TP 51206', b: 'Consulta a domicilio' },
-  { img: groomer, alt: 'Peluquería canina de Alma Animal: schnauzer en brazos y herramientas de corte', who: 'Spa y peluquería', a: 'Spa con protocolo', b: 'Corte según la raza' }
+  { img: draGato, alt: 'Dra. Mariana Hoyos Giraldo con un gato atigrado en brazos', who: 'Dra. Mariana Hoyos · MVZ', a: 'MVZ · TP 51206', b: 'Consulta a domicilio' },
+  { img: albertSchnauzer, alt: 'Albert, el peluquero canino de Alma Animal, con un schnauzer en brazos y la máquina de corte', who: 'Albert · Peluquero canino', a: 'Spa con protocolo', b: 'Corte según la raza' }
 ];
 const REASONS = [
   { n: '8', title: 'Cuidados en cada baño', text: 'Antipulgas, oídos, dientes, hidromasaje, aromaterapia, cepillado, deslanado y uñas.' },
@@ -35,8 +37,8 @@ const REASONS = [
   { n: '1', title: 'Carnet digital por mascota', text: 'Vacunas con lote, laboratorio y sello, visibles desde tu cuenta.' }
 ];
 // los 3 artículos más recientes del blog
-const fotoDra = await getImage({ src: mariana, width: 560, format: 'webp' });
-const fotoSpa = await getImage({ src: groomer, width: 720, format: 'webp' });
+const fotoDra = await getImage({ src: draCuerpo, width: 360, format: 'webp' });
+const fotoSpa = await getImage({ src: albertCuerpo, width: 360, format: 'webp' });
 const POSTS = BLOG_POSTS.slice(0, 3);
 const waVet = whatsapp.vet();
 ---
@@ -425,20 +427,20 @@ const waVet = whatsapp.vet();
   .door--shop .link { color: #362954; }
   .door:hover { color: inherit; }
   .door--spa:hover { color: #fff; }
-  .door__art { display: none; }
+  .door__art, .door__par { display: none; }
   .door--shop .glyph { -webkit-text-stroke-color: var(--primary); }
   @media (min-width: 900px) {
     .spaces { gap: 40px; }
     .spaces__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
     .door { min-height: 480px; padding: 32px; }
-    .door__art { display: block; position: absolute; right: 22px; top: 26px; width: 136px; height: auto; z-index: -1; }
+    .door__art { display: block; position: absolute; right: 16px; top: 18px; width: 184px; height: auto; z-index: -1; }
     .door__art--gato { transform: rotate(6deg); }
     .door__art--lobo { opacity: .92; transform: rotate(-8deg); }
     /* petshop: el gato y el lobo en miniatura, uno frente al otro */
-    .door__par { position: absolute; right: 20px; top: 24px; z-index: -1; width: 200px; height: 150px; }
+    .door__par { display: block; position: absolute; right: 16px; top: 20px; z-index: -1; width: 250px; height: 190px; }
     .door__par img { position: absolute; height: auto; filter: drop-shadow(0 6px 12px rgb(54 41 84 / .14)); }
-    .door__par .par-g { width: 86px; left: 4px; top: 8px; }
-    .door__par .par-l { width: 94px; right: 0; top: 26px; }
+    .door__par .par-g { width: 112px; left: 0; top: 6px; }
+    .door__par .par-l { width: 124px; right: 0; top: 30px; }
     a.door:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
     .door { transition: transform .25s var(--ease-out), box-shadow .25s var(--ease); }
   }

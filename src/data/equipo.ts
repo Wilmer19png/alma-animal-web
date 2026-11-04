@@ -44,7 +44,7 @@ const AREA: Record<Area, { icon: string; txt: string; fondo: string }> = {
 // tarjeta de una persona (todas con el mismo diseño: foto, nombre, cargo, presentación, temas y botones)
 export function tarjetaPersona(p: PersonaWeb, fotos: FotosBase, esLaDoctora: boolean) {
   const a = AREA[p.area] ?? AREA.consultorio;
-  const recorte = !p.foto && p.area === 'consultorio'; // la foto de respaldo de la doctora es recortada (sin fondo)
+  const recorte = !p.foto; // las fotos de respaldo son recortadas (sin fondo), de cuerpo entero
   const src = p.foto ?? (p.area === 'spa' ? fotos.spa : fotos.consultorio);
   const nombre1 = p.nombre.replace(/^Dra?\.?\s+/i, '').split(/\s+/)[0];
   const ig = p.instagram?.replace(/^@/, '');
