@@ -5,7 +5,7 @@ import Shell from './Shell';
 import { DEMO, link, waLink, prettyCel, fechaCorta, mesCorto } from './lib';
 import {
   listarPacientes, listarPropietarios, registrosDe, crearRegistros, actualizarPaciente, borrarRegistro, cambiarPrivado, subirArchivo, abrirArchivo,
-  nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES, SERVICIOS, PRESENTACIONES, servicioDe, vieneASpa, medicamentosDe,
+  nombreCompleto, edad, kg, sexoTxt, ESPECIES, TIPOS, VACUNAS, DESPARASITACIONES, SERVICIOS, PRESENTACIONES, servicioDe, vieneASpa, medicamentosDe, cantidadEj,
   type Paciente as TPaciente, type Propietario, type Registro, type TipoRegistro, type NuevoPaciente, type Archivo, type Medicamento
 } from './clinica-datos';
 import { PacienteForm, Avatar, erroresPaciente, spaLimpio } from './clinica-ui';
@@ -299,10 +299,13 @@ function Entrada({ r, puedeBorrar, borrar, pdf }: { r: Registro; puedeBorrar: bo
         </div>
         {meds.length > 0 && (
           <ul className="meds">
-            {meds.map((x, i) => <li key={i}><b>{x.nombre}</b><span>{x.presentacion}</span><span>{x.lote ? `Lote ${x.lote}` : 'Sin lote'}</span></li>)}
+            {meds.map((x, i) => (
+              <li key={i}><span className="meds__t"><b>{x.nombre}</b><span>{[x.presentacion, x.cantidad, x.lote && `lote ${x.lote}`].filter(Boolean).join(' · ')}</span></span>
+                {x.indicacion && <span className="meds__i">{x.indicacion}</span>}</li>
+            ))}
           </ul>
         )}
-        {r.resumen && <p>{meds.length > 0 && <b>Indicaciones: </b>}{r.resumen}</p>}
+        {r.resumen && <p>{meds.length > 0 && <b>Observaciones: </b>}{r.resumen}</p>}
         {filas.length > 0 && <dl className="tl__dl">{filas.map(([k, v]) => <div key={k}><dt>{ETIQ[k]}</dt><dd>{k === 'proxima' ? fechaC(v + 'T12:00:00') : v}</dd></div>)}</dl>}
         {r.archivos.length > 0 && <div className="tl__files">{r.archivos.map((a, i) => (
           <button key={i} type="button" className="chip lav" onClick={() => abrir(a)} disabled={!a.ruta}><span className="ms" aria-hidden="true">{a.tipo.includes('pdf') ? 'picture_as_pdf' : 'image'}</span>{a.nombre}</button>
@@ -359,7 +362,7 @@ const CAMPOS = (t: TipoRegistro, m: TPaciente): Campo[] => {
       { k: 'peso', label: 'Peso (kg)', tipo: 'num', ph: 'Ej: 8,4', dato: true }, { k: 'resumen', label: 'Observaciones', tipo: 'area', ph: 'Ej: Piel un poco seca detrás de las orejas.' }
     ];
     // los medicamentos van en su propia lista (ver Medicamentos)
-    case 'formula': return [{ k: 'resumen', label: 'Indicaciones', tipo: 'area', req: true, ph: 'Ej: Otomax: 4 gotas en el oído derecho cada 12 horas por 7 días. Meloxicam: media pasta cada 24 horas por 3 días.' }];
+    case 'formula': return [{ k: 'resumen', label: 'Observaciones generales', tipo: 'area', ph: 'Ej: Control en una semana. Si deja de comer o empeora, escríbenos.' }];
     case 'examen': return [{ k: 'titulo', label: 'Examen', req: true, ph: 'Ej: Hemograma, química sanguínea' }, { k: 'resumen', label: 'Resultados', tipo: 'area', ph: 'Lo más importante del resultado.' }];
     case 'imagen': return [{ k: 'titulo', label: 'Estudio', req: true, ph: 'Ej: Radiografía de cadera' }, { k: 'resumen', label: 'Hallazgos', tipo: 'area' }];
     case 'hospitalizacion': return [{ k: 'titulo', label: 'Motivo', req: true, ph: 'Ej: Gastroenteritis' }, { k: 'resumen', label: 'Evolución', tipo: 'area' }];
@@ -377,7 +380,7 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
     ...(tipo === 'desparasitacion' ? { titulo: DESPARASITACIONES[0], proxima: enDias(esq[DESPARASITACIONES[0]] ?? 90) } : {}),
     ...(tipo === 'spa' ? { titulo: 'Baño completo', cuchilla: m.spa?.cuchilla ?? '' } : {})
   }));
-  const [meds, setMeds] = useState<Medicamento[]>([{ nombre: '', presentacion: PRESENTACIONES[0], lote: '' }]);
+  const [meds, setMeds] = useState<Medicamento[]>([medVacio()]);
   const [otra, setOtra] = useState('');
   const [externo, setExterno] = useState(false);
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -387,10 +390,13 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
 
   const guardar = async () => {
     const falta = campos.find((c) => c.req && !(c.k === 'titulo' && v.titulo === 'Otra' ? otra.trim() : (v[c.k] ?? '').trim()));
-    const lista = meds.map((x) => ({ nombre: x.nombre.trim(), presentacion: x.presentacion, lote: x.lote.trim() }));
+    const lista = meds.map((x) => ({ nombre: x.nombre.trim(), presentacion: x.presentacion, cantidad: x.cantidad.trim(), indicacion: x.indicacion.trim() }));
     if (tipo === 'formula') {
       if (!lista.some((x) => x.nombre)) { setErr('Falta: el nombre de al menos un medicamento.'); return; }
-      if (lista.some((x) => !x.nombre && x.lote)) { setErr('Hay un medicamento con lote pero sin nombre. Escríbelo o quita esa fila.'); return; }
+      const n = lista.findIndex((x) => !x.nombre && (x.cantidad || x.indicacion));
+      if (n >= 0) { setErr(`Al medicamento ${n + 1} le falta el nombre. Escríbelo o quita esa fila.`); return; }
+      const s = lista.findIndex((x) => x.nombre && !x.indicacion);
+      if (s >= 0) { setErr(`Falta la indicación de ${lista[s].nombre}: cómo y para qué se le da.`); return; }
     }
     if (falta) { setErr(`Falta: ${falta.label.toLowerCase()}.`); return; }
     if (v.peso && !/^\d+([.,]\d+)?$/.test(v.peso.trim())) { setErr('Escribe el peso solo con números. Ej: 8,4'); return; }
@@ -440,24 +446,28 @@ function NuevoRegistro({ tipo, m, esq, autor, cerrar, guardado }: { tipo: TipoRe
   );
 }
 
-/* ---------- fórmula médica: una fila por medicamento ---------- */
+/* ---------- fórmula médica: un bloque por medicamento ---------- */
+const medVacio = (): Medicamento => ({ nombre: '', presentacion: PRESENTACIONES[0], cantidad: '', indicacion: '' });
 function Medicamentos({ meds, setMeds }: { meds: Medicamento[]; setMeds: (f: (l: Medicamento[]) => Medicamento[]) => void }) {
   const cambiar = (i: number, c: Partial<Medicamento>) => setMeds((l) => l.map((x, j) => (j === i ? { ...x, ...c } : x)));
   return (
     <div className="fld full medf" role="group" aria-labelledby="medf-t">
       <span className="fld__lb" id="medf-t">Medicamentos <span className="req">*</span></span>
-      <div className="medf__h" aria-hidden="true"><span>Nombre del medicamento</span><span>Presentación</span><span>Lote</span><span /></div>
       {meds.map((x, i) => (
-        <div className="medf__row" key={i}>
-          <input aria-label={`Medicamento ${i + 1}: nombre`} value={x.nombre} placeholder="Ej: Meloxicam 1 mg" onChange={(e) => cambiar(i, { nombre: e.target.value })} />
-          <select aria-label={`Medicamento ${i + 1}: presentación`} value={x.presentacion} onChange={(e) => cambiar(i, { presentacion: e.target.value })}>
-            {PRESENTACIONES.map((o) => <option key={o}>{o}</option>)}
-          </select>
-          <input aria-label={`Medicamento ${i + 1}: lote`} value={x.lote} placeholder="Lote. Ej: MX0457" onChange={(e) => cambiar(i, { lote: e.target.value })} />
-          <button type="button" className="vrow__x" aria-label={`Quitar medicamento ${i + 1}`} disabled={meds.length === 1} onClick={() => setMeds((l) => l.filter((_, j) => j !== i))}><span className="ms">close</span></button>
+        <div className="medf__card" key={i}>
+          <div className="medf__top"><b>Medicamento {i + 1}</b>
+            <button type="button" className="vrow__x" aria-label={`Quitar medicamento ${i + 1}`} disabled={meds.length === 1} onClick={() => setMeds((l) => l.filter((_, j) => j !== i))}><span className="ms">close</span></button></div>
+          <div className="medf__row">
+            <div className="fld"><label htmlFor={`med-${i}-n`}>Nombre</label><input id={`med-${i}-n`} value={x.nombre} placeholder="Ej: Meloxicam 1 mg" onChange={(e) => cambiar(i, { nombre: e.target.value })} /></div>
+            <div className="fld"><label htmlFor={`med-${i}-p`}>Presentación</label>
+              <select id={`med-${i}-p`} value={x.presentacion} onChange={(e) => cambiar(i, { presentacion: e.target.value })}>{PRESENTACIONES.map((o) => <option key={o}>{o}</option>)}</select></div>
+            <div className="fld"><label htmlFor={`med-${i}-c`}>Cantidad por dosis</label><input id={`med-${i}-c`} value={x.cantidad} placeholder={cantidadEj(x.presentacion)} onChange={(e) => cambiar(i, { cantidad: e.target.value })} /></div>
+          </div>
+          <div className="fld"><label htmlFor={`med-${i}-i`}>Indicación o uso <span className="req">*</span></label>
+            <textarea id={`med-${i}-i`} rows={2} value={x.indicacion} placeholder="Ej: Cada 12 horas por 7 días, con comida. Para el dolor." onChange={(e) => cambiar(i, { indicacion: e.target.value })} /></div>
         </div>
       ))}
-      <button className="link-add" type="button" onClick={() => setMeds((l) => [...l, { nombre: '', presentacion: PRESENTACIONES[0], lote: '' }])}><span className="ms" aria-hidden="true">add</span>Agregar otro medicamento</button>
+      <button className="link-add" type="button" onClick={() => setMeds((l) => [...l, medVacio()])}><span className="ms" aria-hidden="true">add</span>Agregar otro medicamento</button>
     </div>
   );
 }

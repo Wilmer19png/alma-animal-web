@@ -19,7 +19,7 @@ export interface Paciente {
 export type Servicio = 'consulta' | 'spa' | 'ambos';
 export interface PerfilSpa { cuchilla?: string; corte?: string; obs?: string }
 // una línea de la fórmula médica (se guarda en datos.medicamentos como JSON)
-export interface Medicamento { nombre: string; presentacion: string; lote: string }
+export interface Medicamento { nombre: string; presentacion: string; cantidad: string; indicacion: string; lote?: string } // lote: solo en fórmulas antiguas
 export interface Archivo { nombre: string; ruta: string; tipo: string }
 export type TipoRegistro = 'consulta' | 'vacuna' | 'desparasitacion' | 'examen' | 'imagen' | 'cirugia' | 'procedimiento' | 'formula' | 'hospitalizacion' | 'peso' | 'spa' | 'nota';
 export interface Registro {
@@ -54,6 +54,8 @@ export const SERVICIOS: [Servicio, string][] = [['consulta', 'Consulta'], ['spa'
 export const servicioDe = (p: Pick<Paciente, 'servicio'>): Servicio => p.servicio ?? 'consulta';
 export const vieneASpa = (p: Pick<Paciente, 'servicio'>) => servicioDe(p) !== 'consulta';
 export const PRESENTACIONES = ['Pastas (tabletas)', 'Gotas', 'Cápsulas', 'Jarabe', 'Suspensión oral', 'Inyectable', 'Pipeta', 'Crema o ungüento', 'Spray', 'Champú', 'Otra'];
+// cuánto se da según la presentación (ejemplo para el campo de cantidad)
+export const cantidadEj = (presentacion: string) => ({ Gotas: 'Ej: 4 gotas', 'Pastas (tabletas)': 'Ej: ½ pasta', 'Cápsulas': 'Ej: 1 cápsula', Jarabe: 'Ej: 2 ml', 'Suspensión oral': 'Ej: 2 ml', Inyectable: 'Ej: 0,5 ml', Pipeta: 'Ej: 1 pipeta' } as Record<string, string>)[presentacion] ?? 'Ej: 1 aplicación';
 export const medicamentosDe = (r: Pick<Registro, 'datos'>): Medicamento[] => {
   try { const x = JSON.parse(r.datos.medicamentos ?? '[]'); return Array.isArray(x) ? x.filter((m) => m && m.nombre) : []; } catch { return []; }
 };
@@ -108,8 +110,8 @@ const SEMILLA = () => {
   });
   const regs = [
     R('r1', 'm1', 'consulta', 6, 'Otitis externa en oído derecho', 'Se rasca la oreja hace 4 días. Oído derecho con cera oscura y olor. Se limpia y se formulan gotas óticas por 7 días.', { motivo: 'Se rasca la oreja', diagnostico: 'Otitis externa', tratamiento: 'Gotas óticas cada 12 horas por 7 días', temperatura: '38,6', peso: '8,4' }),
-    R('r2', 'm1', 'formula', 6, 'Otomax, Meloxicam 1 mg', 'Otomax: 4 gotas en el oído derecho cada 12 horas por 7 días. Meloxicam: media pasta cada 24 horas por 3 días, con comida. Control en una semana.',
-      { medicamentos: JSON.stringify([{ nombre: 'Otomax', presentacion: 'Gotas', lote: 'OT2291' }, { nombre: 'Meloxicam 1 mg', presentacion: 'Pastas (tabletas)', lote: 'MX0457' }]) }),
+    R('r2', 'm1', 'formula', 6, 'Otomax, Meloxicam 1 mg', 'Control en una semana. Si el oído empeora o deja de comer, escríbenos.',
+      { medicamentos: JSON.stringify([{ nombre: 'Otomax', presentacion: 'Gotas', cantidad: '4 gotas', indicacion: 'En el oído derecho cada 12 horas por 7 días.' }, { nombre: 'Meloxicam 1 mg', presentacion: 'Pastas (tabletas)', cantidad: '½ pasta', indicacion: 'Cada 24 horas por 3 días, con comida. Para el dolor y la inflamación.' }]) }),
     R('r3', 'm1', 'vacuna', 40, 'Polivalente (parvovirus, moquillo y otras)', null, { laboratorio: 'Zoetis', lote: 'A1234', proxima: new Date(Date.now() + 325 * 86400000).toISOString().slice(0, 10) }),
     R('r4', 'm1', 'examen', 90, 'Hemograma', 'Valores dentro de lo normal.', {}, [{ nombre: 'hemograma-luna.pdf', ruta: '', tipo: 'application/pdf' }]),
     R('r5', 'm1', 'spa', 20, 'Baño medicado', 'Piel un poco seca detrás de las orejas. Se le avisa a la doctora.', { peso: '8,3', cuchilla: 'N.º 7F' }),
