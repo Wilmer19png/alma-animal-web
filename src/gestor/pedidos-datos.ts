@@ -11,6 +11,7 @@ export interface Pedido {
   departamento: string; ciudad: string; direccion: string; barrio: string; indicaciones: string | null;
   items: Item[]; subtotal: number; envio: number; prioritario: boolean; total: number; obsequio: boolean;
   nota_interna: string | null;
+  pagado_en?: string | null; // se pone solo cuando el pago queda confirmado (lo usa Contabilidad)
 }
 export type Cambio = Partial<Pick<Pedido, 'estado' | 'pago' | 'nota_interna'>>;
 
@@ -32,6 +33,9 @@ export const pagoTxt = (p: Pago) => PAGOS.find((x) => x.id === p)?.txt ?? 'En l�
 
 // Pasos del pedido. Si paga contra entrega (o al recoger), el pago llega con la entrega.
 export const pagaAlRecibir = (p: Pedido) => p.pago === 'contraentrega' || p.pago === 'consultorio';
+// ¿el pago ya está confirmado? (entonces la venta suma en Contabilidad). Es la misma regla de supabase/23-contabilidad.sql.
+export const cobrado = (p: Pick<Pedido, 'estado' | 'pago'>) =>
+  p.estado === 'entregado' || ((p.estado === 'pagado' || p.estado === 'enviado') && !pagaAlRecibir(p as Pedido));
 export const pasos = (p: Pedido) => {
   const alRecibir = pagaAlRecibir(p);
   const orden: Estado[] = ['nuevo', 'confirmado', 'pagado', 'enviado', 'entregado'];
@@ -123,7 +127,11 @@ export async function listar(): Promise<Pedido[]> {
 
 export async function cambiar(id: string, cambio: Cambio): Promise<void> {
   if (DEMO) {
-    store.set(EJEMPLO_KEY, ejemplos().map((p) => (p.id === id ? { ...p, ...cambio } : p)));
+    store.set(EJEMPLO_KEY, ejemplos().map((p) => {
+      if (p.id !== id) return p;
+      const n = { ...p, ...cambio };
+      return { ...n, pagado_en: cobrado(n) ? (p.pagado_en ?? new Date().toISOString()) : null };
+    }));
     return;
   }
   const { error } = await sb!.from('pedidos').update(cambio).eq('id', id);

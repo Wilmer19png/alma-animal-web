@@ -2,8 +2,8 @@
 // Confirmar por WhatsApp → definir cómo paga → avanzar hasta entregado. También imprime el rótulo de envío.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Shell from './Shell';
-import { DEMO, money, when, waLink, prettyCel } from './lib';
-import { listar, cambiar, ESTADOS, PAGOS, pasos, siguiente, mensaje, pagoTxt, type Pedido, type Estado, type Cambio } from './pedidos-datos';
+import { DEMO, money, when, waLink, prettyCel, link } from './lib';
+import { listar, cambiar, ESTADOS, PAGOS, pasos, siguiente, mensaje, pagoTxt, cobrado, pagaAlRecibir, type Pedido, type Estado, type Cambio } from './pedidos-datos';
 
 const FILTROS: { id: 'todos' | Estado; txt: string }[] = [
   { id: 'todos', txt: 'Todos' }, { id: 'nuevo', txt: 'Nuevos' }, { id: 'confirmado', txt: 'Cliente confirmó' },
@@ -195,6 +195,15 @@ function Detalle({ p, aplicar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Ca
           ))}
         </div>
       </div>
+      {!cancelado && (
+        <p className={'conta' + (cobrado(p) ? ' conta--ok' : '')} role="status">
+          <span className="ms" aria-hidden="true">{cobrado(p) ? 'account_balance_wallet' : 'hourglass_top'}</span>
+          <span>{cobrado(p)
+            ? <><b>Entraron {money(p.total)} a Contabilidad</b> en «Tienda».</>
+            : <><b>En espera en Contabilidad: {money(p.total)}.</b> {pagaAlRecibir(p) ? 'Entra al marcarlo como entregado y pagado.' : 'Entra al marcar «Pago recibido».'}</>}</span>
+          <a href={link('/gestor/contabilidad')}>Ver Contabilidad</a>
+        </p>
+      )}
 
       <div className="det__cols">
         <div className="det__col">
