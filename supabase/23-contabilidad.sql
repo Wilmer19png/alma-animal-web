@@ -47,10 +47,11 @@ create table if not exists public.gastos_fijos (
   creado    timestamptz not null default now()
 );
 
--- ---------- MOVIMIENTOS: gastos e ingresos que se registran a mano ----------
+-- ---------- LIBRO CONTABLE: gastos e ingresos que se registran a mano ----------
+-- (se llama libro_contable porque «movimientos» ya es la tabla del inventario, de 05-productos.sql)
 -- Un gasto fijo de un mes es un movimiento con fijo_id y mes ('2026-11'); queda pendiente (pagado = false)
 -- hasta que se marca como pagado. Solo suman los movimientos pagados.
-create table if not exists public.movimientos (
+create table if not exists public.libro_contable (
   id         uuid primary key default gen_random_uuid(),
   fecha      date not null default (now() at time zone 'America/Bogota')::date,
   tipo       text not null check (tipo in ('ingreso', 'gasto')),
@@ -65,9 +66,9 @@ create table if not exists public.movimientos (
   mes        text check (mes is null or mes ~ '^\d{4}-\d{2}$'),
   por_nombre text,
   creado     timestamptz not null default now(),
-  constraint movimientos_fijo_mes unique (fijo_id, mes)
+  constraint libro_contable_fijo_mes unique (fijo_id, mes)
 );
-create index if not exists movimientos_fecha_idx on public.movimientos (fecha desc);
+create index if not exists libro_contable_fecha_idx on public.libro_contable (fecha desc);
 
 -- ---------- REPARTO entre socios: qué se le pagó a cada quien de cada mes ----------
 create table if not exists public.repartos (
@@ -99,21 +100,21 @@ where not exists (select 1 from public.gastos_fijos);
 
 -- ---------- REGLAS (RLS): solo la administradora ----------
 alter table public.gastos_fijos enable row level security;
-alter table public.movimientos enable row level security;
+alter table public.libro_contable enable row level security;
 alter table public.repartos enable row level security;
 
 drop policy if exists "gastos_fijos: admin" on public.gastos_fijos;
 create policy "gastos_fijos: admin" on public.gastos_fijos for all to authenticated
   using (public.tiene_rol(array['admin'])) with check (public.tiene_rol(array['admin']));
-drop policy if exists "movimientos: admin" on public.movimientos;
-create policy "movimientos: admin" on public.movimientos for all to authenticated
+drop policy if exists "libro_contable: admin" on public.libro_contable;
+create policy "libro_contable: admin" on public.libro_contable for all to authenticated
   using (public.tiene_rol(array['admin'])) with check (public.tiene_rol(array['admin']));
 drop policy if exists "repartos: admin" on public.repartos;
 create policy "repartos: admin" on public.repartos for all to authenticated
   using (public.tiene_rol(array['admin'])) with check (public.tiene_rol(array['admin']));
 
-revoke all on public.gastos_fijos, public.movimientos, public.repartos from anon, authenticated;
-grant select, insert, update, delete on public.gastos_fijos, public.movimientos, public.repartos to authenticated;
+revoke all on public.gastos_fijos, public.libro_contable, public.repartos from anon, authenticated;
+grant select, insert, update, delete on public.gastos_fijos, public.libro_contable, public.repartos to authenticated;
 
 -- ---------- FOTOS DE FACTURAS (privadas) ----------
 insert into storage.buckets (id, name, public, file_size_limit)

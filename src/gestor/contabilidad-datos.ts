@@ -4,7 +4,7 @@
 //   · baños marcados «Entregada y pagada» en Citas de spa (datos.total y datos.pago),
 //   · pedidos con el pago confirmado en Pedidos (pagado_en).
 // Mientras no se marquen quedan «en espera» y no suman. Los gastos, los ingresos sueltos, los gastos fijos
-// y el reparto se guardan en las tablas movimientos, gastos_fijos y repartos (supabase/23-contabilidad.sql).
+// y el reparto se guardan en las tablas libro_contable, gastos_fijos y repartos (supabase/23-contabilidad.sql).
 import { sb, DEMO, store } from './lib';
 import { listarCitas, iso, sumarDias, SERVICIOS, type Cita } from './agenda-datos';
 import { listar as listarPedidos, cobrado, pagaAlRecibir, type Pedido } from './pedidos-datos';
@@ -174,7 +174,7 @@ async function leerPedidos(desde: Date): Promise<Pedido[]> {
 }
 async function leerMovs(desde: string, hasta: string): Promise<Movimiento[]> {
   if (DEMO) return ej(K.mov, MOVS_EJ).filter((m) => m.fecha >= desde && m.fecha < hasta);
-  const { data, error } = await sb!.from('movimientos').select('*').gte('fecha', desde).lt('fecha', hasta).order('fecha', { ascending: false });
+  const { data, error } = await sb!.from('libro_contable').select('*').gte('fecha', desde).lt('fecha', hasta).order('fecha', { ascending: false });
   if (error) throw new Error('No pudimos cargar la contabilidad. Revisa tu conexión.');
   return data as Movimiento[];
 }
@@ -207,14 +207,14 @@ export async function guardarMov(m: NuevoMov & { id?: string }): Promise<Movimie
     return n;
   }
   const { id, ...resto } = m;
-  const q = id ? sb!.from('movimientos').update(resto).eq('id', id) : sb!.from('movimientos').insert(resto);
+  const q = id ? sb!.from('libro_contable').update(resto).eq('id', id) : sb!.from('libro_contable').insert(resto);
   const { data, error } = await q.select('*').single();
   if (error) throw new Error(sinPermiso(error));
   return data as Movimiento;
 }
 export async function borrarMov(m: Movimiento): Promise<void> {
   if (DEMO) { store.set(K.mov, ej(K.mov, MOVS_EJ).filter((x) => x.id !== m.id)); return; }
-  const { error } = await sb!.from('movimientos').delete().eq('id', m.id);
+  const { error } = await sb!.from('libro_contable').delete().eq('id', m.id);
   if (error) throw new Error(sinPermiso(error));
   if (m.factura) await sb!.storage.from('contabilidad').remove([m.factura]).catch(() => {});
 }
