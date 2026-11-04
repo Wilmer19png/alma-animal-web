@@ -4,7 +4,7 @@
 //   · baños marcados «Entregada y pagada» en Citas de spa (datos.total y datos.pago),
 //   · pedidos con el pago confirmado en Pedidos (pagado_en).
 // Mientras no se marquen quedan «en espera» y no suman. Los gastos, los ingresos sueltos, los gastos fijos
-// y el reparto se guardan en las tablas movimientos, gastos_fijos y repartos (supabase/23-contabilidad.sql).
+// y el reparto se guardan en las tablas libro_contable, gastos_fijos y repartos (supabase/23-contabilidad.sql).
 import { sb, DEMO, store } from './lib';
 import { listarCitas, iso, sumarDias, SERVICIOS, type Cita } from './agenda-datos';
 import { listar as listarPedidos, cobrado, pagaAlRecibir, type Pedido } from './pedidos-datos';
@@ -165,17 +165,27 @@ export function resumen(libro: Libro, mes: string) {
 }
 
 /* ---------- lecturas ---------- */
+// mensaje claro según lo que respondió Supabase (falta el SQL, falta una columna, sin permiso o sin internet)
+const falla = (e: { message: string; code?: string }, que: string) => {
+  const m = e.message || '';
+  if (e.code === '42P01' || e.code === 'PGRST205' || (/does not exist|could not find the table/i.test(m) && /libro_contable|gastos_fijos|repartos/.test(m)))
+    return 'Falta crear las tablas de Contabilidad: corre supabase/23-contabilidad.sql en Supabase → SQL Editor.';
+  if (e.code === '42703' || /column .* does not exist/i.test(m)) return `Falta actualizar la base de datos (${m}). Corre otra vez supabase/23-contabilidad.sql.`;
+  if (/row-level security|permission denied/i.test(m)) return 'Tu usuario no tiene permiso: la contabilidad solo la ve la administradora.';
+  if (/fetch|network/i.test(m)) return `No pudimos cargar ${que}. Revisa tu conexión.`;
+  return `No pudimos cargar ${que}: ${m}`;
+};
 async function leerPedidos(desde: Date): Promise<Pedido[]> {
   if (DEMO) return listarPedidos();
   const { data, error } = await sb!.from('pedidos').select('*')
     .or(`pagado_en.gte."${desde.toISOString()}",pagado_en.is.null`).neq('estado', 'cancelado').order('creado', { ascending: false }).limit(1000);
-  if (error) throw new Error('No pudimos cargar los pedidos. Revisa tu conexión.');
+  if (error) throw new Error(falla(error, 'los pedidos'));
   return data as Pedido[];
 }
 async function leerMovs(desde: string, hasta: string): Promise<Movimiento[]> {
   if (DEMO) return ej(K.mov, MOVS_EJ).filter((m) => m.fecha >= desde && m.fecha < hasta);
-  const { data, error } = await sb!.from('movimientos').select('*').gte('fecha', desde).lt('fecha', hasta).order('fecha', { ascending: false });
-  if (error) throw new Error('No pudimos cargar la contabilidad. Revisa tu conexión.');
+  const { data, error } = await sb!.from('libro_contable').select('*').gte('fecha', desde).lt('fecha', hasta).order('fecha', { ascending: false });
+  if (error) throw new Error(falla(error, 'la contabilidad'));
   return data as Movimiento[];
 }
 async function leerFijos(): Promise<GastoFijo[]> {
@@ -207,14 +217,14 @@ export async function guardarMov(m: NuevoMov & { id?: string }): Promise<Movimie
     return n;
   }
   const { id, ...resto } = m;
-  const q = id ? sb!.from('movimientos').update(resto).eq('id', id) : sb!.from('movimientos').insert(resto);
+  const q = id ? sb!.from('libro_contable').update(resto).eq('id', id) : sb!.from('libro_contable').insert(resto);
   const { data, error } = await q.select('*').single();
   if (error) throw new Error(sinPermiso(error));
   return data as Movimiento;
 }
 export async function borrarMov(m: Movimiento): Promise<void> {
   if (DEMO) { store.set(K.mov, ej(K.mov, MOVS_EJ).filter((x) => x.id !== m.id)); return; }
-  const { error } = await sb!.from('movimientos').delete().eq('id', m.id);
+  const { error } = await sb!.from('libro_contable').delete().eq('id', m.id);
   if (error) throw new Error(sinPermiso(error));
   if (m.factura) await sb!.storage.from('contabilidad').remove([m.factura]).catch(() => {});
 }
