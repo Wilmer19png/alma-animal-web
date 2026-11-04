@@ -5,7 +5,7 @@ import firma from '../assets/identidad/firma.webp';
 import gatoMini from '../assets/identidad/gato-miniatura.webp';
 import loboMini from '../assets/identidad/lobo-miniatura.webp';
 import { asset } from './lib';
-import { edad, TIPOS, type Paciente, type Registro } from './clinica-datos';
+import { edad, TIPOS, medicamentosDe, type Paciente, type Registro } from './clinica-datos';
 
 export interface Tutor { nombre: string; doc: string | null; celular: string; ciudad: string | null }
 const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -171,11 +171,17 @@ export function AtencionDoc({ p, tutor, regs }: { p: Paciente; tutor: Tutor; reg
         <Datos tutor={tutor} p={p} />
         {ordenados.map((r) => {
           const filas = Object.entries(r.datos).filter(([k, v]) => v && ETIQUETAS[k] && k !== 'obs');
+          const meds = r.tipo === 'formula' ? medicamentosDe(r) : [];
           return (
             <section key={r.id} className="doc-sec doc-reg">
               <h3><span className="ms" aria-hidden="true">{TIPOS[r.tipo].icon}</span>{TIPOS[r.tipo].txt}</h3>
-              <b className="doc-reg__t">{r.titulo}</b>
-              {r.resumen && <p className="doc-reg__p">{r.resumen}</p>}
+              {meds.length > 0 ? (
+                <div className="doc-tabla doc-meds" role="table" aria-label="Medicamentos formulados">
+                  <div className="doc-tr doc-th" role="row"><span>Medicamento</span><span>Presentación</span><span>Lote</span></div>
+                  {meds.map((x, i) => <div key={i} className="doc-tr" role="row"><span><b>{x.nombre}</b></span><span data-l="Presentación">{x.presentacion}</span><span data-l="Lote">{x.lote || '—'}</span></div>)}
+                </div>
+              ) : <b className="doc-reg__t">{r.titulo}</b>}
+              {r.resumen && <p className="doc-reg__p">{meds.length > 0 && <b>Indicaciones: </b>}{r.resumen}</p>}
               {filas.length > 0 && (
                 <dl className="doc-grid doc-grid--2">
                   {filas.map(([k, v]) => <div key={k}><dt>{ETIQUETAS[k]}</dt><dd>{k === 'proxima' ? larga(v + 'T12:00:00') : v}</dd></div>)}

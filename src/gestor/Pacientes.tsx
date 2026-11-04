@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, link, prettyCel } from './lib';
-import { listarPacientes, listarPropietarios, nombreCompleto, edad, kg, ESPECIES, sexoTxt, type Paciente, type Propietario } from './clinica-datos';
+import { listarPacientes, listarPropietarios, nombreCompleto, edad, kg, ESPECIES, sexoTxt, servicioDe, type Paciente, type Propietario } from './clinica-datos';
 import { Avatar } from './clinica-ui';
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -12,7 +12,7 @@ export default function Pacientes() {
   const [props, setProps] = useState<Propietario[]>([]);
   const [error, setError] = useState('');
   const [q, setQ] = useState('');
-  const [filtro, setFiltro] = useState<'todos' | 'canino' | 'felino' | 'alergias' | 'inactivos'>('todos');
+  const [filtro, setFiltro] = useState<'todos' | 'consulta' | 'spa' | 'canino' | 'felino' | 'alergias' | 'inactivos'>('todos');
   useEffect(() => {
     Promise.all([listarPacientes(), listarPropietarios()]).then(([a, b]) => { setPacs(a); setProps(b); }).catch((e) => setError((e as Error).message));
   }, []);
@@ -20,7 +20,8 @@ export default function Pacientes() {
   const visibles = useMemo(() => {
     const t = norm(q.trim());
     return (pacs ?? []).filter((m) => (filtro === 'inactivos' ? !m.activo : m.activo)
-      && (filtro === 'todos' || filtro === 'inactivos' || (filtro === 'alergias' ? !!m.alergias : m.especie === filtro))
+      && (filtro === 'todos' || filtro === 'inactivos' || (filtro === 'alergias' ? !!m.alergias
+        : filtro === 'consulta' || filtro === 'spa' ? [filtro, 'ambos'].includes(servicioDe(m)) : m.especie === filtro))
       && (!t || norm(`${m.nombre} ${m.raza ?? ''} ${m.microchip ?? ''} ${dueño(m.propietario_id) ? nombreCompleto(dueño(m.propietario_id)!) : ''} ${dueño(m.propietario_id)?.celular ?? ''}`).includes(t)));
   }, [pacs, props, q, filtro]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -38,7 +39,7 @@ export default function Pacientes() {
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Mascota, propietario, raza o microchip. Ej: Luna, Gómez" autoFocus />
             </label>
             <div className="filts" role="group" aria-label="Filtrar">
-              {([['todos', 'Todos'], ['canino', 'Caninos'], ['felino', 'Felinos'], ['alergias', 'Con alergias'], ['inactivos', 'Inactivos']] as const).map(([id, t]) => (
+              {([['todos', 'Todos'], ['consulta', 'Consulta'], ['spa', 'Spa'], ['canino', 'Caninos'], ['felino', 'Felinos'], ['alergias', 'Con alergias'], ['inactivos', 'Inactivos']] as const).map(([id, t]) => (
                 <button key={id} type="button" className="filt" aria-pressed={filtro === id} onClick={() => setFiltro(id)}>{t}</button>
               ))}
             </div>
@@ -53,7 +54,7 @@ export default function Pacientes() {
                 <a key={m.id} className="row prow2" href={link('/gestor/paciente') + `?id=${m.id}`}>
                   <Avatar txt={m.nombre[0]} foto={m.foto} />
                   <span className="row__txt">
-                    <b>{m.nombre}{m.alergias && <span className="alerg" title={`Alérgico a: ${m.alergias}`}><span className="ms" aria-hidden="true">warning</span>Alergias</span>}</b>
+                    <b>{m.nombre}{m.alergias && <span className="alerg" title={`Alérgico a: ${m.alergias}`}><span className="ms" aria-hidden="true">warning</span>Alergias</span>}{servicioDe(m) !== 'consulta' && <span className="tspa" title={servicioDe(m) === 'spa' ? 'Solo viene a spa' : 'Viene a consulta y a spa'}><span className="ms" aria-hidden="true">shower</span>{servicioDe(m) === 'spa' ? 'Solo spa' : 'Spa'}</span>}</b>
                     <span>{[ESPECIES[m.especie], m.raza, sexoTxt(m), edad(m), kg(m.peso)].filter(Boolean).join(' · ')}</span>
                   </span>
                   <span className="prow2__own">{d ? <><b>{nombreCompleto(d)}</b><span>{prettyCel(d.celular)}</span></> : null}</span>

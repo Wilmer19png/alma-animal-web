@@ -239,3 +239,5 @@ body.portal { background: var(--surface-2); }
 
 .pacc__links { flex-direction: column; align-items: center; }
 .ing__link--sec { font-weight: 500; color: var(--ink-muted); }
+.pmeds { margin: 4px 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+.pmeds b { font-weight: 600; }

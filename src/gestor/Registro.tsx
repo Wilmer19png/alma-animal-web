@@ -5,9 +5,9 @@ import Shell from './Shell';
 import { DEMO, link, go, prettyCel } from './lib';
 import {
   listarPropietarios, listarPacientes, crearPropietario, crearPaciente, crearRegistros, nombreCompleto, iniciales, celNorm,
-  ESPECIES, VACUNAS, DESPARASITACIONES, sexoTxt, edad, kg, type Propietario, type Paciente, type NuevoPropietario, type NuevoPaciente
+  ESPECIES, VACUNAS, DESPARASITACIONES, SERVICIOS, servicioDe, sexoTxt, edad, kg, type Propietario, type Paciente, type NuevoPropietario, type NuevoPaciente
 } from './clinica-datos';
-import { PropietarioForm, PacienteForm, Seg, Avatar, propietarioVacio, pacienteVacio, erroresPropietario, erroresPaciente } from './clinica-ui';
+import { PropietarioForm, PacienteForm, Seg, Avatar, propietarioVacio, pacienteVacio, erroresPropietario, erroresPaciente, spaLimpio } from './clinica-ui';
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 interface Previa { que: string; fecha: string; lab: string }
@@ -43,7 +43,7 @@ export default function Registro() {
   }, [buscar, props, pacs]);
   const dueñoTxt = modo === 'existe' ? (existente ? nombreCompleto(existente) : '—') : (nombreCompleto(prop) || '—');
   const mascotaTxt = pac.nombre.trim() || 'Nueva mascota';
-  const mascotaDesc = [ESPECIES[pac.especie], pac.raza, sexoTxt(pac), edad(pac), kg(pac.peso)].filter(Boolean).join(' · ');
+  const mascotaDesc = [ESPECIES[pac.especie], pac.raza, sexoTxt(pac), edad(pac), kg(pac.peso), 'Viene a ' + SERVICIOS.find(([k]) => k === servicioDe(pac))![1].toLowerCase()].filter(Boolean).join(' · ');
 
   const validarPaso = (n: number) => {
     setFalla('');
@@ -71,7 +71,7 @@ export default function Registro() {
         ...prop, nombre: prop.nombre.trim(), apellidos: prop.apellidos.trim(),
         portal: invitar && prop.correo ? 'por_invitar' : 'sin_invitar'
       });
-      const m = await crearPaciente({ ...pac, nombre: pac.nombre.trim(), propietario_id: dueño.id, extras: pac.extras.filter(([k]) => k.trim()) });
+      const m = await crearPaciente({ ...pac, nombre: pac.nombre.trim(), propietario_id: dueño.id, extras: pac.extras.filter(([k]) => k.trim()), spa: spaLimpio(pac) });
       await crearRegistros(previas.map((x) => ({
         paciente_id: m.id, tipo: DESPARASITACIONES.includes(x.que) ? 'desparasitacion' : 'vacuna', fecha: new Date(x.fecha + 'T12:00:00').toISOString(),
         titulo: x.que, resumen: null, datos: x.lab ? { laboratorio: x.lab } : {}, archivos: [], externo: true, por_nombre: null

@@ -13,7 +13,13 @@ export interface Paciente {
   sexo: 'macho' | 'hembra'; reproductivo: 'entero' | 'esterilizado' | null; nacimiento: string | null; edad_aprox: string | null;
   peso: number | null; microchip: string | null; alimento: string | null; alimento_cant: string | null; alergias: string | null;
   cronicas: string | null; extras: [string, string][]; foto: string | null; activo: boolean; creado: string;
+  servicio?: Servicio;    // a qué viene: solo consulta, solo spa o las dos (sin dato = consulta)
+  spa?: PerfilSpa | null; // cómo se le hace el spa: guía de cuchilla, corte y observaciones
 }
+export type Servicio = 'consulta' | 'spa' | 'ambos';
+export interface PerfilSpa { cuchilla?: string; corte?: string; obs?: string }
+// una línea de la fórmula médica (se guarda en datos.medicamentos como JSON)
+export interface Medicamento { nombre: string; presentacion: string; lote: string }
 export interface Archivo { nombre: string; ruta: string; tipo: string }
 export type TipoRegistro = 'consulta' | 'vacuna' | 'desparasitacion' | 'examen' | 'imagen' | 'cirugia' | 'procedimiento' | 'formula' | 'hospitalizacion' | 'peso' | 'spa' | 'nota';
 export interface Registro {
@@ -44,6 +50,13 @@ export const VACUNAS = {
   felino: ['Triple felina', 'Antirrábica', 'Leucemia felina'],
   otro: ['Antirrábica']
 };
+export const SERVICIOS: [Servicio, string][] = [['consulta', 'Consulta'], ['spa', 'Spa'], ['ambos', 'Consulta y spa']];
+export const servicioDe = (p: Pick<Paciente, 'servicio'>): Servicio => p.servicio ?? 'consulta';
+export const vieneASpa = (p: Pick<Paciente, 'servicio'>) => servicioDe(p) !== 'consulta';
+export const PRESENTACIONES = ['Pastas (tabletas)', 'Gotas', 'Cápsulas', 'Jarabe', 'Suspensión oral', 'Inyectable', 'Pipeta', 'Crema o ungüento', 'Spray', 'Champú', 'Otra'];
+export const medicamentosDe = (r: Pick<Registro, 'datos'>): Medicamento[] => {
+  try { const x = JSON.parse(r.datos.medicamentos ?? '[]'); return Array.isArray(x) ? x.filter((m) => m && m.nombre) : []; } catch { return []; }
+};
 export const DESPARASITACIONES = ['Desparasitación interna', 'Desparasitación externa (pulgas y garrapatas)'];
 
 export const nombreCompleto = (p: Pick<Propietario, 'nombre' | 'apellidos'>) => `${p.nombre} ${p.apellidos}`.trim();
@@ -73,7 +86,7 @@ const SEMILLA = () => {
   });
   const M = (id: string, propietario_id: string, nombre: string, especie: Paciente['especie'], raza: string, sexo: Paciente['sexo'], extra: Partial<Paciente> = {}): Paciente => ({
     id, propietario_id, nombre, especie, raza, sexo, color: null, reproductivo: null, nacimiento: null, edad_aprox: null, peso: null, microchip: null,
-    alimento: null, alimento_cant: null, alergias: null, cronicas: null, extras: [], foto: null, activo: true, creado: dias(180), ...extra
+    alimento: null, alimento_cant: null, alergias: null, cronicas: null, extras: [], foto: null, activo: true, creado: dias(180), servicio: 'consulta', spa: {}, ...extra
   });
   const props = [
     P('p1', 'Laura', 'Gómez Restrepo', '300 123 4567', { correo: 'laura@correo.com', direccion: 'Calle 19 # 8-34, apto 302', barrio: 'Álamos', doc_numero: '1.088.234.567', portal: 'activo', creado: dias(420) }),
@@ -83,22 +96,23 @@ const SEMILLA = () => {
     P('p5', 'Andrea', 'Muñoz', '315 777 3344', { correo: 'andrea.munoz@correo.com', fuente: 'Pasaba por el consultorio' })
   ];
   const pacs = [
-    M('m1', 'p1', 'Luna', 'canino', 'Shih Tzu', 'hembra', { color: 'Blanco y dorado', reproductivo: 'esterilizado', nacimiento: '2022-03-12', peso: 8.4, microchip: '900 108 000 123 456', alimento: 'Concentrado raza pequeña adulto', alimento_cant: '110 g al día, en 2 tomas', alergias: 'Amoxicilina', cronicas: 'Piel sensible (dermatitis)', extras: [['Le teme a…', 'El secador. Mejor secado con toalla.']] }),
+    M('m1', 'p1', 'Luna', 'canino', 'Shih Tzu', 'hembra', { color: 'Blanco y dorado', reproductivo: 'esterilizado', nacimiento: '2022-03-12', peso: 8.4, microchip: '900 108 000 123 456', alimento: 'Concentrado raza pequeña adulto', alimento_cant: '110 g al día, en 2 tomas', alergias: 'Amoxicilina', cronicas: 'Piel sensible (dermatitis)', servicio: 'ambos', spa: { cuchilla: 'N.º 7F en el cuerpo, peine de 1/2" en las patas', corte: 'Corte cachorro', obs: 'Champú hipoalergénico. Se pone nerviosa con el secador.' }, extras: [['Le teme a…', 'El secador. Mejor secado con toalla.']] }),
     M('m2', 'p1', 'Toby', 'canino', 'Schnauzer', 'macho', { reproductivo: 'entero', nacimiento: '2020-07-02', peso: 9 }),
     M('m3', 'p2', 'Max', 'canino', 'Labrador', 'macho', { reproductivo: 'esterilizado', edad_aprox: '6 años', peso: 31.5 }),
     M('m4', 'p3', 'Nala', 'felino', 'Criolla', 'hembra', { reproductivo: 'esterilizado', nacimiento: '2023-01-20', peso: 4 }),
     M('m5', 'p4', 'Rocky', 'canino', 'Golden retriever', 'macho', { nacimiento: '2021-05-10', peso: 28 }),
-    M('m6', 'p5', 'Coco', 'canino', 'French poodle', 'hembra', { reproductivo: 'esterilizado', edad_aprox: '3 años', peso: 6.2 })
+    M('m6', 'p5', 'Coco', 'canino', 'French poodle', 'hembra', { reproductivo: 'esterilizado', edad_aprox: '3 años', peso: 6.2, servicio: 'spa', spa: { cuchilla: 'N.º 10 en cara y patas', corte: 'Corte poodle tradicional' } })
   ];
   const R = (id: string, paciente_id: string, tipo: TipoRegistro, n: number, titulo: string, resumen: string | null, datos: Record<string, string> = {}, archivos: Archivo[] = []): Registro => ({
     id, paciente_id, tipo, fecha: dias(n), titulo, resumen, datos, archivos, externo: false, por_nombre: tipo === 'spa' ? 'Albert' : 'Dra. Mariana Hoyos', creado: dias(n)
   });
   const regs = [
     R('r1', 'm1', 'consulta', 6, 'Otitis externa en oído derecho', 'Se rasca la oreja hace 4 días. Oído derecho con cera oscura y olor. Se limpia y se formulan gotas óticas por 7 días.', { motivo: 'Se rasca la oreja', diagnostico: 'Otitis externa', tratamiento: 'Gotas óticas cada 12 horas por 7 días', temperatura: '38,6', peso: '8,4' }),
-    R('r2', 'm1', 'formula', 6, 'Gotas óticas', 'Aplicar 4 gotas en el oído derecho cada 12 horas durante 7 días. Control en una semana.'),
+    R('r2', 'm1', 'formula', 6, 'Otomax, Meloxicam 1 mg', 'Otomax: 4 gotas en el oído derecho cada 12 horas por 7 días. Meloxicam: media pasta cada 24 horas por 3 días, con comida. Control en una semana.',
+      { medicamentos: JSON.stringify([{ nombre: 'Otomax', presentacion: 'Gotas', lote: 'OT2291' }, { nombre: 'Meloxicam 1 mg', presentacion: 'Pastas (tabletas)', lote: 'MX0457' }]) }),
     R('r3', 'm1', 'vacuna', 40, 'Polivalente (parvovirus, moquillo y otras)', null, { laboratorio: 'Zoetis', lote: 'A1234', proxima: new Date(Date.now() + 325 * 86400000).toISOString().slice(0, 10) }),
     R('r4', 'm1', 'examen', 90, 'Hemograma', 'Valores dentro de lo normal.', {}, [{ nombre: 'hemograma-luna.pdf', ruta: '', tipo: 'application/pdf' }]),
-    R('r5', 'm1', 'spa', 20, 'Baño medicado', 'Piel un poco seca detrás de las orejas. Se le avisa a la doctora.', { peso: '8,3' }),
+    R('r5', 'm1', 'spa', 20, 'Baño medicado', 'Piel un poco seca detrás de las orejas. Se le avisa a la doctora.', { peso: '8,3', cuchilla: 'N.º 7F' }),
     R('r6', 'm1', 'peso', 120, 'Control de peso', null, { peso: '8,1' }),
     R('r7', 'm1', 'desparasitacion', 75, 'Desparasitación interna', null, { producto: 'Antiparasitario de amplio espectro', proxima: new Date(Date.now() + 15 * 86400000).toISOString().slice(0, 10) })
   ];

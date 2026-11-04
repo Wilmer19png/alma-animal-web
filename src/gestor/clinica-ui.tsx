@@ -1,6 +1,6 @@
 // Piezas compartidas de Propietarios, Pacientes y Registro: formularios del propietario y de la mascota,
 // selector segmentado y avatar.
-import { DOCS, FUENTES, ESPECIES, type NuevoPropietario, type NuevoPaciente } from './clinica-datos';
+import { DOCS, FUENTES, ESPECIES, SERVICIOS, servicioDe, vieneASpa, type NuevoPropietario, type NuevoPaciente, type PerfilSpa } from './clinica-datos';
 
 const DEPTOS = ['Risaralda', 'Caldas', 'Quindío', 'Valle del Cauca', 'Antioquia', 'Bogotá D.C.', 'Cundinamarca', 'Otro'];
 const CIUDADES_RIS = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virginia', 'Marsella', 'Otra'];
@@ -75,8 +75,13 @@ export function PropietarioForm({ v, set, errores = {}, idp = 'o' }: { v: NuevoP
 /* ---------- mascota ---------- */
 export const pacienteVacio = (propietario_id = ''): NuevoPaciente => ({
   propietario_id, nombre: '', especie: 'canino', raza: null, color: null, sexo: 'hembra', reproductivo: null, nacimiento: null,
-  edad_aprox: null, peso: null, microchip: null, alimento: null, alimento_cant: null, alergias: null, cronicas: null, extras: [], foto: null, activo: true
+  edad_aprox: null, peso: null, microchip: null, alimento: null, alimento_cant: null, alergias: null, cronicas: null, extras: [], foto: null, activo: true, servicio: 'consulta', spa: {}
 });
+// lo que se guarda del perfil de spa: sin espacios sobrantes y vacío si solo viene a consulta
+export const spaLimpio = (p: NuevoPaciente): PerfilSpa => {
+  if (!vieneASpa(p)) return {};
+  return Object.fromEntries(Object.entries(p.spa ?? {}).map(([k, v]) => [k, (v ?? '').trim()]).filter(([, v]) => v));
+};
 export const erroresPaciente = (p: NuevoPaciente) => {
   const e: Record<string, string> = {};
   if (!p.nombre.trim()) e.nombre = 'Escribe el nombre de la mascota.';
@@ -93,8 +98,31 @@ export function PacienteForm({ v, set, errores = {}, idp = 'p' }: { v: NuevoPaci
       {errores[k] && <span className="gerr-f">{errores[k]}</span>}
     </div>
   );
+  const spa = v.spa ?? {};
+  const S = (k: keyof PerfilSpa, label: string, ph: string, area?: boolean) => (
+    <div className={'fld' + (area ? ' full' : '')}>
+      <label htmlFor={`${idp}-spa-${k}`}>{label}</label>
+      {area
+        ? <textarea id={`${idp}-spa-${k}`} value={spa[k] ?? ''} placeholder={ph} onChange={(e) => set({ spa: { ...spa, [k]: e.target.value } })} />
+        : <input id={`${idp}-spa-${k}`} value={spa[k] ?? ''} placeholder={ph} onChange={(e) => set({ spa: { ...spa, [k]: e.target.value } })} />}
+    </div>
+  );
   return (
     <div className="pform">
+      <div className="fld"><span className="fld__lb">¿A qué viene? <span className="req">*</span></span>
+        <Seg label="A qué viene" value={servicioDe(v)} opts={SERVICIOS} onChange={(x) => set({ servicio: x })} />
+        <span className="hint">Así la encuentras rápido en la lista de pacientes. Lo puedes cambiar cuando quieras.</span>
+      </div>
+      {vieneASpa(v) && (
+        <div className="spa-p" role="group" aria-label="Cliente de spa">
+          <span className="spa-p__t"><span className="ms" aria-hidden="true">shower</span>Cliente de spa</span>
+          <div className="grid2g">
+            {S('cuchilla', 'Guía de cuchilla', 'Ej: N.º 7F en el cuerpo, peine de 1/2" en las patas')}
+            {S('corte', 'Tipo de corte', 'Ej: Corte cachorro, solo baño, rapado sanitario')}
+            {S('obs', 'Observaciones del spa', 'Ej: Champú hipoalergénico. Le da miedo el secador. Muerde al cortarle las uñas.', true)}
+          </div>
+        </div>
+      )}
       <div className="grid2g">
         {T('nombre', 'Nombre', 'Ej: Luna', { req: true })}
         <div className="fld"><span className="fld__lb">Especie <span className="req">*</span></span>
