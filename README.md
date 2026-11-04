@@ -62,6 +62,12 @@ abre `vista-previa/gestor/ingresar.html`.
 
 Módulos listos: Hoy, Agenda, Horarios, Pedidos, Productos e inventario, Propietarios, Pacientes (ficha e historia clínica) y Registrar paciente. Los demás aparecen en el menú como «Pronto».
 
+**Contabilidad** (`/gestor/contabilidad`, solo la administradora): lo que entra no se escribe dos veces. Las consultas y vacunas
+suman al marcarlas como hechas en la Agenda (con el valor cobrado), los baños al entregarlos en Citas de spa y la tienda al
+confirmar el pago en Pedidos; mientras tanto quedan «en espera». Ahí se registran los gastos (con foto de la factura), los gastos
+fijos de cada mes (luz y agua esperan el valor del recibo) y el reparto de la ganancia entre socios (50 % / 50 %, en la clave
+`socios` de la tabla `ajustes`). «Descargar para el contador» baja el mes en CSV para Excel. Base de datos: `supabase/23-contabilidad.sql`.
+
 La tienda (Petshop, ficha `/producto?p=…`, sugerencias del carrito, producto recomendado del blog y avisos de compra)
 lee el catálogo de Supabase en el navegador: lo que se cambia en el gestor se ve al instante, sin volver a publicar.
 

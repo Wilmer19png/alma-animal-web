@@ -2,10 +2,10 @@
 // y control de acceso. Si no hay sesión, manda a /gestor/ingresar.
 import { useEffect, type ReactNode } from 'react';
 import heart from '../assets/identidad/logo.webp';
-import { useSesion, salir, inactividadActiva, ROL_TXT, type Miembro } from './session';
+import { useSesion, salir, inactividadActiva, ROL_TXT, type Miembro, type Rol } from './session';
 import { link, go, asset, DEMO } from './lib';
 
-interface Item { id: string; txt: string; icon: string; href: string; listo: boolean }
+interface Item { id: string; txt: string; icon: string; href: string; listo: boolean; solo?: Rol[] } // solo: roles que lo ven en el menú
 const GRUPOS: { grp: string; items: Item[] }[] = [
   { grp: 'General', items: [{ id: 'hoy', txt: 'Hoy', icon: 'space_dashboard', href: '/gestor', listo: true }] },
   { grp: 'Clínica', items: [
@@ -21,6 +21,9 @@ const GRUPOS: { grp: string; items: Item[] }[] = [
   { grp: 'Tienda', items: [
     { id: 'pedidos', txt: 'Pedidos', icon: 'receipt_long', href: '/gestor/pedidos', listo: true },
     { id: 'productos', txt: 'Productos e inventario', icon: 'inventory_2', href: '/gestor/productos', listo: true }
+  ] },
+  { grp: 'Negocio', items: [
+    { id: 'contabilidad', txt: 'Contabilidad', icon: 'account_balance_wallet', href: '/gestor/contabilidad', listo: true, solo: ['admin'] }
   ] },
   { grp: 'Sitio web', items: [
     { id: 'sitio', txt: 'Textos e imágenes', icon: 'web', href: '/gestor/sitio', listo: true },
@@ -53,10 +56,11 @@ function Enlace({ it, activo, insignia }: { it: Item; activo: string; insignia?:
   );
 }
 
-function Menu({ activo, insignias }: { activo: string; insignias: Record<string, number> }) {
+function Menu({ activo, insignias, rol }: { activo: string; insignias: Record<string, number>; rol: Rol }) {
+  const grupos = GRUPOS.map((g) => ({ ...g, items: g.items.filter((it) => !it.solo || it.solo.includes(rol)) })).filter((g) => g.items.length);
   return (
     <>
-      {GRUPOS.map((g) => (
+      {grupos.map((g) => (
         <div key={g.grp} className="grp-wrap">
           {g.grp !== 'General' && <span className="grp">{g.grp}</span>}
           <nav aria-label={g.grp}>
@@ -118,7 +122,7 @@ export default function Shell({ activo, insignias = {}, children }: { activo: st
           <span><img src={asset(heart.src)} alt="" width={34} /></span>
           <span><b>Alma Animal</b><small>Gestor interno</small></span>
         </a>
-        <Menu activo={activo} insignias={insignias} />
+        <Menu activo={activo} insignias={insignias} rol={yo.rol} />
         <Yo yo={yo} />
       </aside>
 
@@ -134,7 +138,7 @@ export default function Shell({ activo, insignias = {}, children }: { activo: st
         <details className={'gmore' + (masActivo ? ' on' : '')}>
           <summary><span className="ms" aria-hidden="true">menu</span>Más</summary>
           <div className="gsheet">
-            <Menu activo={activo} insignias={insignias} />
+            <Menu activo={activo} insignias={insignias} rol={yo.rol} />
             <Yo yo={yo} />
           </div>
         </details>

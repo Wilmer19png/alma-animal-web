@@ -345,6 +345,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
           <div className="dacts">
             <button type="button" className="gbtn" disabled={ocupado} onClick={() => paso({ estado: 'atendida', datos: { pago, total: String(total), entregada: new Date().toISOString() } }, 'Entregada y pagada')}><span className="ms" aria-hidden="true">check</span>Entregada y pagada</button>
           </div>
+          <p className="conta"><span className="ms" aria-hidden="true">hourglass_top</span><span>Este baño está <b>en espera</b> en Contabilidad. Al marcarlo como entregado y pagado entran <b>{money(total)}</b> en «Baños y spa».</span></p>
         </>
       )}
 
@@ -355,6 +356,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
             <div><dt>Pagó</dt><dd>{c.datos.total ? money(Number(c.datos.total)) : money(total)}{c.datos.pago ? ` · ${String(c.datos.pago).replace(/ \(.*/, '')}` : ''}</dd></div>
             {(c.datos as unknown as { ficha?: Ficha }).ficha && <div className="full"><dt>Ficha del baño</dt><dd className="normal">{fichaTexto(ficha)}</dd></div>}
           </dl>
+          <p className="conta conta--ok"><span className="ms" aria-hidden="true">account_balance_wallet</span><span>Entraron <b>{money(Number(c.datos.total) || total)}</b> a Contabilidad en «Baños y spa».</span></p>
           <p className="sdet__prox"><span className="ms" aria-hidden="true">event_repeat</span>Próximo baño sugerido: <b>{largo(sumarDias(pedida, t.proximo * 7)).replace(/ a las .*/, '')}</b> (en {t.proximo} semanas).</p>
           <div className="dacts"><a className="gbtn sm" href={link('/gestor/agenda') + `?servicio=spa${p ? `&paciente=${p.id}` : ''}`}><span className="ms" aria-hidden="true">add</span>Agendar el próximo</a></div>
           <p className="hint">Queda en el historial de spa de {mascota}{p ? ', que el dueño también verá en su portal' : ''}.</p>

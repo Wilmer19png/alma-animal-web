@@ -2,7 +2,7 @@
 // Las horas libres salen del horario, la duración del servicio y las citas que ya hay. En celular, un día a la vez.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Shell from './Shell';
-import { DEMO, link, waLink, prettyCel } from './lib';
+import { DEMO, link, waLink, prettyCel, money } from './lib';
 import {
   leerHorario, leerDuraciones, listarCierres, listarCitas, crearCita, cambiarCita, horas, cerradoPor, hhmm, iso, sumarDias, lunesDe, minutosDe,
   enFecha, diaSemana, SERVICIOS, CARRILES, ESTADOS_CITA, DIAS_C, MESES, type Horario, type Duraciones, type Cierre, type Cita, type Servicio, type Carril, type Estado
@@ -123,7 +123,9 @@ export default function Agenda() {
                                       style={{ top: (a - desde) * PX, height: Math.max(22, (b - a) * PX - 2), background: sv.bg, color: sv.fg }}
                                       title={`${hhmm(a)} · ${nombreCita(c)} · ${sv.txt}${c.estado === 'solicitada' ? ' · por confirmar' : ''}`}
                                       onClick={() => setPanel({ modo: 'ver', cita: c })}>
-                                      <b>{hhmm(a, true)}{c.origen !== 'consultorio' && <span className="ms" aria-label="Agendada por el cliente">language</span>}{c.sobrecupo && <span className="ms" aria-label="Sobrecupo">warning</span>}</b>
+                                      <b>{hhmm(a, true)}{c.origen !== 'consultorio' && <span className="ms" aria-label="Agendada por el cliente">language</span>}{c.sobrecupo && <span className="ms" aria-label="Sobrecupo">warning</span>}
+                                        {c.estado === 'atendida' && <span className="ms appt__ok" aria-label="Hecha">check_circle</span>}
+                                        {c.estado === 'confirmada' && c.carril === 'dra' && new Date(c.fin) < new Date() && <span className="ms appt__esp" aria-label="Ya pasó y falta marcarla como hecha">hourglass_top</span>}</b>
                                       <span>{nombreCita(c)}</span>
                                     </button>
                                   );
@@ -141,6 +143,8 @@ export default function Agenda() {
                 <span><span className="ms" aria-hidden="true">touch_app</span>Toca un espacio libre para agendar ahí</span>
                 <span><span className="ms" aria-hidden="true">language</span>La agendó el cliente</span>
                 <span><i className="ag__sol" aria-hidden="true" />Por confirmar</span>
+                <span><span className="ms appt__ok" aria-hidden="true">check_circle</span>Hecha (ya entró a Contabilidad)</span>
+                <span><span className="ms appt__esp" aria-hidden="true">hourglass_top</span>Ya pasó y falta marcarla como hecha</span>
               </div>
             </section>
 
@@ -148,6 +152,7 @@ export default function Agenda() {
             <aside className="gcard ag__panel">
               {panel.modo === 'ver'
                 ? <VerCita c={citas.find((x) => x.id === panel.cita.id) ?? panel.cita} paciente={pac(panel.cita.paciente_id)} dueño={dueñoDe(panel.cita)}
+                    sugerido={Number(citas.filter((x) => x.servicio === panel.cita.servicio && x.estado === 'atendida' && Number(x.datos.total)).sort((a, b) => b.inicio.localeCompare(a.inicio))[0]?.datos.total) || 0}
                     cambiar={async (cambio, msg) => { try { guardada(await cambiarCita(panel.cita.id, cambio), msg); } catch (e) { setAviso((e as Error).message); } }}
                     mover={() => setPanel({ modo: 'nueva', mover: panel.cita, servicio: panel.cita.servicio, dia: new Date(panel.cita.inicio) })} cerrar={() => setPanel({ modo: 'nueva' })} />
                 : h && dur && <Agendar key={`${panel.dia?.toISOString()}-${panel.min}-${panel.mover?.id}`} inicial={panel} lunes={lunes} h={h} dur={dur} cierres={cierres} citas={citas}
@@ -163,7 +168,28 @@ export default function Agenda() {
 }
 
 /* ---------- ver una cita ---------- */
-function VerCita({ c, paciente, dueño, cambiar, mover, cerrar }: { c: Cita; paciente?: Paciente; dueño?: Propietario; cambiar: (x: Partial<Cita>, msg: string) => void; mover: () => void; cerrar: () => void }) {
+/* ---------- marcar como hecha: el valor cobrado entra a Contabilidad ---------- */
+const MEDIOS = ['Efectivo', 'Nequi', 'Daviplata', 'Transferencia', 'Tarjeta'];
+function MarcarHecha({ c, sugerido, cambiar }: { c: Cita; sugerido: number; cambiar: (x: Partial<Cita>, msg: string) => void }) {
+  const [valor, setValor] = useState(() => Number(c.datos.total) || sugerido || 0);
+  const [pago, setPago] = useState(String(c.datos.pago || MEDIOS[0]));
+  return (
+    <div className="hecha">
+      <b className="hecha__t"><span className="ms" aria-hidden="true">check_circle</span>Marcar como hecha</b>
+      <div className="grid2g">
+        <div className="fld"><label htmlFor="hv">Valor cobrado</label>
+          <input id="hv" inputMode="numeric" value={valor ? money(valor) : ''} placeholder="Escribe el valor" onChange={(e) => setValor(Number(e.target.value.replace(/\D/g, '')) || 0)} /></div>
+        <div className="fld"><label htmlFor="hp">Cómo pagó</label>
+          <select id="hp" value={pago} onChange={(e) => setPago(e.target.value)}>{MEDIOS.map((m) => <option key={m}>{m}</option>)}</select></div>
+      </div>
+      <button className="gbtn sm" type="button" disabled={!valor} onClick={() => cambiar({ estado: 'atendida', datos: { ...c.datos, total: String(valor), pago, hecha: new Date().toISOString() } }, 'Hecha · el valor entró a Contabilidad')}>
+        <span className="ms" aria-hidden="true">done_all</span>Marcar como hecha</button>
+      <p className="hint">Mientras no la marques, queda «en espera» en Contabilidad y no suma.</p>
+    </div>
+  );
+}
+
+function VerCita({ c, paciente, dueño, sugerido, cambiar, mover, cerrar }: { c: Cita; paciente?: Paciente; dueño?: Propietario; sugerido: number; cambiar: (x: Partial<Cita>, msg: string) => void; mover: () => void; cerrar: () => void }) {
   const sv = SERVICIOS[c.servicio], st = ESTADOS_CITA[c.estado];
   const d = new Date(c.inicio);
   const cuando = `${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}, ${hhmm(minutosDe(c.inicio))}`;
@@ -189,8 +215,17 @@ function VerCita({ c, paciente, dueño, cambiar, mover, cerrar }: { c: Cita; pac
       <div className="dacts">
         {cel && <a className="gbtn wa sm" href={waLink(cel, msg)} target="_blank" rel="noopener"><span className="ms" aria-hidden="true">chat</span>{c.estado === 'solicitada' ? 'Escribir para confirmar' : 'Recordar por WhatsApp'}</a>}
         {c.estado === 'solicitada' && <button className="gbtn sm" type="button" onClick={() => cambiar({ estado: 'confirmada' }, 'Cita confirmada')}><span className="ms" aria-hidden="true">check</span>Confirmar cita</button>}
-        {c.estado === 'confirmada' && <button className="gbtn sm" type="button" onClick={() => cambiar({ estado: 'atendida' }, 'Marcada como atendida')}><span className="ms" aria-hidden="true">done_all</span>Atendida</button>}
       </div>
+      {c.estado === 'confirmada' && c.carril === 'dra' && <MarcarHecha key={c.id} c={c} sugerido={sugerido} cambiar={cambiar} />}
+      {c.estado === 'confirmada' && c.carril === 'spa' && (
+        <p className="conta"><span className="ms" aria-hidden="true">hourglass_top</span>
+          <span>Los baños se marcan en <b>Citas de spa</b> al entregar la mascota («Entregada y pagada»). Ahí entra el valor a Contabilidad.</span>
+          <a href={link('/gestor/spa')}>Abrir Citas de spa</a></p>
+      )}
+      {c.estado === 'atendida' && (
+        <p className="conta conta--ok"><span className="ms" aria-hidden="true">account_balance_wallet</span>
+          <span>{Number(c.datos.total) ? <>Hecha. Entraron <b>{money(Number(c.datos.total))}</b> a Contabilidad{c.datos.pago ? ` · ${String(c.datos.pago).replace(/ \(.*/, '')}` : ''}.</> : 'Hecha, sin valor cobrado registrado.'}</span></p>
+      )}
       <div className="dacts">
         {(c.estado === 'confirmada' || c.estado === 'solicitada') && <button className="gbtn out sm" type="button" onClick={mover}><span className="ms" aria-hidden="true">schedule</span>Cambiar hora</button>}
         {c.estado === 'confirmada' && <button className="gbtn out sm" type="button" onClick={() => cambiar({ estado: 'no_vino' }, 'Marcada: no vino')}>No vino</button>}
