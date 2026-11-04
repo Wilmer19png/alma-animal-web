@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, link } from './lib';
+import { enlaceIg } from '../data/equipo';
 import { listarPersonas, guardarPersona, borrarPersona, ordenar, subirFotoPersona, subirVideo, nuevaPersona, AREAS, type Persona, type Area } from './equipo-datos';
 import { Seg } from './clinica-ui';
 import { iniciales } from './clinica-datos';
@@ -138,7 +139,7 @@ function Ficha({ p: inicial, puede, volver, guardado, borrado, error }: { p: Per
       </div>
 
       <details className="eqf__mas" open={p.area === 'consultorio' || undefined}>
-        <summary><span className="ms" aria-hidden="true">auto_stories</span>Su página «Conoce a…» <small>· video, foto de cuerpo entero, historia y fotos en acción</small></summary>
+        <summary><span className="ms" aria-hidden="true">auto_stories</span>Su página «Conoce a…» <small>· video, foto de cuerpo entero, historia, fotos en acción y videos de Instagram</small></summary>
         <div className="eqf__mas-in">
           <div className="sfld"><label htmlFor="eq-fr">Una frase suya <small className="cnt">{(p.frase ?? '').length} de 220</small></label>
             <input id="eq-fr" className="cell" maxLength={220} disabled={!puede} value={p.frase ?? ''} placeholder="Ej: Cuido a cada mascota como si fuera mía." onChange={(e) => set({ frase: e.target.value || null })} /></div>
@@ -174,6 +175,18 @@ function Ficha({ p: inicial, puede, volver, guardado, borrado, error }: { p: Per
                 <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => sumarFotos(e.target.files)} /></label>}
             </div>
           </div>
+          {(() => {
+            const lineas = (p.videos_ig ?? []).map((x) => x.trim()).filter(Boolean);
+            const malos = lineas.filter((x) => !enlaceIg(x));
+            return (
+              <div className="sfld"><label htmlFor="eq-ig">Videos de Instagram <small className="cnt">{lineas.length - malos.length} de 9</small></label>
+                <span className="hint">Pega el enlace de cada reel, uno por renglón. En Instagram: abre el video → ⋯ → «Copiar enlace». Salen en su página, en «Videos de la doctora».</span>
+                <textarea id="eq-ig" className="cell" rows={4} disabled={!puede} value={(p.videos_ig ?? []).join('\n')} placeholder="https://www.instagram.com/reel/…"
+                  onChange={(e) => set({ videos_ig: e.target.value.split('\n') })} />
+                {malos.length > 0 && <span className="hint rojo">Estos no son enlaces de Instagram y no se van a ver: {malos.join(' · ')}</span>}
+              </div>
+            );
+          })()}
         </div>
       </details>
       {ocupado && <p className="hint-g">Subiendo… no cierres esta pantalla.</p>}
