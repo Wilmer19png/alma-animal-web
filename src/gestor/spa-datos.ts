@@ -3,6 +3,7 @@
 // El avance, los adicionales, la ficha del baño y el pago se guardan en citas.datos.
 import { DEMO, store } from './lib';
 import { listarCitas, cambiarCita, iso, enFecha, sumarDias, type Cita } from './agenda-datos';
+import { tablaDe, filaDe, filaTxt, precioAdicional, type Tarifas } from './tarifas-datos';
 
 export type Fase = 'solicitada' | 'confirmada' | 'spa' | 'lista' | 'entregada';
 export const FASES: { id: Fase; txt: string; bg: string; fg: string }[] = [
@@ -29,13 +30,34 @@ export const fichaAlerta = (f: Ficha) => FICHA.some((x) => (f[x.k] ?? 0) >= x.ma
 export const fichaTexto = (f: Ficha) => FICHA.map((x) => `${x.q}: ${x.opts[f[x.k] ?? 0].toLowerCase()}`).join(' · ');
 export const PAGOS = ['Efectivo', 'Transferencia (Nequi, Daviplata o banco)', 'Tarjeta'];
 
-// lo que pidió en el formulario de la web ("Baño completo + corte + baño medicado") → adicionales
+// lo que pidió en el formulario de la web ("Baño + baño medicado + transporte") → adicionales
 export const extrasDe = (c: Cita): string[] => {
-  const d = c.datos as unknown as { extras?: string[]; servicio?: string };
-  if (Array.isArray(d.extras)) return d.extras;
+  const d = c.datos as unknown as { extras?: string[]; servicio?: string; transporte?: unknown };
+  if (Array.isArray(d.extras)) return d.extras.map((x) => (x === 'desenredo' ? 'nudos' : x));
   const s = (d.servicio ?? '').toLowerCase();
-  return [/corte/.test(s) && 'corte', /medicad/.test(s) && 'medicado', /desenred|nudo/.test(s) && 'desenredo'].filter(Boolean) as string[];
+  return [/medicad/.test(s) && 'medicado', /desenred|nudo/.test(s) && 'nudos', (/transporte|recog/.test(s) || d.transporte) && 'transporte'].filter(Boolean) as string[];
 };
+
+// lo que se cobra: la tabla (tipo de pelo), la fila (peso), si es pelo abundante, los adicionales
+// y el valor escrito de los variables (transporte, nudos). Se guarda en citas.datos.
+export interface Cobro { grupo: string; fila: number; abundante: boolean; extras: string[]; montos: Record<string, number> }
+export const pesoDe = (c: Cita, p?: { peso: number | null } | null) => p?.peso ?? (c.datos.peso ? Number(String(c.datos.peso).replace(',', '.')) || null : null);
+export function cobroDe(c: Cita, t: Tarifas, p?: { especie: string; raza: string | null; peso: number | null } | null): Cobro {
+  const d = c.datos as unknown as { grupo?: string; fila?: number | string; abundante?: boolean | string; montos?: Record<string, number>; especie?: string; raza?: string; servicio?: string };
+  const peso = pesoDe(c, p);
+  const grupo = d.grupo && t.tablas.some((x) => x.id === d.grupo) ? d.grupo : tablaDe(p ? p.especie : d.especie, p?.raza ?? d.raza, t, d.servicio);
+  const tb = t.tablas.find((x) => x.id === grupo);
+  const fila = d.fila != null && tb && Number(d.fila) < tb.filas.length ? Number(d.fila) : tb ? filaDe(tb, peso) : 0;
+  return { grupo, fila, abundante: d.abundante === true || d.abundante === '1', extras: extrasDe(c), montos: d.montos && typeof d.montos === 'object' ? d.montos : {} };
+}
+export function cuenta(s: Cobro, t: Tarifas, peso: number | null) {
+  const tb = t.tablas.find((x) => x.id === s.grupo) ?? null;
+  const f = tb?.filas[s.fila];
+  const base = f ? (s.abundante && tb!.abundante && f.abundante ? f.abundante : f.precio) : 0;
+  const ads = t.adicionales.filter((a) => s.extras.includes(a.id)).map((a) => ({ a, v: precioAdicional(a, peso, s.montos[a.id]) }));
+  const nombre = tb ? (tb.bano ? `Baño ${tb.nombre.toLowerCase()}` : tb.nombre) + (tb.porPeso ? '' : ` (${filaTxt(tb, s.fila).toLowerCase()})`) + (s.abundante && tb.abundante ? ', pelo abundante' : '') : 'Baño';
+  return { tb, base, ads, total: base + ads.reduce((n, x) => n + x.v, 0), txt: [nombre, ...ads.map((x) => x.a.nombre.toLowerCase())].join(' + ') };
+}
 
 // citas del spa desde hace 30 días hasta dentro de 60 (activas + historial reciente)
 export async function listarSpa(): Promise<Cita[]> {

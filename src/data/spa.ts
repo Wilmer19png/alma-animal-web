@@ -24,8 +24,8 @@ export const SPA_INCLUDES = [
 export const SPA_COAT = [
   { title: 'Mantos largos', text: 'Desenredantes y acondicionador para que el pelo quede suelto y brillante.' },
   { title: 'Corte según la raza', text: 'De acuerdo con la raza y las características de su manto.' },
-  { title: 'Nudos o enredos severos', text: 'Tienen un valor adicional que depende del estado del manto. Te lo decimos antes de empezar.' },
-  { title: 'Piel sensible', text: 'Baño medicado: +$5.000 para mascotas de hasta 10 kg.' }
+  { title: 'Nudos o enredos severos', text: 'Tienen un valor adicional de $10.000 a $20.000 según el estado del manto. Te lo decimos antes de empezar.' },
+  { title: 'Piel sensible', text: 'Baño medicado: +$5.000 hasta 10 kg y +$8.000 para mascotas de más de 10 kg.' }
 ];
 
 // la portada: Albert trabajando
