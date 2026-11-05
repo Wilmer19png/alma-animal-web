@@ -6,8 +6,8 @@ import { DEMO, link, waLink, prettyCel, money, when } from './lib';
 import { listarPacientes, listarPropietarios, crearRegistros, nombreCompleto, edad, kg, type Paciente, type Propietario } from './clinica-datos';
 import { leerHorario, leerDuraciones, listarCierres, horas, hhmm, minutosDe, diaSemana, iso, sumarDias, enFecha, cerradoPor, MESES, DIAS,
   type Cita, type Horario, type Duraciones, type Cierre } from './agenda-datos';
-import { leerTarifas, tallaDe, tallaTxt, type Tarifas } from './tarifas-datos';
-import { listarSpa, avanzar, fase, extrasDe, FASES, FICHA, PAGOS, fichaAlerta, fichaTexto, type Fase, type Ficha } from './spa-datos';
+import { leerTarifas, filaDe, filaTxt, fueraDeTabla, type Tarifas } from './tarifas-datos';
+import { listarSpa, avanzar, fase, cobroDe, cuenta, pesoDe, FASES, FICHA, PAGOS, fichaAlerta, fichaTexto, type Fase, type Ficha, type Cobro } from './spa-datos';
 import { Seg, Avatar } from './clinica-ui';
 import type { Miembro } from './session';
 
@@ -50,10 +50,7 @@ export default function Spa() {
   const dueño = (c: Cita) => { const p = pac(c); return props.find((o) => o.id === (p?.propietario_id ?? c.propietario_id)); };
   const mascota = (c: Cita) => pac(c)?.nombre ?? c.datos.mascota ?? 'Sin nombre';
   const raza = (c: Cita) => pac(c)?.raza ?? c.datos.raza ?? '';
-  const servicioTxt = (c: Cita) => {
-    const x = extrasDe(c);
-    return ['Baño completo', x.includes('corte') && 'corte', x.includes('medicado') && 'medicado', x.includes('desenredo') && 'desenredado'].filter(Boolean).join(' + ');
-  };
+  const servicioTxt = (c: Cita) => (tar ? cuenta(cobroDe(c, tar, pac(c)), tar, pesoDe(c, pac(c))).txt : String(c.datos.servicio ?? 'Baño'));
   const guardado = (n: Cita, txt: string) => { setCitas((cs) => (cs ?? []).map((c) => (c.id === n.id ? n : c)).filter((c) => fase(c))); setAviso(txt); };
   const elegir = (c: Cita) => { setSel(c.id); setVista('detalle'); };
   const porConfirmar = (citas ?? []).filter((c) => fase(c) === 'solicitada').length;
@@ -146,20 +143,15 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
   servicioTxt: (c: Cita) => string; volver: () => void; guardado: (c: Cita, txt: string) => void; error: (t: string) => void;
 }) {
   const f = fase(c)!, si = FASES.findIndex((x) => x.id === f);
-  const peso = p?.peso ?? (c.datos.peso ? Number(String(c.datos.peso).replace(',', '.')) : null);
+  const peso = pesoDe(c, p);
   const especie = p ? p.especie : c.datos.especie;
-  const talla = tallaDe(especie, peso, t);
   const celular = o?.celular ?? c.datos.celular ?? '';
   const quien = o ? nombreCompleto(o) : c.datos.nombre ?? '';
   const primer = (o?.nombre ?? quien).split(' ')[0];
-  const [extras, setExtras] = useState<string[]>(extrasDe(c));
-  const base = t.servicios.find((s) => s.id === 'bano');
-  const lineas = [
-    ...(base ? [{ s: base, fijo: true }] : []),
-    ...t.servicios.filter((s) => s.tipo === 'adicional' && s.precios[talla] != null).map((s) => ({ s, fijo: false }))
-  ];
-  const total = lineas.reduce((n, l) => n + (l.fijo || extras.includes(l.s.id) ? l.s.precios[talla] ?? 0 : 0), 0);
-  const svc = servicioTxt({ ...c, datos: { ...c.datos, extras } as never }).replace('medicado', 'baño medicado');
+  const [cobro, setCobro] = useState<Cobro>(() => cobroDe(c, t, p));
+  const { tb, base, total, txt: svc } = cuenta(cobro, t, peso);
+  const cerrada = f === 'entregada';
+  const direccion = String(c.datos.direccion ?? c.direccion ?? '');
   const ficha: Ficha = (c.datos as unknown as { ficha?: Ficha }).ficha ?? {};
   const [fi, setFi] = useState<Ficha>(ficha);
   const [pago, setPago] = useState<string>((c.datos.pago as string) || PAGOS[0]);
@@ -170,11 +162,13 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
     try { guardado(await avanzar(c, cambio), txt); } catch (e) { error((e as Error).message); }
     setOcupado(false);
   };
-  const cambiarExtra = (id: string) => {
-    const n = extras.includes(id) ? extras.filter((x) => x !== id) : [...extras, id];
-    setExtras(n);
-    if (f !== 'entregada') avanzar(c, { datos: { extras: n } }).then((x) => guardado(x, 'Servicio actualizado')).catch((e) => error((e as Error).message));
+  // cada cambio del servicio se guarda en la cita (los valores escritos, al salir de la casilla)
+  const guardarCobro = (n: Cobro, ya = true) => {
+    setCobro(n);
+    if (ya && !cerrada) avanzar(c, { datos: { ...n } }).then((x) => guardado(x, 'Servicio actualizado')).catch((e) => error((e as Error).message));
   };
+  const cambiarExtra = (id: string) => guardarCobro({ ...cobro, extras: cobro.extras.includes(id) ? cobro.extras.filter((x) => x !== id) : [...cobro.extras, id] });
+  const cambiarTabla = (g: string) => { const n = t.tablas.find((x) => x.id === g); guardarCobro({ ...cobro, grupo: g, fila: n ? filaDe(n, peso) : 0, abundante: false }); };
 
   // horas libres del spa: las del día que pidió y las de los días siguientes
   const pedida = new Date(c.inicio);
@@ -195,7 +189,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
   }, [f, citas, hor]); // eslint-disable-line react-hooks/exhaustive-deps
   const [hora, setHora] = useState<number>(() => Math.max(0, opciones.findIndex((x) => x.libre)));
   const elegida = opciones[hora]?.libre ? opciones[hora].d : null;
-  const confirmTxt = elegida ? `¡Hola, ${primer}! Te escribimos de Alma Animal. Confirmamos el spa de ${mascota} para el ${largo(elegida)}.\nServicio: ${svc} (talla ${tallaTxt(talla).toLowerCase()}).\nValor: ${money(total)}.\nTe esperamos en la Calle 1 # 9-02, Alfonso López. Si necesitas cambiar la hora, respóndenos por aquí.` : '';
+  const confirmTxt = elegida ? `¡Hola, ${primer}! Te escribimos de Alma Animal. Confirmamos el spa de ${mascota} para el ${largo(elegida)}.\nServicio: ${svc}.\nValor: ${money(total)}.\nTe esperamos en la Calle 1 # 9-02, Alfonso López. Si necesitas cambiar la hora, respóndenos por aquí.` : '';
   const [msg, setMsg] = useState('');
   useEffect(() => { setMsg(confirmTxt); }, [hora, total]); // eslint-disable-line react-hooks/exhaustive-deps
   const cierre = hor.h.dias[diaSemana(new Date())];
@@ -217,7 +211,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
         <Avatar txt={mascota.slice(0, 1).toUpperCase()} grande />
         <div className="dhead__txt">
           <h2 id="sdn">{mascota}</h2>
-          <span>{[p ? (p.especie === 'felino' ? 'Gato' : p.especie === 'canino' ? 'Perro' : 'Otra especie') : (/gat/i.test(especie ?? '') ? 'Gato' : 'Perro'), p?.raza ?? c.datos.raza, peso ? kg(peso) : '', p ? edad(p) : c.datos.edad, `talla ${tallaTxt(talla).toLowerCase()}`].filter(Boolean).join(' · ')}</span>
+          <span>{[p ? (p.especie === 'felino' ? 'Gato' : p.especie === 'canino' ? 'Perro' : 'Otra especie') : (/gat/i.test(especie ?? '') ? 'Gato' : 'Perro'), p?.raza ?? c.datos.raza, peso ? kg(peso) : '', p ? edad(p) : c.datos.edad].filter(Boolean).join(' · ')}</span>
         </div>
         {p && <a className="gbtn out sm" href={link('/gestor/paciente') + `?id=${p.id}`}><span className="ms" aria-hidden="true">clinical_notes</span>Ficha clínica</a>}
       </div>
@@ -239,22 +233,52 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
       )}
 
       <div className="sprecio">
-        <h3 className="ch2"><span className="ms" aria-hidden="true">shower</span>Servicio y precio<small>talla {tallaTxt(talla).toLowerCase()} según el peso</small></h3>
+        <h3 className="ch2"><span className="ms" aria-hidden="true">shower</span>Servicio y precio<small>{peso ? `pesa ${kg(peso)}` : 'sin peso: elige la fila'}{p?.raza ?? c.datos.raza ? ` · ${p?.raza ?? c.datos.raza}` : ''}</small></h3>
+        <div className="sserv">
+          <div className="fld"><label htmlFor="ss-t">Tipo</label>
+            <select id="ss-t" value={cobro.grupo} disabled={cerrada} onChange={(e) => cambiarTabla(e.target.value)}>
+              {t.tablas.map((x) => <option key={x.id} value={x.id}>{x.nombre}</option>)}
+            </select></div>
+          {tb && <div className="fld"><label htmlFor="ss-f">{tb.porPeso ? 'Peso' : 'Opción'}</label>
+            <select id="ss-f" value={cobro.fila} disabled={cerrada} onChange={(e) => guardarCobro({ ...cobro, fila: Number(e.target.value) })}>
+              {tb.filas.map((x, j) => <option key={j} value={j}>{filaTxt(tb, j)} · {money(x.precio)}</option>)}
+            </select></div>}
+        </div>
+        {tb && fueraDeTabla(tb, peso) && <p className="hint-g">Pesa más de lo que cubre la tabla «{tb.nombre}». Revisa el precio con el peluquero.</p>}
         <ul>
-          {lineas.map(({ s, fijo }) => {
-            const on = fijo || extras.includes(s.id);
+          {tb && (
+            <li data-on>
+              <span className="ms sprecio__ic" aria-hidden="true">check_circle</span>
+              <span className="sprecio__n"><b>{tb.bano ? `Baño · ${tb.nombre.toLowerCase()}` : tb.nombre}</b><span>{filaTxt(tb, cobro.fila)}{tb.bano ? ' · incluye el baño completo' : ''}</span></span>
+              <b className="sprecio__v">{money(base)}</b>
+            </li>
+          )}
+          {tb?.abundante && tb.filas[cobro.fila]?.abundante && (
+            <li data-on={cobro.abundante || undefined}>
+              <button type="button" className="sw" role="switch" aria-checked={cobro.abundante} aria-label="Pelo abundante (deslanado)" disabled={cerrada} onClick={() => guardarCobro({ ...cobro, abundante: !cobro.abundante })}><i /></button>
+              <span className="sprecio__n"><b>Pelo abundante (deslanado)</b><span>Cambia el precio de la fila a {money(tb.filas[cobro.fila].abundante!)}</span></span>
+              <b className="sprecio__v">{cobro.abundante ? '' : money(tb.filas[cobro.fila].abundante!)}</b>
+            </li>
+          )}
+          {t.adicionales.map((a) => {
+            const on = cobro.extras.includes(a.id);
+            const v = cuenta({ ...cobro, extras: [a.id] }, t, peso).ads[0]?.v ?? 0;
             return (
-              <li key={s.id} data-on={on || undefined}>
-                {fijo ? <span className="ms sprecio__ic" aria-hidden="true">check_circle</span>
-                  : <button type="button" className="sw" role="switch" aria-checked={on} aria-label={s.nombre} disabled={f === 'entregada'} onClick={() => cambiarExtra(s.id)}><i /></button>}
-                <span className="sprecio__n"><b>{s.nombre}</b><span>{s.desc}</span></span>
-                <b className="sprecio__v">{fijo ? '' : '+'}{money(s.precios[talla] ?? 0)}</b>
+              <li key={a.id} data-on={on || undefined}>
+                <button type="button" className="sw" role="switch" aria-checked={on} aria-label={a.nombre} disabled={cerrada} onClick={() => cambiarExtra(a.id)}><i /></button>
+                <span className="sprecio__n"><b>{a.nombre}</b><span>{a.id === 'transporte' && direccion ? `Dirección: ${direccion}` : a.desc}</span></span>
+                {a.variable && on ? (
+                  <input className="cell sprecio__in" inputMode="numeric" aria-label={`Valor de ${a.nombre}`} placeholder="$0" disabled={cerrada}
+                    value={v ? money(v) : ''}
+                    onChange={(e) => guardarCobro({ ...cobro, montos: { ...cobro.montos, [a.id]: Number(e.target.value.replace(/\D/g, '')) || 0 } }, false)}
+                    onBlur={() => guardarCobro(cobro)} />
+                ) : <b className="sprecio__v">{a.variable && !v ? 'Según el caso' : '+' + money(v)}</b>}
               </li>
             );
           })}
         </ul>
         <div className="sprecio__t"><span>Total</span><b>{money(total)}</b></div>
-        {DEMO && <p className="hint">Tarifas de ejemplo. Se cambian en <a href={link('/gestor/tarifas')}>Servicios y tarifas</a>.</p>}
+        <p className="hint">Las tarifas se cambian en <a href={link('/gestor/tarifas')}>Servicios y tarifas</a>.</p>
       </div>
 
       {f === 'solicitada' && (
@@ -277,7 +301,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
               <textarea id="smsg" rows={6} value={msg} onChange={(e) => setMsg(e.target.value)} />
               <div className="wamsg__acts">
                 <a className={'gbtn wa' + (elegida && !ocupado ? '' : ' off')} href={elegida ? waLink(celular, msg) : undefined} target="_blank" rel="noopener" aria-disabled={!elegida}
-                  onClick={(e) => { if (!elegida || ocupado) { e.preventDefault(); return; } paso({ estado: 'confirmada', inicio: elegida.toISOString(), fin: new Date(elegida.getTime() + hor.d.spa * 60000).toISOString(), datos: { extras, total: String(total) } }, 'Cita confirmada'); }}>
+                  onClick={(e) => { if (!elegida || ocupado) { e.preventDefault(); return; } paso({ estado: 'confirmada', inicio: elegida.toISOString(), fin: new Date(elegida.getTime() + hor.d.spa * 60000).toISOString(), datos: { ...cobro, total: String(total) } }, 'Cita confirmada'); }}>
                   <span className="ms" aria-hidden="true">send</span>Confirmar por WhatsApp
                 </a>
                 <button type="button" className="gbtn ghost" disabled={ocupado} onClick={() => { if (confirm(`¿Rechazar la solicitud de ${mascota}? Escríbele para contarle el motivo.`)) paso({ estado: 'cancelada' }, 'Solicitud rechazada'); }}>Rechazar</button>
@@ -285,7 +309,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
             </div>
           ) : (
             <div className="dacts">
-              <button type="button" className="gbtn" disabled={!elegida || ocupado} onClick={() => elegida && paso({ estado: 'confirmada', inicio: elegida.toISOString(), fin: new Date(elegida.getTime() + hor.d.spa * 60000).toISOString(), datos: { extras, total: String(total) } }, 'Cita confirmada')}><span className="ms" aria-hidden="true">check</span>Confirmar</button>
+              <button type="button" className="gbtn" disabled={!elegida || ocupado} onClick={() => elegida && paso({ estado: 'confirmada', inicio: elegida.toISOString(), fin: new Date(elegida.getTime() + hor.d.spa * 60000).toISOString(), datos: { ...cobro, total: String(total) } }, 'Cita confirmada')}><span className="ms" aria-hidden="true">check</span>Confirmar</button>
               <button type="button" className="gbtn ghost" disabled={ocupado} onClick={() => { if (confirm(`¿Rechazar la solicitud de ${mascota}?`)) paso({ estado: 'cancelada' }, 'Solicitud rechazada'); }}>Rechazar</button>
             </div>
           )}
@@ -343,7 +367,7 @@ function Detalle({ c, yo, p, o, t, hor, citas, mascota, servicioTxt, volver, gua
           )}
           <div className="pay"><b>Cómo pagó</b><Seg label="Cómo pagó" value={pago} opts={PAGOS.map((x) => [x, x.replace(/ \(.*/, '')] as [string, string])} onChange={setPago} /></div>
           <div className="dacts">
-            <button type="button" className="gbtn" disabled={ocupado} onClick={() => paso({ estado: 'atendida', datos: { pago, total: String(total), entregada: new Date().toISOString() } }, 'Entregada y pagada')}><span className="ms" aria-hidden="true">check</span>Entregada y pagada</button>
+            <button type="button" className="gbtn" disabled={ocupado} onClick={() => paso({ estado: 'atendida', datos: { ...cobro, pago, total: String(total), entregada: new Date().toISOString(), sin_conta: '' } }, 'Entregada y pagada')}><span className="ms" aria-hidden="true">check</span>Entregada y pagada</button>
           </div>
           <p className="conta"><span className="ms" aria-hidden="true">hourglass_top</span><span>Este baño está <b>en espera</b> en Contabilidad. Al marcarlo como entregado y pagado entran <b>{money(total)}</b> en «Baños y spa».</span></p>
         </>

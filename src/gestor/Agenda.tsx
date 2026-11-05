@@ -182,7 +182,7 @@ function MarcarHecha({ c, sugerido, cambiar }: { c: Cita; sugerido: number; camb
         <div className="fld"><label htmlFor="hp">Cómo pagó</label>
           <select id="hp" value={pago} onChange={(e) => setPago(e.target.value)}>{MEDIOS.map((m) => <option key={m}>{m}</option>)}</select></div>
       </div>
-      <button className="gbtn sm" type="button" disabled={!valor} onClick={() => cambiar({ estado: 'atendida', datos: { ...c.datos, total: String(valor), pago, hecha: new Date().toISOString() } }, 'Hecha · el valor entró a Contabilidad')}>
+      <button className="gbtn sm" type="button" disabled={!valor} onClick={() => cambiar({ estado: 'atendida', datos: { ...c.datos, total: String(valor), pago, hecha: new Date().toISOString(), sin_conta: '' } }, 'Hecha · el valor entró a Contabilidad')}>
         <span className="ms" aria-hidden="true">done_all</span>Marcar como hecha</button>
       <p className="hint">Mientras no la marques, queda «en espera» en Contabilidad y no suma.</p>
     </div>

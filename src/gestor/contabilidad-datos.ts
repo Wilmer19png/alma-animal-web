@@ -6,7 +6,7 @@
 // Mientras no se marquen quedan «en espera» y no suman. Los gastos, los ingresos sueltos, los gastos fijos
 // y el reparto se guardan en las tablas libro_contable, gastos_fijos y repartos (supabase/23-contabilidad.sql).
 import { sb, DEMO, store } from './lib';
-import { listarCitas, iso, sumarDias, SERVICIOS, type Cita } from './agenda-datos';
+import { listarCitas, cambiarCita, iso, sumarDias, SERVICIOS, type Cita } from './agenda-datos';
 import { listar as listarPedidos, cobrado, pagaAlRecibir, type Pedido } from './pedidos-datos';
 import { listarPacientes } from './clinica-datos';
 
@@ -51,7 +51,7 @@ export interface Socio { id: string; nombre: string; rol: string; pct: number }
 export type Origen = 'agenda' | 'spa' | 'pedido' | 'manual' | 'fijo';
 export interface Linea {
   id: string; fecha: string; tipo: 'ingreso' | 'gasto'; cat: Cat; concepto: string; det: string; valor: number;
-  medio: string; origen: Origen; espera: boolean; factura: string | null; mov?: Movimiento;
+  medio: string; origen: Origen; espera: boolean; factura: string | null; mov?: Movimiento; cita?: Cita;
 }
 
 /* ---------- fechas ---------- */
@@ -127,10 +127,11 @@ export async function cargarLibro(mes: string): Promise<Libro> {
 
   // citas: atendidas suman; las que ya pasaron (o están hoy en el spa) y no se han marcado quedan en espera
   for (const c of citas) {
+    if (c.datos.sin_conta) continue; // la quitaron de Contabilidad (se equivocaron al registrarla)
     const spa = c.carril === 'spa';
     const valor = Number(c.datos.total) || 0;
     const fecha = (c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio;
-    const base = { id: 'c-' + c.id, tipo: 'ingreso' as const, cat: catDeCita(c), concepto: SERVICIOS[c.servicio].txt, det: nombre(c), valor, origen: (spa ? 'spa' : 'agenda') as Origen, factura: null };
+    const base = { id: 'c-' + c.id, tipo: 'ingreso' as const, cat: catDeCita(c), concepto: SERVICIOS[c.servicio].txt, det: nombre(c), valor, origen: (spa ? 'spa' : 'agenda') as Origen, factura: null, cita: c };
     if (c.estado === 'atendida') lineas.push({ ...base, fecha: iso(new Date(fecha)), medio: String(c.datos.pago ?? '').replace(/ \(.*/, '') || '—', espera: false });
     else if (c.estado === 'confirmada' && (spa ? iso(new Date(c.inicio)) < finHoy : new Date(c.fin) < ahora))
       lineas.push({ ...base, fecha: iso(new Date(c.inicio)), medio: '—', espera: true, det: base.det + (spa ? ' · falta entregarlo' : ' · falta marcarla') });
@@ -227,6 +228,16 @@ export async function borrarMov(m: Movimiento): Promise<void> {
   const { error } = await sb!.from('libro_contable').delete().eq('id', m.id);
   if (error) throw new Error(sinPermiso(error));
   if (m.factura) await sb!.storage.from('contabilidad').remove([m.factura]).catch(() => {});
+}
+// quitar un movimiento por si se equivocaron:
+//   · a mano: se borra (con su foto);
+//   · gasto fijo pagado: se borra el pago y el gasto vuelve a quedar pendiente en «Gastos fijos»;
+//   · cita de la Agenda o del spa: la cita sigue en su lugar, pero deja de contar en Contabilidad.
+// Los pedidos se quitan cancelándolos en Pedidos.
+export async function quitarLinea(l: Linea): Promise<void> {
+  if (l.mov) return borrarMov(l.mov);
+  if (l.cita) { await cambiarCita(l.cita.id, { datos: { ...l.cita.datos, sin_conta: new Date().toISOString() } }); return; }
+  throw new Error('Los pedidos se quitan cancelándolos en Pedidos.');
 }
 export async function guardarFijo(f: Omit<GastoFijo, 'id'> & { id?: string }): Promise<GastoFijo> {
   if (DEMO) {

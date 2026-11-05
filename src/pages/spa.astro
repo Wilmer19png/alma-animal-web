@@ -137,30 +137,55 @@ const HERO_PHOTOS = SPA_HERO;
 
 <script>
   // Precios del spa: salen del gestor (Servicios y tarifas). Si allá eligen «sin precios», queda el texto de siempre.
-  interface Tarifas { mostrar: 'desde' | 'tabla' | 'no'; servicios: { nombre: string; tipo: string; desc: string; web: boolean; precios: Record<string, number | null> }[] }
+  // (mismo formato que src/gestor/tarifas-datos.ts: precio por tipo de pelo y peso, con el baño incluido)
+  interface Fila { hasta: number | null; nombre?: string; precio: number; abundante?: number | null }
+  interface Tarifas {
+    v?: number; mostrar: 'desde' | 'tabla' | 'no'; condiciones?: string[];
+    tablas?: { nombre: string; razas: string; porPeso: boolean; abundante: boolean; bano: boolean; web: boolean; filas: Fila[] }[];
+    adicionales?: { nombre: string; desc: string; precio: number; kg: number | null; precioMas: number | null; variable: boolean; web: boolean }[];
+  }
   const SB = import.meta.env.PUBLIC_SUPABASE_URL, KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
   const lista = document.querySelector<HTMLUListElement>('[data-precios]');
   if (SB && KEY && lista) {
     fetch(`${SB}/rest/v1/ajustes?clave=eq.tarifas&select=valor`, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } })
       .then((r) => (r.ok ? r.json() : []))
-      .then((filas: { valor: Tarifas }[]) => { const t = filas[0]?.valor; if (t && t.mostrar !== 'no') pintarPrecios(t, lista); })
+      .then((filas: { valor: Tarifas }[]) => { const t = filas[0]?.valor; if (t && t.v === 2 && t.mostrar !== 'no') pintarPrecios(t, lista); })
       .catch(() => {});
   }
   function pintarPrecios(t: Tarifas, ul: HTMLUListElement) {
     const plata = (n: number) => '$' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     const esc = (x: string) => x.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-    const TALLAS: [string, string][] = [['pequeno', 'Pequeño'], ['mediano', 'Mediano'], ['grande', 'Grande'], ['gigante', 'Gigante'], ['gato', 'Gato']];
-    const svs = t.servicios.filter((s) => s.web && Object.values(s.precios).some((p) => p != null));
-    if (!svs.length) return;
-    ul.innerHTML = svs.map((s) => {
-      const ps = TALLAS.filter(([k]) => s.precios[k] != null);
-      const mas = s.tipo === 'adicional' ? '+' : '';
+    const filaTxt = (tb: NonNullable<Tarifas['tablas']>[number], i: number) => {
+      const f = tb.filas[i], prev = i > 0 ? tb.filas[i - 1].hasta : null;
+      if (!tb.porPeso) return f.nombre ?? '';
+      if (f.hasta == null) return prev != null ? `Más de ${prev} kg` : 'Cualquier peso';
+      return prev == null ? `Hasta ${f.hasta} kg` : `De ${prev} a ${f.hasta} kg`;
+    };
+    const tablas = (t.tablas ?? []).filter((x) => x.web && x.filas.length);
+    const ads = (t.adicionales ?? []).filter((a) => a.web);
+    if (!tablas.length) return;
+    const filasTablas = tablas.map((tb) => {
+      const desc = [tb.razas, tb.bano ? 'Incluye el baño completo' : ''].filter(Boolean).join(' · ');
       const val = t.mostrar === 'desde'
-        ? `<b>${mas || 'Desde '}${plata(Math.min(...ps.map(([k]) => s.precios[k]!)))}</b>`
-        : `<span class="tarifas__t">${ps.map(([k, n]) => `<i>${n} <b>${mas}${plata(s.precios[k]!)}</b></i>`).join('')}</span>`;
-      return `<li><span><strong>${esc(s.nombre)}</strong><small>${esc(s.desc)}</small></span>${val}</li>`;
-    }).join('');
+        ? `<b>Desde ${plata(Math.min(...tb.filas.map((f) => f.precio).filter((n) => n > 0)))}</b>`
+        : `<span class="tarifas__t">${tb.filas.map((f, i) => `<i>${esc(filaTxt(tb, i))} <b>${plata(f.precio)}</b>${tb.abundante && f.abundante ? ` <span>· abundante ${plata(f.abundante)}</span>` : ''}</i>`).join('')}</span>`;
+      return `<li><span><strong>${esc(tb.nombre)}</strong><small>${esc(desc)}</small></span>${val}</li>`;
+    });
+    const filasAds = ads.map((a) => {
+      const val = a.variable ? (a.precio ? `+ desde ${plata(a.precio)}` : 'Según el caso')
+        : a.kg != null && a.precioMas != null ? `+${plata(a.precio)} / +${plata(a.precioMas)}` : `+${plata(a.precio)}`;
+      const desc = a.kg != null && a.precioMas != null && !a.variable ? `${a.desc} Hasta ${a.kg} kg / más de ${a.kg} kg.` : a.desc;
+      return `<li><span><strong>${esc(a.nombre)}</strong><small>${esc(desc)}</small></span><b>${val}</b></li>`;
+    });
+    ul.innerHTML = [...filasTablas, ...filasAds].join('');
     ul.hidden = false;
+    const cond = (t.condiciones ?? []).filter((x) => x.trim());
+    if (cond.length) {
+      const nota = document.createElement('ul');
+      nota.className = 'tarifas__no';
+      nota.innerHTML = cond.map((x) => `<li>${esc(x)}</li>`).join('');
+      ul.after(nota);
+    }
     const p = document.querySelector('[data-precio-txt]');
     if (p) { p.textContent = 'El valor final depende del peso y del estado del manto. Te lo confirmamos por WhatsApp antes de agendar.'; p.removeAttribute('data-c'); }
   }
@@ -335,6 +360,8 @@ const HERO_PHOTOS = SPA_HERO;
   .tarifas :global(li:has(.tarifas__t)) { flex-direction: column; align-items: flex-start; gap: 8px; }
   .tarifas :global(.tarifas__t) { display: flex; flex-wrap: wrap; gap: 6px; }
   .tarifas :global(.tarifas__t i) { font-style: normal; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: #fff; }
+  .tarifas :global(.tarifas__t i span) { opacity: .75; }
+  .price :global(.tarifas__no) { margin: 14px 0 0; padding-left: 20px; max-width: 560px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 1.4; }
   .price__actions > * { width: 100%; }
   @media (min-width: 768px) {
     .price__actions { flex-direction: row; flex-wrap: wrap; }

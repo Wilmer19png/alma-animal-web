@@ -6,7 +6,7 @@ import Shell from './Shell';
 import { DEMO, link, money, store } from './lib';
 import { iso } from './agenda-datos';
 import {
-  cargarLibro, resumen, guardarMov, borrarMov, guardarFijo, pagarSocio, deshacerPagoSocio, subirFactura, verFactura, csvDelMes,
+  cargarLibro, resumen, guardarMov, quitarLinea, guardarFijo, pagarSocio, deshacerPagoSocio, subirFactura, verFactura, csvDelMes,
   CATS_I, CATS_G, MEDIOS, catTxt, catIcon, mesActual, mesTxt, sumarMeses, venceEn,
   type Libro, type Linea, type Cat, type CatI, type CatG, type GastoFijo, type Movimiento
 } from './contabilidad-datos';
@@ -222,13 +222,19 @@ function Movimientos({ lineas, mes, intentar }: { lineas: Linea[]; mes: string; 
             <span className={'mrow__v ' + (l.espera ? 'cont__gris' : l.tipo === 'ingreso' ? 'cont__up' : 'cont__down')}>{l.espera ? '' : l.tipo === 'ingreso' ? '+ ' : '− '}{money(l.valor)}{l.espera && <small>no suma aún</small>}</span>
             <span className="mrow__a">
               {l.factura && <button type="button" className="vrow__x" aria-label="Ver la factura" title="Ver la factura" onClick={() => abrir(l.factura!)}><span className="ms">description</span></button>}
-              {l.origen === 'manual' && l.mov && <button type="button" className="vrow__x" aria-label={`Borrar ${l.concepto}`} title="Borrar" onClick={() => { if (confirm(`¿Borrar «${l.concepto}» por ${money(l.valor)}?`)) intentar(() => borrarMov(l.mov!), 'Movimiento borrado'); }}><span className="ms">delete</span></button>}
+              {(l.mov || l.cita) && <button type="button" className="vrow__x" aria-label={`Borrar ${l.concepto}`} title="Borrar" onClick={() => {
+                const que = `«${l.concepto}${l.cita ? ` · ${l.det.replace(/ · .*/, '')}` : ''}» por ${money(l.valor)}`;
+                const txt = l.origen === 'fijo' ? `¿Borrar el pago de ${que}? El gasto vuelve a quedar pendiente en Gastos fijos.`
+                  : l.cita ? `¿Quitar ${que} de Contabilidad? La cita sigue en ${l.origen === 'spa' ? 'Citas de spa' : 'la Agenda'}, pero ya no suma aquí.`
+                  : `¿Borrar ${que}? No se puede deshacer.`;
+                if (confirm(txt)) intentar(() => quitarLinea(l), l.origen === 'fijo' ? 'Pago borrado: vuelve a quedar pendiente' : l.cita ? 'Quitado de Contabilidad' : 'Movimiento borrado');
+              }}><span className="ms">delete</span></button>}
             </span>
           </div>
         ))}
         {!lista.length && <p className="vacio">No hay movimientos con este filtro.</p>}
       </div>
-      <p className="hint">Cada consulta, vacuna, baño y pedido aparece aquí solo, primero en espera. Las consultas y vacunas suman al marcarlas como hechas en la Agenda; los baños, al entregarlos en Citas de spa; los pedidos, al confirmar el pago en Pedidos.</p>
+      <p className="hint">Cada consulta, vacuna, baño y pedido aparece aquí solo, primero en espera. Las consultas y vacunas suman al marcarlas como hechas en la Agenda; los baños, al entregarlos en Citas de spa; los pedidos, al confirmar el pago en Pedidos. Si algo quedó mal registrado, bórralo con <span className="ms" aria-label="el botón de borrar">delete</span> (los pedidos se quitan cancelándolos en Pedidos).</p>
     </section>
   );
 }
