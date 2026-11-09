@@ -11,3 +11,6 @@ dist/
 vista-previa/
 # archivo de instalación de una sola vez
 supabase/PEGAR-EN-SUPABASE.sql
+
+# Excel y SQL de contabilidad: cifras privadas del negocio, no van al repositorio
+contabilidad/

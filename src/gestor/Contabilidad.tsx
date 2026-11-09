@@ -99,7 +99,7 @@ function Mes({ libro, mes, yo, intentar }: { libro: Libro; mes: string; yo: Miem
               {ing.filter((x) => x.v || x.k !== 'otro_ingreso').map((x) => (
                 <div key={x.k} className="cbar">
                   <span className="cbar__ic cbar__ic--i"><span className="ms" aria-hidden="true">{CATS_I[x.k].icon}</span></span>
-                  <span className="cbar__n">{CATS_I[x.k].txt}<small>{x.k === 'tienda' ? 'solo pedidos pagados' : x.k === 'otro_ingreso' ? 'registrados a mano' : `${x.n} ${x.k === 'spa' ? 'baños entregados' : 'hechas'}`}</small></span>
+                  <span className="cbar__n">{CATS_I[x.k].txt}<small>{x.k === 'tienda' ? 'solo pedidos pagados' : x.k === 'otro_ingreso' ? 'registrados a mano' : `${x.n} ${x.k === 'spa' ? 'baños entregados' : x.k === 'medicamento' ? 'ventas' : x.k === 'examen' || x.k === 'procedimiento' ? 'hechos' : 'hechas'}`}</small></span>
                   <span className="cbar__v">{money(x.v)}</span>
                   <span className="cbar__tr"><i style={{ width: Math.max(3, (x.v / maxI) * 100) + '%' }} /></span>
                 </div>
@@ -253,7 +253,7 @@ function Registrar({ yo, mes, intentar }: { yo: Miembro; mes: string; intentar: 
   const [err, setErr] = useState(false);
   const [ocupado, setOcupado] = useState(false);
   useEffect(() => { setFecha((f) => enMes(f)); }, [mes]); // eslint-disable-line react-hooks/exhaustive-deps
-  const opts = tipo === 'gasto' ? (Object.keys(CATS_G) as CatG[]) : (['tienda', 'consulta', 'vacuna', 'spa', 'otro_ingreso'] as CatI[]);
+  const opts = tipo === 'gasto' ? (Object.keys(CATS_G) as CatG[]) : (['tienda', 'consulta', 'medicamento', 'examen', 'procedimiento', 'vacuna', 'spa', 'otro_ingreso'] as CatI[]);
   const elegirTipo = (t: Tipo) => { setTipo(t); setCat(t === 'gasto' ? 'meta' : 'tienda'); setErr(false); };
 
   const guardar = async () => {

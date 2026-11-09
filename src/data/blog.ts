@@ -1,6 +1,6 @@
 // Blog. La doctora publica desde el gestor (módulo Blog): al publicar el sitio se leen de Supabase los artículos
 // publicados. Si todavía no hay ninguno, se muestran los de EJEMPLO (la página lo dice).
-import { COVERS, EJEMPLOS, type Post, type Block, type BlogCat } from './blog-base';
+import { COVERS, EJEMPLOS, ordenar, type Post, type Block, type BlogCat } from './blog-base';
 export * from './blog-base';
 
 // artículos publicados en Supabase (solo los que ya llegaron a su fecha: lo filtra la base de datos)
@@ -13,7 +13,7 @@ async function publicados(): Promise<Post[] | null> {
     if (!r.ok) return null;
     const filas = (await r.json()) as Fila[];
     return filas.length ? filas.map((x) => ({
-      slug: x.slug, cat: x.categoria, title: x.titulo, excerpt: x.resumen, min: x.min, date: new Date(new Date(x.publicado).getTime() - 5 * 3600000).toISOString().slice(0, 10), body: x.cuerpo,
+      slug: x.slug, cat: x.categoria, title: x.titulo, excerpt: x.resumen, min: x.min, date: new Date(new Date(x.publicado).getTime() - 5 * 3600000).toISOString().slice(0, 10), body: ordenar(x.cuerpo),
       cover: { ...COVERS[x.ilustracion % COVERS.length], ...(x.portada ? { foto: x.portada } : {}) }
     })) : null;
   } catch { return null; }
