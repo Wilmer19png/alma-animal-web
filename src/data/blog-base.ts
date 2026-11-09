@@ -114,6 +114,23 @@ export const longDate = (iso: string) => { const [y, m, d] = iso.split('-').map(
 
 // texto con **negritas** → HTML seguro
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-export const rich = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+export const rich = (s: string) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+// Un bloque «Párrafo» con varios renglones (escrito o pegado de Word/WhatsApp) se parte en bloques:
+// cada renglón es un párrafo, los que empiezan con «-», «•» o «1.» forman una lista y los que empiezan
+// con «#» son subtítulos. Así el artículo no sale todo de corrido.
+const VINETA = /^\s*(?:[-•–·]|\*(?!\*)|\d+[.)])\s+/;
+export const ordenar = (body: Block[]): Block[] => body.flatMap((b): Block[] => {
+  if (b.t !== 'p' || !b.text.includes('\n')) return [b];
+  const out: Block[] = [];
+  for (const linea of b.text.split(/\r?\n/).map((x) => x.trim()).filter(Boolean)) {
+    const ult = out[out.length - 1];
+    if (VINETA.test(linea)) {
+      const item = linea.replace(VINETA, '');
+      if (ult?.t === 'ul') ult.items.push(item); else out.push({ t: 'ul', items: [item] });
+    } else if (/^#+\s*/.test(linea)) out.push({ t: 'h2', text: linea.replace(/^#+\s*/, '').replace(/\*\*/g, '') });
+    else out.push({ t: 'p', text: linea });
+  }
+  return out;
+});
 // id para el índice a partir del subtítulo
 export const anchor = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

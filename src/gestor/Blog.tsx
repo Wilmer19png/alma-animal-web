@@ -5,7 +5,7 @@ import Shell from './Shell';
 import { DEMO, link, fechaCorta } from './lib';
 import { listar as listarProductos, type Prod } from './productos-datos';
 import { listarArticulos, guardarArticulo, borrarArticulo, subirPortada, estadoDe, slugDe, palabras, nuevo, BLOG_CATS, type Articulo, type Block, type Estado } from './blog-datos';
-import { COVERS } from '../data/blog-base';
+import { COVERS, ordenar } from '../data/blog-base';
 import { hhmm } from './agenda-datos';
 import { Seg } from './clinica-ui';
 
@@ -110,7 +110,7 @@ function Editor({ a: inicial, listo, prods, puede, yo, volver, guardado, borrado
     }
     setOcupado(true);
     try {
-      const cuerpo = a.cuerpo.filter((b) => !('text' in b) || b.text.trim()).map((b) => (b.t === 'ul' ? { ...b, items: b.items.filter((x) => x.trim()) } : b));
+      const cuerpo = ordenar(a.cuerpo).filter((b) => !('text' in b) || b.text.trim()).map((b) => (b.t === 'ul' ? { ...b, items: b.items.filter((x) => x.trim()) } : b));
       const slug = publicadoYa ? a.slug : slugDe(a.titulo);
       const n2 = await guardarArticulo({ ...a, slug, cuerpo, estado, publicado, min, por_nombre: a.por_nombre ?? yo });
       setA(n2);
@@ -156,7 +156,7 @@ function Editor({ a: inicial, listo, prods, puede, yo, volver, guardado, borrado
         <textarea id="ber" className="cell" rows={2} disabled={!puede} value={a.resumen} onChange={(x) => set({ resumen: x.target.value.replace(/\n/g, ' ') })} /></div>
 
       <div className="bcuerpo">
-        <h3 className="ch2"><span className="ms" aria-hidden="true">article</span>El artículo<small>en los textos, **así** va en negrita</small></h3>
+        <h3 className="ch2"><span className="ms" aria-hidden="true">article</span>El artículo<small>cada Enter es un párrafo nuevo · «- » al inicio hace una lista · «# » un subtítulo · **así** va en negrita</small></h3>
         {a.cuerpo.map((b, i) => {
           const tipo = TIPOS.find((x) => x.t === b.t);
           return (

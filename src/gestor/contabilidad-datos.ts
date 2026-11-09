@@ -11,11 +11,14 @@ import { listar as listarPedidos, cobrado, pagaAlRecibir, type Pedido } from './
 import { listarPacientes } from './clinica-datos';
 
 /* ---------- categorías ---------- */
-export type CatI = 'consulta' | 'vacuna' | 'spa' | 'tienda' | 'otro_ingreso';
+export type CatI = 'consulta' | 'medicamento' | 'examen' | 'procedimiento' | 'vacuna' | 'spa' | 'tienda' | 'otro_ingreso';
 export type CatG = 'arriendo' | 'servicios' | 'meta' | 'medic' | 'insumos' | 'merc' | 'otro';
 export type Cat = CatI | CatG;
 export const CATS_I: Record<CatI, { txt: string; icon: string }> = {
   consulta: { txt: 'Consultas', icon: 'stethoscope' },
+  medicamento: { txt: 'Medicamentos y antiparasitarios', icon: 'medication' },
+  examen: { txt: 'Exámenes e imágenes', icon: 'biotech' },
+  procedimiento: { txt: 'Procedimientos y cirugías', icon: 'healing' },
   vacuna: { txt: 'Vacunas', icon: 'vaccines' },
   spa: { txt: 'Baños y spa', icon: 'shower' },
   tienda: { txt: 'Tienda', icon: 'storefront' },
@@ -33,8 +36,9 @@ export const CATS_G: Record<CatG, { txt: string; icon: string; fijo?: boolean }>
 export const catTxt = (c: Cat) => (c in CATS_I ? CATS_I[c as CatI].txt : CATS_G[c as CatG].txt);
 export const catIcon = (c: Cat) => (c in CATS_I ? CATS_I[c as CatI].icon : CATS_G[c as CatG].icon);
 export const MEDIOS = ['Efectivo', 'Nequi', 'Daviplata', 'Transferencia', 'Tarjeta', 'PSE'];
-// servicio de la agenda → categoría (domicilios, radiografías y cirugías cuentan como consultas)
-const catDeCita = (c: Cita): CatI => (c.servicio === 'spa' ? 'spa' : c.servicio === 'vacuna' ? 'vacuna' : 'consulta');
+// servicio de la agenda → categoría (los domicilios cuentan como consultas)
+const catDeCita = (c: Cita): CatI =>
+  c.servicio === 'spa' ? 'spa' : c.servicio === 'vacuna' ? 'vacuna' : c.servicio === 'cirugia' ? 'procedimiento' : c.servicio === 'radiografia' ? 'examen' : 'consulta';
 
 /* ---------- tipos ---------- */
 export interface Movimiento {
