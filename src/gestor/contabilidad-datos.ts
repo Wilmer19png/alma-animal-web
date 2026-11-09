@@ -110,6 +110,9 @@ const MOVS_EJ = (): Movimiento[] => {
   ].filter((m) => m.fecha <= iso(hoy));
 };
 
+// marca de los movimientos importados del Excel (scripts/contabilidad-excel.mjs)
+export const POR_EXCEL = 'Excel Contabilidad vet';
+
 /* ---------- cargar un mes (con 6 meses atrás para arrastrar pérdidas) ---------- */
 export interface Libro { lineas: Linea[]; fijos: GastoFijo[]; movs: Movimiento[]; repartos: Reparto[]; socios: Socio[] }
 
@@ -128,10 +131,15 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   const nombre = (c: Cita) => pacs.find((p) => p.id === c.paciente_id)?.nombre ?? c.datos.mascota ?? 'Sin paciente';
   const ahora = new Date(), finHoy = iso(sumarDias(ahora, 1));
   const lineas: Linea[] = [];
+  // meses que vienen del Excel: ahí el Excel ya trae todos los baños, consultas y ventas, así que las citas
+  // y los pedidos del gestor de ese mes no se suman (si no, se cuentan dos veces)
+  const deExcel = new Set(movs.filter((m) => m.por_nombre === POR_EXCEL).map((m) => m.fecha.slice(0, 7)));
+  const enExcel = (fecha: string) => deExcel.has(fecha.slice(0, 7));
 
   // citas: atendidas suman; las que ya pasaron (o están hoy en el spa) y no se han marcado quedan en espera
   for (const c of citas) {
     if (c.datos.sin_conta) continue; // la quitaron de Contabilidad (se equivocaron al registrarla)
+    if (enExcel(iso(new Date((c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio)))) continue;
     const spa = c.carril === 'spa';
     const valor = Number(c.datos.total) || 0;
     const fecha = (c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio;
@@ -143,6 +151,7 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   // pedidos: suman cuando el pago está confirmado; los confirmados por el cliente sin pago quedan en espera
   for (const p of pedidos) {
     if (p.estado === 'cancelado') continue;
+    if (enExcel(iso(new Date(cobrado(p) ? p.pagado_en ?? p.creado : p.creado)))) continue;
     const base = { id: 'p-' + p.id, tipo: 'ingreso' as const, cat: 'tienda' as Cat, concepto: `Pedido #${p.numero}`, valor: p.total, origen: 'pedido' as Origen, factura: null };
     const medio = p.pago === 'contraentrega' ? 'Contraentrega' : p.pago === 'consultorio' ? 'En el consultorio' : p.pago === 'transferencia' ? 'Transferencia' : p.pago === 'en_linea' ? 'En línea' : '—';
     if (cobrado(p)) lineas.push({ ...base, fecha: iso(new Date(p.pagado_en ?? p.creado)), det: `${p.nombre} ${p.apellido}`, medio, espera: false });

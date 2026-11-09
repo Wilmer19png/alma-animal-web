@@ -1,15 +1,15 @@
 // Convierte el Excel de contabilidad (una hoja por mes: OCT, NOV… OCT26, NOV26) en el SQL que se pega en
 // Supabase para llenar Contabilidad del gestor.
-//   node scripts/contabilidad-excel.mjs "contabilidad/Contabilidad ACTUALIZADA.xlsx" --hasta=2026-10
+//   node scripts/contabilidad-excel.mjs "contabilidad/Contabilidad ACTUALIZADA.xlsx"
 // Escribe contabilidad/importar-excel.sql e imprime los totales por mes y categoría para revisarlos.
 // Columnas de cada hoja: B/C consultorio · E/F peluquería · H/I petshop · K/L salidas.
 // El consultorio se reparte según el nombre: consulta, medicamento, examen, procedimiento, vacuna o tienda.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
 
-// --hasta=2026-10: último mes que se importa. Desde que se usa el gestor, los baños entregados, las citas
-// atendidas y los pedidos pagados ya suman solos en Contabilidad; importar esos meses del Excel los cuenta dos veces.
-const HASTA = (process.argv.find((a) => a.startsWith('--hasta=')) ?? '--hasta=2026-10').slice(8);
+// --hasta=2026-11: último mes que se importa (por defecto, todos). En un mes que viene del Excel, Contabilidad
+// no suma las citas, baños ni pedidos del gestor de ese mes: el Excel manda (ver cargarLibro).
+const HASTA = (process.argv.find((a) => a.startsWith('--hasta=')) ?? '--hasta=9999-12').slice(8);
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const archivo = args[0] ?? 'contabilidad/Contabilidad ACTUALIZADA.xlsx';
 const salida = args[1] ?? 'contabilidad/importar-excel.sql';
@@ -94,7 +94,7 @@ const avisos = [];
 for (const h of hojas) {
   const mes = mesDe(h.nombre);
   if (!mes) { avisos.push(`Hoja «${h.nombre}» ignorada: no sé de qué mes es.`); continue; }
-  if (mes > HASTA) { avisos.push(`Hoja «${h.nombre}» no se importa: ese mes ya lo lleva el gestor (--hasta=${HASTA}).`); continue; }
+  if (mes > HASTA) { avisos.push(`Hoja «${h.nombre}» no se importa (--hasta=${HASTA}).`); continue; }
   for (const [fila, f] of Object.entries(celdas(h.ruta))) {
     for (const [ct, cv, col] of COLS) {
       const valor = Number(f[cv]);
