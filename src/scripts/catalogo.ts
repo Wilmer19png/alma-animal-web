@@ -71,8 +71,11 @@ export const esUnica = (nombre: string) => /^(único|única)$/i.test(nombre);
 export const itemCarrito = (p: Producto, v: Variante) => ({ id: p.slug, vid: v.id, name: p.nombre, variant: v.nombre, price: v.precio, icon: p.icono, tone: TONOS[p.tono] ?? TONOS.lav, max: Math.max(0, v.stock) });
 
 const enArchivo = () => location.protocol === 'file:';
+// productos con página propia (landing de anuncios): su tarjeta y su ficha llevan ahí
+export const LANDINGS: Record<string, string> = { 'bano-sanitario-perros': '/bano-sanitario-perros' };
 // dirección de la ficha (en la vista previa con doble clic es un archivo relativo)
 export const productoUrl = (slug: string) => {
+  if (LANDINGS[slug]) return enArchivo() ? '.' + LANDINGS[slug] + '.html' : LANDINGS[slug];
   if (!enArchivo()) return `/producto?p=${encodeURIComponent(slug)}`;
   const up = /\/(blog|gestor)\/[^/]*$/.test(location.pathname.replace(/\\/g, '/')) ? '../' : './';
   return `${up}producto.html?p=${encodeURIComponent(slug)}`;
