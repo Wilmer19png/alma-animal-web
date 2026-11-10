@@ -1,0 +1,717 @@
+---
+// Landing de un solo producto para los anuncios de Meta: Baño Sanitario para Perros con Pasto.
+// La venta se cierra aquí mismo (formulario contraentrega, sin carrito). Producto de Dropi: envío gratis incluido.
+// Fotos y videos en public/landing/bano-sanitario/ (sin texto: títulos y precios van en HTML).
+import Base from '../layouts/Base.astro';
+import Lockup from '../components/Lockup.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { PHONES, LEGAL, SOCIAL, whatsapp } from '../data/site';
+import { DEPARTAMENTOS, money } from '../data/shop';
+
+const P = {
+  nombre: 'Baño Sanitario para Perros con Pasto',
+  corto: 'Baño Sanitario con Pasto',
+  slug: 'bano-sanitario-perros',
+  precio: 119900,
+  medidas: '70 × 45 cm',
+  dropi: '2282266' // interno: no se muestra
+};
+const R = '/landing/bano-sanitario';
+const img = (n: string) => `${R}/img/${n}.webp`;
+const vid = (n: string) => ({ src: `${R}/video/${n}.mp4`, poster: `${R}/video/${n}-poster.webp` });
+const waPregunta = whatsapp.shop('Hola, quiero información del Baño Sanitario para perros con pasto');
+const ig = SOCIAL.instagram[0];
+const url = new URL('/bano-sanitario-perros', Astro.site).href;
+
+const galeria = [
+  { tipo: 'video', ...vid('agua-pasto-seco'), alt: 'Se echa agua sobre el pasto y queda seco' },
+  { tipo: 'img', src: img('producto-cenital-durazno'), alt: 'Baño sanitario visto desde arriba: pasto, rejilla verde y bandeja gris' },
+  { tipo: 'img', src: img('boston-terrier-encima'), alt: 'Un boston terrier sentado sobre el baño sanitario' },
+  { tipo: 'video', ...vid('perro-va-al-tapete'), alt: 'Un caniche camina hasta el tapete y se sienta' }
+] as const;
+
+const para = [
+  { t: 'Apartamento sin patio', d: '¿Sin patio? Su patio en tu balcón.', foto: img('balcon-beagle'), alt: 'Un beagle junto al baño sanitario en un balcón' },
+  { t: 'Cachorro nuevo', d: 'Un solo lugar para aprender.', foto: img('cachorro-maltes-dormido'), alt: 'Un cachorro maltés dormido junto al tapete' },
+  { t: 'Perro mayor', d: 'Para el perrito que ya no alcanza a salir a tiempo.', icono: 'favorite' },
+  { t: 'Noches de lluvia', d: 'Sin salir a mojarse a las 11 p. m.', video: vid('perro-va-al-tapete'), alt: 'Un caniche va al tapete dentro de la casa' }
+];
+
+const faq = [
+  ['¿Cuánto tarda en llegar?', 'De 2 a 5 días hábiles según tu ciudad.'],
+  ['¿Tengo que pagar el envío?', 'No, el envío es gratis a toda Colombia.'],
+  ['¿Cómo pago?', 'En efectivo cuando el mensajero te lo entregue.'],
+  ['¿Le sirve a mi perro?', `Mide ${P.medidas}. Es ideal para perros pequeños y medianos.`],
+  ['¿Y si no lo usa al principio?', 'Ponlo donde ya suele ir y llévalo allí después de comer o al despertar. Felicítalo cuando lo use. Cada perro tiene su ritmo.'],
+  ['¿Cómo se limpia? ¿Huele?', 'Vacías la bandeja y enjuagas. Recomendamos limpiarlo a diario para que no queden olores.'],
+  ['¿Puedo cambiarlo?', 'Escríbenos por WhatsApp si llega con algún defecto.']
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: P.nombre,
+  description: 'Tapete sanitario de 3 capas (pasto sintético, rejilla y bandeja), 70 × 45 cm, para perros pequeños y medianos. Lavable y reutilizable.',
+  image: [new URL(img('producto-cenital-durazno'), Astro.site).href, new URL(img('hero-pomerania-cenital'), Astro.site).href],
+  sku: P.slug,
+  brand: { '@type': 'Brand', name: 'Alma Animal' },
+  offers: {
+    '@type': 'Offer', url, priceCurrency: 'COP', price: P.precio, availability: 'https://schema.org/InStock', itemCondition: 'https://schema.org/NewCondition',
+    shippingDetails: { '@type': 'OfferShippingDetails', shippingRate: { '@type': 'MonetaryAmount', value: 0, currency: 'COP' }, shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'CO' } }
+  }
+};
+---
+<Base
+  title="Baño Sanitario para Perros con Pasto · Envío gratis · Alma Animal"
+  description="Tapete sanitario de 3 capas, 70 × 45 cm. El orín baja a la bandeja y el pasto queda seco. Envío gratis a toda Colombia y pagas al recibir."
+  waArea="shop"
+  image={new URL(img('hero-pomerania-cenital'), Astro.site).href}
+  sinWa
+>
+  <Fragment slot="head">
+    <link rel="preload" as="image" href={img('hero-pomerania-cenital')} fetchpriority="high" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <!-- ======== BARRA SUPERIOR ======== -->
+  <div slot="top" class="lp-bar">
+    <span><span class="ms" aria-hidden="true">local_shipping</span>Envío <b>GRATIS</b> a toda Colombia</span>
+    <span class="lp-bar__dot" aria-hidden="true">·</span>
+    <span><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
+  </div>
+
+  <div class="lp" data-lp data-precio={P.precio} data-slug={P.slug} data-nombre={P.nombre} data-dropi={P.dropi}
+    data-medidas={P.medidas} data-legal={LEGAL.updated} data-shop={PHONES.shop.e164}>
+
+    <!-- ======== PRIMERA PANTALLA ======== -->
+    <section class="hero" aria-labelledby="lp-titulo">
+      <div class="hero__media">
+        <figure class="hero__portada">
+          <img src={img('hero-pomerania-cenital')} alt="Un pomerania feliz acostado sobre el baño sanitario de pasto, en la sala" width="880" height="1168" fetchpriority="high" decoding="async" />
+          <div class="hero__marca"><Lockup /></div>
+          <h1 id="lp-titulo" class="hero__h1">Baño Sanitario <span>para Perros con Pasto</span></h1>
+        </figure>
+
+        <div class="gal" data-gal>
+          <div class="gal__track" data-gal-track tabindex="0" role="region" aria-roledescription="carrusel" aria-label="Fotos y videos del baño sanitario">
+            {galeria.map((g, i) => (
+              <div class="gal__slide" role="group" aria-roledescription="diapositiva" aria-label={`${i + 1} de ${galeria.length}`}>
+                {g.tipo === 'video'
+                  ? <div class="vid"><video muted loop playsinline preload="none" poster={g.poster} aria-label={g.alt} data-vid><source src={g.src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
+                  : <img src={g.src} alt={g.alt} width="600" height="600" loading="lazy" decoding="async" />}
+              </div>
+            ))}
+          </div>
+          <div class="gal__dots" aria-hidden="true">{galeria.map((_, i) => <span class:list={{ 'is-on': i === 0 }} data-dot />)}</div>
+        </div>
+      </div>
+
+      <div class="hero__info">
+        <p class="hero__sub">Su propio “patio” dentro de casa: el orín baja a la bandeja y el pasto queda seco.</p>
+        <div class="precio">
+          <b>{money(P.precio)}</b>
+          <span class="sello sello--peach"><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis</span>
+          <span class="sello sello--lav"><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
+        </div>
+        <ul class="puntos">
+          <li><span class="ms" aria-hidden="true">grass</span><span><b>3 capas:</b> pasto, rejilla y bandeja que recoge el orín</span></li>
+          <li><span class="ms" aria-hidden="true">straighten</span><span><b>{P.medidas}</b>, para perros pequeños y medianos</span></li>
+          <li><span class="ms" aria-hidden="true">recycling</span><span><b>Lavable y reutilizable</b>, sin desechables</span></li>
+        </ul>
+        <div class="ctas">
+          <a class="cta" href="#pedido" data-pedir>Pedir ahora · Pagas al recibir</a>
+          <a class="wa-btn" href={waPregunta} target="_blank" rel="noopener"><WaIcon size={22} class="" />Tengo una pregunta</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== EL PROBLEMA ======== -->
+    <section class="wrap blq blq--lav rv" aria-labelledby="lp-problema">
+      <div class="split">
+        <div class="split__txt">
+          <span class="gota" aria-hidden="true"><span class="ms">format_color_reset</span></span>
+          <h2 id="lp-problema" class="h2">¿Otra vez charcos en la sala?</h2>
+          <p class="txt">Llegas del trabajo y está el charco. Trapeas todos los días y aún huele. No es que tu perro no quiera hacerlo bien: muchas veces no alcanza a salir a tiempo, sobre todo en apartamento, de noche o cuando llueve.</p>
+        </div>
+        <div class="split__media">
+          <div class="vid vid--card"><video muted loop playsinline preload="none" poster={vid('capas-se-levantan').poster} aria-label="Se levantan el pasto y la rejilla y se ve la bandeja con el agua recogida" data-vid><source src={vid('capas-se-levantan').src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
+          <p class="cap">El orín queda en la bandeja, no en tu piso.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== CÓMO FUNCIONA ======== -->
+    <section class="wrap blq rv" aria-labelledby="lp-funciona">
+      <div class="split">
+        <div class="split__media"><img class="foto" src={img('tres-capas-flatlay')} alt="Las tres capas separadas: pasto sintético, rejilla verde y bandeja gris" width="880" height="1168" loading="lazy" decoding="async" /></div>
+        <div class="split__txt">
+          <h2 id="lp-funciona" class="h2">Así funciona: <b class="gt">3 capas</b></h2>
+          <ol class="pasos">
+            <li><span class="pasos__n">1</span><span><b>Pasto suave:</b> se siente como afuera y lo reconoce como “su lugar”.</span></li>
+            <li><span class="pasos__n">2</span><span><b>Rejilla:</b> deja pasar el líquido y mantiene las patas secas.</span></li>
+            <li><span class="pasos__n">3</span><span><b>Bandeja:</b> recoge el orín para que no toque tu piso.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="duo rv">
+        <figure class="duo__item">
+          <div class="vid vid--card"><video muted loop playsinline preload="none" poster={vid('armado-3-capas').poster} aria-label="Las tres capas encajan una sobre otra" data-vid><source src={vid('armado-3-capas').src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
+          <figcaption>Las 3 capas encajan en segundos.</figcaption>
+        </figure>
+        <figure class="duo__item">
+          <img class="foto foto--sq" src={img('pasto-gotas-macro')} alt="Primer plano del pasto sintético con gotas de agua" width="600" height="600" loading="lazy" decoding="async" />
+          <figcaption><b>Patas secas, piso limpio.</b></figcaption>
+        </figure>
+      </div>
+
+      <!-- medidas: cotas dibujadas con CSS sobre la foto -->
+      <div class="medidas rv">
+        <figure class="medidas__fig">
+          <img src={img('producto-medidas-base')} alt="El baño sanitario visto desde arriba" width="600" height="600" loading="lazy" decoding="async" />
+          <span class="cota cota--ancho" aria-hidden="true"><span>70 cm</span></span>
+          <span class="cota cota--alto" aria-hidden="true"><span>45 cm</span></span>
+        </figure>
+        <div class="medidas__txt">
+          <h3 class="h3"><span class="ms" aria-hidden="true">straighten</span>Mide 70 × 45 cm</h3>
+          <p class="txt">Para perros pequeños y medianos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PARA QUIÉN ES ======== -->
+    <section class="blq blq--peach rv" aria-labelledby="lp-para">
+      <div class="wrap"><h2 id="lp-para" class="h2">¿Para quién es?</h2></div>
+      <ul class="cards" tabindex="0" aria-label="Para quién es: desliza para ver más">
+        {para.map((c) => (
+          <li class="pcard">
+            <div class="pcard__media">
+              {c.foto && <img src={c.foto} alt={c.alt} width="600" height="600" loading="lazy" decoding="async" />}
+              {c.video && <div class="vid"><video muted loop playsinline preload="none" poster={c.video.poster} aria-label={c.alt} data-vid><source src={c.video.src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>}
+              {c.icono && <span class="pcard__ic" aria-hidden="true"><span class="ms">{c.icono}</span></span>}
+            </div>
+            <div class="pcard__txt"><h3>{c.t}</h3><p>{c.d}</p></div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- ======== AHORRO ======== -->
+    <section class="wrap blq rv" aria-labelledby="lp-ahorro">
+      <div class="ahorro">
+        <h2 id="lp-ahorro" class="h2">Deja de comprar empapadores cada semana</h2>
+        <p class="txt">Los desechables se acaban y se botan. Este se lava y se vuelve a usar.</p>
+        <div class="vs">
+          <div class="vs__col vs__col--no"><span class="ms" aria-hidden="true">delete</span><b>Empapadores</b><span>Se compran cada semana</span></div>
+          <div class="vs__col vs__col--si"><span class="ms" aria-hidden="true">savings</span><b>Baño Sanitario</b><span>Se lava y se reutiliza</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== CÓMO SE LIMPIA ======== -->
+    <section class="wrap blq blq--lav rv" aria-labelledby="lp-limpia">
+      <div class="split split--rev">
+        <div class="split__txt">
+          <h2 id="lp-limpia" class="h2">Cómo se <b class="gt">limpia</b></h2>
+          <ol class="pasos pasos--ic">
+            <li><span class="pasos__n"><span class="ms" aria-hidden="true">grid_on</span></span><span>Levantas el pasto con la rejilla.</span></li>
+            <li><span class="pasos__n"><span class="ms" aria-hidden="true">inbox</span></span><span>Vacías la bandeja.</span></li>
+            <li><span class="pasos__n"><span class="ms" aria-hidden="true">water_drop</span></span><span>Enjuagas y listo.</span></li>
+          </ol>
+        </div>
+        <div class="split__media duo duo--tight">
+          <div class="vid vid--card"><video muted loop playsinline preload="none" poster={vid('lavado-facil').poster} aria-label="El tapete se lava en el lavadero" data-vid><source src={vid('lavado-facil').src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
+          <img class="foto" src={img('lavado-bandeja')} alt="Se enjuaga la bandeja en el lavadero" width="880" height="1168" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== CÓMO COMPRAS ======== -->
+    <section class="wrap blq rv" aria-labelledby="lp-compras">
+      <div class="split">
+        <div class="split__media"><img class="foto" src={img('entrega-pagas-al-recibir')} alt="Una persona recibe el paquete en la puerta de su casa y paga en efectivo" width="880" height="1168" loading="lazy" decoding="async" /></div>
+        <div class="split__txt">
+          <h2 id="lp-compras" class="h2">Pides hoy, <b class="gt">pagas cuando te llega</b></h2>
+          <ol class="pasos">
+            <li><span class="pasos__n">1</span><span>Llenas el formulario (1 minuto).</span></li>
+            <li><span class="pasos__n">2</span><span>Te confirmamos por WhatsApp.</span></li>
+            <li><span class="pasos__n">3</span><span>Lo recibes en tu casa y pagas en efectivo al mensajero.</span></li>
+          </ol>
+          <p class="confianza"><span class="ms" aria-hidden="true">verified</span><span><a href="/">Alma Animal</a> · Consultorio, spa y petshop en Pereira · <a href={ig.url} target="_blank" rel="noopener">Instagram {ig.handle}</a></span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== FORMULARIO DE PEDIDO ======== -->
+    <section id="pedido" class="wrap blq pedido" aria-labelledby="lp-pedido" data-pedido>
+      <div class="pedido__card">
+        <div data-form-wrap>
+          <h2 id="lp-pedido" class="h2 pedido__h">Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>
+          <div class="resumen">
+            <img src={img('producto-cenital-durazno')} alt="" width="72" height="72" loading="lazy" decoding="async" />
+            <p><b>{P.nombre}</b><span><span data-cant-txt>1 unidad</span> · <b data-total>{money(P.precio)}</b> · Envío gratis</span></p>
+          </div>
+
+          <form class="form" novalidate data-form>
+            <fieldset class="cant">
+              <legend>Cantidad</legend>
+              <label><input type="radio" name="cantidad" value="1" checked /><span><b>1 unidad</b>{money(P.precio)}</span></label>
+              <label><input type="radio" name="cantidad" value="2" /><span><b>2 unidades</b>{money(P.precio * 2)}</span></label>
+            </fieldset>
+            <p class="hint">Todos los campos son obligatorios, menos las indicaciones.</p>
+            <div class="grid2">
+              <div class="fld"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" autocomplete="given-name" placeholder="Ej: Laura" required /><span class="err" id="f-nombre-err">Escribe tu nombre.</span></div>
+              <div class="fld"><label for="f-apellido">Apellido</label><input id="f-apellido" name="apellido" autocomplete="family-name" placeholder="Ej: Gómez" required /><span class="err" id="f-apellido-err">Escribe tu apellido.</span></div>
+              <div class="fld"><label for="f-celular">Celular</label><input id="f-celular" name="celular" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Ej: 300 123 4567" required /><span class="hint">Te escribimos a este número por WhatsApp.</span><span class="err" id="f-celular-err">Escribe un celular de 10 dígitos que empiece por 3. Ej: 300 123 4567</span></div>
+              <div class="fld"><label for="f-depto">Departamento</label>
+                <select id="f-depto" name="departamento" autocomplete="address-level1" required>
+                  <option value="">Elige el departamento</option>
+                  {DEPARTAMENTOS.map((d) => <option>{d}</option>)}
+                </select>
+                <span class="err" id="f-depto-err">Elige el departamento.</span>
+              </div>
+              <div class="fld"><label for="f-ciudad">Ciudad o municipio</label><input id="f-ciudad" name="ciudad" autocomplete="address-level2" placeholder="Ej: Pereira" required /><span class="err" id="f-ciudad-err">Escribe la ciudad o el municipio.</span></div>
+              <div class="fld"><label for="f-barrio">Barrio</label><input id="f-barrio" name="barrio" placeholder="Ej: Álamos" required /><span class="err" id="f-barrio-err">Escribe el barrio.</span></div>
+              <div class="fld full"><label for="f-direccion">Dirección completa</label><input id="f-direccion" name="direccion" autocomplete="street-address" placeholder="Ej: Calle 19 # 8-34" required /><span class="err" id="f-direccion-err">Escribe la dirección de entrega.</span></div>
+              <div class="fld full"><label for="f-indicaciones">Indicaciones (opcional)</label><textarea id="f-indicaciones" name="indicaciones" maxlength="300" placeholder="Torre, apto, punto de referencia"></textarea></div>
+            </div>
+            <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos" target="_blank">términos</a> y la <a href="/privacidad" target="_blank">política de datos</a> para que me contacten sobre este pedido.</span></label>
+            <span class="err" id="f-datos-err">Para enviar tu pedido necesitamos tu autorización.</span>
+            <button class="cta cta--full" type="submit" data-enviar><span data-enviar-txt>Confirmar pedido · Pago contraentrega</span></button>
+            <p class="err" role="alert" data-fallo hidden>No pudimos guardar el pedido. Te abrimos WhatsApp con el pedido ya escrito para que no se pierda. Si no se abrió, <a href="#" target="_blank" rel="noopener" data-fallo-wa>toca aquí</a>.</p>
+          </form>
+        </div>
+
+        <div class="gracias" data-gracias hidden>
+          <span class="gracias__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
+          <h2 class="h2" tabindex="-1" data-gracias-h>¡Pedido recibido!</h2>
+          <p class="txt">Te escribimos por WhatsApp para confirmar. Recuerda: <b>pagas al recibir</b>.</p>
+          <p class="gracias__cod">Tu código de pedido: <b data-codigo></b></p>
+          <a class="wa-btn wa-btn--lg" href="#" target="_blank" rel="noopener" data-gracias-wa><WaIcon size={22} class="" />Confirmar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======== PREGUNTAS FRECUENTES ======== -->
+    <section class="wrap blq faq rv" aria-labelledby="lp-faq">
+      <h2 id="lp-faq" class="h2">Preguntas frecuentes</h2>
+      <div class="faq__list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}<span class="ms" aria-hidden="true">expand_more</span></summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+      <a class="wa-btn" href={waPregunta} target="_blank" rel="noopener"><WaIcon size={22} class="" />¿Otra pregunta? Escríbenos</a>
+    </section>
+  </div>
+
+  <!-- ======== BOTÓN FIJO EN CELULAR ======== -->
+  <div class="mbar" data-mbar>
+    <a class="cta cta--full" href="#pedido" data-pedir>Pedir ahora · {money(P.precio)}</a>
+  </div>
+</Base>
+
+<script>
+  import { insert, supabaseReady } from '../scripts/supabase';
+  import { track } from '../scripts/meta';
+
+  const root = document.querySelector<HTMLElement>('[data-lp]')!;
+  const D = root.dataset;
+  const PRECIO = Number(D.precio);
+  const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const wa = (t: string) => `https://wa.me/${D.shop}?text=${encodeURIComponent(t)}`;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+
+  /* ---------- píxel: vio el producto ---------- */
+  const contenido = { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, currency: 'COP' };
+  track('ViewContent', { ...contenido, value: PRECIO });
+  let checkout = false;
+  const iniciar = () => {
+    if (checkout) return;
+    checkout = true;
+    track('InitiateCheckout', { ...contenido, value: PRECIO * cantidad(), num_items: cantidad() });
+  };
+  document.querySelectorAll('[data-pedir]').forEach((a) => a.addEventListener('click', iniciar));
+
+  /* ---------- datos del anuncio (utm y fbclid) para medir qué campaña vende ---------- */
+  const q = new URLSearchParams(location.search);
+  const atribucion: Record<string, string> = {};
+  for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid']) {
+    const v = q.get(k); if (v) atribucion[k] = v.slice(0, 200);
+  }
+
+  /* ---------- videos: en bucle solo mientras se ven; con «reducir movimiento», póster y botón ---------- */
+  const videos = [...document.querySelectorAll<HTMLVideoElement>('[data-vid]')];
+  if (reduce) {
+    videos.forEach((v) => {
+      const b = v.parentElement!.querySelector<HTMLButtonElement>('[data-vid-btn]')!;
+      b.hidden = false;
+      b.addEventListener('click', () => {
+        if (v.paused) { v.play().catch(() => {}); b.setAttribute('aria-label', 'Pausar video'); b.querySelector('.ms')!.textContent = 'pause'; }
+        else { v.pause(); b.setAttribute('aria-label', 'Reproducir video'); b.querySelector('.ms')!.textContent = 'play_arrow'; }
+      });
+    });
+  } else if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target as HTMLVideoElement;
+      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+    }), { threshold: .35 });
+    videos.forEach((v) => io.observe(v));
+  }
+
+  /* ---------- aparición suave al bajar ---------- */
+  const rv = [...document.querySelectorAll<HTMLElement>('.rv')];
+  if (!reduce && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-rv');
+    const io = new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    rv.forEach((el) => io.observe(el));
+  }
+
+  /* ---------- galería deslizable con puntos ---------- */
+  const track_ = document.querySelector<HTMLElement>('[data-gal-track]')!;
+  const dots = [...document.querySelectorAll<HTMLElement>('[data-dot]')];
+  track_.addEventListener('scroll', () => {
+    const i = Math.round(track_.scrollLeft / track_.clientWidth);
+    dots.forEach((d, j) => d.classList.toggle('is-on', j === i));
+  }, { passive: true });
+
+  /* ---------- formulario ---------- */
+  const form = document.querySelector<HTMLFormElement>('[data-form]')!;
+  const val = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
+  const cantidad = () => Number((form.querySelector<HTMLInputElement>('[name="cantidad"]:checked'))?.value ?? 1);
+  const pintar = () => {
+    const n = cantidad();
+    document.querySelector('[data-cant-txt]')!.textContent = n === 1 ? '1 unidad' : `${n} unidades`;
+    document.querySelector('[data-total]')!.textContent = money(PRECIO * n);
+  };
+  form.addEventListener('change', pintar);
+  form.addEventListener('focusin', iniciar);
+
+  const celular = () => val('celular').replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, '');
+  const reglas: [string, () => boolean][] = [
+    ['nombre', () => val('nombre').length > 0],
+    ['apellido', () => val('apellido').length > 0],
+    ['celular', () => /^3\d{9}$/.test(celular())],
+    ['depto', () => val('departamento').length > 0],
+    ['ciudad', () => val('ciudad').length > 0],
+    ['barrio', () => val('barrio').length > 0],
+    ['direccion', () => val('direccion').length > 0],
+    ['datos', () => (form.elements.namedItem('datos') as HTMLInputElement).checked]
+  ];
+  const marcar = (k: string, malo: boolean) => {
+    const err = document.getElementById(`f-${k}-err`)!;
+    err.classList.toggle('is-on', malo);
+    const campo = document.getElementById(`f-${k}`) ?? form.querySelector<HTMLElement>(`[name="${k}"]`);
+    if (campo) { campo.setAttribute('aria-invalid', String(malo)); if (malo) campo.setAttribute('aria-describedby', err.id); else campo.removeAttribute('aria-describedby'); }
+    return campo;
+  };
+  const validar = () => {
+    let primero: HTMLElement | null = null;
+    for (const [k, ok] of reglas) { const campo = marcar(k, !ok()); if (!ok() && !primero) primero = campo; }
+    primero?.focus();
+    return !primero;
+  };
+  // al corregir un campo con error, el aviso se va
+  form.addEventListener('input', (e) => {
+    const el = e.target as HTMLElement;
+    if (el.getAttribute('aria-invalid') !== 'true') return;
+    const r = reglas.find(([k]) => `f-${k}` === el.id || (el as HTMLInputElement).name === k);
+    if (r && r[1]()) marcar(r[0], false);
+  });
+
+  let enviando = false;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (enviando || !validar()) return;
+    const n = cantidad();
+    const total = PRECIO * n;
+    const codigo = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
+    const datos = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), departamento: val('departamento'), ciudad: val('ciudad'), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
+    const fila = {
+      codigo, ...datos, correo: null, indicaciones: datos.indicaciones || null,
+      items: [{ id: D.slug, nombre: D.nombre, variante: D.medidas, precio: PRECIO, cantidad: n, proveedor: 'dropi', dropi_id: D.dropi }],
+      subtotal: total, envio: 0, prioritario: false, total, obsequio: false, aviso_compras: false,
+      acepto_terminos: true, version_politicas: D.legal
+    };
+    const msg = [
+      `Hola, Alma Animal. Quiero confirmar mi pedido ${codigo}:`,
+      `• ${n} × ${D.nombre} — ${money(total)}`,
+      'Envío gratis · Pago contraentrega', '',
+      `Para: ${datos.nombre} ${datos.apellido} · ${datos.celular}`,
+      `Dirección: ${datos.direccion}, barrio ${datos.barrio}, ${datos.ciudad} (${datos.departamento})`,
+      datos.indicaciones ? `Indicaciones: ${datos.indicaciones}` : ''
+    ].filter(Boolean).join('\n');
+
+    enviando = true;
+    const btn = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
+    btn.disabled = true;
+    form.querySelector('[data-enviar-txt]')!.textContent = 'Enviando tu pedido…';
+    form.querySelector<HTMLElement>('[data-fallo]')!.hidden = true;
+
+    // con los datos del anuncio; si la base aún no tiene esas columnas, se guarda sin ellas
+    let res = PREVIEW ? 'ok' : await insert('pedidos', { ...fila, fuente: 'landing-meta', modo_envio: 'gratis', atribucion: Object.keys(atribucion).length ? atribucion : null });
+    if (res === 'error') res = await insert('pedidos', fila);
+
+    enviando = false;
+    btn.disabled = false;
+    form.querySelector('[data-enviar-txt]')!.textContent = 'Confirmar pedido · Pago contraentrega';
+
+    if (res === 'ok') {
+      track('Purchase', { ...contenido, value: total, num_items: n, order_id: codigo, contents: [{ id: D.slug, quantity: n, item_price: PRECIO }] },
+        { celular: datos.celular, nombre: datos.nombre, apellido: datos.apellido, ciudad: datos.ciudad, departamento: datos.departamento }, codigo);
+      document.querySelector<HTMLElement>('[data-form-wrap]')!.hidden = true;
+      const g = document.querySelector<HTMLElement>('[data-gracias]')!;
+      g.hidden = false;
+      g.querySelector('[data-codigo]')!.textContent = codigo;
+      g.querySelector<HTMLAnchorElement>('[data-gracias-wa]')!.href = wa(msg);
+      document.querySelector<HTMLElement>('[data-mbar]')!.hidden = true;
+      document.getElementById('pedido')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      g.querySelector<HTMLElement>('[data-gracias-h]')!.focus({ preventScroll: true });
+    } else {
+      // no se pierde la venta: el pedido sale por WhatsApp
+      const href = wa(`Hola, Alma Animal. Quiero hacer este pedido (${codigo}):\n` + msg.split('\n').slice(1).join('\n'));
+      const f = form.querySelector<HTMLElement>('[data-fallo]')!;
+      f.querySelector<HTMLAnchorElement>('[data-fallo-wa]')!.href = href;
+      f.hidden = false;
+      window.open(href, '_blank', 'noopener') ?? (location.href = href);
+    }
+  });
+
+  /* ---------- barra fija: se oculta cuando el formulario está en pantalla ---------- */
+  const mbar = document.querySelector<HTMLElement>('[data-mbar]')!;
+  const hero = document.querySelector<HTMLElement>('.ctas')!;
+  // también mientras se ven los botones de la primera pantalla (no repetir el mismo botón dos veces)
+  const visibles = new Set<Element>();
+  const obs = new IntersectionObserver((es) => {
+    es.forEach((e) => (e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target)));
+    mbar.classList.toggle('is-off', visibles.size > 0);
+  });
+  obs.observe(document.getElementById('pedido')!);
+  obs.observe(hero);
+</script>
+
+<style>
+  /* ---------- barra superior ---------- */
+  .lp-bar { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 8px; padding: 8px 12px; background: var(--ink); color: #fff; font: 500 13.5px/1.3 var(--font-sans); text-align: center; }
+  .lp-bar > span { display: inline-flex; align-items: center; gap: 6px; }
+  .lp-bar .ms { font-size: 18px; color: var(--peach); }
+  .lp-bar b { font-weight: 700; color: var(--peach); }
+  .lp-bar__dot { opacity: .6; }
+  @media (max-width: 439px) { .lp-bar .ms { display: none; } }
+  @media (min-width: 440px) { .lp-bar { font-size: 14px; } }
+
+  .lp { --gap: 20px; }
+  .h2 { font: 400 clamp(28px, 6.4vw, 44px)/1.08 var(--font-serif); letter-spacing: -.02em; color: var(--ink); }
+  .h2 b { font-weight: 700; }
+  .h3 { display: flex; align-items: center; gap: 8px; font: 700 22px/1.2 var(--font-serif); }
+  .h3 .ms { color: var(--primary); font-size: 24px; }
+  .txt { font: 400 17px/1.6 var(--font-sans); color: var(--ink-muted); }
+  .txt b { color: var(--ink); }
+  .cap, figcaption { font: 500 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  figure { margin: 0; }
+  .foto { width: 100%; height: auto; border-radius: 22px; background: var(--surface-3); }
+
+  /* ---------- botones ---------- */
+  .cta { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 24px; border-radius: 999px; border: 0; background: var(--primary); color: #fff; font: 700 17px/1.2 var(--font-sans); text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 6px 16px rgb(77 63 108 / .28); transition: background .2s, transform .2s var(--ease-out); }
+  .cta:hover { background: var(--primary-strong); color: #fff; }
+  .cta:active { transform: scale(.98); }
+  .cta:disabled { opacity: .7; cursor: progress; }
+  .cta--full { width: 100%; }
+  .wa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px; border-radius: 999px; background: var(--wa); color: var(--wa-dark); font: 700 16px/1.2 var(--font-sans); text-decoration: none; transition: filter .2s; }
+  .wa-btn:hover { color: var(--wa-dark); filter: brightness(1.06); }
+  .wa-btn--lg { min-height: 56px; width: 100%; }
+
+  /* ---------- primera pantalla ---------- */
+  .hero { display: grid; gap: 18px; padding-bottom: 32px; }
+  .hero__portada { position: relative; aspect-ratio: 3 / 4; max-height: 82svh; overflow: hidden; background: var(--lavender); }
+  .hero__portada img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%; }
+  .hero__marca { position: absolute; top: 12px; left: 12px; padding: 4px 10px 4px 4px; border-radius: 16px; background: rgb(254 247 254 / .82); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .hero__marca :global(.lockup) { transform: scale(.8); transform-origin: left center; display: flex; }
+  .hero__h1 { position: absolute; left: 0; right: 0; top: 18%; padding: 0 var(--gutter); font: 700 clamp(36px, 10.5vw, 60px)/1 var(--font-serif); letter-spacing: -.03em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / .5); }
+  .hero__h1 span { display: block; margin-top: 6px; font-size: .52em; font-weight: 400; letter-spacing: -.01em; color: var(--primary-strong); }
+  .hero__info { display: flex; flex-direction: column; gap: 18px; padding-inline: var(--gutter); }
+  .hero__sub { font: 400 19px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .precio { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .precio > b { font: 700 40px/1 var(--font-sans); letter-spacing: -.02em; margin-right: 4px; }
+  .sello { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 999px; font: 700 14px/1 var(--font-sans); }
+  .sello .ms { font-size: 18px; }
+  .sello--peach { background: var(--peach); color: var(--peach-ink); }
+  .sello--lav { background: var(--lavender); color: #372C42; }
+  .puntos { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .puntos li { display: flex; gap: 12px; align-items: flex-start; font: 400 16.5px/1.45 var(--font-sans); }
+  .puntos .ms { flex: none; width: 36px; height: 36px; font-size: 22px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-3); color: var(--primary); }
+  .ctas { display: grid; gap: 10px; }
+
+  /* galería deslizable */
+  .gal { padding-inline: var(--gutter); }
+  .gal__track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 22px; }
+  .gal__track::-webkit-scrollbar { display: none; }
+  .gal__slide { flex: 0 0 100%; scroll-snap-align: center; aspect-ratio: 1; border-radius: 22px; overflow: hidden; background: var(--surface-3); }
+  .gal__slide > img, .gal__slide .vid, .gal__slide video { width: 100%; height: 100%; object-fit: cover; }
+  .gal__dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+  .gal__dots span { width: 8px; height: 8px; border-radius: 4px; background: var(--line); transition: width .25s var(--ease-out), background .2s; }
+  .gal__dots span.is-on { width: 22px; background: var(--primary); }
+
+  /* videos */
+  .vid { position: relative; overflow: hidden; background: var(--surface-3); }
+  .vid video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .vid--card { border-radius: 22px; aspect-ratio: 3 / 4; }
+  .vid__btn { position: absolute; right: 12px; bottom: 12px; width: 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgb(255 255 255 / .92); color: var(--primary-strong); cursor: pointer; box-shadow: var(--shadow-1); }
+  .vid__btn .ms { font-size: 28px; }
+
+  /* ---------- bloques ---------- */
+  .blq { padding-block: var(--section); }
+  .blq--lav, .blq--peach { border-radius: 24px; }
+  .blq--lav { background: #EFE6F3; }
+  .blq--peach { background: #FDEBDD; }
+  .wrap.blq--lav, .wrap.blq--peach { width: calc(100% - 2 * 12px); margin-inline: auto; padding-inline: calc(var(--gutter) - 4px); }
+  section.blq--peach { margin-inline: 12px; }
+  .split { display: grid; gap: 24px; align-items: center; }
+  .split__txt { display: flex; flex-direction: column; gap: 16px; }
+  .split__media { display: flex; flex-direction: column; gap: 10px; }
+  .gota { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: #fff; color: var(--primary); }
+  .gota .ms { font-size: 30px; }
+
+  .pasos { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .pasos li { display: flex; gap: 14px; align-items: flex-start; font: 400 17px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .pasos li b { color: var(--ink); }
+  .pasos__n { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--grad-alma); color: #362954; font: 700 16px/1 var(--font-sans); }
+  .pasos--ic .pasos__n { border-radius: 12px; background: #fff; color: var(--primary); }
+  .pasos--ic .ms { font-size: 22px; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; align-items: start; }
+  .duo--tight { margin-top: 0; }
+  .duo__item { display: flex; flex-direction: column; gap: 8px; }
+  .duo .vid--card, .duo .foto { aspect-ratio: 3 / 4; object-fit: cover; height: 100%; }
+  .duo .foto--sq { aspect-ratio: 3 / 4; }
+
+  /* medidas con cotas */
+  .medidas { display: grid; gap: 16px; align-items: center; margin-top: 32px; padding: 16px; border-radius: 24px; background: var(--surface-2); }
+  .medidas__fig { position: relative; border-radius: 18px; overflow: hidden; }
+  .medidas__fig img { width: 100%; height: auto; }
+  .medidas__txt { display: flex; flex-direction: column; gap: 6px; padding-inline: 4px; }
+  /* la bandeja ocupa ~15 % a ~84,5 % de ancho y ~27 % a ~72 % de alto en la foto */
+  .cota { position: absolute; display: flex; align-items: center; justify-content: center; color: var(--primary-strong); }
+  .cota span { padding: 3px 9px; border-radius: 999px; background: #fff; font: 700 clamp(12px, 3.4vw, 15px)/1 var(--font-sans); box-shadow: 0 0 0 1.5px var(--primary); }
+  .cota--ancho { left: 15%; right: 15.5%; top: 17%; height: 2px; background: var(--primary); }
+  .cota--ancho::before, .cota--ancho::after { content: ''; position: absolute; top: -6px; width: 2px; height: 14px; background: var(--primary); }
+  .cota--ancho::before { left: 0; } .cota--ancho::after { right: 0; }
+  .cota--alto { top: 27%; bottom: 28%; left: 7%; width: 2px; background: var(--primary); }
+  .cota--alto::before, .cota--alto::after { content: ''; position: absolute; left: -6px; width: 14px; height: 2px; background: var(--primary); }
+  .cota--alto::before { top: 0; } .cota--alto::after { bottom: 0; }
+  .cota--alto span { white-space: nowrap; }
+
+  /* tarjetas deslizables */
+  .cards { list-style: none; margin: 20px 0 0; padding: 0 var(--gutter) 6px; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none; }
+  .cards::-webkit-scrollbar { display: none; }
+  .pcard { flex: 0 0 min(78%, 300px); scroll-snap-align: start; display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgb(98 63 33 / .08); }
+  .pcard__media { aspect-ratio: 1; background: var(--lavender); display: grid; place-items: center; overflow: hidden; }
+  .pcard__media img, .pcard__media .vid { width: 100%; height: 100%; object-fit: cover; }
+  .pcard__ic { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--primary); }
+  .pcard__ic .ms { font-size: 52px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
+  .pcard__txt { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+  .pcard__txt h3 { font: 700 19px/1.25 var(--font-serif); }
+  .pcard__txt p { font: 400 15.5px/1.45 var(--font-sans); color: var(--ink-muted); }
+
+  /* ahorro */
+  .ahorro { display: flex; flex-direction: column; gap: 14px; }
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .vs__col { display: flex; flex-direction: column; gap: 6px; padding: 18px 16px; border-radius: 22px; font: 400 15.5px/1.4 var(--font-sans); }
+  .vs__col .ms { font-size: 28px; }
+  .vs__col b { font: 700 18px/1.2 var(--font-serif); }
+  .vs__col--no { background: var(--surface-3); color: var(--ink-muted); }
+  .vs__col--no b { color: var(--ink-muted); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+  .vs__col--si { background: var(--grad-alma); color: #362954; }
+
+  .confianza { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; background: var(--surface-2); font: 500 15px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .confianza .ms { color: var(--primary); }
+
+  /* ---------- formulario ---------- */
+  .pedido { scroll-margin-top: 48px; }
+  .pedido__card { padding: 20px 16px; border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft), 0 12px 32px rgb(54 41 84 / .08); }
+  .pedido__h span { display: block; font-size: .62em; color: var(--primary); margin-top: 4px; }
+  .resumen { display: flex; gap: 12px; align-items: center; margin: 16px 0; padding: 10px; border-radius: 18px; background: var(--surface-2); }
+  .resumen img { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; flex: none; }
+  .resumen p { display: flex; flex-direction: column; gap: 2px; font: 400 15px/1.35 var(--font-sans); color: var(--ink-muted); }
+  .resumen p > b { color: var(--ink); font-size: 16px; }
+  .resumen span b { color: var(--ink); }
+  .form { display: flex; flex-direction: column; gap: 18px; }
+  .cant { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cant legend { font: 600 15px/1.3 var(--font-sans); margin-bottom: 8px; padding: 0; }
+  .cant label { position: relative; cursor: pointer; }
+  .cant input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .cant label > span { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--line); font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); transition: border-color .15s, background .15s; }
+  .cant label > span b { color: var(--ink); font-size: 16px; }
+  .cant input:checked + span { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
+  .cant input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .grid2 { display: grid; gap: 16px; }
+  .fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .fld label { font: 600 15px/1.3 var(--font-sans); }
+  .fld input, .fld select, .fld textarea { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 16px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; transition: border-color .15s, box-shadow .15s; }
+  .fld textarea { min-height: 84px; padding: 14px 16px; resize: vertical; }
+  .fld input::placeholder, .fld textarea::placeholder { color: #6E6585; }
+  .fld input:focus, .fld select:focus, .fld textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  .fld [aria-invalid="true"] { border-color: #B4271F; }
+  .hint { font: 400 14px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .err { display: none; font: 600 14px/1.4 var(--font-sans); color: #B4271F; }
+  .err.is-on, p.err:not([hidden]) { display: block; }
+  .consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
+  .consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
+  .consent [aria-invalid="true"] { outline: 2px solid #B4271F; outline-offset: 2px; }
+
+  .gracias { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px 4px; text-align: center; }
+  .gracias__ic { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #E3F4E7; color: #1D7A37; }
+  .gracias__ic .ms { font-size: 44px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
+  .gracias__cod { font: 500 16px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .gracias__cod b { color: var(--ink); letter-spacing: .04em; }
+
+  /* ---------- preguntas ---------- */
+  .faq { display: flex; flex-direction: column; gap: 20px; }
+  .faq__list { display: flex; flex-direction: column; gap: 10px; }
+  .faq details { border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 12px 16px; font: 600 16.5px/1.35 var(--font-sans); cursor: pointer; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .ms { color: var(--primary); transition: transform .2s var(--ease); }
+  .faq details[open] summary .ms { transform: rotate(180deg); }
+  .faq details p { padding: 0 16px 16px; font: 400 16px/1.55 var(--font-sans); color: var(--ink-muted); }
+  .faq > .wa-btn { align-self: flex-start; }
+
+  /* ---------- barra fija en celular ---------- */
+  .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 16px max(10px, env(safe-area-inset-bottom)); background: rgb(254 247 254 / .96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 -1px 0 var(--line-soft), 0 -6px 16px rgb(54 41 84 / .08); transition: transform .3s var(--ease-out), visibility .3s; }
+  .mbar.is-off { transform: translateY(110%); visibility: hidden; }
+  :global(body:has(.mbar)) { padding-bottom: 80px; }
+
+  /* ---------- aparición suave ---------- */
+  :global(.js-rv) .rv { opacity: 0; transform: translateY(12px); transition: opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+  :global(.js-rv) .rv.is-in { opacity: 1; transform: none; }
+
+  /* ---------- tableta y escritorio ---------- */
+  @media (min-width: 768px) {
+    .split { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .split--rev .split__txt { order: 2; }
+    .split__media { width: 100%; max-width: 440px; justify-self: center; }
+    .split__media.duo { max-width: 560px; }
+    .duo:not(.split__media) { max-width: 720px; margin-inline: auto; }
+    .grid2 { grid-template-columns: 1fr 1fr; }
+    .fld.full { grid-column: 1 / -1; }
+    .pedido__card { max-width: 760px; margin-inline: auto; padding: 32px; }
+    .medidas { grid-template-columns: 1.2fr 1fr; padding: 24px; max-width: 880px; margin-inline: auto; }
+    .ctas { grid-template-columns: auto auto; justify-content: start; }
+    .faq { max-width: 820px; }
+  }
+  @media (min-width: 1000px) {
+    .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: start; max-width: 1344px; margin-inline: auto; padding: 24px var(--gutter) 48px; }
+    .hero__media { display: grid; gap: 14px; }
+    .hero__portada { border-radius: 28px; max-height: none; }
+    .gal { padding: 0; }
+    .gal__track { overflow: visible; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .gal__dots { display: none; }
+    .hero__info { position: sticky; top: 64px; padding: 24px 0 0; }
+    .hero__h1 { padding: 0 32px; }
+    .cards { max-width: 1344px; margin-inline: auto; overflow: visible; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .mbar { display: none; }
+    :global(body:has(.mbar)) { padding-bottom: 0; }
+  }
+</style>

@@ -3,10 +3,10 @@ import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp, PHONES, LEGAL } from '../data/site';
-import { DEMO, SHIPPING, GIFT, PAGOS, money, CIUDADES } from '../data/shop';
+import { DEMO, SHIPPING, GIFT, PAGOS, money, CIUDADES, DEPARTAMENTOS } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
-const DEPTS = ['Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bogotá D.C.', 'Bolívar', 'Boyacá', 'Caldas', 'Caquetá', 'Casanare', 'Cauca', 'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 'Guaviare', 'Huila', 'La Guajira', 'Magdalena', 'Meta', 'Nariño', 'Norte de Santander', 'Putumayo', 'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada'];
+const DEPTS = DEPARTAMENTOS;
 const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virginia', 'Marsella', 'Apía', 'Balboa', 'Belén de Umbría', 'Guática', 'La Celia', 'Mistrató', 'Pueblo Rico', 'Quinchía', 'Santuario'];
 ---
 <Base
@@ -418,7 +418,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       track('Purchase', {
         order_id: order.code, value: r.total, currency: 'COP', content_type: 'product', content_ids: r.items.map((i) => i.id),
         contents: r.items.map((i) => ({ id: i.id, quantity: i.cantidad, item_price: i.precio })), num_items: r.items.reduce((s, i) => s + i.cantidad, 0)
-      }, { correo: order.fields.correo, celular: order.fields.celular, nombre: order.fields.nombre, apellido: order.fields.apellido, ciudad: order.fields.ciudad, departamento: order.fields.departamento });
+      }, { correo: order.fields.correo, celular: order.fields.celular, nombre: order.fields.nombre, apellido: order.fields.apellido, ciudad: order.fields.ciudad, departamento: order.fields.departamento }, order.code);
       $('[data-done-name]').textContent = order.fields.nombre;
       $('[data-done-code]').textContent = order.code;
       $('[data-done-cel]').textContent = order.fields.celular;

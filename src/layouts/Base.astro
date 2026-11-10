@@ -5,12 +5,12 @@ import CartDrawer from '../components/CartDrawer.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp } from '../data/site';
 
-interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop'; image?: string }
-const { title, description, waMessage, waArea = 'vet', image } = Astro.props;
+interface Props { title: string; description: string; waMessage?: string; waArea?: 'vet' | 'shop'; image?: string; sinWa?: boolean }
+const { title, description, waMessage, waArea = 'vet', image, sinWa = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const waHref = whatsapp[waArea](waMessage);
 // subconjunto de íconos (deben ir en orden alfabético)
-const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward', 'auto_stories', 'bolt', 'brush', 'calendar_month', 'call', 'chat', 'check', 'check_circle', 'chevron_right', 'clean_hands', 'close', 'content_cut', 'cookie', 'cruelty_free', 'delete', 'dentistry', 'description', 'favorite', 'hearing', 'home_health', 'info', 'link', 'local_fire_department', 'local_shipping', 'location_on', 'loyalty', 'mail', 'map', 'mark_email_read', 'medical_services', 'menu', 'movie', 'new_releases', 'pause', 'person', 'pest_control', 'pets', 'photo_camera', 'photo_library', 'pill', 'play_arrow', 'play_circle', 'public', 'radiology', 'redeem', 'remove', 'school', 'search', 'sell', 'set_meal', 'shopping_bag', 'shower', 'smart_display', 'soap', 'sound_detection_dog_barking', 'spa', 'sports_baseball', 'stethoscope', 'storefront', 'tune', 'two_wheeler', 'vaccines', 'verified', 'waves', 'wifi_off'];
+const ICONS = ['add', 'add_shopping_cart', 'air', 'apartment', 'arrow_back', 'arrow_forward', 'auto_stories', 'bedtime', 'bolt', 'brush', 'calendar_month', 'call', 'chat', 'check', 'check_circle', 'chevron_right', 'clean_hands', 'cleaning_services', 'close', 'content_cut', 'cookie', 'cruelty_free', 'delete', 'dentistry', 'description', 'eco', 'expand_more', 'favorite', 'format_color_reset', 'grass', 'grid_on', 'hearing', 'home_health', 'inbox', 'info', 'link', 'local_fire_department', 'local_shipping', 'location_on', 'loyalty', 'mail', 'map', 'mark_email_read', 'medical_services', 'menu', 'movie', 'new_releases', 'pause', 'payments', 'person', 'pest_control', 'pets', 'photo_camera', 'photo_library', 'pill', 'play_arrow', 'play_circle', 'public', 'radiology', 'rainy', 'recycling', 'redeem', 'remove', 'savings', 'school', 'search', 'sell', 'set_meal', 'shopping_bag', 'shower', 'smart_display', 'soap', 'sound_detection_dog_barking', 'spa', 'sports_baseball', 'stethoscope', 'storefront', 'straighten', 'tune', 'two_wheeler', 'vaccines', 'verified', 'water_drop', 'waves', 'wifi_off'];
 ---
 <!doctype html>
 <html lang="es-CO">
@@ -37,6 +37,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..800&family=Gowun+Batang:wght@400;700&display=swap" />
   <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&icon_names=${ICONS.join(',')}&display=block`} />
+  <slot name="head" />
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -47,7 +48,7 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   </main>
   <Footer />
   <CartDrawer />
-  <a class="fab-wa" href={waHref} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><WaIcon size={30} class="" /></a>
+  {!sinWa && <a class="fab-wa" href={waHref} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><WaIcon size={30} class="" /></a>}
 
   <script>
     import '../scripts/contenido';
