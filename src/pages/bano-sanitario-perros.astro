@@ -3,7 +3,7 @@
 // La venta se cierra aquí mismo (formulario contraentrega, sin carrito). Producto de Dropi: envío gratis incluido.
 // Fotos y videos en public/landing/bano-sanitario/ (sin texto: títulos y precios van en HTML).
 import Base from '../layouts/Base.astro';
-import Lockup from '../components/Lockup.astro';
+import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { PHONES, LEGAL, SOCIAL, whatsapp } from '../data/site';
 import { DEPARTAMENTOS, money } from '../data/shop';
@@ -73,22 +73,28 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 
-  <!-- ======== BARRA SUPERIOR ======== -->
+  <!-- ======== BARRA DE ENVÍO + MENÚ DEL SITIO ======== -->
   <div slot="top" class="lp-bar">
     <span><span class="ms" aria-hidden="true">local_shipping</span>Envío <b>GRATIS</b> a toda Colombia</span>
     <span class="lp-bar__dot" aria-hidden="true">·</span>
     <span><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
   </div>
+  <SiteHeader slot="top" />
 
   <div class="lp" data-lp data-precio={P.precio} data-slug={P.slug} data-nombre={P.nombre} data-dropi={P.dropi}
     data-medidas={P.medidas} data-legal={LEGAL.updated} data-shop={PHONES.shop.e164}>
+
+    <nav class="wrap crumbs" aria-label="Estás en">
+      <a href="/petshop">Petshop</a><span class="ms" aria-hidden="true">chevron_right</span>
+      <a href="/petshop#higiene">Higiene</a><span class="ms" aria-hidden="true">chevron_right</span>
+      <span aria-current="page">{P.corto}</span>
+    </nav>
 
     <!-- ======== PRIMERA PANTALLA ======== -->
     <section class="hero" aria-labelledby="lp-titulo">
       <div class="hero__media">
         <figure class="hero__portada">
           <img src={img('hero-pomerania-cenital')} alt="Un pomerania feliz acostado sobre el baño sanitario de pasto, en la sala" width="880" height="1168" fetchpriority="high" decoding="async" />
-          <div class="hero__marca"><Lockup /></div>
           <h1 id="lp-titulo" class="hero__h1">Baño Sanitario <span>para Perros con Pasto</span></h1>
         </figure>
 
@@ -494,7 +500,7 @@ const jsonLd = {
 
 <style>
   /* ---------- barra superior ---------- */
-  .lp-bar { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 8px; padding: 8px 12px; background: var(--ink); color: #fff; font: 500 13.5px/1.3 var(--font-sans); text-align: center; }
+  .lp-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 8px; padding: 8px 12px; background: var(--ink); color: #fff; font: 500 13.5px/1.3 var(--font-sans); text-align: center; }
   .lp-bar > span { display: inline-flex; align-items: center; gap: 6px; }
   .lp-bar .ms { font-size: 18px; color: var(--peach); }
   .lp-bar b { font-weight: 700; color: var(--peach); }
@@ -503,6 +509,11 @@ const jsonLd = {
   @media (min-width: 440px) { .lp-bar { font-size: 14px; } }
 
   .lp { --gap: 20px; }
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding-top: 12px; padding-bottom: 12px; font: 500 14px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .crumbs a { color: var(--primary); text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .crumbs .ms { font-size: 16px; }
+  .crumbs [aria-current] { color: var(--ink); }
   .h2 { font: 400 clamp(28px, 6.4vw, 44px)/1.08 var(--font-serif); letter-spacing: -.02em; color: var(--ink); }
   .h2 b { font-weight: 700; }
   .h3 { display: flex; align-items: center; gap: 8px; font: 700 22px/1.2 var(--font-serif); }
@@ -527,9 +538,7 @@ const jsonLd = {
   .hero { display: grid; gap: 18px; padding-bottom: 32px; }
   .hero__portada { position: relative; aspect-ratio: 3 / 4; max-height: 82svh; overflow: hidden; background: var(--lavender); }
   .hero__portada img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%; }
-  .hero__marca { position: absolute; top: 12px; left: 12px; padding: 4px 10px 4px 4px; border-radius: 16px; background: rgb(254 247 254 / .82); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-  .hero__marca :global(.lockup) { transform: scale(.8); transform-origin: left center; display: flex; }
-  .hero__h1 { position: absolute; left: 0; right: 0; top: 18%; padding: 0 var(--gutter); font: 700 clamp(36px, 10.5vw, 60px)/1 var(--font-serif); letter-spacing: -.03em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / .5); }
+  .hero__h1 { position: absolute; left: 0; right: 0; top: 9%; padding: 0 var(--gutter); font: 700 clamp(36px, 10.5vw, 60px)/1 var(--font-serif); letter-spacing: -.03em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / .5); }
   .hero__h1 span { display: block; margin-top: 6px; font-size: .52em; font-weight: 400; letter-spacing: -.01em; color: var(--primary-strong); }
   .hero__info { display: flex; flex-direction: column; gap: 18px; padding-inline: var(--gutter); }
   .hero__sub { font: 400 19px/1.5 var(--font-sans); color: var(--ink-muted); }
@@ -629,7 +638,7 @@ const jsonLd = {
   .confianza .ms { color: var(--primary); }
 
   /* ---------- formulario ---------- */
-  .pedido { scroll-margin-top: 48px; }
+  .pedido { scroll-margin-top: 84px; }
   .pedido__card { padding: 20px 16px; border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft), 0 12px 32px rgb(54 41 84 / .08); }
   .pedido__h span { display: block; font-size: .62em; color: var(--primary); margin-top: 4px; }
   .resumen { display: flex; gap: 12px; align-items: center; margin: 16px 0; padding: 10px; border-radius: 18px; background: var(--surface-2); }
@@ -702,13 +711,13 @@ const jsonLd = {
     .faq { max-width: 820px; }
   }
   @media (min-width: 1000px) {
-    .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: start; max-width: 1344px; margin-inline: auto; padding: 24px var(--gutter) 48px; }
+    .hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: start; max-width: 1344px; margin-inline: auto; padding: 0 var(--gutter) 48px; }
     .hero__media { display: grid; gap: 14px; }
     .hero__portada { border-radius: 28px; max-height: none; }
     .gal { padding: 0; }
     .gal__track { overflow: visible; display: grid; grid-template-columns: repeat(4, 1fr); }
     .gal__dots { display: none; }
-    .hero__info { position: sticky; top: 64px; padding: 24px 0 0; }
+    .hero__info { position: sticky; top: 96px; padding: 24px 0 0; }
     .hero__h1 { padding: 0 32px; }
     .cards { max-width: 1344px; margin-inline: auto; overflow: visible; display: grid; grid-template-columns: repeat(4, 1fr); }
     .mbar { display: none; }

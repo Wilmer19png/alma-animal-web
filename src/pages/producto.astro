@@ -70,7 +70,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
 
 <script>
   import { cart, progress, money } from '../scripts/cart';
-  import { catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
+  import { LANDINGS, catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
   import { TAGS } from '../data/shop';
   import { avisarAgregado } from '../scripts/add-buttons';
@@ -78,6 +78,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
 
   const SHOP = '573017925910';
   const slug = new URLSearchParams(location.search).get('p') ?? '';
+  if (LANDINGS[slug]) location.replace(LANDINGS[slug] + location.search.replace(/[?&]p=[^&]*/, '').replace(/^&/, '?'));
   const section = document.querySelector<HTMLElement>('[data-product]')!;
   const info = document.querySelector<HTMLElement>('[data-info]')!;
   const gallery = section.querySelector<HTMLElement>('.gallery')!;
