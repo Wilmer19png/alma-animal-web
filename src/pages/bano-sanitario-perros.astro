@@ -1,12 +1,14 @@
 ---
 // Landing de un solo producto para los anuncios de Meta: Baño Sanitario para Perros con Pasto.
-// «Pedir ahora» agrega el producto y lleva al carrito y checkout de siempre; «Agregar al carrito» lo deja en el carrito.
+// «Pedir ahora» abre el checkout por pasos en una ventana flotante (sin salir de la página); el mismo checkout está
+// al final de la página. «Agregar al carrito» lo deja en el carrito de siempre.
 // Producto de Dropi: envío gratis incluido. Reseñas con estrellas y foto (supabase/28, se publican tras revisarlas).
 // Fotos y videos en public/landing/bano-sanitario/ (sin texto: títulos y precios van en HTML).
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import PedirCta from '../components/PedirCta.astro';
+import CheckoutLanding from '../components/CheckoutLanding.astro';
 import { PHONES, LEGAL, SOCIAL, whatsapp } from '../data/site';
 import { money } from '../data/shop';
 
@@ -18,6 +20,9 @@ const P = {
   medidas: '70 × 45 cm',
   dropi: '2282266' // interno: no se muestra
 };
+// Promoción con fecha de fin REAL (ej. '2026-11-30T23:59:00-05:00'). Con null no sale el letrero.
+// El precio tachado sale solo si en el gestor la variante tiene «precio antes» (un precio que de verdad se cobró).
+const PROMO: { hasta: string | null; texto: string } = { hasta: null, texto: 'Envío gratis a toda Colombia' };
 const R = '/landing/bano-sanitario';
 const img = (n: string) => `${R}/img/${n}.webp`;
 const vid = (n: string) => ({ src: `${R}/video/${n}.mp4`, poster: `${R}/video/${n}-poster.webp` });
@@ -115,9 +120,12 @@ const jsonLd = {
       </div>
 
       <div class="hero__info">
+        <a class="hero__stars" href="#opiniones" data-hero-stars><span class="stars" aria-hidden="true">☆☆☆☆☆</span><span data-hero-stars-txt>Sé el primero en opinar</span></a>
         <p class="hero__sub">Su propio “patio” dentro de casa: el orín baja a la bandeja y el pasto queda seco.</p>
         <div class="precio">
+          <s class="antes" data-antes hidden></s>
           <b>{money(P.precio)}</b>
+          <span class="off" data-off hidden></span>
           <span class="sello sello--peach"><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis</span>
           <span class="sello sello--lav"><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
         </div>
@@ -126,7 +134,8 @@ const jsonLd = {
           <li><span class="ms" aria-hidden="true">straighten</span><span><b>{P.medidas}</b>, para perros pequeños y medianos</span></li>
           <li><span class="ms" aria-hidden="true">recycling</span><span><b>Lavable y reutilizable</b>, sin desechables</span></li>
         </ul>
-        <div class="ctas" data-ctas-hero><PedirCta wa={waPregunta} nota={false} /></div>
+        {PROMO.hasta && <p class="promo" data-promo={PROMO.hasta} hidden><span class="ms" aria-hidden="true">timer</span><span>{PROMO.texto} · termina en <b data-promo-t></b></span></p>}
+        <div class="ctas" data-ctas-hero><PedirCta nota={false} /></div>
       </div>
     </section>
 
@@ -252,18 +261,6 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- ======== CIERRE DE COMPRA ======== -->
-    <section id="pedido" class="wrap blq pedido rv" aria-labelledby="lp-pedido">
-      <div class="pedido__card">
-        <h2 id="lp-pedido" class="h2 pedido__h">Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>
-        <div class="resumen">
-          <img src={img('producto-cenital-durazno')} alt="" width="72" height="72" loading="lazy" decoding="async" />
-          <p><b>{P.nombre}</b><span><b>{money(P.precio)}</b> · {P.medidas} · Envío gratis a toda Colombia</span></p>
-        </div>
-        <PedirCta wa={waPregunta} />
-      </div>
-    </section>
-
     <!-- ======== RESEÑAS ======== -->
     <section id="opiniones" class="wrap blq resenas rv" aria-labelledby="lp-resenas" data-resenas>
       <div class="resenas__head">
@@ -320,9 +317,26 @@ const jsonLd = {
         ))}
       </div>
       <a class="wa-btn" href={waPregunta} target="_blank" rel="noopener"><WaIcon size={22} class="" />¿Otra pregunta? Escríbenos</a>
-      <PedirCta />
+    </section>
+
+    <!-- ======== CHECKOUT AL FINAL DE LA PÁGINA ======== -->
+    <section id="pedido" class="wrap blq pedido" aria-labelledby="f-t">
+      <div class="pedido__card">
+        <CheckoutLanding pre="f" titulo slug={P.slug} nombre={P.nombre} precio={P.precio} variante={P.medidas} foto={img('producto-cenital-durazno')} dropi={P.dropi} legal={LEGAL.updated} shop={PHONES.shop.e164} />
+      </div>
     </section>
   </div>
+
+  <!-- ======== VENTANA FLOTANTE DE PEDIDO ======== -->
+  <dialog class="ckd" data-ck-dialog aria-labelledby="ckd-t">
+    <div class="ckd__in">
+      <div class="ckd__head">
+        <p class="ckd__t" id="ckd-t">Pide tu Baño Sanitario</p>
+        <button type="button" class="ckd__x" data-ck-cerrar aria-label="Cerrar"><span class="ms" aria-hidden="true">close</span></button>
+      </div>
+      <CheckoutLanding pre="m" slug={P.slug} nombre={P.nombre} precio={P.precio} variante={P.medidas} foto={img('producto-cenital-durazno')} dropi={P.dropi} legal={LEGAL.updated} shop={PHONES.shop.e164} />
+    </div>
+  </dialog>
 
   <!-- ======== BOTÓN FIJO EN CELULAR ======== -->
   <div class="mbar" data-mbar>
@@ -344,7 +358,6 @@ const jsonLd = {
   const SB_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const enArchivo = location.protocol === 'file:';
-  const CARRITO = enArchivo ? './carrito.html' : '/carrito';
 
   /* ---------- píxel: vio el producto (AddToCart, InitiateCheckout y Purchase salen del carrito de siempre) ---------- */
   track('ViewContent', { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, value: PRECIO, currency: 'COP' });
@@ -368,26 +381,24 @@ const jsonLd = {
     const v = p?.variantes[0];
     // Dropi maneja el inventario: si en la tienda figura en cero, igual se puede pedir
     if (p && v) item = { ...itemCarrito(p, v), max: Math.max(v.stock, 10) };
+    // precio tachado: solo si en el gestor tiene un «precio antes» mayor (promoción real)
+    if (v?.antes && v.antes > v.precio) {
+      const s = document.querySelector<HTMLElement>('[data-antes]')!, off = document.querySelector<HTMLElement>('[data-off]')!;
+      s.textContent = '$' + v.antes.toLocaleString('es-CO'); s.setAttribute('aria-label', 'Antes ' + s.textContent); s.hidden = false;
+      off.textContent = '-' + Math.round((1 - v.precio / v.antes) * 100) + '%'; off.hidden = false;
+    }
   }).catch(() => { /* queda el producto base */ });
-  const enCarrito = () => cart.items().some((i) => i.id === item.id);
 
   document.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    const pedir = t.closest<HTMLButtonElement>('[data-pedir]');
-    if (pedir) {
-      if (!enCarrito()) cart.add(item);
-      location.href = CARRITO;
-      return;
-    }
     const agregar = t.closest<HTMLButtonElement>('[data-agregar]');
     if (agregar) {
       cart.add(item);
       avisarAgregado(item);
       agregar.classList.add('is-added');
-      const txt = agregar.lastChild!;
-      const antes = txt.textContent;
-      txt.textContent = '¡Agregado!';
-      window.setTimeout(() => { agregar.classList.remove('is-added'); txt.textContent = antes; }, 1400);
+      const ic = agregar.querySelector('.ms')!;
+      ic.textContent = 'check';
+      window.setTimeout(() => { agregar.classList.remove('is-added'); ic.textContent = 'add_shopping_cart'; }, 1400);
     }
   });
 
@@ -433,7 +444,25 @@ const jsonLd = {
     mbar.classList.toggle('is-off', visibles.size > 0);
   });
   obs.observe(document.querySelector('[data-ctas-hero]')!);
+  document.addEventListener('ck:listo', () => mbar.classList.add('is-off'));
   obs.observe(document.getElementById('pedido')!);
+
+  /* ---------- promoción: cuenta regresiva hasta su fecha real de fin ---------- */
+  const promo = document.querySelector<HTMLElement>('[data-promo]');
+  if (promo) {
+    const fin = new Date(promo.dataset.promo!).getTime();
+    const t = promo.querySelector<HTMLElement>('[data-promo-t]')!;
+    const dos = (n: number) => String(n).padStart(2, '0');
+    const tic = () => {
+      const ms = fin - Date.now();
+      if (ms <= 0) { promo.hidden = true; return false; }
+      const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, sg = Math.floor(ms / 1e3) % 60;
+      t.textContent = (d ? d + (d === 1 ? ' día ' : ' días ') : '') + dos(h) + ':' + dos(m) + ':' + dos(sg);
+      promo.hidden = false;
+      return true;
+    };
+    if (tic()) { const iv = window.setInterval(() => { if (!tic()) window.clearInterval(iv); }, 1000); }
+  }
 
   /* ---------- reseñas publicadas ---------- */
   const lista = document.querySelector<HTMLElement>('[data-lista]')!;
@@ -451,6 +480,10 @@ const jsonLd = {
         vacio.hidden = true;
         const media = rs.reduce((s, x) => s + x.estrellas, 0) / rs.length;
         prom.hidden = false;
+        const hs = document.querySelector<HTMLElement>('[data-hero-stars]')!;
+        hs.querySelector('.stars')!.textContent = estrellasTxt(Math.round(media));
+        hs.querySelector('[data-hero-stars-txt]')!.textContent = `${media.toFixed(1).replace('.', ',')} · ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}`;
+        hs.setAttribute('aria-label', `${media.toFixed(1).replace('.', ',')} de 5 estrellas, ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}. Ver opiniones`);
         prom.innerHTML = `<span class="stars" aria-hidden="true">${estrellasTxt(Math.round(media))}</span><b>${media.toFixed(1).replace('.', ',')}</b> de 5 · ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}`;
         lista.innerHTML = rs.map((x) => `<li class="resena">
           <div class="resena__top"><span class="stars" role="img" aria-label="${x.estrellas} de 5 estrellas">${estrellasTxt(x.estrellas)}</span><time datetime="${esc(x.creado)}">${fecha(x.creado)}</time></div>
@@ -595,6 +628,14 @@ const jsonLd = {
   .hero__info { display: flex; flex-direction: column; gap: 18px; padding-inline: var(--gutter); }
   .hero__sub { font: 400 19px/1.5 var(--font-sans); color: var(--ink-muted); }
   .precio { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .hero__stars { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font: 600 14.5px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .hero__stars:hover { color: var(--primary-strong); text-decoration: underline; }
+  .hero__stars .stars { font-size: 20px; }
+  .antes { font: 500 20px/1 var(--font-sans); color: var(--ink-soft); }
+  .off { display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; background: #B4271F; color: #fff; font: 700 14px/1 var(--font-sans); }
+  .promo { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #FDEBDD; color: var(--peach-ink); font: 500 15px/1.35 var(--font-sans); }
+  .promo .ms { font-size: 24px; color: #B4571F; }
+  .promo b { font-variant-numeric: tabular-nums; color: var(--ink); }
   .precio > b { font: 700 40px/1 var(--font-sans); letter-spacing: -.02em; margin-right: 4px; }
   .sello { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 999px; font: 700 14px/1 var(--font-sans); }
   .sello .ms { font-size: 18px; }
@@ -698,6 +739,23 @@ const jsonLd = {
   .resumen p { display: flex; flex-direction: column; gap: 2px; font: 400 15px/1.35 var(--font-sans); color: var(--ink-muted); }
   .resumen p > b { color: var(--ink); font-size: 16px; }
   .resumen span b { color: var(--ink); }
+
+  /* ---------- ventana flotante de pedido ---------- */
+  .ckd { width: min(100% - 24px, 560px); max-height: min(92dvh, 900px); margin: auto; padding: 0; border: 0; border-radius: 26px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px rgb(43 30 72 / .35); }
+  .ckd::backdrop { background: rgb(43 30 72 / .55); backdrop-filter: blur(3px); }
+  .ckd__in { display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 20px; }
+  .ckd__head { position: sticky; top: -16px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -16px -16px 0; padding: 14px 12px 10px 18px; background: var(--surface); border-bottom: 1px solid var(--line-soft); }
+  .ckd__t { font: 700 20px/1.2 var(--font-serif); }
+  .ckd__x { width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--surface-3); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .ckd__x:hover { background: #E6DEEA; }
+  :global(html:has(dialog[open])) { overflow: hidden; }
+  @media (max-width: 639px) {
+    /* en celular, hoja que sube desde abajo */
+    .ckd { width: 100%; max-width: none; max-height: 94dvh; margin: auto 0 0; border-radius: 26px 26px 0 0; }
+    .ckd[open] { animation: ckd-sube .3s var(--ease-out); }
+  }
+  @keyframes ckd-sube { from { transform: translateY(40px); opacity: .4; } }
+  @media (prefers-reduced-motion: reduce) { .ckd[open] { animation: none; } }
 
   /* ---------- reseñas ---------- */
   .resenas { display: flex; flex-direction: column; gap: 18px; }

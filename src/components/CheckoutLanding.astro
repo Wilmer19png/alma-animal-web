@@ -1,0 +1,367 @@
+---
+// Checkout por pasos de las landings de producto (contraentrega, sin salir de la página).
+// Se usa dos veces: dentro de la ventana flotante que abre «Pedir ahora» ([data-pedir]) y al final de la página.
+// Pasos: 1 Tu pedido (cantidad) · 2 Envío (datos) · 3 Confirmar. Guarda en la tabla pedidos, como el carrito.
+import { DEPARTAMENTOS, money } from '../data/shop';
+import WaIcon from './WaIcon.astro';
+interface Props { pre: string; slug: string; nombre: string; precio: number; variante: string; foto: string; dropi?: string; legal: string; shop: string; titulo?: boolean }
+const { pre, slug, nombre, precio, variante, foto, dropi, legal, shop, titulo = false } = Astro.props;
+const id = (x: string) => `${pre}-${x}`;
+const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
+---
+<div class="ck" data-ck data-slug={slug} data-nombre={nombre} data-precio={precio} data-variante={variante} data-dropi={dropi} data-legal={legal} data-shop={shop}>
+  {titulo && <h2 class="ck__titulo" id={id('t')}>Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>}
+
+  <ol class="ck__pasos" data-ck-pasos>
+    {PASOS.map((p, i) => <li class:list={{ 'is-on': i === 0 }} data-ind={i}><span class="ck__n" aria-hidden="true">{i + 1}</span><span>{p}</span></li>)}
+  </ol>
+  <p class="sr-only" aria-live="polite" data-ck-live></p>
+
+  <form class="ck__form" novalidate data-ck-form>
+    <!-- PASO 1 · TU PEDIDO -->
+    <div class="ck__panel" data-paso="0">
+      <div class="ck__prod">
+        <img src={foto} alt="" width="80" height="80" loading="lazy" decoding="async" />
+        <p><b>{nombre}</b><span>{variante} · Envío gratis a toda Colombia</span></p>
+      </div>
+      <fieldset class="ck__cant">
+        <legend>¿Cuántos quieres?</legend>
+        <label><input type="radio" name={id('cant')} value="1" checked /><span><b>1 unidad</b>{money(precio)}</span></label>
+        <label><input type="radio" name={id('cant')} value="2" /><span><b>2 unidades</b>{money(precio * 2)}</span></label>
+      </fieldset>
+      <dl class="ck__tot">
+        <div><dt>Envío</dt><dd>Gratis</dd></div>
+        <div class="ck__tot-t"><dt>Total a pagar al recibir</dt><dd data-ck-total>{money(precio)}</dd></div>
+      </dl>
+      <button class="ck__btn" type="button" data-sig>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
+    </div>
+
+    <!-- PASO 2 · DATOS DE ENVÍO -->
+    <div class="ck__panel" data-paso="1" hidden>
+      <p class="ck__hint">Sin crear cuenta. Los campos con <span class="req">*</span> son obligatorios.</p>
+      <div class="ck__grid">
+        <div class="ck__fld"><label for={id('nombre')}>Nombre <span class="req">*</span></label><input id={id('nombre')} name="nombre" maxlength="80" autocomplete="given-name" placeholder="Ej: Laura" /><span class="ck__err" id={id('nombre-err')}>Escribe tu nombre.</span></div>
+        <div class="ck__fld"><label for={id('apellido')}>Apellido <span class="req">*</span></label><input id={id('apellido')} name="apellido" maxlength="80" autocomplete="family-name" placeholder="Ej: Gómez" /><span class="ck__err" id={id('apellido-err')}>Escribe tu apellido.</span></div>
+        <div class="ck__fld"><label for={id('celular')}>Celular <span class="req">*</span></label><input id={id('celular')} name="celular" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Ej: 300 123 4567" /><span class="ck__hint">Te escribimos a este número por WhatsApp.</span><span class="ck__err" id={id('celular-err')}>Escribe un celular de 10 dígitos que empiece por 3.</span></div>
+        <div class="ck__fld"><label for={id('correo')}>Correo (opcional)</label><input id={id('correo')} name="correo" type="email" maxlength="120" autocomplete="email" placeholder="Ej: laura@correo.com" /><span class="ck__err" id={id('correo-err')}>Revisa el correo. Ej: laura@correo.com</span></div>
+        <div class="ck__fld"><label for={id('depto')}>Departamento <span class="req">*</span></label>
+          <select id={id('depto')} name="departamento" autocomplete="address-level1">
+            <option value="">Elige el departamento</option>
+            {DEPARTAMENTOS.map((d) => <option>{d}</option>)}
+          </select>
+          <span class="ck__err" id={id('depto-err')}>Elige el departamento.</span>
+        </div>
+        <div class="ck__fld"><label for={id('ciudad')}>Ciudad o municipio <span class="req">*</span></label><input id={id('ciudad')} name="ciudad" maxlength="80" autocomplete="address-level2" placeholder="Ej: Pereira" /><span class="ck__err" id={id('ciudad-err')}>Escribe la ciudad o el municipio.</span></div>
+        <div class="ck__fld ck__full"><label for={id('direccion')}>Dirección completa <span class="req">*</span></label><input id={id('direccion')} name="direccion" maxlength="160" autocomplete="street-address" placeholder="Ej: Calle 19 # 8-34" /><span class="ck__err" id={id('direccion-err')}>Escribe la dirección de entrega.</span></div>
+        <div class="ck__fld"><label for={id('barrio')}>Barrio <span class="req">*</span></label><input id={id('barrio')} name="barrio" maxlength="80" placeholder="Ej: Álamos" /><span class="ck__err" id={id('barrio-err')}>Escribe el barrio.</span></div>
+        <div class="ck__fld"><label for={id('notas')}>Indicaciones (opcional)</label><input id={id('notas')} name="indicaciones" maxlength="300" placeholder="Torre, apto, referencia" /></div>
+      </div>
+      <div class="ck__nav">
+        <button class="ck__atras" type="button" data-atras><span class="ms" aria-hidden="true">arrow_back</span>Atrás</button>
+        <button class="ck__btn" type="button" data-sig>Revisar mi pedido<span class="ms" aria-hidden="true">arrow_forward</span></button>
+      </div>
+    </div>
+
+    <!-- PASO 3 · CONFIRMAR -->
+    <div class="ck__panel" data-paso="2" hidden>
+      <div class="ck__rev" data-ck-rev></div>
+      <label class="ck__consent"><input type="checkbox" name="datos" id={id('datos')} /><span>Acepto los <a href="/terminos" target="_blank">términos</a> y la <a href="/privacidad" target="_blank">política de datos</a> para que me contacten sobre este pedido. <span class="req">*</span></span></label>
+      <span class="ck__err" id={id('datos-err')}>Para enviar tu pedido necesitamos tu autorización.</span>
+      <div class="ck__nav">
+        <button class="ck__atras" type="button" data-atras><span class="ms" aria-hidden="true">arrow_back</span>Atrás</button>
+        <button class="ck__btn ck__btn--ok" type="submit" data-confirmar><span data-confirmar-txt>Confirmar pedido · Pago contraentrega</span></button>
+      </div>
+      <p class="ck__fallo" role="alert" data-fallo hidden>No pudimos guardar el pedido. Te abrimos WhatsApp con el pedido ya escrito para que no se pierda. Si no se abrió, <a href="#" target="_blank" rel="noopener" data-fallo-wa>toca aquí</a>.</p>
+    </div>
+  </form>
+
+  <!-- LISTO -->
+  <div class="ck__listo" data-listo hidden>
+    <span class="ck__ok" aria-hidden="true"><span class="ms">check_circle</span></span>
+    <p class="ck__listo-t" tabindex="-1" data-listo-t>¡Pedido recibido!</p>
+    <p>Te escribimos por WhatsApp para confirmar. Recuerda: <b>pagas al recibir</b>.</p>
+    <p class="ck__cod">Tu código de pedido: <b data-codigo></b></p>
+    <a class="ck__wa" href="#" target="_blank" rel="noopener" data-listo-wa><WaIcon size={22} class="" />Confirmar por WhatsApp</a>
+  </div>
+</div>
+
+<script>
+  import { insert, supabaseReady } from '../scripts/supabase';
+  import { productoPorSlug } from '../scripts/catalogo';
+  import { track } from '../scripts/meta';
+
+  const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+  const NOMBRES = ['Tu pedido', 'Envío', 'Confirmar'];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // la variante del catálogo: con ella el inventario se descuenta al confirmar el pedido en el gestor
+  const vids = new Map<string, string>();
+  let iniciado = false;
+  const iniciar = (el: HTMLElement) => {
+    if (iniciado) return;
+    iniciado = true;
+    const D = el.dataset, n = cantidadDe(el);
+    track('InitiateCheckout', { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, value: Number(D.precio) * n, num_items: n, currency: 'COP' });
+  };
+  const cantidadDe = (el: HTMLElement) => Number(el.querySelector<HTMLInputElement>('input[type="radio"]:checked')?.value ?? 1);
+
+  document.querySelectorAll<HTMLElement>('[data-ck]').forEach((ck) => {
+    const D = ck.dataset;
+    const PRECIO = Number(D.precio);
+    if (!vids.has(D.slug!)) productoPorSlug(D.slug!).then((p) => { if (p?.variantes[0]) vids.set(D.slug!, p.variantes[0].id); }).catch(() => {});
+    const form = ck.querySelector<HTMLFormElement>('[data-ck-form]')!;
+    const paneles = [...ck.querySelectorAll<HTMLElement>('[data-paso]')];
+    const inds = [...ck.querySelectorAll<HTMLElement>('[data-ind]')];
+    const live = ck.querySelector<HTMLElement>('[data-ck-live]')!;
+    const campo = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+    const val = (n: string) => (campo(n)?.value ?? '').trim();
+    const celular = () => val('celular').replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, '');
+    let paso = 0;
+
+    const ir = (n: number, foco = true) => {
+      paso = n;
+      paneles.forEach((p) => { p.hidden = Number(p.dataset.paso) !== n; });
+      inds.forEach((li) => {
+        const i = Number(li.dataset.ind);
+        li.classList.toggle('is-on', i === n); li.classList.toggle('is-done', i < n);
+        if (i === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+      });
+      live.textContent = `Paso ${n + 1} de 3: ${NOMBRES[n]}`;
+      if (n === 2) pintarRevision();
+      if (foco) {
+        const p = paneles[n];
+        (p.querySelector<HTMLElement>('input, select, button') ?? p).focus({ preventScroll: true });
+        const caja = ck.closest('dialog') ? ck : ck.closest('section') ?? ck;
+        caja.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    };
+    ck.addEventListener('ck:reset', () => { if (ck.querySelector<HTMLElement>('[data-listo]')!.hidden) ir(paso, false); });
+
+    // total según la cantidad
+    form.addEventListener('change', () => { ck.querySelector('[data-ck-total]')!.textContent = money(PRECIO * cantidadDe(ck)); });
+    form.addEventListener('focusin', () => iniciar(ck));
+
+    // validación del paso 2
+    const reglas: [string, () => boolean][] = [
+      ['nombre', () => val('nombre').length > 0],
+      ['apellido', () => val('apellido').length > 0],
+      ['celular', () => /^3\d{9}$/.test(celular())],
+      ['correo', () => !val('correo') || campo('correo').checkValidity()],
+      ['departamento', () => val('departamento').length > 0],
+      ['ciudad', () => val('ciudad').length > 0],
+      ['direccion', () => val('direccion').length > 0],
+      ['barrio', () => val('barrio').length > 0]
+    ];
+    const marcar = (nombreCampo: string, malo: boolean) => {
+      const el = campo(nombreCampo);
+      const err = ck.querySelector<HTMLElement>(`#${el.id}-err`)!;
+      err.classList.toggle('is-on', malo);
+      el.setAttribute('aria-invalid', String(malo));
+      if (malo) el.setAttribute('aria-describedby', err.id); else el.removeAttribute('aria-describedby');
+      return el;
+    };
+    const validarEnvio = () => {
+      let primero: HTMLElement | null = null;
+      for (const [k, ok] of reglas) { const el = marcar(k, !ok()); if (!ok() && !primero) primero = el; }
+      primero?.focus();
+      return !primero;
+    };
+    form.addEventListener('input', (e) => {
+      const el = e.target as HTMLInputElement;
+      if (el.getAttribute('aria-invalid') !== 'true') return;
+      const r = reglas.find(([k]) => k === el.name);
+      if (r && r[1]()) marcar(r[0], false);
+    });
+
+    const pintarRevision = () => {
+      const n = cantidadDe(ck);
+      ck.querySelector<HTMLElement>('[data-ck-rev]')!.innerHTML = `
+        <div class="ck__rev-b"><span class="ck__rev-l">Producto</span><p><b>${n} × ${esc(D.nombre!)}</b><br>${esc(D.variante!)}</p><button type="button" class="ck__cambiar" data-a="0">Cambiar</button></div>
+        <div class="ck__rev-b"><span class="ck__rev-l">Entregar a</span><p><b>${esc(val('nombre'))} ${esc(val('apellido'))}</b> · ${esc(celular())}<br>${esc(val('direccion'))}, barrio ${esc(val('barrio'))}<br>${esc(val('ciudad'))} (${esc(val('departamento'))})${val('indicaciones') ? `<br>${esc(val('indicaciones'))}` : ''}</p><button type="button" class="ck__cambiar" data-a="1">Cambiar</button></div>
+        <dl class="ck__tot"><div><dt>Envío</dt><dd>Gratis</dd></div><div class="ck__tot-t"><dt>Pagas al recibir</dt><dd>${money(PRECIO * n)}</dd></div></dl>`;
+    };
+    ck.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('[data-sig]')) {
+        if (paso === 1 && !validarEnvio()) return;
+        iniciar(ck);
+        ir(paso + 1);
+      } else if (t.closest('[data-atras]')) ir(paso - 1);
+      else if (t.closest('[data-a]')) ir(Number(t.closest<HTMLElement>('[data-a]')!.dataset.a));
+    });
+
+    let enviando = false;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (paso !== 2) { ck.querySelector<HTMLButtonElement>(`[data-paso="${paso}"] [data-sig]`)?.click(); return; }
+      const datos = campo('datos');
+      const sinOk = !datos.checked;
+      ck.querySelector(`#${datos.id}-err`)!.classList.toggle('is-on', sinOk);
+      datos.setAttribute('aria-invalid', String(sinOk));
+      if (sinOk) { datos.focus(); return; }
+      if (enviando) return;
+
+      const n = cantidadDe(ck), total = PRECIO * n;
+      const codigo = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
+      const d = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), correo: val('correo'), departamento: val('departamento'), ciudad: val('ciudad'), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
+      const vid = vids.get(D.slug!);
+      const fila = {
+        codigo, nombre: d.nombre, apellido: d.apellido, celular: d.celular, correo: d.correo || null,
+        departamento: d.departamento, ciudad: d.ciudad, direccion: d.direccion, barrio: d.barrio, indicaciones: d.indicaciones || null,
+        items: [{ id: D.slug, ...(vid ? { vid } : {}), nombre: D.nombre, variante: D.variante, precio: PRECIO, cantidad: n, ...(D.dropi ? { proveedor: 'dropi', dropi_id: D.dropi } : {}) }],
+        subtotal: total, envio: 0, prioritario: false, total, obsequio: false, aviso_compras: false,
+        acepto_terminos: true, version_politicas: D.legal
+      };
+      const msg = [
+        `Hola, Alma Animal. Quiero confirmar mi pedido ${codigo}:`,
+        `• ${n} × ${D.nombre} — ${money(total)}`,
+        'Envío gratis · Pago contraentrega', '',
+        `Para: ${d.nombre} ${d.apellido} · ${d.celular}`,
+        `Dirección: ${d.direccion}, barrio ${d.barrio}, ${d.ciudad} (${d.departamento})`,
+        d.indicaciones ? `Indicaciones: ${d.indicaciones}` : ''
+      ].filter(Boolean).join('\n');
+      const wa = (t: string) => `https://wa.me/${D.shop}?text=${encodeURIComponent(t)}`;
+
+      enviando = true;
+      const btn = ck.querySelector<HTMLButtonElement>('[data-confirmar]')!;
+      btn.disabled = true;
+      ck.querySelector('[data-confirmar-txt]')!.textContent = 'Enviando tu pedido…';
+      ck.querySelector<HTMLElement>('[data-fallo]')!.hidden = true;
+
+      // de qué anuncio vino (lo guarda la landing al entrar)
+      let origen: Record<string, unknown> | null = null;
+      try { origen = JSON.parse(sessionStorage.getItem('alma-origen') || 'null'); } catch { /* sin almacenamiento */ }
+      let res = PREVIEW ? 'ok' : await insert('pedidos', origen ? { ...fila, fuente: origen.fuente, modo_envio: origen.modo_envio, atribucion: origen.atribucion } : fila);
+      if (res === 'error' && origen) res = await insert('pedidos', fila);
+
+      enviando = false;
+      btn.disabled = false;
+      ck.querySelector('[data-confirmar-txt]')!.textContent = 'Confirmar pedido · Pago contraentrega';
+
+      if (res === 'ok') {
+        try { sessionStorage.removeItem('alma-origen'); } catch { /* sin almacenamiento */ }
+        track('Purchase', { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, value: total, num_items: n, order_id: codigo, currency: 'COP', contents: [{ id: D.slug, quantity: n, item_price: PRECIO }] },
+          { correo: d.correo, celular: d.celular, nombre: d.nombre, apellido: d.apellido, ciudad: d.ciudad, departamento: d.departamento }, codigo);
+        form.hidden = true;
+        ck.querySelector<HTMLElement>('[data-ck-pasos]')!.hidden = true;
+        const ok = ck.querySelector<HTMLElement>('[data-listo]')!;
+        ok.hidden = false;
+        ok.querySelector('[data-codigo]')!.textContent = codigo;
+        ok.querySelector<HTMLAnchorElement>('[data-listo-wa]')!.href = wa(msg);
+        ok.querySelector<HTMLElement>('[data-listo-t]')!.focus();
+        document.dispatchEvent(new CustomEvent('ck:listo'));
+      } else {
+        const href = wa(`Hola, Alma Animal. Quiero hacer este pedido (${codigo}):\n` + msg.split('\n').slice(1).join('\n'));
+        const f = ck.querySelector<HTMLElement>('[data-fallo]')!;
+        f.querySelector<HTMLAnchorElement>('[data-fallo-wa]')!.href = href;
+        f.hidden = false;
+        if (!window.open(href, '_blank', 'noopener')) location.href = href;
+      }
+    });
+  });
+
+  /* ---------- ventana flotante: «Pedir ahora» la abre sin salir de la página ---------- */
+  const dlg = document.querySelector<HTMLDialogElement>('[data-ck-dialog]');
+  if (dlg) {
+    const ck = dlg.querySelector<HTMLElement>('[data-ck]')!;
+    let volver: HTMLElement | null = null;
+    document.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-pedir]');
+      if (!b) return;
+      e.preventDefault();
+      volver = b;
+      if (typeof dlg.showModal === 'function') dlg.showModal(); else { document.getElementById('pedido')?.scrollIntoView(); return; }
+      ck.dispatchEvent(new CustomEvent('ck:reset'));
+      iniciar(ck);
+    });
+    const cerrar = () => dlg.close();
+    dlg.querySelector('[data-ck-cerrar]')!.addEventListener('click', cerrar);
+    // tocar fuera de la ventana la cierra
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) cerrar(); });
+    dlg.addEventListener('close', () => volver?.focus({ preventScroll: true }));
+  }
+</script>
+
+<style>
+  .ck { display: flex; flex-direction: column; gap: 16px; }
+  .ck__titulo { font: 400 clamp(26px, 6vw, 38px)/1.1 var(--font-serif); letter-spacing: -.02em; }
+  .ck__titulo span { display: block; margin-top: 4px; font-size: .6em; color: var(--primary); }
+
+  /* indicador de pasos */
+  .ck__pasos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; counter-reset: p; }
+  .ck__pasos li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; font: 600 13px/1.2 var(--font-sans); color: var(--ink-soft); text-align: center; }
+  .ck__pasos li::before { content: ''; position: absolute; top: 15px; left: calc(-50% + 18px); right: calc(50% + 18px); height: 2px; background: var(--line); }
+  .ck__pasos li:first-child::before { display: none; }
+  .ck__pasos li.is-on::before, .ck__pasos li.is-done::before { background: var(--primary); }
+  .ck__n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); font: 700 14px/1 var(--font-sans); color: var(--ink-soft); }
+  .ck__pasos li.is-on { color: var(--ink); }
+  .ck__pasos li.is-on .ck__n { background: var(--primary); box-shadow: none; color: #fff; }
+  .ck__pasos li.is-done .ck__n { background: var(--lavender); box-shadow: none; color: var(--primary-strong); }
+
+  .ck__form, .ck__panel { display: flex; flex-direction: column; gap: 16px; }
+  .ck__prod { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 18px; background: var(--surface-2); }
+  .ck__prod img { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; flex: none; }
+  .ck__prod p { display: flex; flex-direction: column; gap: 2px; font: 400 14.5px/1.35 var(--font-sans); color: var(--ink-muted); }
+  .ck__prod b { color: var(--ink); font-size: 16px; }
+  .ck__cant { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ck__cant legend { font: 600 15px/1.3 var(--font-sans); margin-bottom: 8px; padding: 0; }
+  .ck__cant label { position: relative; cursor: pointer; }
+  .ck__cant input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .ck__cant label > span { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .ck__cant label > span b { color: var(--ink); font-size: 16px; }
+  .ck__cant input:checked + span { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
+  .ck__cant input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .ck__tot { margin: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
+  .ck__tot div { display: flex; justify-content: space-between; gap: 12px; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .ck__tot dd { margin: 0; }
+  .ck__tot-t { font-weight: 700 !important; color: var(--ink) !important; font-size: 17px !important; }
+
+  .ck__grid { display: grid; gap: 14px; }
+  .ck__fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .ck__fld label { font: 600 15px/1.3 var(--font-sans); }
+  .ck__fld input, .ck__fld select { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 14px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; }
+  .ck__fld input::placeholder { color: #6E6585; }
+  .ck__fld input:focus, .ck__fld select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  .ck__fld [aria-invalid="true"] { border-color: #B4271F; }
+  .ck__hint { font: 400 14px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .req { color: #B4271F; }
+  .ck__err { display: none; font: 600 14px/1.4 var(--font-sans); color: #B4271F; }
+  .ck__err.is-on { display: block; }
+
+  .ck__nav { display: flex; align-items: center; gap: 10px; }
+  .ck__btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: 700 16.5px/1.2 var(--font-sans); cursor: pointer; box-shadow: 0 6px 16px rgb(77 63 108 / .25); }
+  .ck__btn:hover { background: var(--primary-strong); }
+  .ck__btn:disabled { opacity: .7; cursor: progress; }
+  .ck__btn .ms { font-size: 20px; }
+  .ck__atras { display: inline-flex; align-items: center; gap: 4px; min-height: 56px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--primary-strong); font: 600 15px/1 var(--font-sans); cursor: pointer; }
+  .ck__atras:hover { background: var(--surface-3); }
+  .ck__atras .ms { font-size: 20px; }
+
+  .ck__rev { display: flex; flex-direction: column; gap: 10px; }
+  .ck__rev :global(.ck__rev-b) { position: relative; padding: 12px 14px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .ck__rev :global(.ck__rev-l) { display: block; margin-bottom: 4px; font: 600 12.5px/1 var(--font-sans); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); }
+  .ck__rev :global(p) { margin: 0; padding-right: 64px; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .ck__rev :global(p b) { color: var(--ink); }
+  .ck__rev :global(.ck__cambiar) { position: absolute; top: 8px; right: 8px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--surface-3); color: var(--primary-strong); font: 600 13.5px/1 var(--font-sans); cursor: pointer; }
+  .ck__consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
+  .ck__consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
+  .ck__consent [aria-invalid="true"] { outline: 2px solid #B4271F; outline-offset: 2px; }
+  .ck__fallo { font: 600 14.5px/1.45 var(--font-sans); color: #B4271F; }
+
+  .ck__listo { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px 4px; text-align: center; font: 400 16px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .ck__listo b { color: var(--ink); }
+  .ck__ok { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #E3F4E7; color: #1D7A37; }
+  .ck__ok .ms { font-size: 44px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
+  .ck__listo-t { font: 700 26px/1.2 var(--font-serif); color: var(--ink); }
+  .ck__cod b { letter-spacing: .04em; }
+  .ck__wa { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 56px; margin-top: 4px; border-radius: 999px; background: var(--wa); color: var(--wa-dark); font: 700 16px/1 var(--font-sans); text-decoration: none; }
+  .ck__wa:hover { color: var(--wa-dark); filter: brightness(1.06); }
+
+  @media (min-width: 640px) {
+    .ck__grid { grid-template-columns: 1fr 1fr; }
+    .ck__full { grid-column: 1 / -1; }
+    .ck__pasos li { font-size: 14px; }
+  }
+</style>

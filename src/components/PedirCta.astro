@@ -1,39 +1,39 @@
 ---
-// Botones de compra de las landings de producto: «Pedir ahora» (agrega y lleva al carrito/checkout de siempre)
-// y «Agregar al carrito» (agrega y muestra el aviso). La lógica está en la página: [data-pedir] y [data-agregar].
-import WaIcon from './WaIcon.astro';
-interface Props { wa?: string; nota?: boolean; centro?: boolean }
-const { wa, nota = true, centro = false } = Astro.props;
+// Botones de compra de las landings de producto: «Pedir ahora» (abre el checkout flotante, [data-pedir])
+// y el carrito pequeño, solo ícono ([data-agregar]: agrega y muestra el aviso). La lógica está en la página.
+interface Props { nota?: boolean; centro?: boolean }
+const { nota = true, centro = false } = Astro.props;
 ---
 <div class:list={['pcta', { 'pcta--centro': centro }]}>
   <div class="pcta__btns">
     <button class="pcta__pedir" type="button" data-pedir><span class="ms" aria-hidden="true">shopping_bag</span>Pedir ahora · Envío gratis</button>
-    <button class="pcta__agregar" type="button" data-agregar><span class="ms" aria-hidden="true">add_shopping_cart</span>Agregar al carrito</button>
-    {wa && <a class="pcta__wa" href={wa} target="_blank" rel="noopener"><WaIcon size={22} class="" />Tengo una pregunta</a>}
+    <button class="pcta__agregar" type="button" data-agregar aria-label="Agregar al carrito" title="Agregar al carrito"><span class="ms" aria-hidden="true">add_shopping_cart</span></button>
   </div>
   {nota && <p class="pcta__nota"><span><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span><span><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis a toda Colombia</span></p>}
 </div>
 
 <style>
   .pcta { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-  .pcta__btns { display: grid; gap: 10px; }
-  .pcta__pedir, .pcta__agregar, .pcta__wa { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 22px; border-radius: 999px; font: 700 17px/1.2 var(--font-sans); text-align: center; text-decoration: none; cursor: pointer; transition: background .2s, transform .2s var(--ease-out), filter .2s; }
-  .pcta__pedir { border: 0; background: var(--primary); color: #fff; box-shadow: 0 6px 16px rgb(77 63 108 / .28); }
-  .pcta__pedir:hover { background: var(--primary-strong); }
-  .pcta__agregar { border: 1.5px solid var(--primary); background: #fff; color: var(--primary-strong); min-height: 52px; font-size: 16px; }
+  .pcta__btns { display: flex; gap: 10px; align-items: center; }
+  .pcta__pedir { position: relative; overflow: hidden; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: 700 17px/1.2 var(--font-sans); text-align: center; cursor: pointer; box-shadow: 0 6px 16px rgb(77 63 108 / .28); transition: background .2s, transform .2s var(--ease-out); animation: pcta-latido 3.2s var(--ease) infinite; }
+  .pcta__pedir:hover { background: var(--primary-strong); animation-play-state: paused; }
+  /* brillo que cruza el botón */
+  .pcta__pedir::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / .35) 50%, transparent 70%); transform: translateX(-120%); animation: pcta-brillo 3.2s var(--ease) infinite; pointer-events: none; }
+  .pcta__pedir:active { transform: scale(.97); }
+  @keyframes pcta-latido { 0%, 70%, 100% { transform: scale(1); } 78% { transform: scale(1.035); } 86% { transform: scale(.99); } 92% { transform: scale(1.015); } }
+  @keyframes pcta-brillo { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+  .pcta__agregar { flex: none; width: 58px; height: 58px; border-radius: 50%; border: 1.5px solid var(--primary); background: #fff; color: var(--primary-strong); display: grid; place-items: center; cursor: pointer; transition: background .2s, transform .2s var(--ease-out); }
   .pcta__agregar:hover { background: #F3EEF8; }
-  .pcta__pedir:active, .pcta__agregar:active { transform: scale(.98); }
+  .pcta__agregar:active { transform: scale(.94); }
   .pcta__agregar.is-added { background: var(--primary); color: #fff; }
-  .pcta__wa { min-height: 52px; font-size: 16px; background: var(--wa); color: var(--wa-dark); }
-  .pcta__wa:hover { color: var(--wa-dark); filter: brightness(1.06); }
   .pcta .ms { font-size: 22px; }
+  .pcta__agregar .ms { font-size: 24px; }
   .pcta__nota { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font: 500 14.5px/1.4 var(--font-sans); color: var(--ink-muted); }
   .pcta__nota > span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
   .pcta__nota .ms { font-size: 18px; color: var(--primary); }
   .pcta--centro { align-items: center; text-align: center; }
+  .pcta--centro .pcta__btns { width: 100%; max-width: 480px; }
   .pcta--centro .pcta__nota { justify-content: center; }
-  @media (min-width: 768px) {
-    .pcta__btns { grid-template-columns: repeat(auto-fit, minmax(220px, max-content)); }
-    .pcta--centro .pcta__btns { justify-content: center; }
-  }
+  @media (prefers-reduced-motion: reduce) { .pcta__pedir, .pcta__pedir::after { animation: none; } }
+  @media (min-width: 768px) { .pcta__btns { max-width: 480px; } }
 </style>
