@@ -11,8 +11,8 @@ import { listar as listarPedidos, cobrado, pagaAlRecibir, type Pedido } from './
 import { listarPacientes } from './clinica-datos';
 
 /* ---------- categorías ---------- */
-export type CatI = 'consulta' | 'medicamento' | 'examen' | 'procedimiento' | 'vacuna' | 'spa' | 'tienda' | 'otro_ingreso';
-export type CatG = 'arriendo' | 'servicios' | 'meta' | 'medic' | 'insumos' | 'merc' | 'otro';
+export type CatI = 'consulta' | 'medicamento' | 'examen' | 'procedimiento' | 'vacuna' | 'spa' | 'tienda' | 'pedido' | 'otro_ingreso';
+export type CatG = 'arriendo' | 'servicios' | 'meta' | 'medic' | 'insumos' | 'merc' | 'dropi' | 'otro';
 export type Cat = CatI | CatG;
 export const CATS_I: Record<CatI, { txt: string; icon: string }> = {
   consulta: { txt: 'Consultas', icon: 'stethoscope' },
@@ -21,7 +21,8 @@ export const CATS_I: Record<CatI, { txt: string; icon: string }> = {
   procedimiento: { txt: 'Procedimientos y cirugías', icon: 'healing' },
   vacuna: { txt: 'Vacunas', icon: 'vaccines' },
   spa: { txt: 'Baños y spa', icon: 'shower' },
-  tienda: { txt: 'Tienda', icon: 'storefront' },
+  tienda: { txt: 'Tienda física', icon: 'storefront' },
+  pedido: { txt: 'Pedidos del Petshop', icon: 'shopping_bag' },
   otro_ingreso: { txt: 'Otros ingresos', icon: 'payments' }
 };
 export const CATS_G: Record<CatG, { txt: string; icon: string; fijo?: boolean }> = {
@@ -31,7 +32,15 @@ export const CATS_G: Record<CatG, { txt: string; icon: string; fijo?: boolean }>
   medic: { txt: 'Medicamentos y vacunas', icon: 'medication' },
   insumos: { txt: 'Insumos de spa', icon: 'soap' },
   merc: { txt: 'Mercancía de la tienda', icon: 'inventory_2' },
+  dropi: { txt: 'Dropi: productos y fletes', icon: 'local_shipping' },
   otro: { txt: 'Otros gastos', icon: 'more_horiz' }
+};
+// Dos cuentas separadas: Alma Animal (consultorio, spa y tienda física; se reparte entre socios) y el Petshop
+// en línea, que vende productos de Dropi (pedidos del sitio, costo de Dropi, fletes y pauta).
+export type Cuenta = 'alma' | 'petshop';
+export const CUENTAS: Record<Cuenta, { txt: string; icon: string; i: CatI[]; g: CatG[] }> = {
+  alma: { txt: 'Alma Animal', icon: 'pets', i: ['consulta', 'medicamento', 'examen', 'procedimiento', 'vacuna', 'spa', 'tienda', 'otro_ingreso'], g: ['arriendo', 'servicios', 'meta', 'medic', 'insumos', 'merc', 'otro'] },
+  petshop: { txt: 'Petshop · Dropi', icon: 'shopping_bag', i: ['pedido', 'otro_ingreso'], g: ['dropi', 'meta', 'otro'] }
 };
 export const catTxt = (c: Cat) => (c in CATS_I ? CATS_I[c as CatI].txt : CATS_G[c as CatG].txt);
 export const catIcon = (c: Cat) => (c in CATS_I ? CATS_I[c as CatI].icon : CATS_G[c as CatG].icon);
@@ -44,7 +53,7 @@ const catDeCita = (c: Cita): CatI =>
 export interface Movimiento {
   id: string; fecha: string; tipo: 'ingreso' | 'gasto'; categoria: Cat; concepto: string; valor: number;
   medio: string | null; factura: string | null; pagado: boolean; fijo_id: string | null; mes: string | null;
-  por_nombre: string | null; creado: string;
+  por_nombre: string | null; creado: string; cuenta?: Cuenta;
 }
 export type NuevoMov = Omit<Movimiento, 'id' | 'creado'>;
 export interface GastoFijo { id: string; nombre: string; categoria: CatG; icono: string; dia: number; varia: boolean; valor: number; activo: boolean; orden: number }
@@ -55,7 +64,7 @@ export interface Socio { id: string; nombre: string; rol: string; pct: number }
 export type Origen = 'agenda' | 'spa' | 'pedido' | 'manual' | 'fijo';
 export interface Linea {
   id: string; fecha: string; tipo: 'ingreso' | 'gasto'; cat: Cat; concepto: string; det: string; valor: number;
-  medio: string; origen: Origen; espera: boolean; factura: string | null; mov?: Movimiento; cita?: Cita;
+  medio: string; origen: Origen; espera: boolean; factura: string | null; mov?: Movimiento; cita?: Cita; cuenta: Cuenta;
 }
 
 /* ---------- fechas ---------- */
@@ -131,8 +140,9 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   const nombre = (c: Cita) => pacs.find((p) => p.id === c.paciente_id)?.nombre ?? c.datos.mascota ?? 'Sin paciente';
   const ahora = new Date(), finHoy = iso(sumarDias(ahora, 1));
   const lineas: Linea[] = [];
-  // meses que vienen del Excel: ahí el Excel ya trae todos los baños, consultas y ventas, así que las citas
-  // y los pedidos del gestor de ese mes no se suman (si no, se cuentan dos veces)
+  // meses que vienen del Excel: ahí el Excel ya trae todos los baños y consultas, así que las citas del gestor
+  // de ese mes no se suman (si no, se cuentan dos veces). Los pedidos web van a la cuenta del Petshop y no
+  // están en el Excel (la columna «petshop» del Excel es la tienda física de Alma Animal).
   const deExcel = new Set(movs.filter((m) => m.por_nombre === POR_EXCEL).map((m) => m.fecha.slice(0, 7)));
   const enExcel = (fecha: string) => deExcel.has(fecha.slice(0, 7));
 
@@ -143,7 +153,7 @@ export async function cargarLibro(mes: string): Promise<Libro> {
     const spa = c.carril === 'spa';
     const valor = Number(c.datos.total) || 0;
     const fecha = (c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio;
-    const base = { id: 'c-' + c.id, tipo: 'ingreso' as const, cat: catDeCita(c), concepto: SERVICIOS[c.servicio].txt, det: nombre(c), valor, origen: (spa ? 'spa' : 'agenda') as Origen, factura: null, cita: c };
+    const base = { id: 'c-' + c.id, tipo: 'ingreso' as const, cat: catDeCita(c), concepto: SERVICIOS[c.servicio].txt, det: nombre(c), valor, origen: (spa ? 'spa' : 'agenda') as Origen, factura: null, cita: c, cuenta: 'alma' as Cuenta };
     if (c.estado === 'atendida') lineas.push({ ...base, fecha: iso(new Date(fecha)), medio: String(c.datos.pago ?? '').replace(/ \(.*/, '') || '—', espera: false });
     else if (c.estado === 'confirmada' && (spa ? iso(new Date(c.inicio)) < finHoy : new Date(c.fin) < ahora))
       lineas.push({ ...base, fecha: iso(new Date(c.inicio)), medio: '—', espera: true, det: base.det + (spa ? ' · falta entregarlo' : ' · falta marcarla') });
@@ -151,8 +161,7 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   // pedidos: suman cuando el pago está confirmado; los confirmados por el cliente sin pago quedan en espera
   for (const p of pedidos) {
     if (p.estado === 'cancelado') continue;
-    if (enExcel(iso(new Date(cobrado(p) ? p.pagado_en ?? p.creado : p.creado)))) continue;
-    const base = { id: 'p-' + p.id, tipo: 'ingreso' as const, cat: 'tienda' as Cat, concepto: `Pedido #${p.numero}`, valor: p.total, origen: 'pedido' as Origen, factura: null };
+    const base = { id: 'p-' + p.id, tipo: 'ingreso' as const, cat: 'pedido' as Cat, concepto: `Pedido #${p.numero}`, valor: p.total, origen: 'pedido' as Origen, factura: null, cuenta: 'petshop' as Cuenta };
     const medio = p.pago === 'contraentrega' ? 'Contraentrega' : p.pago === 'consultorio' ? 'En el consultorio' : p.pago === 'transferencia' ? 'Transferencia' : p.pago === 'en_linea' ? 'En línea' : '—';
     if (cobrado(p)) lineas.push({ ...base, fecha: iso(new Date(p.pagado_en ?? p.creado)), det: `${p.nombre} ${p.apellido}`, medio, espera: false });
     else if (p.estado !== 'nuevo') lineas.push({ ...base, fecha: iso(new Date(p.creado)), det: `${p.nombre} ${p.apellido} · ${pagaAlRecibir(p) ? 'paga al recibir' : 'falta el pago'}`, medio, espera: true });
@@ -161,16 +170,16 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   for (const m of movs) {
     if (!m.pagado) continue;
     lineas.push({ id: 'm-' + m.id, fecha: m.fecha, tipo: m.tipo, cat: m.categoria, concepto: m.concepto, det: m.fijo_id ? 'Gasto fijo' : m.por_nombre ? `Registró ${m.por_nombre}` : 'Registrado a mano',
-      valor: m.valor, medio: m.medio ?? '—', origen: m.fijo_id ? 'fijo' : 'manual', espera: false, factura: m.factura, mov: m });
+      valor: m.valor, medio: m.medio ?? '—', origen: m.fijo_id ? 'fijo' : 'manual', espera: false, factura: m.factura, mov: m, cuenta: m.cuenta ?? 'alma' });
   }
   lineas.sort((a, b) => b.fecha.localeCompare(a.fecha) || Number(b.espera) - Number(a.espera));
   return { lineas, fijos: fijos.filter((f) => f.activo).sort((a, b) => a.orden - b.orden), movs, repartos, socios };
 }
 
 // ganancia de cada mes y lo que se reparte: si un mes da pérdida, se descuenta de los siguientes
-export function resumen(libro: Libro, mes: string) {
+export function resumen(libro: Libro, mes: string, cuenta: Cuenta = 'alma') {
   const neto: Record<string, number> = {};
-  for (const l of libro.lineas) if (!l.espera) { const m = l.fecha.slice(0, 7); neto[m] = (neto[m] ?? 0) + (l.tipo === 'ingreso' ? l.valor : -l.valor); }
+  for (const l of libro.lineas) if (!l.espera && l.cuenta === cuenta) { const m = l.fecha.slice(0, 7); neto[m] = (neto[m] ?? 0) + (l.tipo === 'ingreso' ? l.valor : -l.valor); }
   let arrastre = 0;
   for (let k = -6; k < 0; k++) { const aj = (neto[sumarMeses(mes, k)] ?? 0) + arrastre; arrastre = aj < 0 ? aj : 0; }
   const ganancia = neto[mes] ?? 0;
@@ -306,6 +315,6 @@ export async function verFactura(ruta: string): Promise<string | null> {
 export function csvDelMes(lineas: Linea[], mes: string): string {
   const q = (s: string) => `"${s.replace(/"/g, '""')}"`;
   const filas = lineas.filter((l) => l.fecha.startsWith(mes) && !l.espera).sort((a, b) => a.fecha.localeCompare(b.fecha))
-    .map((l) => [l.fecha, l.tipo === 'ingreso' ? 'Ingreso' : 'Gasto', catTxt(l.cat), l.concepto, l.det, l.medio, String(l.tipo === 'ingreso' ? l.valor : -l.valor), l.factura ? 'Sí' : 'No'].map(q).join(';'));
-  return '﻿' + ['Fecha;Tipo;Categoría;Concepto;Detalle;Medio de pago;Valor;Factura', ...filas].join('\r\n');
+    .map((l) => [l.fecha, CUENTAS[l.cuenta].txt, l.tipo === 'ingreso' ? 'Ingreso' : 'Gasto', catTxt(l.cat), l.concepto, l.det, l.medio, String(l.tipo === 'ingreso' ? l.valor : -l.valor), l.factura ? 'Sí' : 'No'].map(q).join(';'));
+  return '﻿' + ['Fecha;Cuenta;Tipo;Categoría;Concepto;Detalle;Medio de pago;Valor;Factura', ...filas].join('\r\n');
 }
