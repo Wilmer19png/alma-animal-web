@@ -22,6 +22,8 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
   <link rel="canonical" href={canonical} />
   <!-- enlaces de invitación o de contraseña nueva de Supabase: llegan al inicio y van a crear la contraseña -->
   <script is:inline>if (/[#&]type=(invite|recovery)/.test(location.hash)) location.replace('/gestor/clave' + location.hash);</script>
+  <!-- Píxel de Meta (el PageView y los demás eventos salen de scripts/meta.ts, con su copia por la API de conversiones) -->
+  <script is:inline>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','843169261930833');</script>
   <meta name="theme-color" content="#FEF7FE" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -49,6 +51,8 @@ const ICONS = ['add', 'add_shopping_cart', 'air', 'arrow_back', 'arrow_forward',
 
   <script>
     import '../scripts/contenido';
+    import { track } from '../scripts/meta';
+    track('PageView');
   </script>
 
   <style>

@@ -147,6 +147,7 @@ const SLOTS = [
 
 <script>
   import { insert, supabaseReady } from '../scripts/supabase';
+  import { track } from '../scripts/meta';
   const form = document.querySelector<HTMLFormElement>('#spa-form')!;
   const panels = [...form.querySelectorAll<HTMLElement>('[data-step]')];
   const wizItems = [...form.querySelectorAll<HTMLElement>('[data-wiz-item]')];
@@ -341,6 +342,7 @@ const SLOTS = [
     enviando = false;
     form.querySelector('[data-send-txt]')!.textContent = 'Solicitar cita';
     if (res === 'ok') {
+      track('Schedule', { content_name: service(), content_category: 'spa' }, { correo: val('correo'), celular: val('celular'), nombre: val('nombre'), apellido: val('apellido') });
       form.querySelector('[data-sent-name]')!.textContent = val('nombre');
       form.querySelector('[data-sent-pet]')!.textContent = val('mascota');
       form.querySelector<HTMLAnchorElement>('[data-sent-wa]')!.href = wa(`Hola, Alma Animal. Acabo de pedir un baño para ${val('mascota')} (${when()}).`);

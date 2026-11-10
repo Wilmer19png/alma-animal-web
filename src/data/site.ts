@@ -44,7 +44,7 @@ export const LEGAL = {
   idLabel: 'NIT', // 'NIT' o 'C.C.'
   id: '1088357232-6' as string | null,
   email: 'mariana1hoyo2@gmail.com' as string | null, // correo para consultas, reclamos y retracto
-  updated: '2026-10-28' // fecha de la última versión de las políticas
+  updated: '2026-11-10' // fecha de la última versión de las políticas
 };
 
 export const NAV = [

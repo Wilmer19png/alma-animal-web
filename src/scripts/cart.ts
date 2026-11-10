@@ -1,6 +1,7 @@
 // Carrito del navegador. Vive en localStorage de cada visitante (no se comparte ni llega al gestor
 // hasta que hace el pedido). Si el navegador bloquea el almacenamiento, funciona solo en memoria.
 import { SHIPPING, GIFT } from '../data/shop';
+import { track } from './meta';
 
 export interface CartItem { key: string; id: string; vid?: string; name: string; variant: string; price: number; qty: number; icon: string; tone: string; max: number }
 
@@ -27,6 +28,7 @@ export const cart = {
     if (found) found.qty = Math.min(found.qty + qty, item.max);
     else items.push({ ...item, key, qty: Math.min(qty, item.max) });
     write(items);
+    track('AddToCart', { content_ids: [item.id], content_type: 'product', content_name: item.name, contents: [{ id: item.id, quantity: qty, item_price: item.price }], value: item.price * qty, currency: 'COP' });
   },
   setQty(key: string, qty: number) {
     const items = read().map((i) => (i.key === key ? { ...i, qty: Math.max(0, Math.min(qty, i.max)) } : i)).filter((i) => i.qty > 0);

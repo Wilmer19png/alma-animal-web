@@ -163,6 +163,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 <script>
   import { cart, money, type CartItem } from '../scripts/cart';
   import { insert, supabaseReady } from '../scripts/supabase';
+  import { track } from '../scripts/meta';
   import '../scripts/add-buttons';
   import { catalogo, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
 
@@ -278,8 +279,14 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   };
 
   /* ---------- pasos ---------- */
+  let checkout = false;
   const go = (n: number) => {
     step = n;
+    if (n === 1 && !checkout) {
+      checkout = true;
+      const its = cart.items();
+      track('InitiateCheckout', { content_ids: its.map((i) => i.id), content_type: 'product', contents: its.map((i) => ({ id: i.id, quantity: i.qty, item_price: i.price })), num_items: cart.count(), value: totals().total, currency: 'COP' });
+    }
     root.querySelectorAll<HTMLElement>('[data-step]').forEach((el) => { el.hidden = Number(el.dataset.step) !== n; });
     root.querySelectorAll<HTMLElement>('[data-wiz]').forEach((li) => {
       const i = Number(li.dataset.wiz);
@@ -407,6 +414,11 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     setBusy(false);
     if (ok) {
       done = true;
+      const r = order.row as { items: { id: string; precio: number; cantidad: number }[]; total: number };
+      track('Purchase', {
+        order_id: order.code, value: r.total, currency: 'COP', content_type: 'product', content_ids: r.items.map((i) => i.id),
+        contents: r.items.map((i) => ({ id: i.id, quantity: i.cantidad, item_price: i.precio })), num_items: r.items.reduce((s, i) => s + i.cantidad, 0)
+      }, { correo: order.fields.correo, celular: order.fields.celular, nombre: order.fields.nombre, apellido: order.fields.apellido, ciudad: order.fields.ciudad, departamento: order.fields.departamento });
       $('[data-done-name]').textContent = order.fields.nombre;
       $('[data-done-code]').textContent = order.code;
       $('[data-done-cel]').textContent = order.fields.celular;
