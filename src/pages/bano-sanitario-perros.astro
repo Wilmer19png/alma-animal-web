@@ -1,21 +1,29 @@
 ---
 // Landing de un solo producto para los anuncios de Meta: Baño Sanitario para Perros con Pasto.
-// La venta se cierra aquí mismo (formulario contraentrega, sin carrito). Producto de Dropi: envío gratis incluido.
+// «Pedir ahora» abre el checkout por pasos en una ventana flotante (sin salir de la página); el mismo checkout está
+// al final de la página. «Agregar al carrito» lo deja en el carrito de siempre.
+// Producto de Dropi: envío gratis incluido. Reseñas con estrellas y foto (supabase/28, se publican tras revisarlas).
 // Fotos y videos en public/landing/bano-sanitario/ (sin texto: títulos y precios van en HTML).
 import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
+import PedirCta from '../components/PedirCta.astro';
+import CheckoutLanding from '../components/CheckoutLanding.astro';
 import { PHONES, LEGAL, SOCIAL, whatsapp } from '../data/site';
-import { DEPARTAMENTOS, money } from '../data/shop';
+import { money } from '../data/shop';
 
 const P = {
   nombre: 'Baño Sanitario para Perros con Pasto',
   corto: 'Baño Sanitario con Pasto',
   slug: 'bano-sanitario-perros',
   precio: 119900,
+  antes: 135900, // precio anterior real (sale tachado)
   medidas: '70 × 45 cm',
   dropi: '2282266' // interno: no se muestra
 };
+// Promoción con fecha de fin REAL (ej. '2026-11-30T23:59:00-05:00'). Con null no sale el letrero.
+// El precio tachado sale solo si en el gestor la variante tiene «precio antes» (un precio que de verdad se cobró).
+const PROMO: { hasta: string | null; texto: string } = { hasta: null, texto: 'Envío gratis a toda Colombia' };
 const R = '/landing/bano-sanitario';
 const img = (n: string) => `${R}/img/${n}.webp`;
 const vid = (n: string) => ({ src: `${R}/video/${n}.mp4`, poster: `${R}/video/${n}-poster.webp` });
@@ -113,9 +121,12 @@ const jsonLd = {
       </div>
 
       <div class="hero__info">
+        <a class="hero__stars" href="#opiniones" data-hero-stars><span class="stars" aria-hidden="true">☆☆☆☆☆</span><span data-hero-stars-txt>Sé el primero en opinar</span></a>
         <p class="hero__sub">Su propio “patio” dentro de casa: el orín baja a la bandeja y el pasto queda seco.</p>
         <div class="precio">
+          {P.antes > P.precio && <s class="antes" data-antes aria-label={`Antes ${money(P.antes)}`}>{money(P.antes)}</s>}
           <b>{money(P.precio)}</b>
+          {P.antes > P.precio && <span class="off" data-off>-{Math.round((1 - P.precio / P.antes) * 100)}%</span>}
           <span class="sello sello--peach"><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis</span>
           <span class="sello sello--lav"><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
         </div>
@@ -124,10 +135,8 @@ const jsonLd = {
           <li><span class="ms" aria-hidden="true">straighten</span><span><b>{P.medidas}</b>, para perros pequeños y medianos</span></li>
           <li><span class="ms" aria-hidden="true">recycling</span><span><b>Lavable y reutilizable</b>, sin desechables</span></li>
         </ul>
-        <div class="ctas">
-          <a class="cta" href="#pedido" data-pedir>Pedir ahora · Pagas al recibir</a>
-          <a class="wa-btn" href={waPregunta} target="_blank" rel="noopener"><WaIcon size={22} class="" />Tengo una pregunta</a>
-        </div>
+        {PROMO.hasta && <p class="promo" data-promo={PROMO.hasta} hidden><span class="ms" aria-hidden="true">timer</span><span>{PROMO.texto} · termina en <b data-promo-t></b></span></p>}
+        <div class="ctas" data-ctas-hero><PedirCta nota={false} /></div>
       </div>
     </section>
 
@@ -138,6 +147,8 @@ const jsonLd = {
           <span class="gota" aria-hidden="true"><span class="ms">format_color_reset</span></span>
           <h2 id="lp-problema" class="h2">¿Otra vez charcos en la sala?</h2>
           <p class="txt">Llegas del trabajo y está el charco. Trapeas todos los días y aún huele. No es que tu perro no quiera hacerlo bien: muchas veces no alcanza a salir a tiempo, sobre todo en apartamento, de noche o cuando llueve.</p>
+          <p class="txt"><b>Con el Baño Sanitario tiene su lugar dentro de casa.</b></p>
+          <PedirCta />
         </div>
         <div class="split__media">
           <div class="vid vid--card"><video muted loop playsinline preload="none" poster={vid('capas-se-levantan').poster} aria-label="Se levantan el pasto y la rejilla y se ve la bandeja con el agua recogida" data-vid><source src={vid('capas-se-levantan').src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
@@ -180,6 +191,7 @@ const jsonLd = {
         <div class="medidas__txt">
           <h3 class="h3"><span class="ms" aria-hidden="true">straighten</span>Mide 70 × 45 cm</h3>
           <p class="txt">Para perros pequeños y medianos.</p>
+          <PedirCta nota={false} />
         </div>
       </div>
     </section>
@@ -199,6 +211,7 @@ const jsonLd = {
           </li>
         ))}
       </ul>
+      <div class="wrap"><PedirCta centro /></div>
     </section>
 
     <!-- ======== AHORRO ======== -->
@@ -210,6 +223,7 @@ const jsonLd = {
           <div class="vs__col vs__col--no"><span class="ms" aria-hidden="true">delete</span><b>Empapadores</b><span>Se compran cada semana</span></div>
           <div class="vs__col vs__col--si"><span class="ms" aria-hidden="true">savings</span><b>Baño Sanitario</b><span>Se lava y se reutiliza</span></div>
         </div>
+        <PedirCta />
       </div>
     </section>
 
@@ -223,6 +237,7 @@ const jsonLd = {
             <li><span class="pasos__n"><span class="ms" aria-hidden="true">inbox</span></span><span>Vacías la bandeja.</span></li>
             <li><span class="pasos__n"><span class="ms" aria-hidden="true">water_drop</span></span><span>Enjuagas y listo.</span></li>
           </ol>
+          <PedirCta nota={false} />
         </div>
         <div class="split__media duo duo--tight">
           <div class="vid vid--card"><video muted loop playsinline preload="none" poster={vid('lavado-facil').poster} aria-label="El tapete se lava en el lavadero" data-vid><source src={vid('lavado-facil').src} type="video/mp4" /></video><button class="vid__btn" type="button" aria-label="Reproducir video" data-vid-btn hidden><span class="ms" aria-hidden="true">play_arrow</span></button></div>
@@ -238,7 +253,7 @@ const jsonLd = {
         <div class="split__txt">
           <h2 id="lp-compras" class="h2">Pides hoy, <b class="gt">pagas cuando te llega</b></h2>
           <ol class="pasos">
-            <li><span class="pasos__n">1</span><span>Llenas el formulario (1 minuto).</span></li>
+            <li><span class="pasos__n">1</span><span>Lo pides aquí y llenas tus datos de envío (1 minuto).</span></li>
             <li><span class="pasos__n">2</span><span>Te confirmamos por WhatsApp.</span></li>
             <li><span class="pasos__n">3</span><span>Lo recibes en tu casa y pagas en efectivo al mensajero.</span></li>
           </ol>
@@ -247,54 +262,48 @@ const jsonLd = {
       </div>
     </section>
 
-    <!-- ======== FORMULARIO DE PEDIDO ======== -->
-    <section id="pedido" class="wrap blq pedido" aria-labelledby="lp-pedido" data-pedido>
-      <div class="pedido__card">
-        <div data-form-wrap>
-          <h2 id="lp-pedido" class="h2 pedido__h">Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>
-          <div class="resumen">
-            <img src={img('producto-cenital-durazno')} alt="" width="72" height="72" loading="lazy" decoding="async" />
-            <p><b>{P.nombre}</b><span><span data-cant-txt>1 unidad</span> · <b data-total>{money(P.precio)}</b> · Envío gratis</span></p>
-          </div>
-
-          <form class="form" novalidate data-form>
-            <fieldset class="cant">
-              <legend>Cantidad</legend>
-              <label><input type="radio" name="cantidad" value="1" checked /><span><b>1 unidad</b>{money(P.precio)}</span></label>
-              <label><input type="radio" name="cantidad" value="2" /><span><b>2 unidades</b>{money(P.precio * 2)}</span></label>
-            </fieldset>
-            <p class="hint">Todos los campos son obligatorios, menos las indicaciones.</p>
-            <div class="grid2">
-              <div class="fld"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" autocomplete="given-name" placeholder="Ej: Laura" required /><span class="err" id="f-nombre-err">Escribe tu nombre.</span></div>
-              <div class="fld"><label for="f-apellido">Apellido</label><input id="f-apellido" name="apellido" autocomplete="family-name" placeholder="Ej: Gómez" required /><span class="err" id="f-apellido-err">Escribe tu apellido.</span></div>
-              <div class="fld"><label for="f-celular">Celular</label><input id="f-celular" name="celular" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Ej: 300 123 4567" required /><span class="hint">Te escribimos a este número por WhatsApp.</span><span class="err" id="f-celular-err">Escribe un celular de 10 dígitos que empiece por 3. Ej: 300 123 4567</span></div>
-              <div class="fld"><label for="f-depto">Departamento</label>
-                <select id="f-depto" name="departamento" autocomplete="address-level1" required>
-                  <option value="">Elige el departamento</option>
-                  {DEPARTAMENTOS.map((d) => <option>{d}</option>)}
-                </select>
-                <span class="err" id="f-depto-err">Elige el departamento.</span>
-              </div>
-              <div class="fld"><label for="f-ciudad">Ciudad o municipio</label><input id="f-ciudad" name="ciudad" autocomplete="address-level2" placeholder="Ej: Pereira" required /><span class="err" id="f-ciudad-err">Escribe la ciudad o el municipio.</span></div>
-              <div class="fld"><label for="f-barrio">Barrio</label><input id="f-barrio" name="barrio" placeholder="Ej: Álamos" required /><span class="err" id="f-barrio-err">Escribe el barrio.</span></div>
-              <div class="fld full"><label for="f-direccion">Dirección completa</label><input id="f-direccion" name="direccion" autocomplete="street-address" placeholder="Ej: Calle 19 # 8-34" required /><span class="err" id="f-direccion-err">Escribe la dirección de entrega.</span></div>
-              <div class="fld full"><label for="f-indicaciones">Indicaciones (opcional)</label><textarea id="f-indicaciones" name="indicaciones" maxlength="300" placeholder="Torre, apto, punto de referencia"></textarea></div>
-            </div>
-            <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos" target="_blank">términos</a> y la <a href="/privacidad" target="_blank">política de datos</a> para que me contacten sobre este pedido.</span></label>
-            <span class="err" id="f-datos-err">Para enviar tu pedido necesitamos tu autorización.</span>
-            <button class="cta cta--full" type="submit" data-enviar><span data-enviar-txt>Confirmar pedido · Pago contraentrega</span></button>
-            <p class="err" role="alert" data-fallo hidden>No pudimos guardar el pedido. Te abrimos WhatsApp con el pedido ya escrito para que no se pierda. Si no se abrió, <a href="#" target="_blank" rel="noopener" data-fallo-wa>toca aquí</a>.</p>
-          </form>
-        </div>
-
-        <div class="gracias" data-gracias hidden>
-          <span class="gracias__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
-          <h2 class="h2" tabindex="-1" data-gracias-h>¡Pedido recibido!</h2>
-          <p class="txt">Te escribimos por WhatsApp para confirmar. Recuerda: <b>pagas al recibir</b>.</p>
-          <p class="gracias__cod">Tu código de pedido: <b data-codigo></b></p>
-          <a class="wa-btn wa-btn--lg" href="#" target="_blank" rel="noopener" data-gracias-wa><WaIcon size={22} class="" />Confirmar por WhatsApp</a>
-        </div>
+    <!-- ======== RESEÑAS ======== -->
+    <section id="opiniones" class="wrap blq resenas rv" aria-labelledby="lp-resenas" data-resenas>
+      <div class="resenas__head">
+        <h2 id="lp-resenas" class="h2">Opiniones</h2>
+        <p class="resenas__prom" data-promedio hidden></p>
       </div>
+      <ul class="resenas__lista" data-lista></ul>
+      <p class="txt" data-vacio>Aún no hay opiniones de este producto. Si ya lo tienes, cuéntanos cómo te ha ido.</p>
+
+      <details class="opinar" data-opinar>
+        <summary><span class="ms" aria-hidden="true">rate_review</span>Deja tu opinión</summary>
+        <form class="form" novalidate data-form-resena>
+          <fieldset class="estrellas">
+            <legend>¿Cuántas estrellas le das? <span class="req">*</span></legend>
+            <div class="estrellas__fila">
+              {[5, 4, 3, 2, 1].map((n) => <Fragment><input type="radio" name="estrellas" id={`r-e${n}`} value={n} /><label for={`r-e${n}`} title={`${n} de 5`}><span class="ms" aria-hidden="true">star</span><span class="sr-only">{n} de 5 estrellas</span></label></Fragment>)}
+            </div>
+            <span class="err" id="r-estrellas-err">Elige de 1 a 5 estrellas.</span>
+          </fieldset>
+          <div class="grid2">
+            <div class="fld"><label for="r-nombre">Tu nombre <span class="req">*</span></label><input id="r-nombre" name="nombre" maxlength="60" autocomplete="given-name" placeholder="Ej: Laura G." required /><span class="err" id="r-nombre-err">Escribe tu nombre.</span></div>
+            <div class="fld"><label for="r-ciudad">Ciudad (opcional)</label><input id="r-ciudad" name="ciudad" maxlength="60" autocomplete="address-level2" placeholder="Ej: Pereira" /></div>
+            <div class="fld full"><label for="r-comentario">Tu comentario <span class="req">*</span></label><textarea id="r-comentario" name="comentario" maxlength="1000" placeholder="¿Cómo le ha ido a tu perro con el baño sanitario?" required></textarea><span class="err" id="r-comentario-err">Escribe tu comentario (mínimo 3 letras).</span></div>
+            <div class="fld full">
+              <span class="fld__lbl">Foto (opcional)</span>
+              <label class="foto-in" for="r-foto"><span class="ms" aria-hidden="true">add_a_photo</span><span data-foto-txt>Agregar una foto</span></label>
+              <input id="r-foto" name="foto" type="file" accept="image/*" class="sr-only" />
+              <img class="foto-prev" alt="Vista previa de tu foto" data-foto-prev hidden />
+              <span class="err" id="r-foto-err">No pudimos usar esa foto. Prueba con otra (JPG o PNG).</span>
+            </div>
+          </div>
+          <label class="consent"><input type="checkbox" name="datos" id="r-datos" required /><span>Autorizo publicar mi nombre, ciudad, comentario y foto en esta página, según la <a href="/privacidad" target="_blank">política de datos</a>.</span></label>
+          <span class="err" id="r-datos-err">Para publicar tu opinión necesitamos tu autorización.</span>
+          <button class="enviar-resena" type="submit" data-enviar-resena>Enviar opinión</button>
+          <p class="err" role="alert" data-resena-fallo hidden>No pudimos enviar tu opinión. Revisa tu conexión e inténtalo de nuevo.</p>
+        </form>
+        <div class="gracias" data-resena-ok hidden>
+          <span class="gracias__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
+          <p class="h3" tabindex="-1" data-resena-ok-h>¡Gracias por tu opinión!</p>
+          <p class="txt">La revisamos y la publicamos pronto.</p>
+        </div>
+      </details>
     </section>
 
     <!-- ======== PREGUNTAS FRECUENTES ======== -->
@@ -310,43 +319,90 @@ const jsonLd = {
       </div>
       <a class="wa-btn" href={waPregunta} target="_blank" rel="noopener"><WaIcon size={22} class="" />¿Otra pregunta? Escríbenos</a>
     </section>
+
+    <!-- ======== CHECKOUT AL FINAL DE LA PÁGINA ======== -->
+    <section id="pedido" class="wrap blq pedido" aria-labelledby="f-t">
+      <div class="pedido__card">
+        <CheckoutLanding pre="f" titulo slug={P.slug} nombre={P.nombre} precio={P.precio} variante={P.medidas} foto={img('producto-cenital-durazno')} dropi={P.dropi} legal={LEGAL.updated} shop={PHONES.shop.e164} />
+      </div>
+    </section>
   </div>
+
+  <!-- ======== VENTANA FLOTANTE DE PEDIDO ======== -->
+  <dialog class="ckd" data-ck-dialog aria-labelledby="ckd-t">
+    <div class="ckd__in">
+      <div class="ckd__head">
+        <p class="ckd__t" id="ckd-t">Pide tu Baño Sanitario</p>
+        <button type="button" class="ckd__x" data-ck-cerrar aria-label="Cerrar"><span class="ms" aria-hidden="true">close</span></button>
+      </div>
+      <CheckoutLanding pre="m" slug={P.slug} nombre={P.nombre} precio={P.precio} variante={P.medidas} foto={img('producto-cenital-durazno')} dropi={P.dropi} legal={LEGAL.updated} shop={PHONES.shop.e164} />
+    </div>
+  </dialog>
 
   <!-- ======== BOTÓN FIJO EN CELULAR ======== -->
   <div class="mbar" data-mbar>
-    <a class="cta cta--full" href="#pedido" data-pedir>Pedir ahora · {money(P.precio)}</a>
+    <button class="cta cta--full" type="button" data-pedir><span class="ms" aria-hidden="true">shopping_bag</span>Pedir ahora</button>
   </div>
 </Base>
 
 <script>
+  import { cart } from '../scripts/cart';
+  import { avisarAgregado } from '../scripts/add-buttons';
+  import { productoPorSlug, itemCarrito, esc, TONOS } from '../scripts/catalogo';
   import { insert, supabaseReady } from '../scripts/supabase';
   import { track } from '../scripts/meta';
 
   const root = document.querySelector<HTMLElement>('[data-lp]')!;
   const D = root.dataset;
   const PRECIO = Number(D.precio);
-  const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  const wa = (t: string) => `https://wa.me/${D.shop}?text=${encodeURIComponent(t)}`;
+  const SB_URL = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
+  const SB_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const PREVIEW = !supabaseReady && (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname));
+  const enArchivo = location.protocol === 'file:';
 
-  /* ---------- píxel: vio el producto ---------- */
-  const contenido = { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, currency: 'COP' };
-  track('ViewContent', { ...contenido, value: PRECIO });
-  let checkout = false;
-  const iniciar = () => {
-    if (checkout) return;
-    checkout = true;
-    track('InitiateCheckout', { ...contenido, value: PRECIO * cantidad(), num_items: cantidad() });
-  };
-  document.querySelectorAll('[data-pedir]').forEach((a) => a.addEventListener('click', iniciar));
+  /* ---------- píxel: vio el producto (AddToCart, InitiateCheckout y Purchase salen del carrito de siempre) ---------- */
+  track('ViewContent', { content_ids: [D.slug], content_type: 'product', content_name: D.nombre, value: PRECIO, currency: 'COP' });
 
-  /* ---------- datos del anuncio (utm y fbclid) para medir qué campaña vende ---------- */
+  /* ---------- de dónde viene (anuncio): el carrito lo guarda con el pedido ---------- */
   const q = new URLSearchParams(location.search);
   const atribucion: Record<string, string> = {};
   for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid']) {
     const v = q.get(k); if (v) atribucion[k] = v.slice(0, 200);
   }
+  try {
+    const hay = Object.keys(atribucion).length > 0;
+    if (hay || !sessionStorage.getItem('alma-origen')) {
+      sessionStorage.setItem('alma-origen', JSON.stringify({ fuente: hay ? 'landing-meta' : 'landing', modo_envio: 'gratis', atribucion: hay ? atribucion : null }));
+    }
+  } catch { /* sin almacenamiento */ }
+
+  /* ---------- comprar: el producto del catálogo (con su variante, para el inventario) ---------- */
+  let item = { id: D.slug!, name: D.nombre!, variant: D.medidas!, price: PRECIO, icon: 'grass', tone: TONOS.peach, max: 10 } as Parameters<typeof cart.add>[0];
+  productoPorSlug(D.slug!).then((p) => {
+    const v = p?.variantes[0];
+    // Dropi maneja el inventario: si en la tienda figura en cero, igual se puede pedir
+    if (p && v) item = { ...itemCarrito(p, v), max: Math.max(v.stock, 10) };
+    // precio tachado: solo si en el gestor tiene un «precio antes» mayor (promoción real)
+    if (v?.antes && v.antes > v.precio) {
+      const s = document.querySelector<HTMLElement>('[data-antes]'), off = document.querySelector<HTMLElement>('[data-off]');
+      if (!s || !off) return;
+      s.textContent = '$' + v.antes.toLocaleString('es-CO'); s.setAttribute('aria-label', 'Antes ' + s.textContent); s.hidden = false;
+      off.textContent = '-' + Math.round((1 - v.precio / v.antes) * 100) + '%'; off.hidden = false;
+    }
+  }).catch(() => { /* queda el producto base */ });
+
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const agregar = t.closest<HTMLButtonElement>('[data-agregar]');
+    if (agregar) {
+      cart.add(item);
+      avisarAgregado(item);
+      agregar.classList.add('is-added');
+      const ic = agregar.querySelector('.ms')!;
+      ic.textContent = 'check';
+      window.setTimeout(() => { agregar.classList.remove('is-added'); ic.textContent = 'add_shopping_cart'; }, 1400);
+    }
+  });
 
   /* ---------- videos: en bucle solo mientras se ven; con «reducir movimiento», póster y botón ---------- */
   const videos = [...document.querySelectorAll<HTMLVideoElement>('[data-vid]')];
@@ -368,134 +424,165 @@ const jsonLd = {
   }
 
   /* ---------- aparición suave al bajar ---------- */
-  const rv = [...document.querySelectorAll<HTMLElement>('.rv')];
   if (!reduce && 'IntersectionObserver' in window) {
     document.documentElement.classList.add('js-rv');
     const io = new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
-    rv.forEach((el) => io.observe(el));
+    document.querySelectorAll('.rv').forEach((el) => io.observe(el));
   }
 
   /* ---------- galería deslizable con puntos ---------- */
-  const track_ = document.querySelector<HTMLElement>('[data-gal-track]')!;
+  const galeria = document.querySelector<HTMLElement>('[data-gal-track]')!;
   const dots = [...document.querySelectorAll<HTMLElement>('[data-dot]')];
-  track_.addEventListener('scroll', () => {
-    const i = Math.round(track_.scrollLeft / track_.clientWidth);
+  galeria.addEventListener('scroll', () => {
+    const i = Math.round(galeria.scrollLeft / galeria.clientWidth);
     dots.forEach((d, j) => d.classList.toggle('is-on', j === i));
   }, { passive: true });
 
-  /* ---------- formulario ---------- */
-  const form = document.querySelector<HTMLFormElement>('[data-form]')!;
-  const val = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
-  const cantidad = () => Number((form.querySelector<HTMLInputElement>('[name="cantidad"]:checked'))?.value ?? 1);
-  const pintar = () => {
-    const n = cantidad();
-    document.querySelector('[data-cant-txt]')!.textContent = n === 1 ? '1 unidad' : `${n} unidades`;
-    document.querySelector('[data-total]')!.textContent = money(PRECIO * n);
-  };
-  form.addEventListener('change', pintar);
-  form.addEventListener('focusin', iniciar);
-
-  const celular = () => val('celular').replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, '');
-  const reglas: [string, () => boolean][] = [
-    ['nombre', () => val('nombre').length > 0],
-    ['apellido', () => val('apellido').length > 0],
-    ['celular', () => /^3\d{9}$/.test(celular())],
-    ['depto', () => val('departamento').length > 0],
-    ['ciudad', () => val('ciudad').length > 0],
-    ['barrio', () => val('barrio').length > 0],
-    ['direccion', () => val('direccion').length > 0],
-    ['datos', () => (form.elements.namedItem('datos') as HTMLInputElement).checked]
-  ];
-  const marcar = (k: string, malo: boolean) => {
-    const err = document.getElementById(`f-${k}-err`)!;
-    err.classList.toggle('is-on', malo);
-    const campo = document.getElementById(`f-${k}`) ?? form.querySelector<HTMLElement>(`[name="${k}"]`);
-    if (campo) { campo.setAttribute('aria-invalid', String(malo)); if (malo) campo.setAttribute('aria-describedby', err.id); else campo.removeAttribute('aria-describedby'); }
-    return campo;
-  };
-  const validar = () => {
-    let primero: HTMLElement | null = null;
-    for (const [k, ok] of reglas) { const campo = marcar(k, !ok()); if (!ok() && !primero) primero = campo; }
-    primero?.focus();
-    return !primero;
-  };
-  // al corregir un campo con error, el aviso se va
-  form.addEventListener('input', (e) => {
-    const el = e.target as HTMLElement;
-    if (el.getAttribute('aria-invalid') !== 'true') return;
-    const r = reglas.find(([k]) => `f-${k}` === el.id || (el as HTMLInputElement).name === k);
-    if (r && r[1]()) marcar(r[0], false);
-  });
-
-  let enviando = false;
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (enviando || !validar()) return;
-    const n = cantidad();
-    const total = PRECIO * n;
-    const codigo = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
-    const datos = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), departamento: val('departamento'), ciudad: val('ciudad'), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
-    const fila = {
-      codigo, ...datos, correo: null, indicaciones: datos.indicaciones || null,
-      items: [{ id: D.slug, nombre: D.nombre, variante: D.medidas, precio: PRECIO, cantidad: n, proveedor: 'dropi', dropi_id: D.dropi }],
-      subtotal: total, envio: 0, prioritario: false, total, obsequio: false, aviso_compras: false,
-      acepto_terminos: true, version_politicas: D.legal
-    };
-    const msg = [
-      `Hola, Alma Animal. Quiero confirmar mi pedido ${codigo}:`,
-      `• ${n} × ${D.nombre} — ${money(total)}`,
-      'Envío gratis · Pago contraentrega', '',
-      `Para: ${datos.nombre} ${datos.apellido} · ${datos.celular}`,
-      `Dirección: ${datos.direccion}, barrio ${datos.barrio}, ${datos.ciudad} (${datos.departamento})`,
-      datos.indicaciones ? `Indicaciones: ${datos.indicaciones}` : ''
-    ].filter(Boolean).join('\n');
-
-    enviando = true;
-    const btn = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
-    btn.disabled = true;
-    form.querySelector('[data-enviar-txt]')!.textContent = 'Enviando tu pedido…';
-    form.querySelector<HTMLElement>('[data-fallo]')!.hidden = true;
-
-    // con los datos del anuncio; si la base aún no tiene esas columnas, se guarda sin ellas
-    let res = PREVIEW ? 'ok' : await insert('pedidos', { ...fila, fuente: 'landing-meta', modo_envio: 'gratis', atribucion: Object.keys(atribucion).length ? atribucion : null });
-    if (res === 'error') res = await insert('pedidos', fila);
-
-    enviando = false;
-    btn.disabled = false;
-    form.querySelector('[data-enviar-txt]')!.textContent = 'Confirmar pedido · Pago contraentrega';
-
-    if (res === 'ok') {
-      track('Purchase', { ...contenido, value: total, num_items: n, order_id: codigo, contents: [{ id: D.slug, quantity: n, item_price: PRECIO }] },
-        { celular: datos.celular, nombre: datos.nombre, apellido: datos.apellido, ciudad: datos.ciudad, departamento: datos.departamento }, codigo);
-      document.querySelector<HTMLElement>('[data-form-wrap]')!.hidden = true;
-      const g = document.querySelector<HTMLElement>('[data-gracias]')!;
-      g.hidden = false;
-      g.querySelector('[data-codigo]')!.textContent = codigo;
-      g.querySelector<HTMLAnchorElement>('[data-gracias-wa]')!.href = wa(msg);
-      document.querySelector<HTMLElement>('[data-mbar]')!.hidden = true;
-      document.getElementById('pedido')!.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      g.querySelector<HTMLElement>('[data-gracias-h]')!.focus({ preventScroll: true });
-    } else {
-      // no se pierde la venta: el pedido sale por WhatsApp
-      const href = wa(`Hola, Alma Animal. Quiero hacer este pedido (${codigo}):\n` + msg.split('\n').slice(1).join('\n'));
-      const f = form.querySelector<HTMLElement>('[data-fallo]')!;
-      f.querySelector<HTMLAnchorElement>('[data-fallo-wa]')!.href = href;
-      f.hidden = false;
-      window.open(href, '_blank', 'noopener') ?? (location.href = href);
-    }
-  });
-
-  /* ---------- barra fija: se oculta cuando el formulario está en pantalla ---------- */
+  /* ---------- barra fija: se oculta mientras se ven los botones de arriba o el cierre de compra ---------- */
   const mbar = document.querySelector<HTMLElement>('[data-mbar]')!;
-  const hero = document.querySelector<HTMLElement>('.ctas')!;
-  // también mientras se ven los botones de la primera pantalla (no repetir el mismo botón dos veces)
   const visibles = new Set<Element>();
   const obs = new IntersectionObserver((es) => {
     es.forEach((e) => (e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target)));
     mbar.classList.toggle('is-off', visibles.size > 0);
   });
+  obs.observe(document.querySelector('[data-ctas-hero]')!);
+  document.addEventListener('ck:listo', () => mbar.classList.add('is-off'));
   obs.observe(document.getElementById('pedido')!);
-  obs.observe(hero);
+
+  /* ---------- promoción: cuenta regresiva hasta su fecha real de fin ---------- */
+  const promo = document.querySelector<HTMLElement>('[data-promo]');
+  if (promo) {
+    const fin = new Date(promo.dataset.promo!).getTime();
+    const t = promo.querySelector<HTMLElement>('[data-promo-t]')!;
+    const dos = (n: number) => String(n).padStart(2, '0');
+    const tic = () => {
+      const ms = fin - Date.now();
+      if (ms <= 0) { promo.hidden = true; return false; }
+      const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, sg = Math.floor(ms / 1e3) % 60;
+      t.textContent = (d ? d + (d === 1 ? ' día ' : ' días ') : '') + dos(h) + ':' + dos(m) + ':' + dos(sg);
+      promo.hidden = false;
+      return true;
+    };
+    if (tic()) { const iv = window.setInterval(() => { if (!tic()) window.clearInterval(iv); }, 1000); }
+  }
+
+  /* ---------- reseñas publicadas ---------- */
+  const lista = document.querySelector<HTMLElement>('[data-lista]')!;
+  const prom = document.querySelector<HTMLElement>('[data-promedio]')!;
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]')!;
+  const estrellasTxt = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+  const fecha = (iso: string) => new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+  type Resena = { id: string; creado: string; nombre: string; ciudad: string | null; estrellas: number; comentario: string; foto: string | null };
+  if (SB_URL && SB_KEY) {
+    fetch(`${SB_URL}/rest/v1/resenas?select=id,creado,nombre,ciudad,estrellas,comentario,foto&producto=eq.${encodeURIComponent(D.slug!)}&estado=eq.publicada&order=creado.desc&limit=50`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rs: Resena[]) => {
+        if (!rs.length) return;
+        vacio.hidden = true;
+        const media = rs.reduce((s, x) => s + x.estrellas, 0) / rs.length;
+        prom.hidden = false;
+        const hs = document.querySelector<HTMLElement>('[data-hero-stars]')!;
+        hs.querySelector('.stars')!.textContent = estrellasTxt(Math.round(media));
+        hs.querySelector('[data-hero-stars-txt]')!.textContent = `${media.toFixed(1).replace('.', ',')} · ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}`;
+        hs.setAttribute('aria-label', `${media.toFixed(1).replace('.', ',')} de 5 estrellas, ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}. Ver opiniones`);
+        prom.innerHTML = `<span class="stars" aria-hidden="true">${estrellasTxt(Math.round(media))}</span><b>${media.toFixed(1).replace('.', ',')}</b> de 5 · ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}`;
+        lista.innerHTML = rs.map((x) => `<li class="resena">
+          <div class="resena__top"><span class="stars" role="img" aria-label="${x.estrellas} de 5 estrellas">${estrellasTxt(x.estrellas)}</span><time datetime="${esc(x.creado)}">${fecha(x.creado)}</time></div>
+          <p class="resena__txt">${esc(x.comentario)}</p>
+          ${x.foto && x.foto.startsWith(SB_URL!) ? `<img class="resena__foto" src="${esc(x.foto)}" alt="Foto de ${esc(x.nombre)}" loading="lazy" decoding="async" />` : ''}
+          <p class="resena__autor"><b>${esc(x.nombre)}</b>${x.ciudad ? ` · ${esc(x.ciudad)}` : ''}</p>
+        </li>`).join('');
+      })
+      .catch(() => { /* sin reseñas si no carga */ });
+  }
+
+  /* ---------- dejar una reseña (queda pendiente hasta que el equipo la publique) ---------- */
+  const formR = document.querySelector<HTMLFormElement>('[data-form-resena]')!;
+  const fotoIn = formR.querySelector<HTMLInputElement>('#r-foto')!;
+  const fotoPrev = formR.querySelector<HTMLImageElement>('[data-foto-prev]')!;
+  let fotoBlob: Blob | null = null;
+
+  const comprimir = async (file: File, max = 1200): Promise<Blob> => {
+    const img = await createImageBitmap(file);
+    const k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
+    return new Promise((ok, mal) => c.toBlob((b) => (b ? ok(b) : mal(new Error('foto'))), 'image/webp', 0.82));
+  };
+  fotoIn.addEventListener('change', async () => {
+    const file = fotoIn.files?.[0];
+    formR.querySelector('#r-foto-err')!.classList.remove('is-on');
+    if (!file) return;
+    try {
+      fotoBlob = await comprimir(file);
+      if (fotoBlob.size > 3 * 1024 * 1024) throw new Error('grande');
+      fotoPrev.src = URL.createObjectURL(fotoBlob);
+      fotoPrev.hidden = false;
+      formR.querySelector('[data-foto-txt]')!.textContent = 'Cambiar la foto';
+    } catch {
+      fotoBlob = null; fotoPrev.hidden = true;
+      formR.querySelector('#r-foto-err')!.classList.add('is-on');
+    }
+  });
+
+  const v = (n: string) => ((formR.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
+  const estrellas = () => Number(formR.querySelector<HTMLInputElement>('[name="estrellas"]:checked')?.value ?? 0);
+  const reglas: [string, () => boolean, string][] = [
+    ['estrellas', () => estrellas() > 0, 'r-e5'],
+    ['nombre', () => v('nombre').length > 0, 'r-nombre'],
+    ['comentario', () => v('comentario').length >= 3, 'r-comentario'],
+    ['datos', () => formR.querySelector<HTMLInputElement>('#r-datos')!.checked, 'r-datos']
+  ];
+  let enviando = false;
+  formR.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (enviando) return;
+    let primero: HTMLElement | null = null;
+    for (const [k, ok, id] of reglas) {
+      const malo = !ok();
+      const err = document.getElementById(`r-${k}-err`)!;
+      err.classList.toggle('is-on', malo);
+      const campo = document.getElementById(id)!;
+      campo.setAttribute('aria-invalid', String(malo));
+      if (malo) campo.setAttribute('aria-describedby', err.id); else campo.removeAttribute('aria-describedby');
+      if (malo && !primero) primero = campo;
+    }
+    if (primero) { primero.focus(); return; }
+
+    enviando = true;
+    const btn = formR.querySelector<HTMLButtonElement>('[data-enviar-resena]')!;
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    const fallo = formR.querySelector<HTMLElement>('[data-resena-fallo]')!;
+    fallo.hidden = true;
+
+    let ok = false;
+    try {
+      let foto: string | null = null;
+      if (fotoBlob && SB_URL && SB_KEY) {
+        const ruta = `${D.slug}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
+        const r = await fetch(`${SB_URL}/storage/v1/object/resenas/${ruta}`, {
+          method: 'POST', headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'image/webp', 'cache-control': '31536000' }, body: fotoBlob
+        });
+        if (r.ok) foto = `${SB_URL}/storage/v1/object/public/resenas/${ruta}`;
+      }
+      const res = !supabaseReady && enArchivo ? 'ok' : await insert('resenas', {
+        producto: D.slug, nombre: v('nombre'), ciudad: v('ciudad') || null, estrellas: estrellas(), comentario: v('comentario'), foto,
+        acepto_datos: true, version_politicas: D.legal
+      });
+      ok = res === 'ok';
+    } catch { ok = false; }
+
+    enviando = false;
+    btn.disabled = false; btn.textContent = 'Enviar opinión';
+    if (ok) {
+      formR.hidden = true;
+      const g = document.querySelector<HTMLElement>('[data-resena-ok]')!;
+      g.hidden = false;
+      g.querySelector<HTMLElement>('[data-resena-ok-h]')!.focus();
+    } else fallo.hidden = false;
+  });
 </script>
 
 <style>
@@ -525,7 +612,7 @@ const jsonLd = {
   .foto { width: 100%; height: auto; border-radius: 22px; background: var(--surface-3); }
 
   /* ---------- botones ---------- */
-  .cta { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 0 24px; border-radius: 999px; border: 0; background: var(--primary); color: #fff; font: 700 17px/1.2 var(--font-sans); text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 6px 16px rgb(77 63 108 / .28); transition: background .2s, transform .2s var(--ease-out); }
+  .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; padding: 0 24px; border-radius: 999px; border: 0; background: var(--primary); color: #fff; font: 700 17px/1.2 var(--font-sans); text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 6px 16px rgb(77 63 108 / .28); transition: background .2s, transform .2s var(--ease-out); }
   .cta:hover { background: var(--primary-strong); color: #fff; }
   .cta:active { transform: scale(.98); }
   .cta:disabled { opacity: .7; cursor: progress; }
@@ -543,6 +630,14 @@ const jsonLd = {
   .hero__info { display: flex; flex-direction: column; gap: 18px; padding-inline: var(--gutter); }
   .hero__sub { font: 400 19px/1.5 var(--font-sans); color: var(--ink-muted); }
   .precio { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+  .hero__stars { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font: 600 14.5px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
+  .hero__stars:hover { color: var(--primary-strong); text-decoration: underline; }
+  .hero__stars .stars { font-size: 20px; }
+  .antes { font: 500 20px/1 var(--font-sans); color: var(--ink-soft); }
+  .off { display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; background: #B4271F; color: #fff; font: 700 14px/1 var(--font-sans); }
+  .promo { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #FDEBDD; color: var(--peach-ink); font: 500 15px/1.35 var(--font-sans); }
+  .promo .ms { font-size: 24px; color: #B4571F; }
+  .promo b { font-variant-numeric: tabular-nums; color: var(--ink); }
   .precio > b { font: 700 40px/1 var(--font-sans); letter-spacing: -.02em; margin-right: 4px; }
   .sello { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 999px; font: 700 14px/1 var(--font-sans); }
   .sello .ms { font-size: 18px; }
@@ -637,44 +732,90 @@ const jsonLd = {
   .confianza { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; background: var(--surface-2); font: 500 15px/1.5 var(--font-sans); color: var(--ink-muted); }
   .confianza .ms { color: var(--primary); }
 
-  /* ---------- formulario ---------- */
+  /* ---------- cierre de compra ---------- */
   .pedido { scroll-margin-top: 84px; }
   .pedido__card { padding: 20px 16px; border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft), 0 12px 32px rgb(54 41 84 / .08); }
   .pedido__h span { display: block; font-size: .62em; color: var(--primary); margin-top: 4px; }
-  .resumen { display: flex; gap: 12px; align-items: center; margin: 16px 0; padding: 10px; border-radius: 18px; background: var(--surface-2); }
+  .resumen { display: flex; gap: 12px; align-items: center; margin: 16px 0 8px; padding: 10px; border-radius: 18px; background: var(--surface-2); }
   .resumen img { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; flex: none; }
   .resumen p { display: flex; flex-direction: column; gap: 2px; font: 400 15px/1.35 var(--font-sans); color: var(--ink-muted); }
   .resumen p > b { color: var(--ink); font-size: 16px; }
   .resumen span b { color: var(--ink); }
+
+  /* ---------- ventana flotante de pedido ---------- */
+  .ckd { width: min(100% - 24px, 560px); max-height: min(92dvh, 900px); margin: auto; padding: 0; border: 0; border-radius: 26px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px rgb(43 30 72 / .35); }
+  .ckd::backdrop { background: rgb(43 30 72 / .55); backdrop-filter: blur(3px); }
+  .ckd__in { display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 20px; }
+  .ckd__head { position: sticky; top: -16px; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: -16px -16px 0; padding: 14px 12px 10px 18px; background: var(--surface); border-bottom: 1px solid var(--line-soft); }
+  .ckd__t { font: 700 20px/1.2 var(--font-serif); }
+  .ckd__x { width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--surface-3); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .ckd__x:hover { background: #E6DEEA; }
+  :global(html:has(dialog[open])) { overflow: hidden; }
+  @media (max-width: 639px) {
+    /* en celular, hoja que sube desde abajo */
+    .ckd { width: 100%; max-width: none; max-height: 94dvh; margin: auto 0 0; border-radius: 26px 26px 0 0; }
+    .ckd[open] { animation: ckd-sube .3s var(--ease-out); }
+  }
+  @keyframes ckd-sube { from { transform: translateY(40px); opacity: .4; } }
+  @media (prefers-reduced-motion: reduce) { .ckd[open] { animation: none; } }
+
+  /* ---------- reseñas ---------- */
+  .resenas { display: flex; flex-direction: column; gap: 18px; }
+  .resenas__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+  .resenas__prom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: 500 15.5px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .resenas__prom b { color: var(--ink); font-size: 18px; }
+  .stars { color: #C77A2E; letter-spacing: 2px; font-size: 18px; line-height: 1; }
+  .resenas__lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .resena { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .resena__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .resena__top time { font: 400 13.5px/1 var(--font-sans); color: var(--ink-soft); }
+  .resena__txt { font: 400 16px/1.55 var(--font-sans); color: var(--ink); white-space: pre-line; }
+  .resena__foto { width: 100%; max-width: 320px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+  .resena__autor { font: 400 14.5px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .resena__autor b { color: var(--ink); }
+
+  .opinar { border-radius: 22px; background: var(--surface-2); box-shadow: 0 0 0 1px var(--line-soft); }
+  .opinar summary { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 12px 18px; font: 700 17px/1.2 var(--font-sans); color: var(--primary-strong); cursor: pointer; list-style: none; }
+  .opinar summary::-webkit-details-marker { display: none; }
+  .opinar summary .ms { font-size: 24px; }
+  .opinar[open] summary { border-bottom: 1px solid var(--line-soft); }
+  .opinar .form, .opinar .gracias { padding: 18px 16px 20px; }
   .form { display: flex; flex-direction: column; gap: 18px; }
-  .cant { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .cant legend { font: 600 15px/1.3 var(--font-sans); margin-bottom: 8px; padding: 0; }
-  .cant label { position: relative; cursor: pointer; }
-  .cant input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-  .cant label > span { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--line); font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); transition: border-color .15s, background .15s; }
-  .cant label > span b { color: var(--ink); font-size: 16px; }
-  .cant input:checked + span { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
-  .cant input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .estrellas { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .estrellas legend { font: 600 15px/1.3 var(--font-sans); padding: 0; margin-bottom: 6px; }
+  /* las estrellas van de 5 a 1 y se voltean: al pasar o elegir una, se encienden ella y las de su izquierda */
+  .estrellas__fila { display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; }
+  .estrellas__fila input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .estrellas__fila label { cursor: pointer; padding: 4px; border-radius: 10px; color: #CFC6D6; }
+  .estrellas__fila label .ms { font-size: 38px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
+  .estrellas__fila input:checked ~ label, .estrellas__fila label:hover, .estrellas__fila label:hover ~ label { color: #E5A04B; }
+  .estrellas__fila input:focus-visible + label { outline: 3px solid var(--primary); outline-offset: 1px; }
+  .estrellas__fila input[aria-invalid="true"] ~ label { color: #E8B7B3; }
   .grid2 { display: grid; gap: 16px; }
   .fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .fld label { font: 600 15px/1.3 var(--font-sans); }
-  .fld input, .fld select, .fld textarea { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 16px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; transition: border-color .15s, box-shadow .15s; }
-  .fld textarea { min-height: 84px; padding: 14px 16px; resize: vertical; }
+  .fld label, .fld__lbl { font: 600 15px/1.3 var(--font-sans); }
+  .fld input, .fld textarea { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 16px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; transition: border-color .15s, box-shadow .15s; }
+  .fld textarea { min-height: 110px; padding: 14px 16px; resize: vertical; }
   .fld input::placeholder, .fld textarea::placeholder { color: #6E6585; }
-  .fld input:focus, .fld select:focus, .fld textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
+  .fld input:focus, .fld textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }
   .fld [aria-invalid="true"] { border-color: #B4271F; }
-  .hint { font: 400 14px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .foto-in { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 1.5px dashed var(--primary-soft); background: #fff; color: var(--primary-strong); font: 600 15px/1 var(--font-sans); cursor: pointer; }
+  .foto-in .ms { font-size: 22px; }
+  #r-foto:focus-visible + .foto-prev, .foto-in:has(+ #r-foto:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .foto-prev { width: 140px; height: 105px; object-fit: cover; border-radius: 12px; }
+  .req { color: #B4271F; }
   .err { display: none; font: 600 14px/1.4 var(--font-sans); color: #B4271F; }
   .err.is-on, p.err:not([hidden]) { display: block; }
   .consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
   .consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
   .consent [aria-invalid="true"] { outline: 2px solid #B4271F; outline-offset: 2px; }
+  .enviar-resena { align-self: flex-start; min-height: 52px; padding: 0 26px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: 700 16px/1 var(--font-sans); cursor: pointer; }
+  .enviar-resena:hover { background: var(--primary-strong); }
+  .enviar-resena:disabled { opacity: .7; cursor: progress; }
 
-  .gracias { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px 4px; text-align: center; }
-  .gracias__ic { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: #E3F4E7; color: #1D7A37; }
-  .gracias__ic .ms { font-size: 44px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
-  .gracias__cod { font: 500 16px/1.4 var(--font-sans); color: var(--ink-muted); }
-  .gracias__cod b { color: var(--ink); letter-spacing: .04em; }
+  .gracias { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .gracias__ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: #E3F4E7; color: #1D7A37; }
+  .gracias__ic .ms { font-size: 40px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
 
   /* ---------- preguntas ---------- */
   .faq { display: flex; flex-direction: column; gap: 20px; }
@@ -704,10 +845,11 @@ const jsonLd = {
     .split__media.duo { max-width: 560px; }
     .duo:not(.split__media) { max-width: 720px; margin-inline: auto; }
     .grid2 { grid-template-columns: 1fr 1fr; }
+    .resenas__lista { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .resenas { max-width: 1000px; }
     .fld.full { grid-column: 1 / -1; }
     .pedido__card { max-width: 760px; margin-inline: auto; padding: 32px; }
     .medidas { grid-template-columns: 1.2fr 1fr; padding: 24px; max-width: 880px; margin-inline: auto; }
-    .ctas { grid-template-columns: auto auto; justify-content: start; }
     .faq { max-width: 820px; }
   }
   @media (min-width: 1000px) {
