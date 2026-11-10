@@ -2,14 +2,14 @@
 // Checkout por pasos de las landings de producto (contraentrega, sin salir de la página).
 // Se usa dos veces: dentro de la ventana flotante que abre «Pedir ahora» ([data-pedir]) y al final de la página.
 // Pasos: 1 Tu pedido (cantidad) · 2 Envío (datos) · 3 Confirmar. Guarda en la tabla pedidos, como el carrito.
-import { DEPARTAMENTOS, money } from '../data/shop';
+import { DEPARTAMENTOS, SHIPPING, money } from '../data/shop';
 import WaIcon from './WaIcon.astro';
 interface Props { pre: string; slug: string; nombre: string; precio: number; variante: string; foto: string; dropi?: string; legal: string; shop: string; titulo?: boolean }
 const { pre, slug, nombre, precio, variante, foto, dropi, legal, shop, titulo = false } = Astro.props;
 const id = (x: string) => `${pre}-${x}`;
 const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
 ---
-<div class="ck" data-ck data-slug={slug} data-nombre={nombre} data-precio={precio} data-variante={variante} data-dropi={dropi} data-legal={legal} data-shop={shop}>
+<div class="ck" data-ck data-prio={SHIPPING.priority} data-slug={slug} data-nombre={nombre} data-precio={precio} data-variante={variante} data-dropi={dropi} data-legal={legal} data-shop={shop}>
   {titulo && <h2 class="ck__titulo" id={id('t')}>Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>}
 
   <ol class="ck__pasos" data-ck-pasos>
@@ -29,8 +29,17 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
         <label><input type="radio" name={id('cant')} value="1" checked /><span><b>1 unidad</b>{money(precio)}</span></label>
         <label><input type="radio" name={id('cant')} value="2" /><span><b>2 unidades</b>{money(precio * 2)}</span></label>
       </fieldset>
+      {SHIPPING.priority > 0 && (
+        <label class="ck__prio">
+          <input type="checkbox" name="prioritario" />
+          <span class="ms" aria-hidden="true">bolt</span>
+          <span class="ck__prio-t"><b>Envío prioritario</b><span>Tu pedido sale primero.</span></span>
+          <b class="ck__prio-v">+{money(SHIPPING.priority)}</b>
+        </label>
+      )}
       <dl class="ck__tot">
         <div><dt>Envío</dt><dd>Gratis</dd></div>
+        <div data-ck-prio-row hidden><dt>Envío prioritario</dt><dd>{money(SHIPPING.priority)}</dd></div>
         <div class="ck__tot-t"><dt>Total a pagar al recibir</dt><dd data-ck-total>{money(precio)}</dd></div>
       </dl>
       <button class="ck__btn" type="button" data-sig>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
@@ -51,7 +60,12 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
           </select>
           <span class="ck__err" id={id('depto-err')}>Elige el departamento.</span>
         </div>
-        <div class="ck__fld"><label for={id('ciudad')}>Ciudad o municipio <span class="req">*</span></label><input id={id('ciudad')} name="ciudad" maxlength="80" autocomplete="address-level2" placeholder="Ej: Pereira" /><span class="ck__err" id={id('ciudad-err')}>Escribe la ciudad o el municipio.</span></div>
+        <div class="ck__fld"><label for={id('ciudad')}>Ciudad o municipio <span class="req">*</span></label>
+          <select id={id('ciudad')} name="ciudad" autocomplete="address-level2" disabled><option value="">Primero elige el departamento</option></select>
+          <input id={id('ciudad-otro')} name="ciudadOtro" maxlength="80" placeholder="Escribe el municipio o corregimiento" aria-label="Escribe el municipio o corregimiento" hidden />
+          <span class="ck__err" id={id('ciudad-err')}>Elige la ciudad o el municipio.</span>
+          <span class="ck__err" id={id('ciudad-otro-err')}>Escribe el municipio o corregimiento.</span>
+        </div>
         <div class="ck__fld ck__full"><label for={id('direccion')}>Dirección completa <span class="req">*</span></label><input id={id('direccion')} name="direccion" maxlength="160" autocomplete="street-address" placeholder="Ej: Calle 19 # 8-34" /><span class="ck__err" id={id('direccion-err')}>Escribe la dirección de entrega.</span></div>
         <div class="ck__fld"><label for={id('barrio')}>Barrio <span class="req">*</span></label><input id={id('barrio')} name="barrio" maxlength="80" placeholder="Ej: Álamos" /><span class="ck__err" id={id('barrio-err')}>Escribe el barrio.</span></div>
         <div class="ck__fld"><label for={id('notas')}>Indicaciones (opcional)</label><input id={id('notas')} name="indicaciones" maxlength="300" placeholder="Torre, apto, referencia" /></div>
@@ -89,6 +103,7 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   import { insert, supabaseReady } from '../scripts/supabase';
   import { productoPorSlug } from '../scripts/catalogo';
   import { track } from '../scripts/meta';
+  import { MUNICIPIOS } from '../data/municipios';
 
   const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -110,6 +125,7 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   document.querySelectorAll<HTMLElement>('[data-ck]').forEach((ck) => {
     const D = ck.dataset;
     const PRECIO = Number(D.precio);
+    const PRIO = Number(D.prio || 0);
     if (!vids.has(D.slug!)) productoPorSlug(D.slug!).then((p) => { if (p?.variantes[0]) vids.set(D.slug!, p.variantes[0].id); }).catch(() => {});
     const form = ck.querySelector<HTMLFormElement>('[data-ck-form]')!;
     const paneles = [...ck.querySelectorAll<HTMLElement>('[data-paso]')];
@@ -117,6 +133,20 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
     const live = ck.querySelector<HTMLElement>('[data-ck-live]')!;
     const campo = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const val = (n: string) => (campo(n)?.value ?? '').trim();
+    const prio = () => !!campo('prioritario')?.checked;
+    const totalDe = () => PRECIO * cantidadDe(ck) + (prio() ? PRIO : 0);
+    const OTRO = '__otro';
+    const ciudadSel = campo('ciudad') as unknown as HTMLSelectElement, ciudadOtro = campo('ciudadOtro');
+    const ciudad = () => (ciudadSel.value === OTRO ? val('ciudadOtro') : ciudadSel.value);
+    campo('departamento').addEventListener('change', () => {
+      const lista = MUNICIPIOS[val('departamento')] ?? [];
+      ciudadSel.replaceChildren(new Option(lista.length ? 'Elige el municipio' : 'Primero elige el departamento', ''), ...lista.map((c) => new Option(c, c)), ...(lista.length ? [new Option('Otro municipio o corregimiento…', OTRO)] : []));
+      ciudadSel.disabled = !lista.length;
+      if (lista.length === 1) ciudadSel.value = lista[0];
+      ciudadOtro.hidden = true;
+      marcar('ciudad', false);
+    });
+    ciudadSel.addEventListener('change', () => { ciudadOtro.hidden = ciudadSel.value !== OTRO; if (!ciudadOtro.hidden) ciudadOtro.focus(); });
     const celular = () => val('celular').replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, '');
     let paso = 0;
 
@@ -140,7 +170,10 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
     ck.addEventListener('ck:reset', () => { if (ck.querySelector<HTMLElement>('[data-listo]')!.hidden) ir(paso, false); });
 
     // total según la cantidad
-    form.addEventListener('change', () => { ck.querySelector('[data-ck-total]')!.textContent = money(PRECIO * cantidadDe(ck)); });
+    form.addEventListener('change', () => {
+      ck.querySelector('[data-ck-total]')!.textContent = money(totalDe());
+      const fila = ck.querySelector<HTMLElement>('[data-ck-prio-row]'); if (fila) fila.hidden = !prio();
+    });
     form.addEventListener('focusin', () => iniciar(ck));
 
     // validación del paso 2
@@ -150,7 +183,8 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       ['celular', () => /^3\d{9}$/.test(celular())],
       ['correo', () => !val('correo') || campo('correo').checkValidity()],
       ['departamento', () => val('departamento').length > 0],
-      ['ciudad', () => val('ciudad').length > 0],
+      ['ciudad', () => ciudadSel.value.length > 0],
+      ['ciudadOtro', () => ciudadSel.value !== OTRO || val('ciudadOtro').length > 0],
       ['direccion', () => val('direccion').length > 0],
       ['barrio', () => val('barrio').length > 0]
     ];
@@ -179,8 +213,8 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       const n = cantidadDe(ck);
       ck.querySelector<HTMLElement>('[data-ck-rev]')!.innerHTML = `
         <div class="ck__rev-b"><span class="ck__rev-l">Producto</span><p><b>${n} × ${esc(D.nombre!)}</b><br>${esc(D.variante!)}</p><button type="button" class="ck__cambiar" data-a="0">Cambiar</button></div>
-        <div class="ck__rev-b"><span class="ck__rev-l">Entregar a</span><p><b>${esc(val('nombre'))} ${esc(val('apellido'))}</b> · ${esc(celular())}<br>${esc(val('direccion'))}, barrio ${esc(val('barrio'))}<br>${esc(val('ciudad'))} (${esc(val('departamento'))})${val('indicaciones') ? `<br>${esc(val('indicaciones'))}` : ''}</p><button type="button" class="ck__cambiar" data-a="1">Cambiar</button></div>
-        <dl class="ck__tot"><div><dt>Envío</dt><dd>Gratis</dd></div><div class="ck__tot-t"><dt>Pagas al recibir</dt><dd>${money(PRECIO * n)}</dd></div></dl>`;
+        <div class="ck__rev-b"><span class="ck__rev-l">Entregar a</span><p><b>${esc(val('nombre'))} ${esc(val('apellido'))}</b> · ${esc(celular())}<br>${esc(val('direccion'))}, barrio ${esc(val('barrio'))}<br>${esc(ciudad())} (${esc(val('departamento'))})${val('indicaciones') ? `<br>${esc(val('indicaciones'))}` : ''}</p><button type="button" class="ck__cambiar" data-a="1">Cambiar</button></div>
+        <dl class="ck__tot"><div><dt>Envío</dt><dd>Gratis</dd></div>${prio() ? `<div><dt>Envío prioritario</dt><dd>${money(PRIO)}</dd></div>` : ''}<div class="ck__tot-t"><dt>Pagas al recibir</dt><dd>${money(totalDe())}</dd></div></dl>`;
     };
     ck.addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
@@ -203,21 +237,22 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       if (sinOk) { datos.focus(); return; }
       if (enviando) return;
 
-      const n = cantidadDe(ck), total = PRECIO * n;
+      const n = cantidadDe(ck), sub = PRECIO * n, total = totalDe(), conPrio = prio();
       const codigo = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
-      const d = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), correo: val('correo'), departamento: val('departamento'), ciudad: val('ciudad'), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
+      const d = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), correo: val('correo'), departamento: val('departamento'), ciudad: ciudad(), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
       const vid = vids.get(D.slug!);
       const fila = {
         codigo, nombre: d.nombre, apellido: d.apellido, celular: d.celular, correo: d.correo || null,
         departamento: d.departamento, ciudad: d.ciudad, direccion: d.direccion, barrio: d.barrio, indicaciones: d.indicaciones || null,
         items: [{ id: D.slug, ...(vid ? { vid } : {}), nombre: D.nombre, variante: D.variante, precio: PRECIO, cantidad: n, ...(D.dropi ? { proveedor: 'dropi', dropi_id: D.dropi } : {}) }],
-        subtotal: total, envio: 0, prioritario: false, total, obsequio: false, aviso_compras: false,
+        subtotal: sub, envio: 0, prioritario: conPrio, total, obsequio: false, aviso_compras: false,
         acepto_terminos: true, version_politicas: D.legal
       };
       const msg = [
         `Hola, Alma Animal. Quiero confirmar mi pedido ${codigo}:`,
-        `• ${n} × ${D.nombre} — ${money(total)}`,
-        'Envío gratis · Pago contraentrega', '',
+        `• ${n} × ${D.nombre} — ${money(sub)}`,
+        conPrio ? `Envío gratis + prioritario ${money(PRIO)}` : 'Envío gratis',
+        `Total: ${money(total)} · Pago contraentrega`, '',
         `Para: ${d.nombre} ${d.apellido} · ${d.celular}`,
         `Dirección: ${d.direccion}, barrio ${d.barrio}, ${d.ciudad} (${d.departamento})`,
         d.indicaciones ? `Indicaciones: ${d.indicaciones}` : ''
@@ -313,6 +348,13 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   .ck__cant label > span b { color: var(--ink); font-size: 16px; }
   .ck__cant input:checked + span { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
   .ck__cant input:focus-visible + span { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .ck__prio { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; }
+  .ck__prio:has(input:checked) { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
+  .ck__prio input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+  .ck__prio > .ms { font-size: 22px; color: var(--primary); }
+  .ck__prio-t { flex: 1; display: flex; flex-direction: column; gap: 2px; font: 400 14px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .ck__prio-t b { font-size: 15.5px; color: var(--ink); }
+  .ck__prio-v { font: 700 15.5px/1 var(--font-sans); white-space: nowrap; }
   .ck__tot { margin: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
   .ck__tot div { display: flex; justify-content: space-between; gap: 12px; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
   .ck__tot dd { margin: 0; }
@@ -321,6 +363,7 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   .ck__grid { display: grid; gap: 14px; }
   .ck__fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .ck__fld label { font: 600 15px/1.3 var(--font-sans); }
+  .ck__fld select:disabled { background: var(--surface-2); color: var(--ink-soft); }
   .ck__fld input, .ck__fld select { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid #7A7580; background: #fff; padding: 0 14px; font: 400 17px/1.3 var(--font-sans); color: var(--ink); outline: 0; }
   .ck__fld input::placeholder { color: #6E6585; }
   .ck__fld input:focus, .ck__fld select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(101 87 133 / .18); }

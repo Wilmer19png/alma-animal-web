@@ -104,7 +104,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
             <select id="c-ciudad" name="ciudad" data-city-select>
               {RISARALDA.map((c) => <option>{c}</option>)}
             </select>
-            <input id="c-ciudad-txt" name="ciudadTxt" placeholder="Ej: Manizales" autocomplete="address-level2" data-city-input hidden aria-label="Ciudad o municipio" />
+            <input id="c-ciudad-txt" name="ciudadTxt" placeholder="Escribe el municipio o corregimiento" autocomplete="address-level2" data-city-input hidden aria-label="Escribe el municipio o corregimiento" />
             <span class="err" data-err-for="c-ciudad-txt">Escribe la ciudad o el municipio.</span>
           </div>
           <div class="fld"><label for="c-dir">Dirección <span class="req">*</span></label><input id="c-dir" name="direccion" placeholder="Ej: Calle 19 # 8-34, apto 302" autocomplete="street-address" required /><span class="err" data-err-for="c-dir">Escribe la dirección de entrega.</span></div>
@@ -162,6 +162,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
 <script>
   import { cart, money, type CartItem } from '../scripts/cart';
+  import { MUNICIPIOS } from '../data/municipios';
   import { insert, supabaseReady } from '../scripts/supabase';
   import { track } from '../scripts/meta';
   import '../scripts/add-buttons';
@@ -178,20 +179,24 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   let step = 0;
   let done = false;
 
-  /* ---------- ciudad: en Risaralda se elige de la lista; en otro departamento se escribe ---------- */
+  /* ---------- ciudad: la lista de municipios del departamento elegido; «Otro» deja escribirla ---------- */
   const dept = $<HTMLSelectElement>('#c-depto');
   const citySel = $<HTMLSelectElement>('[data-city-select]');
   const cityTxt = $<HTMLInputElement>('[data-city-input]');
+  const OTRO = '__otro';
+  let deptPintado = '';
   const syncCity = () => {
-    const ris = dept.value === 'Risaralda';
-    citySel.hidden = !ris; citySel.disabled = !ris;
-    cityTxt.hidden = ris; cityTxt.disabled = ris;
-    // la etiqueta apunta al campo visible
-    root.querySelector('label[for^="c-ciudad"]')!.setAttribute('for', ris ? 'c-ciudad' : 'c-ciudad-txt');
-    if (!ris && dept.value === 'Bogotá D.C.' && !cityTxt.value) cityTxt.value = 'Bogotá';
+    if (dept.value !== deptPintado) {
+      deptPintado = dept.value;
+      const lista = MUNICIPIOS[dept.value] ?? [];
+      citySel.replaceChildren(...lista.map((c) => new Option(c, c)), new Option('Otro municipio o corregimiento…', OTRO));
+    }
+    const otro = citySel.value === OTRO;
+    cityTxt.hidden = !otro; cityTxt.disabled = !otro;
   };
   dept.addEventListener('change', () => { syncCity(); paint(); });
-  const city = () => (dept.value === 'Risaralda' ? citySel.value : cityTxt.value.trim());
+  citySel.addEventListener('change', syncCity);
+  const city = () => (citySel.value === OTRO ? cityTxt.value.trim() : citySel.value);
   const isLocal = () => step === 1 && dept.value === 'Risaralda' && LOCAL.includes(citySel.value);
 
   /* ---------- filas del carrito ---------- */
@@ -316,13 +321,13 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   const validate = () => {
     let first: string | null = null;
     const need = ['c-nombre', 'c-apellido', 'c-cel', 'c-dir', 'c-barrio'];
-    if (dept.value !== 'Risaralda') need.push('c-ciudad-txt');
+    if (citySel.value === OTRO) need.push('c-ciudad-txt');
     for (const id of need) {
       const el = $<HTMLInputElement>(`#${id}`);
       const bad = !el.value.trim() || (id === 'c-cel' && el.value.replace(/\D/g, '').length < 10);
       showErr(id, bad); if (bad && !first) first = id;
     }
-    if (dept.value === 'Risaralda') showErr('c-ciudad-txt', false);
+    if (citySel.value !== OTRO) showErr('c-ciudad-txt', false);
     const mail = $<HTMLInputElement>('#c-correo');
     const badMail = !!mail.value && !mail.checkValidity();
     showErr('c-correo', badMail); if (badMail && !first) first = 'c-correo';
