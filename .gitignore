@@ -14,3 +14,8 @@ supabase/PEGAR-EN-SUPABASE.sql
 
 # Excel y SQL de contabilidad: cifras privadas del negocio, no van al repositorio
 contabilidad/
+
+# originales pesados de las campañas (las versiones livianas van en public/landing)
+campanas/**/*.png
+campanas/**/*.jpg
+campanas/**/*.mp4

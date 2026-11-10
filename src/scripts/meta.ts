@@ -15,8 +15,9 @@ const local = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includ
 const nuevoId = () => (crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`);
 const cookie = (n: string) => document.cookie.split('; ').find((c) => c.startsWith(n + '='))?.slice(n.length + 1);
 
-export function track(evento: string, datos: Record<string, unknown> = {}, cliente?: Cliente) {
-  const id = nuevoId();
+// eventId: para la compra se usa el código del pedido (si se repite, Meta lo cuenta una sola vez)
+export function track(evento: string, datos: Record<string, unknown> = {}, cliente?: Cliente, eventId?: string) {
+  const id = eventId ?? nuevoId();
   try { window.fbq?.('track', evento, datos, { eventID: id }); } catch { /* píxel bloqueado */ }
   if (local) return;
   const body = JSON.stringify({ evento, id, url: location.href, datos, cliente, fbp: cookie('_fbp'), fbc: cookie('_fbc') });
