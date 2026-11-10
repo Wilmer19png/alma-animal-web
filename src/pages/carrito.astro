@@ -401,7 +401,13 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   const send = async (order: NonNullable<typeof lastOrder>) => {
     setBusy(true);
-    const ok = PREVIEW || (await insert('pedidos', order.row)) === 'ok';
+    // si llegó por una landing de anuncio, el pedido guarda de dónde vino (si la base aún no tiene esas columnas, se guarda sin ellas)
+    let origen: Record<string, unknown> | null = null;
+    try { origen = JSON.parse(sessionStorage.getItem('alma-origen') || 'null'); } catch { /* sin almacenamiento */ }
+    let res = PREVIEW ? 'ok' : await insert('pedidos', origen ? { ...order.row, fuente: origen.fuente, modo_envio: origen.modo_envio, atribucion: origen.atribucion } : order.row);
+    if (res === 'error' && origen) res = await insert('pedidos', order.row);
+    const ok = res === 'ok';
+    if (ok) try { sessionStorage.removeItem('alma-origen'); } catch { /* sin almacenamiento */ }
     // en la vista previa el pedido queda en este navegador para verlo en el gestor de ejemplo
     if (PREVIEW) {
       try {
