@@ -268,7 +268,7 @@ const jsonLd = {
         <h2 id="lp-resenas" class="h2">Opiniones</h2>
         <p class="resenas__prom" data-promedio hidden></p>
       </div>
-      <ul class="resenas__lista" data-lista></ul>
+      <ul class="resenas__lista" data-lista tabindex="0" aria-label="Opiniones: desliza para ver más"></ul>
       <p class="txt" data-vacio>Aún no hay opiniones de este producto. Si ya lo tienes, cuéntanos cómo te ha ido.</p>
 
       <details class="opinar" data-opinar>
@@ -471,7 +471,6 @@ const jsonLd = {
   const prom = document.querySelector<HTMLElement>('[data-promedio]')!;
   const vacio = document.querySelector<HTMLElement>('[data-vacio]')!;
   const estrellasTxt = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
-  const fecha = (iso: string) => new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
   type Resena = { id: string; creado: string; nombre: string; ciudad: string | null; estrellas: number; comentario: string; foto: string | null };
   if (SB_URL && SB_KEY) {
     fetch(`${SB_URL}/rest/v1/resenas?select=id,creado,nombre,ciudad,estrellas,comentario,foto&producto=eq.${encodeURIComponent(D.slug!)}&estado=eq.publicada&order=creado.desc&limit=50`,
@@ -488,7 +487,7 @@ const jsonLd = {
         hs.setAttribute('aria-label', `${media.toFixed(1).replace('.', ',')} de 5 estrellas, ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}. Ver opiniones`);
         prom.innerHTML = `<span class="stars" aria-hidden="true">${estrellasTxt(Math.round(media))}</span><b>${media.toFixed(1).replace('.', ',')}</b> de 5 · ${rs.length} ${rs.length === 1 ? 'opinión' : 'opiniones'}`;
         lista.innerHTML = rs.map((x) => `<li class="resena">
-          <div class="resena__top"><span class="stars" role="img" aria-label="${x.estrellas} de 5 estrellas">${estrellasTxt(x.estrellas)}</span><time datetime="${esc(x.creado)}">${fecha(x.creado)}</time></div>
+          <div class="resena__top"><span class="stars" role="img" aria-label="${x.estrellas} de 5 estrellas">${estrellasTxt(x.estrellas)}</span></div>
           <p class="resena__txt">${esc(x.comentario)}</p>
           ${x.foto && x.foto.startsWith(SB_URL!) ? `<img class="resena__foto" src="${esc(x.foto)}" alt="Foto de ${esc(x.nombre)}" loading="lazy" decoding="async" />` : ''}
           <p class="resena__autor"><b>${esc(x.nombre)}</b>${x.ciudad ? ` · ${esc(x.ciudad)}` : ''}</p>
@@ -632,7 +631,7 @@ const jsonLd = {
   .precio { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
   .hero__stars { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; font: 600 14.5px/1 var(--font-sans); color: var(--ink-muted); text-decoration: none; }
   .hero__stars:hover { color: var(--primary-strong); text-decoration: underline; }
-  .hero__stars .stars { font-size: 20px; }
+  .hero__stars :global(.stars) { font-size: 20px; }
   .antes { font: 500 20px/1 var(--font-sans); color: var(--ink-soft); }
   .off { display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border-radius: 999px; background: #B4271F; color: #fff; font: 700 14px/1 var(--font-sans); }
   .promo { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: #FDEBDD; color: var(--peach-ink); font: 500 15px/1.35 var(--font-sans); }
@@ -763,16 +762,18 @@ const jsonLd = {
   .resenas { display: flex; flex-direction: column; gap: 18px; }
   .resenas__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
   .resenas__prom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font: 500 15.5px/1.3 var(--font-sans); color: var(--ink-muted); }
-  .resenas__prom b { color: var(--ink); font-size: 18px; }
-  .stars { color: #C77A2E; letter-spacing: 2px; font-size: 18px; line-height: 1; }
-  .resenas__lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .resena { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
-  .resena__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .resena__top time { font: 400 13.5px/1 var(--font-sans); color: var(--ink-soft); }
-  .resena__txt { font: 400 16px/1.55 var(--font-sans); color: var(--ink); white-space: pre-line; }
-  .resena__foto { width: 100%; max-width: 320px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
-  .resena__autor { font: 400 14.5px/1.3 var(--font-sans); color: var(--ink-muted); }
-  .resena__autor b { color: var(--ink); }
+  .resenas__prom :global(b) { color: var(--ink); font-size: 18px; }
+  :global(.stars) { color: #E9A800; text-shadow: 0 1px 0 rgb(150 100 0 / .25); letter-spacing: 2px; font-size: 18px; line-height: 1; }
+  /* carrusel: se desliza con el dedo */
+  .resenas__lista { list-style: none; margin: 0 calc(-1 * var(--gutter)); padding: 4px var(--gutter) 10px; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none; }
+  .resenas__lista::-webkit-scrollbar { display: none; }
+  .resenas__lista:empty { display: none; }
+  .resenas :global(.resena) { flex: 0 0 min(85%, 340px); scroll-snap-align: start; display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .resenas :global(.resena__top) { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .resenas :global(.resena__txt) { font: 400 16px/1.55 var(--font-sans); color: var(--ink); white-space: pre-line; }
+  .resenas :global(.resena__foto) { width: 100%; max-width: 320px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+  .resenas :global(.resena__autor) { font: 400 14.5px/1.3 var(--font-sans); color: var(--ink-muted); }
+  .resenas :global(.resena__autor b) { color: var(--ink); }
 
   .opinar { border-radius: 22px; background: var(--surface-2); box-shadow: 0 0 0 1px var(--line-soft); }
   .opinar summary { display: flex; align-items: center; gap: 10px; min-height: 60px; padding: 12px 18px; font: 700 17px/1.2 var(--font-sans); color: var(--primary-strong); cursor: pointer; list-style: none; }
@@ -788,7 +789,7 @@ const jsonLd = {
   .estrellas__fila input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .estrellas__fila label { cursor: pointer; padding: 4px; border-radius: 10px; color: #CFC6D6; }
   .estrellas__fila label .ms { font-size: 38px; font-variation-settings: "FILL" 1, "wght" 400, "opsz" 48; }
-  .estrellas__fila input:checked ~ label, .estrellas__fila label:hover, .estrellas__fila label:hover ~ label { color: #E5A04B; }
+  .estrellas__fila input:checked ~ label, .estrellas__fila label:hover, .estrellas__fila label:hover ~ label { color: #E9A800; }
   .estrellas__fila input:focus-visible + label { outline: 3px solid var(--primary); outline-offset: 1px; }
   .estrellas__fila input[aria-invalid="true"] ~ label { color: #E8B7B3; }
   .grid2 { display: grid; gap: 16px; }
@@ -845,7 +846,6 @@ const jsonLd = {
     .split__media.duo { max-width: 560px; }
     .duo:not(.split__media) { max-width: 720px; margin-inline: auto; }
     .grid2 { grid-template-columns: 1fr 1fr; }
-    .resenas__lista { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
     .resenas { max-width: 1000px; }
     .fld.full { grid-column: 1 / -1; }
     .pedido__card { max-width: 760px; margin-inline: auto; padding: 32px; }
