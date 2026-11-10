@@ -74,6 +74,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
   import { supabaseReady } from '../scripts/supabase';
   import { TAGS } from '../data/shop';
   import { avisarAgregado } from '../scripts/add-buttons';
+  import { track } from '../scripts/meta';
 
   const SHOP = '573017925910';
   const slug = new URLSearchParams(location.search).get('p') ?? '';
@@ -203,6 +204,8 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     document.querySelector('[data-crumb-name]')!.textContent = p.nombre;
     galeria(p);
     ficha(p);
+    const v0 = p.variantes.find((v) => v.stock > 0) ?? p.variantes[0];
+    track('ViewContent', { content_ids: [p.id], content_type: 'product', content_name: p.nombre, content_category: categoria(p.categoria), value: v0?.precio ?? 0, currency: 'COP' });
     // relacionados: primero la misma categoría, luego los destacados
     const rel = lista.filter((x) => x.slug !== p.slug && stockDe(x) > 0)
       .sort((a, b) => Number(b.categoria === p.categoria) - Number(a.categoria === p.categoria) || a.orden - b.orden).slice(0, 4);
