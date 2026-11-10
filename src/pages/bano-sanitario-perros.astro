@@ -17,6 +17,7 @@ const P = {
   corto: 'Baño Sanitario con Pasto',
   slug: 'bano-sanitario-perros',
   precio: 119900,
+  antes: 135900, // precio anterior real (sale tachado)
   medidas: '70 × 45 cm',
   dropi: '2282266' // interno: no se muestra
 };
@@ -123,9 +124,9 @@ const jsonLd = {
         <a class="hero__stars" href="#opiniones" data-hero-stars><span class="stars" aria-hidden="true">☆☆☆☆☆</span><span data-hero-stars-txt>Sé el primero en opinar</span></a>
         <p class="hero__sub">Su propio “patio” dentro de casa: el orín baja a la bandeja y el pasto queda seco.</p>
         <div class="precio">
-          <s class="antes" data-antes hidden></s>
+          {P.antes > P.precio && <s class="antes" data-antes aria-label={`Antes ${money(P.antes)}`}>{money(P.antes)}</s>}
           <b>{money(P.precio)}</b>
-          <span class="off" data-off hidden></span>
+          {P.antes > P.precio && <span class="off" data-off>-{Math.round((1 - P.precio / P.antes) * 100)}%</span>}
           <span class="sello sello--peach"><span class="ms" aria-hidden="true">local_shipping</span>Envío gratis</span>
           <span class="sello sello--lav"><span class="ms" aria-hidden="true">payments</span>Pagas al recibir</span>
         </div>
@@ -383,7 +384,8 @@ const jsonLd = {
     if (p && v) item = { ...itemCarrito(p, v), max: Math.max(v.stock, 10) };
     // precio tachado: solo si en el gestor tiene un «precio antes» mayor (promoción real)
     if (v?.antes && v.antes > v.precio) {
-      const s = document.querySelector<HTMLElement>('[data-antes]')!, off = document.querySelector<HTMLElement>('[data-off]')!;
+      const s = document.querySelector<HTMLElement>('[data-antes]'), off = document.querySelector<HTMLElement>('[data-off]');
+      if (!s || !off) return;
       s.textContent = '$' + v.antes.toLocaleString('es-CO'); s.setAttribute('aria-label', 'Antes ' + s.textContent); s.hidden = false;
       off.textContent = '-' + Math.round((1 - v.precio / v.antes) * 100) + '%'; off.hidden = false;
     }
