@@ -7,8 +7,8 @@ import { DEMO, link, money, store } from './lib';
 import { iso } from './agenda-datos';
 import {
   cargarLibro, resumen, guardarMov, quitarLinea, guardarFijo, pagarSocio, deshacerPagoSocio, subirFactura, verFactura, csvDelMes,
-  CATS_I, CATS_G, MEDIOS, catTxt, catIcon, mesActual, mesTxt, sumarMeses, venceEn,
-  type Libro, type Linea, type Cat, type CatI, type CatG, type GastoFijo, type Movimiento
+  CATS_I, CATS_G, CUENTAS, MEDIOS, catTxt, catIcon, mesActual, mesTxt, sumarMeses, venceEn,
+  type Libro, type Linea, type Cat, type CatI, type CatG, type Cuenta, type GastoFijo, type Movimiento
 } from './contabilidad-datos';
 import type { Miembro } from './session';
 
@@ -18,6 +18,7 @@ const num = (s: string) => Number(s.replace(/\D/g, '')) || 0;
 const pct = (a: number, b: number) => (b ? Math.round((a / b) * 100) + ' %' : '0 %');
 const fechaTxt = (f: string) => { const d = new Date(f + 'T12:00:00'); return `${String(d.getDate()).padStart(2, '0')} ${mesTxt(f.slice(0, 7), false).slice(0, 3)}`; };
 const FILTRO_K = 'alma-conta-filtro';
+const CUENTA_K = 'alma-conta-cuenta';
 
 export default function Contabilidad() {
   return <Shell activo="contabilidad">{(yo) => (yo.rol === 'admin'
@@ -27,6 +28,8 @@ export default function Contabilidad() {
 
 function LibroMes({ yo }: { yo: Miembro }) {
   const [mes, setMes] = useState(mesActual);
+  const [cuenta, setCuenta] = useState<Cuenta>(() => (store.get<Cuenta>(CUENTA_K) === 'petshop' ? 'petshop' : 'alma'));
+  useEffect(() => { store.set(CUENTA_K, cuenta); }, [cuenta]);
   const [libro, setLibro] = useState<Libro | null>(null);
   const [error, setError] = useState('');
   const [aviso, setAviso] = useState('');
@@ -39,8 +42,8 @@ function LibroMes({ yo }: { yo: Miembro }) {
   const descargar = () => {
     if (!libro) return;
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csvDelMes(libro.lineas, mes)], { type: 'text/csv;charset=utf-8' }));
-    a.download = `alma-animal-contabilidad-${mes}.csv`;
+    a.href = URL.createObjectURL(new Blob([csvDelMes(libro.lineas.filter((l) => l.cuenta === cuenta), mes)], { type: 'text/csv;charset=utf-8' }));
+    a.download = `${cuenta === 'alma' ? 'alma-animal' : 'petshop-dropi'}-contabilidad-${mes}.csv`;
     a.click();
     window.setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   };
@@ -48,7 +51,14 @@ function LibroMes({ yo }: { yo: Miembro }) {
   return (
     <div className="cont">
       <div className="mhead">
-        <div className="mhead__txt"><h1>Contabilidad</h1><p>Lo que entra por consultas, baños y tienda, lo que sale en gastos, y cuánto le toca a cada socio.</p></div>
+        <div className="mhead__txt"><h1>Contabilidad</h1><p>{cuenta === 'alma'
+          ? 'Alma Animal: lo que entra por consultas, baños y tienda física, lo que sale en gastos, y cuánto le toca a cada socio.'
+          : 'Petshop en línea (productos de Dropi): pedidos del sitio, costo de Dropi, fletes y pauta. Va aparte de Alma Animal.'}</p></div>
+        <div className="seg cont__seg" role="radiogroup" aria-label="Cuenta">
+          {(Object.keys(CUENTAS) as Cuenta[]).map((k) => (
+            <button key={k} type="button" role="radio" aria-checked={cuenta === k} onClick={() => setCuenta(k)}><span className="ms" aria-hidden="true">{CUENTAS[k].icon}</span>{CUENTAS[k].txt}</button>
+          ))}
+        </div>
         {DEMO && <span className="ex">Datos de ejemplo</span>}
         <label className="sr-only" htmlFor="c-mes">Mes</label>
         <select id="c-mes" className="cell cont__mes" value={mes} onChange={(e) => setMes(e.target.value)}>
@@ -57,24 +67,28 @@ function LibroMes({ yo }: { yo: Miembro }) {
         <button type="button" className="gbtn out sm" disabled={!libro} onClick={descargar}><span className="ms" aria-hidden="true">download</span>Descargar para el contador</button>
       </div>
       {error && <p className="gerr" role="alert">{error}</p>}
-      {!libro ? <p className="vacio">Cargando…</p> : <Mes libro={libro} mes={mes} yo={yo} intentar={intentar} />}
+      {!libro ? <p className="vacio">Cargando…</p> : <Mes key={cuenta} libro={{ ...libro, lineas: libro.lineas.filter((l) => l.cuenta === cuenta) }} cuenta={cuenta} mes={mes} yo={yo} intentar={intentar} />}
       <p className="gtoast" role="status" aria-live="polite">{aviso}</p>
     </div>
   );
 }
 
-function Mes({ libro, mes, yo, intentar }: { libro: Libro; mes: string; yo: Miembro; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
+function Mes({ libro, cuenta, mes, yo, intentar }: { libro: Libro; cuenta: Cuenta; mes: string; yo: Miembro; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
   const actual = mes === mesActual();
+  const alma = cuenta === 'alma';
   const delMes = libro.lineas.filter((l) => l.fecha.startsWith(mes));
   const hechas = delMes.filter((l) => !l.espera);
   // en espera: lo del mes y, en el mes en curso, todos los pedidos que siguen sin pagar
   const espera = libro.lineas.filter((l) => l.espera && (l.fecha.startsWith(mes) || (actual && l.origen === 'pedido')));
   const sumar = (f: (l: Linea) => boolean) => hechas.filter(f).reduce((n, l) => n + l.valor, 0);
-  const ing = (Object.keys(CATS_I) as CatI[]).map((k) => ({ k, v: sumar((l) => l.tipo === 'ingreso' && l.cat === k), n: hechas.filter((l) => l.tipo === 'ingreso' && l.cat === k).length }));
-  const gas = (Object.keys(CATS_G) as CatG[]).map((k) => ({ k, v: sumar((l) => l.tipo === 'gasto' && l.cat === k) }));
+  // categorías de esta cuenta, más cualquier otra que tenga movimientos (para que nada sume escondido)
+  const catsDe = <K extends Cat>(base: K[], tipo: Tipo) => [...base, ...[...new Set(hechas.filter((l) => l.tipo === tipo).map((l) => l.cat as K))].filter((k) => !base.includes(k))];
+  const ing = catsDe(CUENTAS[cuenta].i, 'ingreso').map((k) => ({ k, v: sumar((l) => l.tipo === 'ingreso' && l.cat === k), n: hechas.filter((l) => l.tipo === 'ingreso' && l.cat === k).length }));
+  const gas = catsDe(CUENTAS[cuenta].g, 'gasto').map((k) => ({ k, v: sumar((l) => l.tipo === 'gasto' && l.cat === k) }));
   const totI = ing.reduce((n, x) => n + x.v, 0), totG = gas.reduce((n, x) => n + x.v, 0);
   const totF = gas.filter((x) => CATS_G[x.k].fijo).reduce((n, x) => n + x.v, 0);
-  const r = resumen(libro, mes);
+  const r = resumen(libro, mes, cuenta);
+  const nPedidos = hechas.filter((l) => l.origen === 'pedido').length;
   const meta = gas.find((x) => x.k === 'meta')!.v;
   const maxI = Math.max(1, ...ing.map((x) => x.v)), maxG = Math.max(1, ...gas.map((x) => x.v));
   const totEspera = espera.reduce((n, l) => n + l.valor, 0);
@@ -83,10 +97,12 @@ function Mes({ libro, mes, yo, intentar }: { libro: Libro; mes: string; yo: Miem
   return (
     <>
       <div className="kpis">
-        <div className="kpi"><span><span className="ms cont__up" aria-hidden="true">trending_up</span>Entró</span><b className="cont__up">{money(totI)}</b><small>{nAtenciones} consultas, baños y ventas</small></div>
-        <div className="kpi"><span><span className="ms cont__down" aria-hidden="true">trending_down</span>Salió en gastos</span><b className="cont__down">{money(totG)}</b><small>Fijos {money(totF)} · Variables {money(totG - totF)}</small></div>
+        <div className="kpi"><span><span className="ms cont__up" aria-hidden="true">trending_up</span>Entró</span><b className="cont__up">{money(totI)}</b><small>{alma ? `${nAtenciones} consultas, baños y ventas` : `${nPedidos} ${nPedidos === 1 ? 'pedido pagado' : 'pedidos pagados'}`}</small></div>
+        <div className="kpi"><span><span className="ms cont__down" aria-hidden="true">trending_down</span>Salió en gastos</span><b className="cont__down">{money(totG)}</b><small>{alma ? `Fijos ${money(totF)} · Variables ${money(totG - totF)}` : `Dropi ${money(gas.find((x) => x.k === 'dropi')?.v ?? 0)} · Pauta ${money(gas.find((x) => x.k === 'meta')?.v ?? 0)}`}</small></div>
         <div className="kpi kpi--dark"><span><span className="ms" aria-hidden="true">savings</span>Ganancia del mes</span><b>{r.ganancia < 0 ? '− ' : ''}{money(Math.abs(r.ganancia))}</b><small>{pct(r.ganancia, totI)} de lo que entró</small></div>
-        <div className="kpi"><span><span className="ms" aria-hidden="true">handshake</span>A repartir</span><b>{money(r.aRepartir)}</b><small>{libro.socios.map((s) => `${s.nombre.split(' ')[0]} ${s.pct} %`).join(' · ')}</small></div>
+        {alma
+          ? <div className="kpi"><span><span className="ms" aria-hidden="true">handshake</span>A repartir</span><b>{money(r.aRepartir)}</b><small>{libro.socios.map((s) => `${s.nombre.split(' ')[0]} ${s.pct} %`).join(' · ')}</small></div>
+          : <div className="kpi"><span><span className="ms" aria-hidden="true">receipt_long</span>Por cobrar</span><b>{money(espera.filter((l) => l.origen === 'pedido').reduce((n, l) => n + l.valor, 0))}</b><small>pedidos en camino o sin pagar</small></div>}
       </div>
 
       <div className="cont__grid">
@@ -99,12 +115,14 @@ function Mes({ libro, mes, yo, intentar }: { libro: Libro; mes: string; yo: Miem
               {ing.filter((x) => x.v || x.k !== 'otro_ingreso').map((x) => (
                 <div key={x.k} className="cbar">
                   <span className="cbar__ic cbar__ic--i"><span className="ms" aria-hidden="true">{CATS_I[x.k].icon}</span></span>
-                  <span className="cbar__n">{CATS_I[x.k].txt}<small>{x.k === 'tienda' ? 'solo pedidos pagados' : x.k === 'otro_ingreso' ? 'registrados a mano' : `${x.n} ${x.k === 'spa' ? 'baños entregados' : x.k === 'medicamento' ? 'ventas' : x.k === 'examen' || x.k === 'procedimiento' ? 'hechos' : 'hechas'}`}</small></span>
+                  <span className="cbar__n">{CATS_I[x.k].txt}<small>{x.k === 'pedido' ? `${x.n} pagados` : x.k === 'tienda' ? 'ventas en el local' : x.k === 'otro_ingreso' ? 'registrados a mano' : `${x.n} ${x.k === 'spa' ? 'baños entregados' : x.k === 'medicamento' ? 'ventas' : x.k === 'examen' || x.k === 'procedimiento' ? 'hechos' : 'hechas'}`}</small></span>
                   <span className="cbar__v">{money(x.v)}</span>
                   <span className="cbar__tr"><i style={{ width: Math.max(3, (x.v / maxI) * 100) + '%' }} /></span>
                 </div>
               ))}
-              <p className="hint cont__nota"><span className="ms" aria-hidden="true">bolt</span><span>Nada suma mientras esté en espera. Consultas y vacunas entran al marcarlas como hechas en la <a href={link('/gestor/agenda')}>Agenda</a>; los baños, al entregarlos en <a href={link('/gestor/spa')}>Citas de spa</a>; la tienda, al confirmar el pago en <a href={link('/gestor/pedidos')}>Pedidos</a>.</span></p>
+              <p className="hint cont__nota"><span className="ms" aria-hidden="true">bolt</span>{alma
+                ? <span>Nada suma mientras esté en espera. Consultas y vacunas entran al marcarlas como hechas en la <a href={link('/gestor/agenda')}>Agenda</a>; los baños, al entregarlos en <a href={link('/gestor/spa')}>Citas de spa</a>. Las ventas del local se registran a mano como «Tienda física». Los pedidos del sitio van en la cuenta Petshop · Dropi.</span>
+                : <span>Los pedidos del sitio entran solos al confirmar el pago en <a href={link('/gestor/pedidos')}>Pedidos</a> (contraentrega: al entregarlos). Registra aquí lo que cobra Dropi por productos y fletes, y la pauta del Petshop.</span>}</p>
               {totEspera > 0 && <p className="conta"><span className="ms" aria-hidden="true">hourglass_top</span><span><b>En espera: {money(totEspera)}</b> ({espera.length} {espera.length === 1 ? 'movimiento' : 'movimientos'}). No suma todavía.</span></p>}
             </div>
             <div className="flujo__col">
@@ -122,14 +140,14 @@ function Mes({ libro, mes, yo, intentar }: { libro: Libro; mes: string; yo: Miem
           <p className="cont__meta"><span className="ms" aria-hidden="true">campaign</span><span><b>Pauta en Meta: {money(meta)}</b> en {mesTxt(mes, false)} ({pct(meta, totG)} de los gastos).</span></p>
         </section>
 
-        <Reparto libro={libro} mes={mes} totI={totI} totG={totG} r={r} actual={actual} intentar={intentar} />
+        {alma && <Reparto libro={libro} mes={mes} totI={totI} totG={totG} r={r} actual={actual} intentar={intentar} />}
       </div>
 
       <div className="cont__grid">
-        <Movimientos lineas={[...espera, ...hechas].sort((a, b) => b.fecha.localeCompare(a.fecha) || Number(b.espera) - Number(a.espera))} mes={mes} intentar={intentar} />
+        <Movimientos lineas={[...espera, ...hechas].sort((a, b) => b.fecha.localeCompare(a.fecha) || Number(b.espera) - Number(a.espera))} cuenta={cuenta} mes={mes} intentar={intentar} />
         <div className="cont__col">
-          <Registrar yo={yo} mes={mes} intentar={intentar} />
-          <Fijos libro={libro} mes={mes} intentar={intentar} />
+          <Registrar yo={yo} cuenta={cuenta} mes={mes} intentar={intentar} />
+          {alma && <Fijos libro={libro} mes={mes} intentar={intentar} />}
         </div>
       </div>
     </>
@@ -171,15 +189,15 @@ function Reparto({ libro, mes, totI, totG, r, actual, intentar }: { libro: Libro
 }
 
 /* ---------- movimientos ---------- */
-function Movimientos({ lineas, mes, intentar }: { lineas: Linea[]; mes: string; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
+function Movimientos({ lineas, cuenta, mes, intentar }: { lineas: Linea[]; cuenta: Cuenta; mes: string; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
   const [flt, setFlt] = useState<Filtro>(() => store.get<Filtro>(FILTRO_K) ?? 'todos');
   const [cat, setCat] = useState<'' | 'espera' | Cat>('');
   useEffect(() => { store.set(FILTRO_K, flt); }, [flt]);
   const cats: ['' | 'espera' | Cat, string, string][] = [
     ['', 'Todas', 'apps'],
     ...(flt !== 'gasto' ? [['espera', 'En espera', 'hourglass_top'] as ['espera', string, string]] : []),
-    ...(flt !== 'gasto' ? (Object.keys(CATS_I) as CatI[]).map((k) => [k, CATS_I[k].txt, CATS_I[k].icon] as [Cat, string, string]) : []),
-    ...(flt !== 'ingreso' ? (Object.keys(CATS_G) as CatG[]).map((k) => [k, CATS_G[k].txt, CATS_G[k].icon] as [Cat, string, string]) : [])
+    ...(flt !== 'gasto' ? CUENTAS[cuenta].i.map((k) => [k, CATS_I[k].txt, CATS_I[k].icon] as [Cat, string, string]) : []),
+    ...(flt !== 'ingreso' ? CUENTAS[cuenta].g.map((k) => [k, CATS_G[k].txt, CATS_G[k].icon] as [Cat, string, string]) : [])
   ];
   const lista = lineas.filter((l) => (flt === 'todos' || l.tipo === flt) && (cat === '' || (cat === 'espera' ? l.espera : l.cat === cat && !l.espera)));
   const sI = lista.filter((l) => !l.espera && l.tipo === 'ingreso').reduce((n, l) => n + l.valor, 0);
@@ -240,11 +258,11 @@ function Movimientos({ lineas, mes, intentar }: { lineas: Linea[]; mes: string; 
 }
 
 /* ---------- registrar un gasto o un ingreso suelto ---------- */
-function Registrar({ yo, mes, intentar }: { yo: Miembro; mes: string; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
+function Registrar({ yo, cuenta, mes, intentar }: { yo: Miembro; cuenta: Cuenta; mes: string; intentar: (f: () => Promise<unknown>, ok: string) => Promise<void> }) {
   const hoy = iso(new Date());
   const enMes = (f: string) => (f.startsWith(mes) ? f : mes === mesActual() ? hoy : venceEn(mes, 28));
   const [tipo, setTipo] = useState<Tipo>('gasto');
-  const [cat, setCat] = useState<Cat>('meta');
+  const [cat, setCat] = useState<Cat>(cuenta === 'alma' ? 'meta' : 'dropi');
   const [concepto, setConcepto] = useState('');
   const [valor, setValor] = useState(0);
   const [medio, setMedio] = useState('Tarjeta');
@@ -253,15 +271,15 @@ function Registrar({ yo, mes, intentar }: { yo: Miembro; mes: string; intentar: 
   const [err, setErr] = useState(false);
   const [ocupado, setOcupado] = useState(false);
   useEffect(() => { setFecha((f) => enMes(f)); }, [mes]); // eslint-disable-line react-hooks/exhaustive-deps
-  const opts = tipo === 'gasto' ? (Object.keys(CATS_G) as CatG[]) : (['tienda', 'consulta', 'medicamento', 'examen', 'procedimiento', 'vacuna', 'spa', 'otro_ingreso'] as CatI[]);
-  const elegirTipo = (t: Tipo) => { setTipo(t); setCat(t === 'gasto' ? 'meta' : 'tienda'); setErr(false); };
+  const opts: Cat[] = tipo === 'gasto' ? CUENTAS[cuenta].g : CUENTAS[cuenta].i;
+  const elegirTipo = (t: Tipo) => { setTipo(t); setCat(cuenta === 'alma' ? (t === 'gasto' ? 'meta' : 'tienda') : (t === 'gasto' ? 'dropi' : 'pedido')); setErr(false); };
 
   const guardar = async () => {
     if (!concepto.trim() || !valor) { setErr(true); return; }
     setOcupado(true);
     await intentar(async () => {
       const factura = foto ? await subirFactura(foto) : null;
-      await guardarMov({ fecha, tipo, categoria: cat, concepto: concepto.trim(), valor, medio, factura, pagado: true, fijo_id: null, mes: null, por_nombre: yo.nombre });
+      await guardarMov({ fecha, tipo, categoria: cat, concepto: concepto.trim(), valor, medio, factura, pagado: true, fijo_id: null, mes: null, por_nombre: yo.nombre, cuenta });
       setConcepto(''); setValor(0); setFoto(null); setErr(false);
     }, 'Guardado. Ya se ve en los totales y en el reparto.');
     setOcupado(false);
@@ -269,14 +287,16 @@ function Registrar({ yo, mes, intentar }: { yo: Miembro; mes: string; intentar: 
 
   return (
     <section className="gcard" aria-labelledby="c-reg">
-      <h2 className="ch2" id="c-reg"><span className="ms" aria-hidden="true">add_card</span>Registrar un movimiento</h2>
+      <h2 className="ch2" id="c-reg"><span className="ms" aria-hidden="true">add_card</span>Registrar en {CUENTAS[cuenta].txt}</h2>
       <div className="seg cont__seg" role="radiogroup" aria-label="Tipo de movimiento">
         <button type="button" role="radio" aria-checked={tipo === 'gasto'} onClick={() => elegirTipo('gasto')}><span className="ms" aria-hidden="true">trending_down</span>Gasto</button>
         <button type="button" role="radio" aria-checked={tipo === 'ingreso'} onClick={() => elegirTipo('ingreso')}><span className="ms" aria-hidden="true">trending_up</span>Ingreso</button>
       </div>
       <div className="fld"><label htmlFor="r-cat">Categoría</label>
-        <select id="r-cat" value={cat} onChange={(e) => setCat(e.target.value as Cat)}>{opts.map((k) => <option key={k} value={k}>{k === 'tienda' ? 'Tienda (venta en mostrador)' : catTxt(k)}</option>)}</select>
-        {tipo === 'ingreso' && <span className="hint">Las consultas, baños y pedidos de la web entran solos. Aquí registra solo lo que se cobró por fuera: ventas en el mostrador u otros ingresos.</span>}
+        <select id="r-cat" value={cat} onChange={(e) => setCat(e.target.value as Cat)}>{opts.map((k) => <option key={k} value={k}>{k === 'tienda' ? 'Tienda física (venta en el local)' : catTxt(k)}</option>)}</select>
+        {tipo === 'ingreso' && <span className="hint">{cuenta === 'alma'
+          ? 'Las consultas y los baños entran solos. Aquí registra lo que se cobró por fuera: ventas en el local u otros ingresos.'
+          : 'Los pedidos del sitio entran solos. Aquí registra solo pedidos que se vendieron por fuera (por ejemplo, por WhatsApp).'}</span>}
       </div>
       <div className="fld"><label htmlFor="r-con">Concepto</label>
         <input id="r-con" value={concepto} maxLength={120} aria-invalid={err && !concepto.trim() ? 'true' : undefined} onChange={(e) => setConcepto(e.target.value)}
@@ -360,7 +380,7 @@ function Fijos({ libro, mes, intentar }: { libro: Libro; mes: string; intentar: 
 
 function EditarFijo({ f, listo, intentar }: { f: GastoFijo; listo: () => void; intentar: (fn: () => Promise<unknown>, ok: string) => Promise<void> }) {
   const [x, setX] = useState(f);
-  const ICONOS: Record<CatG, string> = { arriendo: 'home', servicios: 'bolt', meta: 'campaign', medic: 'medication', insumos: 'soap', merc: 'inventory_2', otro: 'receipt_long' };
+  const ICONOS: Record<CatG, string> = { arriendo: 'home', servicios: 'bolt', meta: 'campaign', medic: 'medication', insumos: 'soap', merc: 'inventory_2', dropi: 'local_shipping', otro: 'receipt_long' };
   const guardar = () => intentar(async () => { await guardarFijo({ ...x, nombre: x.nombre.trim() || f.nombre }); listo(); }, 'Gasto fijo guardado');
   return (
     <div className="fedit">
