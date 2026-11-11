@@ -82,6 +82,19 @@ lee el catálogo de Supabase en el navegador: lo que se cambia en el gestor se v
 
 Sin estas variables, en local el pedido se simula (sale "¡Listo!") y en el sitio publicado se ofrece enviarlo por WhatsApp.
 
+## Pago en línea con Wompi
+
+El carrito y las landings ofrecen «Pagar ahora» (tarjeta, PSE, Nequi, Bancolombia) con 5 % de descuento (máx. $10.000),
+o «Pagar al recibir». El descuento se cambia en `PAGO_EN_LINEA` (`src/data/shop.ts`) y en `netlify/functions/wompi-pago.mjs`.
+
+1. Supabase → SQL Editor: correr `supabase/30-pedidos-borrar-y-wompi.sql`.
+2. Netlify → Environment variables: `PUBLIC_WOMPI_PUBLIC_KEY` (llave pública; con ella aparece la opción),
+   `WOMPI_INTEGRITY_SECRET`, `WOMPI_EVENTS_SECRET` y `SUPABASE_SERVICE_ROLE_KEY` (secretas: solo en Netlify). Volver a publicar.
+3. Wompi → Desarrolladores → URL de eventos: `https://<dominio>/.netlify/functions/wompi-eventos`.
+
+`wompi-pago` revisa precios y total antes de firmar el pago; `wompi-eventos` marca el pedido como «Pago recibido» cuando
+Wompi aprueba y el valor coincide. Al volver, el cliente ve el resultado en `/pago`. Para probar, usar la llave `pub_test_…`.
+
 ## Antes de publicar (legal)
 
 - [ ] Llenar `LEGAL` en `src/data/site.ts`: NIT o cédula y correo para solicitudes (la compilación avisa si faltan).

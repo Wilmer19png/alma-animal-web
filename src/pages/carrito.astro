@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { whatsapp, PHONES, LEGAL } from '../data/site';
-import { DEMO, SHIPPING, GIFT, PAGOS, money, CIUDADES, DEPARTAMENTOS } from '../data/shop';
+import { DEMO, SHIPPING, GIFT, PAGOS, PAGO_EN_LINEA, money, CIUDADES, DEPARTAMENTOS } from '../data/shop';
 
 const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre mi pedido.');
 const DEPTS = DEPARTAMENTOS;
@@ -45,6 +45,10 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       <span class="sent__ic" aria-hidden="true"><span class="ms">check_circle</span></span>
       <h2>¡Listo, <span data-done-name></span>!</h2>
       <p>Recibimos tu pedido <b class="sent__code" data-done-code></b>. En breve te escribimos por WhatsApp al <b data-done-cel></b> para confirmar tus datos, el pago y la entrega.</p>
+      <div class="sent__pay" data-done-pay hidden>
+        <p role="alert" data-done-pay-txt></p>
+        <button class="btn btn--alma" type="button" data-pay-retry><span class="ms" aria-hidden="true">credit_card</span>Pagar ahora</button>
+      </div>
       <div class="sent__wa">
         <span>¿Prefieres escribirnos primero?</span>
         <a class="wa-o" href="#" data-done-wa target="_blank" rel="noopener"><WaIcon size={22} />Quiero confirmar mi pedido</a>
@@ -77,7 +81,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <ul class="rows" data-rows></ul>
         </div>
         <div class="extras" data-extras>
-          <h2 class="panel__t">Súmale a tu pedido</h2>
+          <h2 class="panel__t" data-extras-t>Súmale a tu pedido</h2>
           <!-- sugerencias del catálogo (se llenan en el navegador) -->
           <div class="extras__grid" data-extras-grid></div>
         </div>
@@ -117,6 +121,21 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <span class="prio__txt"><b>Envío prioritario</b><span>Tu pedido sale primero.</span></span>
           <b class="prio__price">+{money(SHIPPING.priority)}</b>
         </label>
+        {PAGO_EN_LINEA.activo && (
+          <fieldset class="metodos">
+            <legend>¿Cómo quieres pagar?</legend>
+            <label class="metodo">
+              <input type="radio" name="metodo" value="wompi" checked />
+              <span class="ms" aria-hidden="true">credit_card</span>
+              <span class="metodo__txt"><b>Pagar ahora <em>{PAGO_EN_LINEA.pct} % menos</em></b><span>Tarjeta, PSE, Nequi o Bancolombia, con Wompi. <span data-ahorro></span></span></span>
+            </label>
+            <label class="metodo">
+              <input type="radio" name="metodo" value="contraentrega" />
+              <span class="ms" aria-hidden="true">local_atm</span>
+              <span class="metodo__txt"><b>Pagar al recibir</b><span>Contraentrega, o transferencia coordinando por WhatsApp.</span></span>
+            </label>
+          </fieldset>
+        )}
         <label class="consent"><input type="checkbox" name="aviso" /><span>Pueden mostrar mi <b>nombre (sin apellido) y mi ciudad</b> en los avisos de compra de la página. Ej: «Laura, de Pereira, compró…». Es opcional.</span></label>
         <label class="consent"><input type="checkbox" name="datos" required /><span>Acepto los <a href="/terminos" target="_blank">términos y condiciones</a> y la <a href="/privacidad" target="_blank">política de tratamiento de datos</a> (Ley 1581 de 2012). <span class="req">*</span></span></label>
         <span class="err" data-err-for="datos">Para enviar tu pedido necesitamos tu autorización.</span>
@@ -139,13 +158,15 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
           <div><dt>Subtotal</dt><dd data-sub></dd></div>
           <div><dt>Envío</dt><dd data-ship></dd></div>
           <div data-prio-row hidden><dt>Envío prioritario</dt><dd>{money(SHIPPING.priority)}</dd></div>
+          <div class="totals__desc" data-desc-row hidden><dt>Descuento por pagar en línea</dt><dd data-desc></dd></div>
           <div class="totals__total"><dt>Total</dt><dd data-total></dd></div>
         </dl>
         <p class="hint" data-ship-note>El envío se calcula con tu ciudad en el siguiente paso.</p>
+        {PAGO_EN_LINEA.activo && <p class="paynow" data-paynow><span class="ms" aria-hidden="true">sell</span><span>Si pagas en línea al final, te descontamos <b data-paynow-v></b>.</span></p>}
         <button class="btn btn--alma btn--go" type="button" data-next>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
         <button class="btn btn--alma btn--go" type="button" data-place hidden><span data-place-txt>Confirmar pedido</span><span class="ms" aria-hidden="true">arrow_forward</span></button>
         <button class="backlink" type="button" data-back hidden><span class="ms" aria-hidden="true">arrow_back</span>Volver al carrito</button>
-        <p class="hint">Al confirmar te escribimos por WhatsApp para coordinar el pago: {PAGOS}.</p>
+        <p class="hint" data-pay-hint>{PAGO_EN_LINEA.activo ? 'Pagas en línea con Wompi, o al recibir si lo prefieres. Te escribimos por WhatsApp para confirmar la entrega.' : `Al confirmar te escribimos por WhatsApp para coordinar el pago: ${PAGOS}.`}</p>
         <a class="wa-o" href={waShop} target="_blank" rel="noopener"><WaIcon size={22} />¿Dudas? Escríbenos</a>
         {DEMO && <p class="hint">Precios de ejemplo.</p>}
       </div>
@@ -166,7 +187,9 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   import { insert, supabaseReady } from '../scripts/supabase';
   import { track } from '../scripts/meta';
   import '../scripts/add-buttons';
-  import { catalogo, stockDe, itemCarrito, productoUrl, portada, esc, TONOS } from '../scripts/catalogo';
+  import { catalogo, stockDe, itemCarrito, productoUrl, portada, esc, TONOS, CODORNICES, type Producto, type Variante } from '../scripts/catalogo';
+  import { PAGO_EN_LINEA, descuentoEnLinea } from '../data/shop';
+  import { pagarConWompi } from '../scripts/wompi';
 
   const root = document.querySelector<HTMLElement>('[data-checkout]')!;
   const C = root.dataset;
@@ -228,13 +251,28 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   };
 
   /* ---------- pintar todo ---------- */
+  // pagar ahora con Wompi (con descuento) o al recibir
+  const metodo = (): 'wompi' | 'contraentrega' =>
+    PAGO_EN_LINEA.activo && (form.elements.namedItem('metodo') as RadioNodeList | null)?.value === 'wompi' ? 'wompi' : 'contraentrega';
   const totals = () => {
     const sub = cart.subtotal();
     const prio = $<HTMLInputElement>('[data-prio]').checked && step === 1;
     const free = isLocal() || sub >= FREE;
     // en el paso 1 aún no sabemos la ciudad: el envío se muestra al elegirla
     const ship = step === 0 ? (sub >= FREE ? 0 : null) : free ? 0 : FLAT;
-    return { sub, prio, ship, total: sub + (ship ?? 0) + (prio ? PRIO : 0) };
+    const desc = step === 1 && metodo() === 'wompi' ? descuentoEnLinea(sub) : 0;
+    return { sub, prio, ship, desc, total: sub - desc + (ship ?? 0) + (prio ? PRIO : 0) };
+  };
+
+  // productos del catálogo para recomendar (se llenan al cargar)
+  let lista: Producto[] = [];
+  // ¿cuántas unidades más de algo que ya lleva le dan el envío gratis? (pedidos de una sola unidad)
+  const masUnidades = (falta: number) => {
+    const its = cart.items().filter((it) => it.qty < it.max);
+    if (!its.length || falta <= 0) return '';
+    const it = its.reduce((a, b) => (b.price > a.price ? b : a));
+    const n = Math.ceil(falta / it.price);
+    return n <= 3 && it.qty + n <= it.max ? ` Con <b>${n} más</b> de ${esc(it.name)} ya no pagas envío.` : '';
   };
 
   const paint = () => {
@@ -251,12 +289,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     const list = $('[data-rows]'); list.innerHTML = '';
     items.forEach((it) => list.append(row(it)));
 
-    let shown = 0;
-    root.querySelectorAll<HTMLElement>('[data-extra]').forEach((x) => {
-      x.hidden = items.some((it) => it.id === x.dataset.extra) || shown >= 3;
-      if (!x.hidden) shown++;
-    });
-    $('[data-extras]').hidden = shown === 0;
+    pintarExtras();
 
     const t = totals();
     const local = isLocal();
@@ -265,7 +298,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     let pct = Math.min(100, Math.round((t.sub / FREE) * 100));
     if (local) { freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>Envío <b>gratis</b> en ${city()}.</span>`; pct = 100; }
     else if (t.sub >= FREE) freeTxt.innerHTML = `<span class="ms fill ok" aria-hidden="true">check_circle</span><span>¡Lograste el envío <b>gratis</b>${step === 1 && city() ? ' a ' + city() : ' a toda Colombia'}!</span>`;
-    else freeTxt.innerHTML = `<span class="ms" aria-hidden="true">local_shipping</span><span>Te faltan <b>${money(FREE - t.sub)}</b> para envío <b>gratis</b> a toda Colombia.</span>`;
+    else freeTxt.innerHTML = `<span class="ms" aria-hidden="true">local_shipping</span><span>Te faltan <b>${money(FREE - t.sub)}</b> para envío <b>gratis</b> a toda Colombia.${masUnidades(FREE - t.sub)}</span>`;
     const fill = freeBar.querySelector('i')!;
     fill.style.width = pct + '%';
     fill.classList.toggle('is-full', pct >= 100); freeBar.setAttribute('aria-valuenow', String(pct));
@@ -279,8 +312,54 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     $('[data-sub]').textContent = money(t.sub);
     $('[data-ship]').textContent = t.ship === null ? 'En el siguiente paso' : t.ship === 0 ? 'Gratis' : money(t.ship);
     $('[data-prio-row]').hidden = !t.prio;
+    $('[data-desc-row]').hidden = !t.desc;
+    $('[data-desc]').textContent = '−' + money(t.desc);
     $$('[data-total]').forEach((el) => { el.textContent = money(t.total); });
     $('[data-ship-note]').hidden = step === 1 || t.ship !== null;
+    // antes de llenar los datos: cuánto se ahorra pagando en línea
+    const paynow = root.querySelector<HTMLElement>('[data-paynow]');
+    if (paynow) { paynow.hidden = step !== 0; paynow.querySelector('[data-paynow-v]')!.textContent = money(descuentoEnLinea(t.sub)); }
+    const ahorro = root.querySelector('[data-ahorro]');
+    if (ahorro) ahorro.textContent = `Ahorras ${money(descuentoEnLinea(t.sub))}.`;
+    if (!sending) placeTxt();
+  };
+
+  /* ---------- «Súmale a tu pedido»: siempre las codornices (bolsa y frasco) y lo que completa el envío gratis ---------- */
+  const extra = (p: Producto, v: Variante, nota = '') => `<div class="extra${p.slug === CODORNICES ? ' extra--star' : ''}">
+      <span class="extra__ic" style="background:${TONOS[p.tono] ?? TONOS.lav}" aria-hidden="true">${portada(p)}</span>
+      <span class="extra__txt"><a href="${productoUrl(p.slug)}">${esc(p.nombre)}${p.variantes.length > 1 ? ` · ${esc(v.nombre)}` : ''}</a><span>${money(v.precio)}${nota ? ` · ${nota}` : ''}</span></span>
+      <button class="add add--sm" type="button" aria-label="Agregar ${esc(p.nombre)}${p.variantes.length > 1 ? ' ' + esc(v.nombre) : ''} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add</span></button>
+    </div>`;
+  let extrasPintados = '';
+  function pintarExtras() {
+    if (!lista.length) return;
+    const items = cart.items();
+    const enCarrito = new Set(items.map((it) => it.vid ?? `${it.id}:${it.variant}`));
+    const falta = FREE - cart.subtotal();
+    const tarjetas: string[] = [];
+    // 1. codornices deshidratadas: bolsa y frasco, siempre (si no están ya en el carrito)
+    const cod = lista.find((p) => p.slug === CODORNICES);
+    cod?.variantes.filter((v) => v.stock > 0 && !enCarrito.has(v.id)).forEach((v) => {
+      tarjetas.push(extra(cod, v, falta > 0 && v.precio >= falta ? 'con esto tu envío sale gratis' : /frasco/i.test(v.nombre) ? 'rinde más' : 'para probar'));
+    });
+    // 2. lo que completa el envío gratis (o lo más barato si ya lo tiene)
+    const otros = lista.filter((p) => p.slug !== CODORNICES && p.variantes.length === 1 && stockDe(p) > 0 && !items.some((it) => it.id === p.slug))
+      .sort((a, b) => falta > 0
+        ? Number(b.variantes[0].precio >= falta) - Number(a.variantes[0].precio >= falta) || Math.abs(a.variantes[0].precio - falta) - Math.abs(b.variantes[0].precio - falta)
+        : a.variantes[0].precio - b.variantes[0].precio);
+    for (const p of otros) {
+      if (tarjetas.length >= 3) break;
+      tarjetas.push(extra(p, p.variantes[0], falta > 0 && p.variantes[0].precio >= falta ? 'con esto tu envío sale gratis' : ''));
+    }
+    const html = tarjetas.slice(0, 3).join('');
+    if (html !== extrasPintados) { $('[data-extras-grid]').innerHTML = html; extrasPintados = html; }
+    $('[data-extras]').hidden = !html;
+    $('[data-extras-t]').textContent = falta > 0 ? `Súmale ${money(falta)} y tu envío sale gratis` : 'Súmale a tu pedido';
+  }
+  const placeTxt = () => {
+    const w = step === 1 && metodo() === 'wompi';
+    $('[data-place-txt]').textContent = w ? `Pagar ${money(totals().total)}` : 'Confirmar pedido';
+    if (step === 1) document.querySelector('[data-mbar-txt]')!.textContent = w ? 'Pagar en línea' : 'Confirmar pedido';
   };
 
   /* ---------- pasos ---------- */
@@ -365,7 +444,8 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     // por si no se puede guardar: el pedido completo listo para WhatsApp
     const msg = [
       `Hola, Alma Animal. Quiero hacer este pedido (${code}):`, ...lines.map((l) => '• ' + l),
-      `Subtotal: ${fields.subtotal}`, `Envío: ${ship}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`, `Total: ${fields.total}`,
+      `Subtotal: ${fields.subtotal}`, `Envío: ${ship}${t.prio ? ` + prioritario ${money(PRIO)}` : ''}`,
+      t.desc ? `Descuento por pagar en línea: −${money(t.desc)}` : '', `Total: ${fields.total}${metodo() === 'wompi' ? ' · pago en línea' : ''}`,
       t.sub >= GIFT ? `Con obsequio: ${GIFT_NAME} 🎁` : '', '',
       `Para: ${fields.nombre} ${fields.apellido} · ${fields.celular}${fields.correo ? ' · ' + fields.correo : ''}`,
       `Dirección: ${fields.direccion}, barrio ${fields.barrio}, ${fields.ciudad} (${fields.departamento})`,
@@ -376,10 +456,13 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
       codigo: code, nombre: fields.nombre, apellido: fields.apellido, celular: fields.celular, correo: fields.correo || null,
       departamento: fields.departamento, ciudad: fields.ciudad, direccion: fields.direccion, barrio: fields.barrio,
       indicaciones: fields.indicaciones || null,
-      items: cart.items().map((it) => ({ id: it.id, nombre: it.name, variante: it.variant, precio: it.price, cantidad: it.qty })),
+      // vid: la variante del catálogo; con ella el inventario se descuenta al confirmar y el pago en línea revisa el precio
+      items: cart.items().map((it) => ({ id: it.id, ...(it.vid && /^[0-9a-f-]{36}$/.test(it.vid) ? { vid: it.vid } : {}), nombre: it.name, variante: it.variant, precio: it.price, cantidad: it.qty })),
       subtotal: t.sub, envio: t.ship ?? 0, prioritario: t.prio, total: t.total,
       obsequio: t.sub >= GIFT, aviso_compras: fields.aviso === 'Sí',
-      acepto_terminos: true, version_politicas: C.legal
+      acepto_terminos: true, version_politicas: C.legal,
+      // solo si la base ya tiene estas columnas (supabase/30); en contraentrega se puede guardar sin ellas
+      ...(PAGO_EN_LINEA.activo ? { metodo_pago: metodo(), descuento: t.desc } : {})
     };
     return { code, fields, row, msg };
   };
@@ -402,6 +485,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     document.querySelector('[data-mbar-txt]')!.textContent = on ? 'Enviando…' : 'Confirmar pedido';
     $<HTMLButtonElement>('[data-place]').disabled = on;
     document.querySelector<HTMLButtonElement>('[data-mbar-btn]')!.disabled = on;
+    if (!on) placeTxt();
   };
 
   const send = async (order: NonNullable<typeof lastOrder>) => {
@@ -409,8 +493,14 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     // si llegó por una landing de anuncio, el pedido guarda de dónde vino (si la base aún no tiene esas columnas, se guarda sin ellas)
     let origen: Record<string, unknown> | null = null;
     try { origen = JSON.parse(sessionStorage.getItem('alma-origen') || 'null'); } catch { /* sin almacenamiento */ }
+    const enLinea = (order.row as { metodo_pago?: string }).metodo_pago === 'wompi';
     let res = PREVIEW ? 'ok' : await insert('pedidos', origen ? { ...order.row, fuente: origen.fuente, modo_envio: origen.modo_envio, atribucion: origen.atribucion } : order.row);
     if (res === 'error' && origen) res = await insert('pedidos', order.row);
+    // contraentrega en una base sin las columnas de Wompi: se guarda como antes
+    if (res === 'error' && !enLinea && 'metodo_pago' in order.row) {
+      const { metodo_pago: _m, descuento: _d, ...sinPago } = order.row as Record<string, unknown>;
+      res = await insert('pedidos', sinPago);
+    }
     const ok = res === 'ok';
     if (ok) try { sessionStorage.removeItem('alma-origen'); } catch { /* sin almacenamiento */ }
     // en la vista previa el pedido queda en este navegador para verlo en el gestor de ejemplo
@@ -421,6 +511,28 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
         prev.unshift({ ...order.row, id: 'vp-' + order.code, numero: 1044 + prev.length, creado: new Date().toISOString(), estado: 'nuevo', pago: 'pendiente', nota_interna: null });
         localStorage.setItem(k, JSON.stringify(prev.slice(0, 20)));
       } catch { /* sin almacenamiento */ }
+    }
+    if (ok && enLinea) {
+      // guardado: se va a pagar a Wompi (el Purchase se manda en /pago cuando Wompi aprueba)
+      done = true;
+      cart.clear();
+      const r = order.row as { items: { id: string; precio: number; cantidad: number }[]; total: number };
+      const f = order.fields;
+      try {
+        if (PREVIEW) throw new Error('En la vista previa no se abre Wompi: el pedido quedó guardado como de prueba.');
+        await pagarConWompi(order.code, { codigo: order.code, total: r.total, items: r.items, cliente: { correo: f.correo, celular: f.celular, nombre: f.nombre, apellido: f.apellido, ciudad: f.ciudad, departamento: f.departamento } });
+        return; // la página se va a Wompi
+      } catch (e) {
+        setBusy(false);
+        $('[data-done-name]').textContent = f.nombre;
+        $('[data-done-code]').textContent = order.code;
+        $('[data-done-cel]').textContent = f.celular;
+        $<HTMLAnchorElement>('[data-done-wa]').href = wa(`Hola, Alma Animal. Quiero pagar mi pedido ${order.code}.`);
+        $('[data-done-pay]').hidden = false;
+        $('[data-done-pay-txt]').textContent = `${(e as Error).message} Tu pedido quedó guardado: toca «Pagar ahora» para intentarlo otra vez, o escríbenos y lo pagas al recibir.`;
+        show('done');
+        return;
+      }
     }
     setBusy(false);
     if (ok) {
@@ -452,6 +564,12 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
     $('[data-main]').hidden = false; $('[data-summary]').hidden = false;
     if (lastOrder) send(lastOrder);
   });
+  $('[data-pay-retry]').addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    if (!lastOrder) return;
+    b.disabled = true;
+    try { await pagarConWompi(lastOrder.code); } catch (err) { $('[data-done-pay-txt]').textContent = (err as Error).message + ' Escríbenos por WhatsApp y te ayudamos.'; b.disabled = false; }
+  });
   $('[data-place]').addEventListener('click', place);
   document.querySelector('[data-mbar-btn]')!.addEventListener('click', () => (step === 0 ? go(1) : place()));
   form.addEventListener('submit', (e) => { e.preventDefault(); place(); });
@@ -460,19 +578,8 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
 
   syncCity();
   paint();
-  catalogo().then((lista) => {
-    const extras = lista.filter((p) => p.variantes.length === 1 && stockDe(p) > 0)
-      .sort((a, b) => a.variantes[0].precio - b.variantes[0].precio).slice(0, 8);
-    $('[data-extras-grid]').innerHTML = extras.map((p) => {
-      const v = p.variantes[0];
-      return `<div class="extra" data-extra="${esc(p.slug)}">
-        <span class="extra__ic" style="background:${TONOS[p.tono] ?? TONOS.lav}" aria-hidden="true">${portada(p)}</span>
-        <span class="extra__txt"><a href="${productoUrl(p.slug)}">${esc(p.nombre)}</a><span>${money(v.precio)}</span></span>
-        <button class="add add--sm" type="button" aria-label="Agregar ${esc(p.nombre)} al carrito" data-add='${esc(JSON.stringify(itemCarrito(p, v)))}'><span class="ms" aria-hidden="true">add</span></button>
-      </div>`;
-    }).join('');
-    paint();
-  }).catch(() => { /* sin sugerencias si no carga el catálogo */ });
+  $('[data-extras]').hidden = true;
+  catalogo().then((l) => { lista = l; paint(); }).catch(() => { /* sin sugerencias si no carga el catálogo */ });
   cart.onChange(paint);
 </script>
 
@@ -548,6 +655,7 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   .extras :global(.extra__txt span) { font-weight: 400; color: var(--ink-muted); }
   @media (min-width: 700px) { .extras__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } .extras :global(.extra) { flex-direction: column; align-items: flex-start; } .extras :global(.extra .add) { align-self: flex-end; margin-top: -40px; } }
   .extras :global(.extra__ic img) { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+  .extras :global(.extra--star) { box-shadow: 0 0 0 2px var(--primary-soft, var(--primary)); }
 
   /* envío */
   .ship { display: flex; flex-direction: column; gap: 20px; }
@@ -581,6 +689,18 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   .prio__txt b { font: 600 17px/1.3 var(--font-sans); }
   .prio__txt span { font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
   .prio__price { font: 700 17px/1 var(--font-sans); white-space: nowrap; }
+  /* cómo paga */
+  .metodos { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: 10px; }
+  .metodos legend { padding: 0; margin-bottom: 10px; font: 600 17px/1.3 var(--font-sans); }
+  .metodo { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); cursor: pointer; transition: border-color .2s, background .2s; }
+  .metodo:has(input:checked) { border-color: var(--primary); background: var(--surface-2); }
+  .metodo:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .metodo input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+  .metodo > .ms { font-size: 26px; color: var(--primary); }
+  .metodo__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 400 15px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .metodo__txt b { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: 600 17px/1.3 var(--font-sans); color: var(--ink); }
+  .metodo__txt em { font: 700 12.5px/1 var(--font-sans); font-style: normal; padding: 5px 8px; border-radius: 999px; background: #B8F1B9; color: #1D5128; }
+  @media (min-width: 768px) { .metodos { grid-template-columns: 1fr 1fr; } }
   .consent { display: flex; gap: 12px; align-items: flex-start; font: 400 15px/1.5 var(--font-sans); color: var(--ink-muted); cursor: pointer; }
   .consent b { color: var(--ink); }
   .consent input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); flex: none; }
@@ -601,7 +721,12 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   .totals div { display: flex; justify-content: space-between; gap: 12px; }
   .totals div[hidden] { display: none; }
   .totals dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+  .totals dd { white-space: nowrap; }
+  .totals__desc { color: #1D5128; font-weight: 600; }
   .totals__total { padding-top: 12px; border-top: 1px solid var(--line); font: 700 19px/1.2 var(--font-sans); }
+  .paynow { display: flex; gap: 8px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; background: #E3F4E7; color: #1D5128; font: 500 15px/1.4 var(--font-sans); }
+  .paynow[hidden] { display: none; }
+  .paynow .ms { font-size: 20px; flex: none; }
   .btn--go { width: 100%; height: 56px; font-size: 17px; }
   .btn--go[hidden], .backlink[hidden] { display: none; }
   .backlink { align-self: center; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 8px; color: var(--primary); font: 600 15px/1 var(--font-sans); cursor: pointer; }
@@ -629,6 +754,10 @@ const RISARALDA = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'La Virgini
   .sent__wa { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; padding: 16px 14px; border-radius: 20px; background: var(--surface-2); width: 100%; max-width: 440px; }
   .sent__wa > span { font: 500 15px/1.4 var(--font-sans); color: var(--ink-muted); }
   .sent__wa .wa-o { width: 100%; }
+  .sent__pay { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 440px; padding: 16px 14px; border-radius: 20px; background: #FFF1E3; }
+  .sent__pay[hidden] { display: none; }
+  .sent__pay p { color: #624000; font-weight: 500; }
+  .sent__pay .btn { width: 100%; margin: 0; }
   .sent--warn .sent__ic { background: #FFDDB2; color: #624000; }
   .sent--warn .sent__wa { flex-direction: row; flex-wrap: wrap; justify-content: center; background: none; padding: 0; }
   .sent--warn .sent__wa > * { flex: 1 1 180px; }

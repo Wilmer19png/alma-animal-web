@@ -8,8 +8,15 @@ export interface Producto {
   id: string; slug: string; nombre: string; categoria: string; para: string[]; tamanos: string[];
   marca: string | null; descripcion: string; tipo: string | null; etiquetas: string[]; icono: string; tono: string;
   caracteristicas: [string, string][]; fotos: string[]; precioAntes: number | null; orden: number; creado: string;
-  variantes: Variante[];
+  variantes: Variante[]; ficha: Ficha | null;
 }
+// lo que cuenta la ficha además de la descripción (snacks Revoltosos, supabase/31-snacks-revoltosos.sql)
+export interface Ficha {
+  checks?: string[]; beneficios?: [string, string][]; para_quien?: string[]; uso?: string[];
+  como_darlo?: string[]; preguntas?: [string, string][]; trae?: [string, string, string][];
+}
+// el snack que siempre se recomienda (bolsa de 50 g o frasco de 100 g)
+export const CODORNICES = 'codornices-deshidratadas';
 
 export const TONOS: Record<string, string> = {
   lav: 'linear-gradient(160deg,#EADDFF,#D1C1DD)',
@@ -22,12 +29,13 @@ const TONO_DE: Record<string, string> = Object.fromEntries(Object.entries(TONOS)
 const URL = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
 const KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
 const CAMPOS = 'id,slug,nombre,categoria,para,tamanos,marca,descripcion,tipo_variante,etiquetas,icono,tono,caracteristicas,fotos,precio_antes,orden,creado,variantes(id,nombre,precio,precio_antes,stock,orden,activo)';
+const CON_FICHA = CAMPOS.replace(',orden,creado,', ',orden,creado,ficha,');
 
 type Fila = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const deFila = (r: Fila): Producto => ({
   id: r.id, slug: r.slug, nombre: r.nombre, categoria: r.categoria, para: r.para ?? [], tamanos: r.tamanos ?? [],
   marca: r.marca, descripcion: r.descripcion ?? '', tipo: r.tipo_variante, etiquetas: r.etiquetas ?? [], icono: r.icono, tono: r.tono,
-  caracteristicas: r.caracteristicas ?? [], fotos: r.fotos ?? [], precioAntes: r.precio_antes, orden: r.orden ?? 0, creado: r.creado,
+  caracteristicas: r.caracteristicas ?? [], fotos: r.fotos ?? [], precioAntes: r.precio_antes, orden: r.orden ?? 0, creado: r.creado, ficha: r.ficha ?? null,
   variantes: ((r.variantes ?? []) as Fila[]).filter((v) => v.activo !== false).sort((a, b) => a.orden - b.orden)
     .map((v) => ({ id: v.id, nombre: v.nombre, precio: v.precio, stock: v.stock, antes: v.precio_antes ?? (r.variantes.length === 1 ? r.precio_antes : null) ?? null }))
 });
@@ -37,13 +45,15 @@ const ejemplo = (): Producto[] => PRODUCTS.map((p, i) => ({
   id: p.id, slug: p.id, nombre: p.name, categoria: p.cat, para: p.for, tamanos: p.sizes, marca: null, descripcion: p.text,
   tipo: p.variants.length > 1 ? p.variantKind ?? 'Presentación' : null, etiquetas: p.tag ? [p.tag] : [], icono: p.icon,
   tono: TONO_DE[p.tone] ?? 'lav', caracteristicas: p.specs ?? [], fotos: [], precioAntes: p.variants.find((v) => v.was)?.was ?? null,
-  orden: i, creado: p.added, variantes: p.variants.map((v) => ({ id: `${p.id}:${v.id}`, nombre: v.label, precio: v.price, stock: v.stock, antes: v.was ?? null }))
+  orden: i, creado: p.added, ficha: null, variantes: p.variants.map((v) => ({ id: `${p.id}:${v.id}`, nombre: v.label, precio: v.price, stock: v.stock, antes: v.was ?? null }))
 }));
 
 let cache: Promise<Producto[]> | null = null;
 export function catalogo(): Promise<Producto[]> {
   if (!supabaseReady) return Promise.resolve(ejemplo());
-  cache ??= fetch(`${URL}/rest/v1/productos?select=${CAMPOS}&order=orden.asc,creado.desc`, { headers: { apikey: KEY!, Authorization: `Bearer ${KEY}` } })
+  const leer = (campos: string) => fetch(`${URL}/rest/v1/productos?select=${campos}&order=orden.asc,creado.desc`, { headers: { apikey: KEY!, Authorization: `Bearer ${KEY}` } });
+  // si la base aún no tiene la columna ficha (supabase/31), se lee sin ella
+  cache ??= leer(CON_FICHA).then((r) => (r.ok ? r : leer(CAMPOS)))
     .then((r) => { if (!r.ok) throw new Error('catalogo'); return r.json(); })
     .then((rows: Fila[]) => rows.map(deFila).filter((p) => p.variantes.length > 0));
   return cache;

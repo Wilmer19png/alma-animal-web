@@ -2,7 +2,7 @@
 // Checkout por pasos de las landings de producto (contraentrega, sin salir de la página).
 // Se usa dos veces: dentro de la ventana flotante que abre «Pedir ahora» ([data-pedir]) y al final de la página.
 // Pasos: 1 Tu pedido (cantidad) · 2 Envío (datos) · 3 Confirmar. Guarda en la tabla pedidos, como el carrito.
-import { DEPARTAMENTOS, SHIPPING, money } from '../data/shop';
+import { DEPARTAMENTOS, SHIPPING, PAGO_EN_LINEA, descuentoEnLinea, money } from '../data/shop';
 import WaIcon from './WaIcon.astro';
 interface Props { pre: string; slug: string; nombre: string; precio: number; variante: string; foto: string; dropi?: string; legal: string; shop: string; titulo?: boolean }
 const { pre, slug, nombre, precio, variante, foto, dropi, legal, shop, titulo = false } = Astro.props;
@@ -10,7 +10,7 @@ const id = (x: string) => `${pre}-${x}`;
 const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
 ---
 <div class="ck" data-ck data-prio={SHIPPING.priority} data-slug={slug} data-nombre={nombre} data-precio={precio} data-variante={variante} data-dropi={dropi} data-legal={legal} data-shop={shop}>
-  {titulo && <h2 class="ck__titulo" id={id('t')}>Pide el tuyo <span>Envío gratis · Pagas al recibir</span></h2>}
+  {titulo && <h2 class="ck__titulo" id={id('t')}>Pide el tuyo <span>{PAGO_EN_LINEA.activo ? `Envío gratis · ${PAGO_EN_LINEA.pct} % menos pagando en línea` : 'Envío gratis · Pagas al recibir'}</span></h2>}
 
   <ol class="ck__pasos" data-ck-pasos>
     {PASOS.map((p, i) => <li class:list={{ 'is-on': i === 0 }} data-ind={i}><span class="ck__n" aria-hidden="true">{i + 1}</span><span>{p}</span></li>)}
@@ -42,6 +42,7 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
         <div data-ck-prio-row hidden><dt>Envío prioritario</dt><dd>{money(SHIPPING.priority)}</dd></div>
         <div class="ck__tot-t"><dt>Total a pagar al recibir</dt><dd data-ck-total>{money(precio)}</dd></div>
       </dl>
+      {PAGO_EN_LINEA.activo && <p class="ck__ahorro"><span class="ms" aria-hidden="true">sell</span><span>Si al final pagas en línea, te descontamos <b data-ck-ahorro>{money(descuentoEnLinea(precio))}</b>.</span></p>}
       <button class="ck__btn" type="button" data-sig>Continuar con el envío<span class="ms" aria-hidden="true">arrow_forward</span></button>
     </div>
 
@@ -79,6 +80,14 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
     <!-- PASO 3 · CONFIRMAR -->
     <div class="ck__panel" data-paso="2" hidden>
       <div class="ck__rev" data-ck-rev></div>
+      {PAGO_EN_LINEA.activo && (
+        <fieldset class="ck__metodos">
+          <legend>¿Cómo quieres pagar?</legend>
+          <label class="ck__metodo"><input type="radio" name="metodo" value="wompi" checked /><span class="ms" aria-hidden="true">credit_card</span><span class="ck__metodo-t"><b>Pagar ahora <em>{PAGO_EN_LINEA.pct} % menos</em></b><span>Tarjeta, PSE, Nequi o Bancolombia, con Wompi.</span></span></label>
+          <label class="ck__metodo"><input type="radio" name="metodo" value="contraentrega" /><span class="ms" aria-hidden="true">local_atm</span><span class="ck__metodo-t"><b>Pagar al recibir</b><span>Le pagas a la transportadora cuando llegue.</span></span></label>
+        </fieldset>
+      )}
+      <dl class="ck__tot" data-ck-rev-tot></dl>
       <label class="ck__consent"><input type="checkbox" name="datos" id={id('datos')} /><span>Acepto los <a href="/terminos" target="_blank">términos</a> y la <a href="/privacidad" target="_blank">política de datos</a> para que me contacten sobre este pedido. <span class="req">*</span></span></label>
       <span class="ck__err" id={id('datos-err')}>Para enviar tu pedido necesitamos tu autorización.</span>
       <div class="ck__nav">
@@ -104,6 +113,8 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   import { productoPorSlug } from '../scripts/catalogo';
   import { track } from '../scripts/meta';
   import { MUNICIPIOS } from '../data/municipios';
+  import { PAGO_EN_LINEA, descuentoEnLinea } from '../data/shop';
+  import { pagarConWompi } from '../scripts/wompi';
 
   const money = (n: number) => '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
@@ -134,7 +145,11 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
     const campo = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
     const val = (n: string) => (campo(n)?.value ?? '').trim();
     const prio = () => !!campo('prioritario')?.checked;
-    const totalDe = () => PRECIO * cantidadDe(ck) + (prio() ? PRIO : 0);
+    // pagar ahora con Wompi (con descuento) o al recibir; el método se elige en el paso 3
+    const enLinea = () => PAGO_EN_LINEA.activo && (form.elements.namedItem('metodo') as RadioNodeList | null)?.value === 'wompi';
+    const descDe = () => (paso === 2 && enLinea() ? descuentoEnLinea(PRECIO * cantidadDe(ck)) : 0);
+    const totalDe = () => PRECIO * cantidadDe(ck) - descDe() + (prio() ? PRIO : 0);
+    const textoBoton = () => (enLinea() ? `Pagar ${money(totalDe())} en línea` : 'Confirmar pedido · Pago contraentrega');
     const OTRO = '__otro';
     const ciudadSel = campo('ciudad') as unknown as HTMLSelectElement, ciudadOtro = campo('ciudadOtro');
     const ciudad = () => (ciudadSel.value === OTRO ? val('ciudadOtro') : ciudadSel.value);
@@ -170,9 +185,11 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
     ck.addEventListener('ck:reset', () => { if (ck.querySelector<HTMLElement>('[data-listo]')!.hidden) ir(paso, false); });
 
     // total según la cantidad
-    form.addEventListener('change', () => {
+    form.addEventListener('change', (e) => {
       ck.querySelector('[data-ck-total]')!.textContent = money(totalDe());
       const fila = ck.querySelector<HTMLElement>('[data-ck-prio-row]'); if (fila) fila.hidden = !prio();
+      const ah = ck.querySelector('[data-ck-ahorro]'); if (ah) ah.textContent = money(descuentoEnLinea(PRECIO * cantidadDe(ck)));
+      if ((e.target as HTMLInputElement).name === 'metodo') pintarRevision();
     });
     form.addEventListener('focusin', () => iniciar(ck));
 
@@ -213,8 +230,15 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       const n = cantidadDe(ck);
       ck.querySelector<HTMLElement>('[data-ck-rev]')!.innerHTML = `
         <div class="ck__rev-b"><span class="ck__rev-l">Producto</span><p><b>${n} × ${esc(D.nombre!)}</b><br>${esc(D.variante!)}</p><button type="button" class="ck__cambiar" data-a="0">Cambiar</button></div>
-        <div class="ck__rev-b"><span class="ck__rev-l">Entregar a</span><p><b>${esc(val('nombre'))} ${esc(val('apellido'))}</b> · ${esc(celular())}<br>${esc(val('direccion'))}, barrio ${esc(val('barrio'))}<br>${esc(ciudad())} (${esc(val('departamento'))})${val('indicaciones') ? `<br>${esc(val('indicaciones'))}` : ''}</p><button type="button" class="ck__cambiar" data-a="1">Cambiar</button></div>
-        <dl class="ck__tot"><div><dt>Envío</dt><dd>Gratis</dd></div>${prio() ? `<div><dt>Envío prioritario</dt><dd>${money(PRIO)}</dd></div>` : ''}<div class="ck__tot-t"><dt>Pagas al recibir</dt><dd>${money(totalDe())}</dd></div></dl>`;
+        <div class="ck__rev-b"><span class="ck__rev-l">Entregar a</span><p><b>${esc(val('nombre'))} ${esc(val('apellido'))}</b> · ${esc(celular())}<br>${esc(val('direccion'))}, barrio ${esc(val('barrio'))}<br>${esc(ciudad())} (${esc(val('departamento'))})${val('indicaciones') ? `<br>${esc(val('indicaciones'))}` : ''}</p><button type="button" class="ck__cambiar" data-a="1">Cambiar</button></div>`;
+      const d = descDe();
+      ck.querySelector<HTMLElement>('[data-ck-rev-tot]')!.innerHTML = `
+        <div><dt>Producto${n > 1 ? `s (${n})` : ''}</dt><dd>${money(PRECIO * n)}</dd></div>
+        <div><dt>Envío</dt><dd>Gratis</dd></div>
+        ${prio() ? `<div><dt>Envío prioritario</dt><dd>${money(PRIO)}</dd></div>` : ''}
+        ${d ? `<div class="ck__tot-d"><dt>Descuento por pagar en línea</dt><dd>−${money(d)}</dd></div>` : ''}
+        <div class="ck__tot-t"><dt>${enLinea() ? 'Pagas ahora' : 'Pagas al recibir'}</dt><dd>${money(totalDe())}</dd></div>`;
+      ck.querySelector('[data-confirmar-txt]')!.textContent = textoBoton();
     };
     ck.addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
@@ -237,7 +261,7 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       if (sinOk) { datos.focus(); return; }
       if (enviando) return;
 
-      const n = cantidadDe(ck), sub = PRECIO * n, total = totalDe(), conPrio = prio();
+      const n = cantidadDe(ck), sub = PRECIO * n, total = totalDe(), conPrio = prio(), wompi = enLinea(), desc = descDe();
       const codigo = 'AA-' + Date.now().toString(36).slice(-5).toUpperCase();
       const d = { nombre: val('nombre'), apellido: val('apellido'), celular: celular(), correo: val('correo'), departamento: val('departamento'), ciudad: ciudad(), direccion: val('direccion'), barrio: val('barrio'), indicaciones: val('indicaciones') };
       const vid = vids.get(D.slug!);
@@ -246,13 +270,15 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
         departamento: d.departamento, ciudad: d.ciudad, direccion: d.direccion, barrio: d.barrio, indicaciones: d.indicaciones || null,
         items: [{ id: D.slug, ...(vid ? { vid } : {}), nombre: D.nombre, variante: D.variante, precio: PRECIO, cantidad: n, ...(D.dropi ? { proveedor: 'dropi', dropi_id: D.dropi } : {}) }],
         subtotal: sub, envio: 0, prioritario: conPrio, total, obsequio: false, aviso_compras: false,
-        acepto_terminos: true, version_politicas: D.legal
+        acepto_terminos: true, version_politicas: D.legal,
+        ...(PAGO_EN_LINEA.activo ? { metodo_pago: wompi ? 'wompi' : 'contraentrega', descuento: desc } : {})
       };
       const msg = [
         `Hola, Alma Animal. Quiero confirmar mi pedido ${codigo}:`,
         `• ${n} × ${D.nombre} — ${money(sub)}`,
         conPrio ? `Envío gratis + prioritario ${money(PRIO)}` : 'Envío gratis',
-        `Total: ${money(total)} · Pago contraentrega`, '',
+        desc ? `Descuento por pagar en línea: −${money(desc)}` : '',
+        `Total: ${money(total)} · ${wompi ? 'Pago en línea' : 'Pago contraentrega'}`, '',
         `Para: ${d.nombre} ${d.apellido} · ${d.celular}`,
         `Dirección: ${d.direccion}, barrio ${d.barrio}, ${d.ciudad} (${d.departamento})`,
         d.indicaciones ? `Indicaciones: ${d.indicaciones}` : ''
@@ -270,10 +296,33 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
       try { origen = JSON.parse(sessionStorage.getItem('alma-origen') || 'null'); } catch { /* sin almacenamiento */ }
       let res = PREVIEW ? 'ok' : await insert('pedidos', origen ? { ...fila, fuente: origen.fuente, modo_envio: origen.modo_envio, atribucion: origen.atribucion } : fila);
       if (res === 'error' && origen) res = await insert('pedidos', fila);
+      // contraentrega en una base sin las columnas de Wompi (supabase/30): se guarda como antes
+      if (res === 'error' && !wompi && 'metodo_pago' in fila) {
+        const { metodo_pago: _m, descuento: _d, ...sinPago } = fila;
+        res = await insert('pedidos', sinPago);
+      }
+
+      if (res === 'ok' && wompi) {
+        try { sessionStorage.removeItem('alma-origen'); } catch { /* sin almacenamiento */ }
+        try {
+          if (PREVIEW) throw new Error('En la vista previa no se abre Wompi.');
+          await pagarConWompi(codigo, { codigo, total, items: [{ id: D.slug!, precio: PRECIO, cantidad: n }], cliente: { correo: d.correo, celular: d.celular, nombre: d.nombre, apellido: d.apellido, ciudad: d.ciudad, departamento: d.departamento } });
+          return; // la página se va a Wompi
+        } catch (err) {
+          // el pedido quedó guardado: se puede volver a intentar o pagar al recibir por WhatsApp
+          enviando = false; btn.disabled = false;
+          ck.querySelector('[data-confirmar-txt]')!.textContent = 'Intentar pagar de nuevo';
+          const f = ck.querySelector<HTMLElement>('[data-fallo]')!;
+          f.innerHTML = `${esc((err as Error).message)} Tu pedido <b>${codigo}</b> quedó guardado: toca el botón para intentarlo otra vez, o <a href="${wa(`Hola, Alma Animal. Quiero pagar al recibir mi pedido ${codigo}.`)}" target="_blank" rel="noopener">escríbenos y lo pagas al recibir</a>.`;
+          f.hidden = false;
+          form.addEventListener('submit', (ev) => { ev.preventDefault(); ev.stopImmediatePropagation(); btn.disabled = true; pagarConWompi(codigo).catch((e2) => { btn.disabled = false; f.textContent = (e2 as Error).message; }); }, { capture: true });
+          return;
+        }
+      }
 
       enviando = false;
       btn.disabled = false;
-      ck.querySelector('[data-confirmar-txt]')!.textContent = 'Confirmar pedido · Pago contraentrega';
+      ck.querySelector('[data-confirmar-txt]')!.textContent = textoBoton();
 
       if (res === 'ok') {
         try { sessionStorage.removeItem('alma-origen'); } catch { /* sin almacenamiento */ }
@@ -355,10 +404,28 @@ const PASOS = ['Tu pedido', 'Envío', 'Confirmar'];
   .ck__prio-t { flex: 1; display: flex; flex-direction: column; gap: 2px; font: 400 14px/1.3 var(--font-sans); color: var(--ink-muted); }
   .ck__prio-t b { font-size: 15.5px; color: var(--ink); }
   .ck__prio-v { font: 700 15.5px/1 var(--font-sans); white-space: nowrap; }
-  .ck__tot { margin: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
-  .ck__tot div { display: flex; justify-content: space-between; gap: 12px; font: 400 15px/1.3 var(--font-sans); color: var(--ink-muted); }
-  .ck__tot dd { margin: 0; }
-  .ck__tot-t { font-weight: 700 !important; color: var(--ink) !important; font-size: 17px !important; }
+  /* Totales. Van con :global porque en el paso 3 se dibujan con JavaScript (innerHTML) y los estilos con
+     alcance de Astro no les llegan: por eso los valores salían pegados y corridos a la derecha. */
+  .ck :global(.ck__tot) { margin: 0; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
+  .ck :global(.ck__tot:empty) { display: none; }
+  .ck :global(.ck__tot > div) { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 400 15px/1.35 var(--font-sans); color: var(--ink-muted); }
+  .ck :global(.ck__tot dt) { min-width: 0; }
+  .ck :global(.ck__tot dd) { margin: 0; flex: none; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .ck :global(.ck__tot > .ck__tot-d) { color: #1D5128; font-weight: 600; }
+  .ck :global(.ck__tot > .ck__tot-d dd) { color: #1D5128; }
+  .ck :global(.ck__tot > .ck__tot-t) { padding-top: 8px; border-top: 1px solid var(--line); font-weight: 700; color: var(--ink); font-size: 17px; }
+  .ck__ahorro { display: flex; gap: 8px; align-items: flex-start; padding: 10px 14px; border-radius: 14px; background: #E3F4E7; color: #1D5128; font: 500 14.5px/1.4 var(--font-sans); }
+  .ck__ahorro .ms { font-size: 20px; flex: none; }
+  .ck__metodos { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: 8px; }
+  .ck__metodos legend { padding: 0; margin-bottom: 8px; font: 600 15px/1.3 var(--font-sans); }
+  .ck__metodo { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; }
+  .ck__metodo:has(input:checked) { border-color: var(--primary); background: #F3EEF8; box-shadow: 0 0 0 1px var(--primary); }
+  .ck__metodo:has(input:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .ck__metodo input { width: 22px; height: 22px; margin: 0; accent-color: var(--primary); flex: none; }
+  .ck__metodo > .ms { font-size: 22px; color: var(--primary); }
+  .ck__metodo-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font: 400 14px/1.35 var(--font-sans); color: var(--ink-muted); }
+  .ck__metodo-t b { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 15.5px; color: var(--ink); }
+  .ck__metodo-t em { font: 700 12px/1 var(--font-sans); font-style: normal; padding: 4px 8px; border-radius: 999px; background: #B8F1B9; color: #1D5128; }
 
   .ck__grid { display: grid; gap: 14px; }
   .ck__fld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }

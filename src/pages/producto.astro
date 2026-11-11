@@ -58,6 +58,9 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
       </ul>
     </template>
 
+    <!-- ======== LO QUE DEBES SABER (beneficios, qué trae, cómo darlo, preguntas: columna ficha) ======== -->
+    <section class="wrap fx" aria-labelledby="fx-t" data-fx hidden></section>
+
     <!-- ======== RELACIONADOS ======== -->
     <section class="wrap related" aria-labelledby="rel" data-related hidden>
       <h2 id="rel" class="h-section">Te puede <b class="gt">interesar</b></h2>
@@ -70,9 +73,9 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
 
 <script>
   import { cart, progress, money } from '../scripts/cart';
-  import { LANDINGS, catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, TONOS, type Producto, type Variante } from '../scripts/catalogo';
+  import { LANDINGS, CODORNICES, catalogo, tarjeta, stockDe, itemCarrito, categoria, paraTxt, etiquetas, descuento, esc, portada, TONOS, type Producto, type Variante } from '../scripts/catalogo';
   import { supabaseReady } from '../scripts/supabase';
-  import { TAGS } from '../data/shop';
+  import { TAGS, SHIPPING } from '../data/shop';
   import { avisarAgregado } from '../scripts/add-buttons';
   import { track } from '../scripts/meta';
 
@@ -114,6 +117,42 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     auto();
   }
 
+  /* ---------- lo que debes saber: beneficios, qué trae, para quién, cómo darlo y preguntas ---------- */
+  function saber(p: Producto) {
+    const f = p.ficha;
+    if (!f) return;
+    const el = document.querySelector<HTMLElement>('[data-fx]')!;
+    const lista = (t: string, xs?: string[]) => (xs?.length ? `<div class="fx__box"><h3>${t}</h3><ul>${xs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : '');
+    el.innerHTML = `
+      <h2 id="fx-t" class="h-section">Lo que debes <b class="gt">saber</b></h2>
+      ${f.checks?.length ? `<ul class="fx__checks">${f.checks.map((c) => `<li><span class="ms" aria-hidden="true">check_circle</span>${esc(c)}</li>`).join('')}</ul>` : ''}
+      ${f.trae?.length ? `<div class="fx__trae"><h3>Qué trae</h3><ul>${f.trae.map(([n, t, d]) => `<li><b>${esc(n)}</b><span><b>${esc(t)}</b>${esc(d)}</span></li>`).join('')}</ul></div>` : ''}
+      ${f.beneficios?.length ? `<div class="fx__ben">${f.beneficios.map(([t, d]) => `<div><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div>` : ''}
+      <div class="fx__cols">${lista('¿Para quién es?', f.para_quien)}${lista('Ideal para', f.uso)}</div>
+      ${f.como_darlo?.length ? `<div class="fx__box"><h3>Cómo darlo</h3><ol>${f.como_darlo.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></div>` : ''}
+      ${f.preguntas?.length ? `<div class="fx__faq"><h3>Preguntas frecuentes</h3>${f.preguntas.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>` : ''}`;
+    el.hidden = false;
+  }
+
+  /* ---------- recomendación: codornices deshidratadas (bolsa o frasco) ---------- */
+  function recomendar(p: Producto, lista: Producto[]) {
+    const cod = lista.find((x) => x.slug === CODORNICES);
+    if (!cod || p.slug === CODORNICES) return;
+    const vs = cod.variantes.filter((v) => v.stock > 0);
+    if (!vs.length) return;
+    const box = document.createElement('div');
+    box.className = 'reco';
+    box.innerHTML = `
+      <a class="reco__img" href="${location.protocol === 'file:' ? './producto.html' : '/producto'}?p=${CODORNICES}" style="background:${TONOS[cod.tono] ?? TONOS.lav}" tabindex="-1" aria-hidden="true">${portada(cod)}</a>
+      <div class="reco__txt">
+        <span class="reco__k">Súmale el favorito</span>
+        <b>${esc(cod.nombre)}</b>
+        <span>Codorniz 100 % natural, para perros y gatos. En bolsa o en frasco.</span>
+        <div class="reco__btns">${vs.map((v) => `<button type="button" class="reco__add" data-add='${esc(JSON.stringify(itemCarrito(cod, v)))}' aria-label="Agregar ${esc(cod.nombre)} ${esc(v.nombre)} al carrito"><span class="ms" aria-hidden="true">add</span>${esc(v.nombre)} · ${money(v.precio)}</button>`).join('')}</div>
+      </div>`;
+    info.querySelector('[data-added]')!.after(box);
+  }
+
   /* ---------- información, variantes y compra ---------- */
   function ficha(p: Producto) {
     const words = p.nombre.split(' ');
@@ -136,6 +175,7 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
         <span class="qty" role="group" aria-label="Cantidad"><button type="button" aria-label="Quitar uno" data-dec>−</button><output aria-live="polite" data-qty>1</output><button type="button" aria-label="Agregar uno" data-inc>+</button></span>
         <button class="cta" type="button" data-cta><span class="ms" aria-hidden="true">shopping_bag</span><span data-cta-txt></span></button>
       </div>
+      <p class="nudge" data-nudge hidden></p>
       <div class="added" role="status" data-added hidden><span><span class="ms" aria-hidden="true">check_circle</span><span data-added-txt>Agregado al carrito</span></span><a href="${location.protocol === 'file:' ? './carrito.html' : '/carrito'}">Ver carrito</a></div>`;
     info.append(document.querySelector<HTMLTemplateElement>('[data-fixed]')!.content.cloneNode(true));
     info.querySelector<HTMLAnchorElement>('[data-ask]')!.href = wa(`Hola, Alma Animal. Tengo una pregunta sobre ${p.nombre}. ¿Es el indicado para mi mascota?`);
@@ -162,7 +202,17 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
       info.querySelector('[data-cta-txt]')!.textContent = out ? 'Agotado' : `Agregar · ${money(v.precio * qty)}`;
       info.querySelector<HTMLButtonElement>('[data-dec]')!.disabled = qty <= 1 || out;
       info.querySelector<HTMLButtonElement>('[data-inc]')!.disabled = qty >= v.stock || out;
+      // de a una unidad: cuántas más hacen que el envío salga gratis
+      const nudge = info.querySelector<HTMLElement>('[data-nudge]')!;
+      const falta = SHIPPING.freeFrom - cart.subtotal() - v.precio * qty;
+      const n = Math.ceil((SHIPPING.freeFrom - cart.subtotal()) / v.precio);
+      nudge.hidden = out || falta <= 0;
+      if (!nudge.hidden) nudge.innerHTML = n <= 6 && n > qty && n <= v.stock
+        ? `<span class="ms" aria-hidden="true">local_shipping</span><span>Lleva <b>${n}</b> y tu envío sale <b>gratis</b> a toda Colombia. <button type="button" data-poner="${n}">Llevar ${n}</button></span>`
+        : `<span class="ms" aria-hidden="true">local_shipping</span><span>Te faltan <b>${money(falta)}</b> para el envío <b>gratis</b>. Súmale unas codornices o un combo.</span>`;
     };
+    info.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-poner]'); if (b) { qty = Number(b.dataset.poner); paint(); } });
+    cart.onChange(() => paint());
     radios.forEach((r) => r.addEventListener('change', () => { qty = 1; added.hidden = true; paint(); }));
     info.querySelector('[data-dec]')!.addEventListener('click', () => { qty--; paint(); });
     info.querySelector('[data-inc]')!.addEventListener('click', () => { qty++; paint(); });
@@ -205,6 +255,8 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
     document.querySelector('[data-crumb-name]')!.textContent = p.nombre;
     galeria(p);
     ficha(p);
+    saber(p);
+    recomendar(p, lista);
     const v0 = p.variantes.find((v) => v.stock > 0) ?? p.variantes[0];
     track('ViewContent', { content_ids: [p.id], content_type: 'product', content_name: p.nombre, content_category: categoria(p.categoria), value: v0?.precio ?? 0, currency: 'COP' });
     // relacionados: primero la misma categoría, luego los destacados
@@ -371,4 +423,51 @@ const waShop = whatsapp.shop('Hola, Alma Animal. Tengo una pregunta sobre un pro
   .pdp .missing p { max-width: 44ch; color: var(--ink-muted); }
   .pdp .missing__acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
   @media (prefers-reduced-motion: reduce) { .pdp .gallery__main.is-loading { animation: none; } }
+
+  /* ---------- MÁS UNIDADES = ENVÍO GRATIS ---------- */
+  .pdp .nudge { display: flex; gap: 8px; align-items: flex-start; margin-top: -6px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); font: 500 15px/1.45 var(--font-sans); }
+  .pdp .nudge[hidden] { display: none; }
+  .pdp .nudge .ms { color: var(--primary); font-size: 20px; flex: none; }
+  .pdp .nudge button { margin-left: 4px; min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: 600 14px/1 var(--font-sans); cursor: pointer; }
+
+  /* ---------- RECOMENDADO: CODORNICES ---------- */
+  .pdp .reco { display: flex; gap: 14px; align-items: flex-start; padding: 14px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 2px var(--primary-soft); }
+  .pdp .reco__img { flex: none; width: 84px; height: 84px; border-radius: 14px; overflow: hidden; display: grid; place-items: center; color: rgb(54 41 84 / .5); }
+  .pdp .reco__img img { width: 100%; height: 100%; object-fit: cover; }
+  .pdp .reco__txt { min-width: 0; display: flex; flex-direction: column; gap: 3px; font: 400 14.5px/1.4 var(--font-sans); color: var(--ink-muted); }
+  .pdp .reco__k { font: 700 12.5px/1.2 var(--font-sans); letter-spacing: .04em; text-transform: uppercase; color: var(--primary); }
+  .pdp .reco__txt > b { font: 600 17px/1.3 var(--font-sans); color: var(--ink); }
+  .pdp .reco__btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .pdp .reco__add { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 14px 0 10px; border: 1.5px solid var(--primary); border-radius: 999px; background: #fff; color: var(--primary-strong, var(--primary)); font: 600 14.5px/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; }
+  .pdp .reco__add:hover { background: var(--surface-2); }
+  .pdp .reco__add.is-added { background: #B8F1B9; border-color: #1D7A33; color: #1D5128; }
+  .pdp .reco__add .ms { font-size: 20px; }
+
+  /* ---------- LO QUE DEBES SABER ---------- */
+  .pdp .fx { display: flex; flex-direction: column; gap: 20px; padding-bottom: var(--section); }
+  .pdp .fx[hidden] { display: none; }
+  .pdp .fx h3 { font: 600 19px/1.3 var(--font-sans); margin-bottom: 10px; }
+  .pdp .fx__checks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .pdp .fx__checks li { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); font: 600 14.5px/1.2 var(--font-sans); }
+  .pdp .fx__checks .ms { font-size: 18px; color: #1D7A33; font-variation-settings: "FILL" 1; }
+  .pdp .fx__ben { display: grid; gap: 12px; }
+  .pdp .fx__ben > div, .pdp .fx__box, .pdp .fx__trae, .pdp .fx__faq { padding: 18px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line-soft); }
+  .pdp .fx__ben h3 { font-size: 17px; margin-bottom: 4px; }
+  .pdp .fx__ben p, .pdp .fx__box li, .pdp .fx__faq p { font: 400 15.5px/1.55 var(--font-sans); color: var(--ink-muted); }
+  .pdp .fx__box ul, .pdp .fx__box ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .pdp .fx__cols { display: grid; gap: 12px; }
+  .pdp .fx__cols:empty { display: none; }
+  .pdp .fx__trae ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .pdp .fx__trae li { display: flex; gap: 12px; align-items: flex-start; }
+  .pdp .fx__trae li > b { flex: none; min-width: 56px; padding: 6px 8px; border-radius: 10px; background: var(--surface-2); text-align: center; font: 700 14px/1.2 var(--font-sans); color: var(--primary); }
+  .pdp .fx__trae li span { display: flex; flex-direction: column; gap: 2px; font: 400 15px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .pdp .fx__trae li span b { color: var(--ink); font-weight: 600; }
+  .pdp .fx__faq details { border-top: 1px solid var(--line-soft); }
+  .pdp .fx__faq details:first-of-type { border-top: 0; }
+  .pdp .fx__faq summary { padding: 14px 0; font: 600 16px/1.35 var(--font-sans); cursor: pointer; }
+  .pdp .fx__faq p { padding-bottom: 14px; }
+  @media (min-width: 768px) {
+    .pdp .fx__ben { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .pdp .fx__cols { grid-template-columns: 1fr 1fr; }
+  }
 </style>

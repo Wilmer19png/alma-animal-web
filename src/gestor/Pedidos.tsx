@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Shell from './Shell';
 import { DEMO, money, when, waLink, prettyCel, link } from './lib';
-import { listar, cambiar, ESTADOS, PAGOS, pasos, siguiente, mensaje, pagoTxt, cobrado, pagaAlRecibir, type Pedido, type Estado, type Cambio } from './pedidos-datos';
+import { listar, cambiar, borrar, ESTADOS, PAGOS, WOMPI_TXT, pasos, siguiente, mensaje, pagoTxt, cobrado, pagaAlRecibir, type Pedido, type Estado, type Cambio } from './pedidos-datos';
 
 const FILTROS: { id: 'todos' | Estado; txt: string }[] = [
   { id: 'todos', txt: 'Todos' }, { id: 'nuevo', txt: 'Nuevos' }, { id: 'confirmado', txt: 'Cliente confirmó' },
@@ -53,6 +53,14 @@ export default function Pedidos() {
 
   const actual = lista?.find((p) => p.id === sel) ?? visibles[0] ?? null;
 
+  // borrar para siempre (solo la administradora): sale de la lista y de Contabilidad
+  const quitar = async (p: Pedido) => {
+    const antes = lista;
+    setLista((l) => l!.filter((x) => x.id !== p.id));
+    setSel(null); setVerDetalle(false);
+    try { await borrar(p.id); setAviso(`Pedido #${p.numero} borrado`); } catch (e) { setLista(antes); setAviso((e as Error).message); }
+  };
+
   // cambio con respuesta inmediata; si falla, se devuelve
   const aplicar = async (p: Pedido, c: Cambio, ok?: string) => {
     const antes = lista;
@@ -62,7 +70,7 @@ export default function Pedidos() {
 
   return (
     <Shell activo="pedidos" insignias={{ pedidos: cuentas.nuevo ?? 0 }}>
-      {() => (
+      {(yo) => (
         <div className="ped" data-vista={verDetalle ? 'detalle' : 'lista'}>
           <div className="mhead">
             <div className="mhead__txt">
@@ -112,7 +120,7 @@ export default function Pedidos() {
             </section>
 
             {/* ---------- DETALLE ---------- */}
-            {actual && <Detalle key={actual.id} p={actual} aplicar={aplicar} volver={() => setVerDetalle(false)} />}
+            {actual && <Detalle key={actual.id} p={actual} aplicar={aplicar} quitar={yo.rol === 'admin' ? quitar : undefined} volver={() => setVerDetalle(false)} />}
           </div>
 
           <p className="gtoast" role="status" aria-live="polite">{aviso}</p>
@@ -122,7 +130,7 @@ export default function Pedidos() {
   );
 }
 
-function Detalle({ p, aplicar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Cambio, ok?: string) => void; volver: () => void }) {
+function Detalle({ p, aplicar, quitar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Cambio, ok?: string) => void; quitar?: (p: Pedido) => void; volver: () => void }) {
   const [msgAbierto, setMsgAbierto] = useState(false);
   const [msg, setMsg] = useState(() => mensaje(p));
   const [nota, setNota] = useState(p.nota_interna ?? '');
@@ -143,7 +151,14 @@ function Detalle({ p, aplicar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Ca
         <span className="det__when">{when(p.creado)} · {p.codigo}</span>
         {p.prioritario && <span className="chip dark"><span className="ms" aria-hidden="true">bolt</span>Envío prioritario</span>}
         {p.obsequio && <span className="chip peach"><span className="ms" aria-hidden="true">redeem</span>Lleva obsequio</span>}
+        {p.metodo_pago === 'wompi' && p.pago_estado && WOMPI_TXT[p.pago_estado] && <span className="chip" style={{ background: WOMPI_TXT[p.pago_estado].bg, color: WOMPI_TXT[p.pago_estado].fg }}><span className="ms" aria-hidden="true">credit_card</span>{WOMPI_TXT[p.pago_estado].txt}</span>}
       </div>
+      {p.metodo_pago === 'wompi' && p.pago_estado !== 'aprobado' && !cancelado && p.pago === 'pendiente' && (
+        <p className="hint-g">El cliente eligió <b>pagar en línea</b> y Wompi aún no lo aprueba. Cuando se apruebe, el pedido pasa solo a «Pago recibido». Si no termina, escríbele: puede intentarlo otra vez o pagar al recibir (en ese caso cambia «Cómo paga»).</p>
+      )}
+      {p.pago_estado === 'aprobado' && p.items.some((it) => (it as { proveedor?: string }).proveedor === 'dropi') && (
+        <p className="hint-g">Ya está pagado en línea: al crear el pedido en Dropi hazlo <b>sin recaudo</b> (sin contraentrega).</p>
+      )}
 
       {!cancelado && (
         <ol className="pasos" aria-label="Avance del pedido">
@@ -166,6 +181,14 @@ function Detalle({ p, aplicar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Ca
           </button>
         )}
         {cancelado && <button className="gbtn out" type="button" onClick={() => aplicar(p, { estado: 'nuevo' }, 'Pedido reabierto')}><span className="ms" aria-hidden="true">undo</span>Reabrir pedido</button>}
+        {quitar && (
+          <button className="gbtn ghost" type="button" onClick={() => {
+            const conta = cobrado(p) ? `\n\nOjo: ya entró a Contabilidad (${money(p.total)}) y saldrá de allí.` : '';
+            if (confirm(`¿Borrar el pedido #${p.numero} de ${p.nombre} para siempre? No se puede deshacer. Si sacó productos del inventario, vuelven a bodega.${conta}`)) quitar(p);
+          }}>
+            <span className="ms" aria-hidden="true">delete</span>Borrar pedido
+          </button>
+        )}
       </div>
       {bloqueado && <p className="hint-g">Para avanzar, elige abajo cómo va a pagar el cliente.</p>}
 
@@ -230,6 +253,7 @@ function Detalle({ p, aplicar, volver }: { p: Pedido; aplicar: (p: Pedido, c: Ca
             <dl className="tot">
               <div><dt>Subtotal</dt><dd>{money(p.subtotal)}</dd></div>
               <div><dt>Envío</dt><dd>{p.envio === 0 ? 'Gratis' : money(p.envio)}</dd></div>
+              {!!p.descuento && <div><dt>Descuento pago en línea</dt><dd>−{money(p.descuento)}</dd></div>}
               {p.prioritario && <div><dt>Prioritario</dt><dd>{money(5000)}</dd></div>}
               {p.obsequio && <div><dt>Obsequio</dt><dd>Snack dental</dd></div>}
               <div className="tot__t"><dt>Total</dt><dd>{money(p.total)}</dd></div>
