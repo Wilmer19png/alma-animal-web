@@ -27,7 +27,7 @@ export function track(evento: string, datos: Record<string, unknown> = {}, clien
 
 // clics en cualquier botón o enlace de WhatsApp
 document.addEventListener('click', (e) => {
-  const a = (e.target as Element | null)?.closest?.('a[href*="wa.me/"]') as HTMLAnchorElement | null;
+  const a = (e.target as Element | null)?.closest?.('a[href*="wa.me/"], a[href*="api.whatsapp.com/"]') as HTMLAnchorElement | null;
   if (!a) return;
   const area = a.href.includes('573017925910') ? 'petshop' : 'veterinaria';
   track('Contact', { content_category: area });
