@@ -28,6 +28,15 @@ export const SHIPPING = {
 const L = SHIPPING.localCities;
 export const CIUDADES = L.length > 1 ? L.slice(0, -1).join(', ') + ' y ' + L[L.length - 1] : L[0] ?? ''; // «Pereira y Dosquebradas»
 export const GIFT = { active: CFG.obsequio.activo, from: CFG.obsequio.activo ? CFG.obsequio.desde : Number.MAX_SAFE_INTEGER, name: CFG.obsequio.nombre };
+// Pago en línea con Wompi (tarjeta, PSE, Nequi, Bancolombia). Aparece cuando en Netlify está PUBLIC_WOMPI_PUBLIC_KEY.
+// Pagar de una vez tiene descuento: en Dropi el mismo envío con contraentrega cuesta entre $4.200 y $5.400 más
+// (cotizado el 2026-11-11, baño sanitario a Medellín y Bogotá) y además se evitan las devoluciones.
+// Si cambias pct o tope, cámbialos también en netlify/functions/wompi-pago.mjs (allí se revisa el total).
+export const PAGO_EN_LINEA = { activo: Boolean(import.meta.env.PUBLIC_WOMPI_PUBLIC_KEY), pct: 5, tope: 10000 };
+// descuento en pesos por pagar en línea: 5 % de los productos, redondeado a $100, máximo $10.000
+export const descuentoEnLinea = (subtotal: number) =>
+  PAGO_EN_LINEA.activo ? Math.min(PAGO_EN_LINEA.tope, Math.round((subtotal * PAGO_EN_LINEA.pct) / 100 / 100) * 100) : 0;
+
 // "contraentrega, transferencia o en el consultorio"
 const PAGOS_TXT = [CFG.pagos.contraentrega && 'contraentrega', CFG.pagos.transferencia && 'transferencia', CFG.pagos.consultorio && 'en el consultorio'].filter(Boolean) as string[];
 export const PAGOS = PAGOS_TXT.length > 1 ? PAGOS_TXT.slice(0, -1).join(', ') + ' o ' + PAGOS_TXT[PAGOS_TXT.length - 1] : PAGOS_TXT[0] ?? 'transferencia';

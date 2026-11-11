@@ -1,0 +1,119 @@
+---
+// Resultado del pago en línea. Wompi devuelve al cliente aquí con ?id=<transacción>.
+// La página solo muestra el estado (lo consulta a Wompi): quien marca el pedido como pagado es
+// netlify/functions/wompi-eventos.mjs cuando Wompi le avisa, nunca el navegador.
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { PHONES } from '../data/site';
+---
+<Base title="Tu pago · Petshop Alma Animal" description="Resultado de tu pago en línea en el Petshop de Alma Animal." waArea="shop" waMessage="Hola, Alma Animal. Tengo una pregunta sobre mi pago.">
+  <SiteHeader slot="top" />
+
+  <!-- ======== RESULTADO DEL PAGO ======== -->
+  <section class="wrap pago" aria-live="polite" data-pago data-shop={PHONES.shop.e164}>
+    <div class="pago__card" data-estado="cargando">
+      <span class="pago__ic" aria-hidden="true"><span class="ms" data-ic>hourglass_top</span></span>
+      <h1 tabindex="-1" data-t>Revisando tu pago…</h1>
+      <p data-p>Un momento, estamos confirmando con Wompi.</p>
+      <p class="pago__cod" data-cod hidden>Pedido <b data-cod-v></b><span data-medio></span></p>
+      <div class="pago__acts">
+        <button class="btn btn--alma" type="button" data-reintentar hidden><span class="ms" aria-hidden="true">credit_card</span>Intentar pagar de nuevo</button>
+        <a class="wa-o" href="#" target="_blank" rel="noopener" data-wa><WaIcon size={22} /><span data-wa-t>Escríbenos por WhatsApp</span></a>
+        <a class="link-btn" href="/petshop"><span class="ms" aria-hidden="true">arrow_back</span>Seguir comprando</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { track } from '../scripts/meta';
+  import { pagarConWompi, CLAVE_PAGO, type CompraGuardada } from '../scripts/wompi';
+  import { cart } from '../scripts/cart';
+
+  const root = document.querySelector<HTMLElement>('[data-pago]')!;
+  const card = root.querySelector<HTMLElement>('.pago__card')!;
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+  const llave = (import.meta.env.PUBLIC_WOMPI_PUBLIC_KEY as string | undefined) ?? '';
+  const API = /^pub_test_/.test(llave) ? 'https://sandbox.wompi.co/v1' : 'https://production.wompi.co/v1';
+  const wa = (t: string) => `https://wa.me/${root.dataset.shop}?text=${encodeURIComponent(t)}`;
+  const MEDIOS: Record<string, string> = { CARD: 'tarjeta', PSE: 'PSE', NEQUI: 'Nequi', BANCOLOMBIA_TRANSFER: 'Bancolombia', BANCOLOMBIA_QR: 'QR Bancolombia', DAVIPLATA: 'Daviplata' };
+  let compra: CompraGuardada | null = null;
+  try { compra = JSON.parse(sessionStorage.getItem(CLAVE_PAGO) || 'null'); } catch { /* sin almacenamiento */ }
+
+  const pintar = (estado: 'ok' | 'mal' | 'espera' | 'nada', codigo: string | null, medio?: string) => {
+    card.dataset.estado = estado;
+    const T = {
+      ok: ['check_circle', '¡Pago aprobado!', 'Gracias. En breve te escribimos por WhatsApp para coordinar la entrega.'],
+      mal: ['error', 'El pago no se aprobó', 'No se te cobró nada. Puedes intentarlo otra vez con otro medio, o escribirnos y lo pagas al recibir.'],
+      espera: ['hourglass_top', 'Tu pago está en verificación', 'Tu banco aún no lo confirma. Apenas Wompi lo apruebe, tu pedido queda pagado y te escribimos. No tienes que hacer nada más.'],
+      nada: ['error', 'No encontramos el pago', 'Si ya pagaste, escríbenos con el código de tu pedido y lo revisamos.']
+    }[estado];
+    $('[data-ic]').textContent = T[0];
+    $('[data-t]').textContent = T[1];
+    $('[data-p]').textContent = T[2];
+    $('[data-cod]').hidden = !codigo;
+    if (codigo) $('[data-cod-v]').textContent = codigo;
+    $('[data-medio]').textContent = medio && MEDIOS[medio] ? ` · pagado con ${MEDIOS[medio]}` : '';
+    $('[data-reintentar]').hidden = estado !== 'mal' || !codigo;
+    $('[data-wa-t]').textContent = estado === 'mal' ? 'Prefiero pagar al recibir' : 'Escríbenos por WhatsApp';
+    $<HTMLAnchorElement>('[data-wa]').href = wa(estado === 'mal'
+      ? `Hola, Alma Animal. Mi pago en línea del pedido ${codigo} no pasó. Prefiero pagar al recibir.`
+      : codigo ? `Hola, Alma Animal. Te escribo por mi pedido ${codigo}.` : 'Hola, Alma Animal. Tengo una pregunta sobre mi pago.');
+    $('[data-t]').focus({ preventScroll: true });
+  };
+
+  // Purchase una sola vez, cuando Wompi aprueba (el mismo event_id = código del pedido)
+  const comprar = (codigo: string) => {
+    if (!compra || compra.codigo !== codigo) return;
+    track('Purchase', {
+      order_id: codigo, value: compra.total, currency: 'COP', content_type: 'product', content_ids: compra.items.map((i) => i.id),
+      contents: compra.items.map((i) => ({ id: i.id, quantity: i.cantidad, item_price: i.precio })), num_items: compra.items.reduce((s, i) => s + i.cantidad, 0)
+    }, compra.cliente, codigo);
+    try { sessionStorage.removeItem(CLAVE_PAGO); } catch { /* sin almacenamiento */ }
+  };
+
+  const id = new URLSearchParams(location.search).get('id');
+  let intentos = 0;
+  async function revisar() {
+    if (!id) { pintar('nada', compra?.codigo ?? null); return; }
+    try {
+      const r = await fetch(`${API}/transactions/${encodeURIComponent(id)}`);
+      const tx = (await r.json())?.data;
+      const codigo = String(tx?.reference ?? '').replace(/-[0-9a-f]{4}$/, '') || compra?.codigo || null;
+      if (tx?.status === 'APPROVED') { cart.clear(); comprar(codigo!); pintar('ok', codigo, tx.payment_method_type); }
+      else if (tx?.status === 'PENDING') {
+        pintar('espera', codigo);
+        if (++intentos < 10) window.setTimeout(revisar, 4000); // PSE y Nequi pueden tardar unos segundos
+      } else if (tx) pintar('mal', codigo);
+      else pintar('nada', compra?.codigo ?? null);
+    } catch { pintar('espera', compra?.codigo ?? null); }
+  }
+  revisar();
+
+  $('[data-reintentar]').addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    const codigo = $('[data-cod-v]').textContent!;
+    b.disabled = true;
+    try { await pagarConWompi(codigo); } catch (err) { b.disabled = false; $('[data-p]').textContent = (err as Error).message; }
+  });
+</script>
+
+<style>
+  .pago { display: grid; place-items: center; padding-top: 24px; padding-bottom: var(--section); }
+  .pago__card { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 36px 20px; border-radius: var(--r-md); background: #fff; box-shadow: 0 0 0 1px var(--line); text-align: center; }
+  .pago__ic { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--primary); }
+  .pago__ic .ms { font-size: 40px; font-variation-settings: "FILL" 1; }
+  [data-estado="ok"] .pago__ic { background: #B8F1B9; color: #1D5128; }
+  [data-estado="mal"] .pago__ic, [data-estado="nada"] .pago__ic { background: #FFDAD5; color: #910809; }
+  [data-estado="espera"] .pago__ic { background: #FFDDB2; color: #624000; }
+  .pago h1 { font: 600 clamp(24px, 6vw, 30px)/1.2 var(--font-sans); }
+  .pago h1:focus { outline: none; }
+  .pago p { max-width: 42ch; color: var(--ink-muted); line-height: 1.5; }
+  .pago__cod b { color: var(--ink); letter-spacing: .03em; }
+  .pago__cod[hidden], .pago [hidden] { display: none; }
+  .pago__acts { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .pago__acts .btn, .pago__acts .wa-o { width: 100%; }
+  .link-btn { align-self: center; display: inline-flex; align-items: center; gap: 6px; padding: 8px; font: 600 15px/1 var(--font-sans); color: var(--primary); text-decoration: none; }
+  .link-btn .ms { font-size: 18px; }
+</style>

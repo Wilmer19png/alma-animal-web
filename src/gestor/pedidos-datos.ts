@@ -12,6 +12,9 @@ export interface Pedido {
   items: Item[]; subtotal: number; envio: number; prioritario: boolean; total: number; obsequio: boolean;
   nota_interna: string | null;
   pagado_en?: string | null; // se pone solo cuando el pago queda confirmado (lo usa Contabilidad)
+  // pago en línea con Wompi (supabase/30): lo que eligió el cliente y lo que dijo Wompi
+  metodo_pago?: 'contraentrega' | 'wompi'; descuento?: number;
+  pago_estado?: 'pendiente' | 'aprobado' | 'rechazado' | 'anulado' | 'error' | null; wompi_medio?: string | null;
 }
 export type Cambio = Partial<Pick<Pedido, 'estado' | 'pago' | 'nota_interna'>>;
 
@@ -27,8 +30,17 @@ export const PAGOS: { id: Pago; txt: string; icon: string }[] = [
   { id: 'pendiente', txt: 'Por definir', icon: 'help' },
   { id: 'transferencia', txt: 'Transferencia o Nequi', icon: 'account_balance' },
   { id: 'contraentrega', txt: 'Contraentrega', icon: 'local_atm' },
-  { id: 'consultorio', txt: 'En el consultorio', icon: 'storefront' }
+  { id: 'consultorio', txt: 'En el consultorio', icon: 'storefront' },
+  { id: 'en_linea', txt: 'En línea (Wompi)', icon: 'credit_card' }
 ];
+// lo que dijo Wompi del pago en línea
+export const WOMPI_TXT: Record<string, { txt: string; bg: string; fg: string }> = {
+  pendiente: { txt: 'Pago en línea sin terminar', bg: '#FFDDB2', fg: '#624000' },
+  aprobado: { txt: 'Pagó en línea', bg: '#B8F1B9', fg: '#1D5128' },
+  rechazado: { txt: 'Pago en línea rechazado', bg: '#FFDAD5', fg: '#910809' },
+  anulado: { txt: 'Pago en línea anulado', bg: '#FFDAD5', fg: '#910809' },
+  error: { txt: 'Pago en línea con error: revisar en Wompi', bg: '#FFDAD5', fg: '#910809' }
+};
 export const pagoTxt = (p: Pago) => PAGOS.find((x) => x.id === p)?.txt ?? 'En línea';
 
 // Pasos del pedido. Si paga contra entrega (o al recoger), el pago llega con la entrega.
@@ -72,10 +84,12 @@ export const mensaje = (p: Pedido) => [
   `Hola, ${p.nombre} 👋 Te escribimos de Alma Animal para confirmar tu pedido ${p.codigo}:`,
   ...p.items.map((it) => `• ${it.cantidad} × ${it.nombre}${it.variante && !/^(único|única)$/i.test(it.variante) ? ` (${it.variante})` : ''} — ${money(it.precio * it.cantidad)}`),
   `Envío: ${p.envio === 0 ? 'gratis' : money(p.envio)}${p.prioritario ? ' + prioritario' : ''}`,
-  `Total: ${money(p.total)}`,
+  p.descuento ? `Descuento por pagar en línea: −${money(p.descuento)}` : '',
+  `Total: ${money(p.total)}${p.pago_estado === 'aprobado' ? ' · ya está pagado en línea ✅' : ''}`,
   p.obsequio ? '🎁 Va con un snack dental de obsequio.' : '',
   '',
   p.pago === 'consultorio' ? 'Lo recoges en el consultorio: Calle 1 # 9-02, Alfonso López.' : `Lo enviamos a: ${p.direccion}, barrio ${p.barrio}, ${p.ciudad}.`,
+  p.pago === 'pendiente' && p.metodo_pago === 'wompi' ? 'Vimos que el pago en línea no se terminó. ¿Quieres que te enviemos el enlace otra vez o prefieres pagar al recibir?' :
   p.pago === 'pendiente' ? '¿Nos confirmas que los datos están bien y cómo prefieres pagar: transferencia, Nequi o contra entrega?' : '¿Nos confirmas que los datos están bien?'
 ].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n');
 
@@ -136,4 +150,16 @@ export async function cambiar(id: string, cambio: Cambio): Promise<void> {
   }
   const { error } = await sb!.from('pedidos').update(cambio).eq('id', id);
   if (error) throw new Error('No se guardó el cambio. Revisa tu conexión e inténtalo de nuevo.');
+}
+
+// Borra el pedido para siempre (solo la administradora; supabase/30). Si había sacado inventario, vuelve a bodega.
+export async function borrar(id: string): Promise<void> {
+  if (DEMO) {
+    store.set(EJEMPLO_KEY, ejemplos().filter((p) => p.id !== id));
+    const vp = store.get<Pedido[]>('alma-pedidos-vista-previa', globalThis.localStorage);
+    if (vp) store.set('alma-pedidos-vista-previa', vp.filter((p) => p.id !== id), globalThis.localStorage);
+    return;
+  }
+  const { data, error } = await sb!.from('pedidos').delete().eq('id', id).select('id');
+  if (error || !data?.length) throw new Error(error ? 'No se pudo borrar. Revisa tu conexión e inténtalo de nuevo.' : 'No se pudo borrar: solo la administradora puede borrar pedidos (y hay que correr supabase/30 en Supabase).');
 }
