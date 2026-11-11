@@ -143,13 +143,16 @@ export async function cargarLibro(mes: string): Promise<Libro> {
   // meses que vienen del Excel: ahí el Excel ya trae todos los baños y consultas, así que las citas del gestor
   // de ese mes no se suman (si no, se cuentan dos veces). Los pedidos web van a la cuenta del Petshop y no
   // están en el Excel (la columna «petshop» del Excel es la tienda física de Alma Animal).
-  const deExcel = new Set(movs.filter((m) => m.por_nombre === POR_EXCEL).map((m) => m.fecha.slice(0, 7)));
-  const enExcel = (fecha: string) => deExcel.has(fecha.slice(0, 7));
+  // Solo se saltan las citas de antes de importar el Excel de ese mes: lo que se entrega después (el Excel ya
+  // no lo trae) sí suma. Si se vuelve a importar un Excel más nuevo, el corte se corre solo.
+  const corteExcel: Record<string, string> = {};
+  for (const m of movs) if (m.por_nombre === POR_EXCEL) { const k = m.fecha.slice(0, 7); if (!corteExcel[k] || m.creado > corteExcel[k]) corteExcel[k] = m.creado; }
+  const enExcel = (fecha: string) => { const corte = corteExcel[iso(new Date(fecha)).slice(0, 7)]; return !!corte && new Date(fecha) < new Date(corte); };
 
   // citas: atendidas suman; las que ya pasaron (o están hoy en el spa) y no se han marcado quedan en espera
   for (const c of citas) {
     if (c.datos.sin_conta) continue; // la quitaron de Contabilidad (se equivocaron al registrarla)
-    if (enExcel(iso(new Date((c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio)))) continue;
+    if (enExcel((c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio)) continue;
     const spa = c.carril === 'spa';
     const valor = Number(c.datos.total) || 0;
     const fecha = (c.datos.entregada as string) || (c.datos.hecha as string) || c.inicio;

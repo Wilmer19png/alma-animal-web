@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
 
 // --hasta=2026-11: último mes que se importa (por defecto, todos). En un mes que viene del Excel, Contabilidad
-// no suma las citas, baños ni pedidos del gestor de ese mes: el Excel manda (ver cargarLibro).
+// no suma las citas y baños del gestor de ese mes registrados antes de importar (el Excel ya los trae); los de después sí (ver cargarLibro).
 const HASTA = (process.argv.find((a) => a.startsWith('--hasta=')) ?? '--hasta=9999-12').slice(8);
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const archivo = args[0] ?? 'contabilidad/Contabilidad ACTUALIZADA.xlsx';
